@@ -1,4 +1,7 @@
-;;; early-init.el --- Early initialization. -*- lexical-binding: t -*-
+;;; early-init.el --- -*- lexical-binding: t -*-
+;;
+;; Don't edit this file, edit c:/home/emacs/psimacs/emacs/init.org instead ...
+;;
 
 ;; Copyright (C) 2020-2021 Johannes Brunen (hatlafax)
 
@@ -29,43 +32,135 @@
 ;; before package and UI initialization happens.
 ;;
 
-;;; Code:
+;;
+;; Tangling procedure constants.
+;;
+(defconst psimacs/config/tangle-early-init-file t
+  "If this flag is t the early-init.el file might be generated at startup.")
 
-(eval-when-compile (load "compile"))
+;;
+;; Conveniency byte size constants
+;;
+(defconst   1MB (* 1024 1024))
+(defconst  20MB (*  20 1MB))
+(defconst  30MB (*  30 1MB))
+(defconst  50MB (*  50 1MB))
+(defconst  64MB (*  64 1MB))
+(defconst 128MB (* 128 1MB))
 
-(defvar psimacs/config/main-org-file "init.org"
+;;
+;; Primary Psimacs file and directory constants use for tangling and synchronization
+;;
+(defconst psimacs/config/main-org-file "init.org"
   "The psimacs initialization file.")
 
-(defvar psimacs/config/icon-file "psi.ico"
+(defconst psimacs/config/icon-file "psi.ico"
   "The psimacs icon file.")
 
-(defvar psimacs/config/license-file "LICENSE"
+(defconst psimacs/config/license-file "LICENSE"
   "The psimacs license file.")
 
-(defvar psimacs/config/custom-file "custom.el"
+(defconst psimacs/config/custom-file "custom.el"
   "The psimacs custom elips file.")
 
-(defvar psimacs/config/agenda-dir "agenda"
+(defconst psimacs/config/agenda-dir "agenda"
   "The psimacs agenda directory.")
 
-(defvar psimacs/config/assets-dir "assets"
+(defconst psimacs/config/assets-dir "assets"
   "The psimacs assets directory.")
 
+(defconst psimacs/config/gc-cons-threshold 64MB
+  "The default value to use for 'gc-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst psimacs/config/gc-cons-percentage 0.1
+  "This variable specifies the amount of consing before garbage collection occurs.
+It is the fraction of the current heap size."
+)
+
 ;;
-;; Some early settings
+;; Use lexical binding instead of dynamic binding.
 ;;
+(setq-default lexical-binding t)
+
+;;
+;; Inhibit the package manager at all
+;;
+(setq package-enable-at-startup nil)
+
+;;
+;; If this option is nil, changing a frame' font, menu bar, tool bar, internal borders,
+;; fringes or scroll bars may resize its outer frame in order to keep the number of
+;; columns or lines of its text area unaltered. If this option is t, no such resizing
+;; is done.
+;;
+(setq frame-inhibit-implied-resize t)
+
+;;
+;; Beautify Emacs
+;;
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
+
+;;
+;; Change color to avoid blank screen
+;;
+(when (display-graphic-p)
+  (set-face-background 'default "#282a36" nil)
+  (set-face-foreground 'default "#f8f8f2" nil)
+)
+
+;;
+;; Garbage collection optimization
+;;
+(setq gc-cons-threshold  most-positive-fixnum
+      ;; The value of this variable is the number of bytes of storage that must
+      ;; be allocated for Lisp objects after one garbage collection in order to
+      ;; trigger another garbage collection.
+
+      gc-cons-percentage 0.6
+      ;; The value of this variable specifies the amount of consing before a
+      ;; garbage collection occurs, as a fraction of the current heap size.
+)
+
+
+;;
+;; After initialization set the garbage collection threshold to a reasonable value.
+;;
+(add-hook 'emacs-startup-hook
+          `(lambda ()
+            (setq gc-cons-threshold  psimacs/config/gc-cons-threshold
+                  gc-cons-percentage psimacs/config/gc-cons-percentage)
+            (garbage-collect)
+                  ) t)
+
+(defvar psimacs/config/file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+;;
+;; After initialization reset the file-name-handler-alist
+;;
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq file-name-handler-alist psimacs/config/file-name-handler-alist)
+            (makunbound 'psimacs/config/file-name-handler-alist)
+            ))
+
+;;
+;; Suppressing ad-handle-definition warnings
+;;
+(setq ad-redefinition-action 'accept)
+
 (setq debug-on-error  t                 ; That will open the debugger when the error is raised.
       message-log-max t                 ; Specifies how many lines to keep in the *Messages* buffer.
                                         ; The value t means there is no limit on how many lines to keep.
-      ad-redefinition-action 'accept    ; Suppressing ad-handle-definition warnings
-      gc-cons-threshold       most-positive-fixnum)
+)
 
-;;
-;; Delegate to configuration to org-file
-;;      http://orgmode.org/worg/org-contrib/babel/intro.html
-;;
 (defun psimacs/config/tangle-section-canceled ()
-  "Return t if the current section header was 'CANCELED', else nil.
+  "Return t if the current section header was 'CANCELED' or 'DISABLED', else nil.
 
 Section headers starts with '*', '**', etc, e.g.:
 
@@ -88,12 +183,14 @@ Shortly, all tangled source code blocks for file foo.el are written to one file 
 
 ;; foo.el --- text -*- lexical-binding: t -*-
 ;;
-;; Don't edit this file, edit %s instead ...
+;; Don't edit this file, edit file.org instead ...
 ;;
-
 ...
+(provide 'foo)
 
-(provide 'foo)"
+Source code blocks that tangle to early-init.el are handled differently. In this case neither a
+'require' statement in file.el nor the 'provide' clause is added to the file early-init.el.
+"
   (let* ((body-list ())
          (src-block-regexp   (concat
                               ;; (1) indentation                 (2) lang
@@ -120,67 +217,88 @@ Shortly, all tangled source code blocks for file foo.el are written to one file 
                               (let ((dst (string-trim (match-string 1 args)))
                                     (dst-file)
                                     (dst-dir)
-                                    (line))
+                                    (line)
+                                    (package-name)
+                                    (relative-dir))
                                 (if (string= dst "yes")
                                     (progn
                                       (setq body (concat body "\n"))
                                       (add-to-list 'body-list body))
+                                  ;; ...else a .el file is requested explicitly.
                                   (progn
-                                    (setq dst-file (expand-file-name (concat user-emacs-directory
-                                                                             dst)))
+                                    (setq dst-file (expand-file-name (concat user-emacs-directory dst)))
                                     (setq dst-dir  (file-name-directory dst-file))
-                                    (unless (cdr (assoc dst-file found-files-alist))
-                                      (when (file-exists-p dst-file)
-                                        (delete-file dst-file))
-                                      (unless (file-exists-p dst-dir)
-                                        (make-directory dst-dir t))
-                                      (unless (cdr (assoc dst-dir found-load-dir-alist))
-                                        (setq line (format
-                                                    "(add-to-list 'load-path (concat user-emacs-directory \"%s\"))\n\n"
-                                                    (file-relative-name (file-name-directory
-                                                                         dst-dir)
-                                                                        user-emacs-directory)))
-                                        (add-to-list 'body-list line)
-                                        (map-put found-load-dir-alist dst-dir t))
-                                      (setq line (format "(require '%s)\n\n"
-                                                         (file-name-sans-extension
-                                                          (file-name-nondirectory dst-file))))
-                                      (add-to-list 'body-list line)
-                                      (let ((description " "))
-                                        (when (string-match
-                                               "^.*:var\\s-+file-description\\s-+\"\\([^\"]+\\).*$"
-                                               args)
-                                          (setq description (concat " " (string-trim (match-string 1
-                                                                                                   args))
-                                                                    " ")))
-                                        (with-temp-buffer (insert (format
-                                                                   ";;; %s ---%s-*- lexical-binding: t -*-\n"
-                                                                   (file-name-nondirectory dst-file)
-                                                                   description))
-                                                          (insert         ";;\n")
-                                                          (insert (format
-                                                                   ";; Don't edit this file, edit %s instead ...\n"
-                                                                   orgfile))
-                                                          (insert         ";;\n")
-                                                          (insert         "\n")
-                                                          (write-region (point-min)
-                                                                        (point-max) dst-file t)))
-                                      (map-put found-files-alist dst-file t))
-                                    (with-temp-buffer (insert body)
-                                                      (insert "\n")
-                                                      (write-region (point-min)
-                                                                    (point-max) dst-file t))))))))))
+                                    (setq package-name (file-name-sans-extension (file-name-nondirectory dst-file)))
+
+                                    (when (or
+                                           (not (equal package-name "early-init"))
+                                           (and
+                                            (equal package-name "early-init")
+                                            psimacs/config/tangle-early-init-file))
+                                      (unless (cdr (assoc dst-file found-files-alist))
+                                        (when (file-exists-p dst-file)
+                                          (delete-file dst-file))
+
+                                        (unless (file-exists-p dst-dir)
+                                          (make-directory dst-dir t))
+
+                                        (setq relative-dir (file-relative-name (file-name-directory dst-dir)
+                                                                               user-emacs-directory))
+
+                                        (unless (or
+                                                 (cdr (assoc dst-dir found-load-dir-alist))
+                                                 (equal relative-dir "./"))
+                                          (setq line (format
+                                                      "(add-to-list 'load-path (concat user-emacs-directory \"%s\"))\n\n"
+                                                      relative-dir))
+                                          (add-to-list 'body-list line)
+                                          (map-put found-load-dir-alist dst-dir t)
+                                        )
+
+                                        (unless (equal package-name "early-init")
+                                          (setq line (format "(require '%s)\n\n" package-name))
+                                          (add-to-list 'body-list line)
+                                        )
+
+                                        (let ((description " "))
+                                          (when (string-match
+                                                 "^.*:var\\s-+file-description\\s-+\"\\([^\"]+\\).*$"
+                                                 args)
+                                            (setq description (concat " " (string-trim (match-string 1
+                                                                                                     args))
+                                                                      " ")))
+                                          (with-temp-buffer (insert (format
+                                                                     ";;; %s ---%s-*- lexical-binding: t -*-\n"
+                                                                     (file-name-nondirectory dst-file)
+                                                                     description))
+                                                            (insert         ";;\n")
+                                                            (insert (format
+                                                                     ";; Don't edit this file, edit %s instead ...\n"
+                                                                     orgfile))
+                                                            (insert         ";;\n")
+                                                            (insert         "\n")
+                                                            (write-region (point-min)
+                                                                          (point-max) dst-file t))
+                                        )
+                                        (map-put found-files-alist dst-file t)
+                                      )
+                                      (with-temp-buffer (insert body)
+                                                        (insert "\n")
+                                                        (write-region (point-min)
+                                                                      (point-max) dst-file t)))))))))))
 
     ;;
     ;; Add the config pathes to Emacs load path list and add the final provide-clause to the
     ;; written emacs package files.
     ;;
     (dolist (element found-files-alist)
-      (let ((file (car element)))
-        (with-temp-buffer (insert (format "(provide '%s)\n" (file-name-sans-extension
-                                                             (file-name-nondirectory file))))
-                          (write-region (point-min)
-                                        (point-max) file t))))
+      (let* ((file (car element))
+             (package-name (file-name-sans-extension (file-name-nondirectory file))))
+
+        (unless (equal package-name "early-init")
+          (with-temp-buffer (insert (format "(provide '%s)\n" package-name))
+                            (write-region (point-min)
+                                          (point-max) file t)))))
     (with-temp-file elfile (insert (format
                                     ";;; %s --- Initialization file -*- lexical-binding: t -*-\n"
                                     (file-name-nondirectory elfile)))
@@ -195,6 +313,10 @@ Shortly, all tangled source code blocks for file foo.el are written to one file 
     ;;(byte-compile-file elfile)
     ))
 
+;;
+;; Next function extracts the elips code from the org-file and possibly loads the
+;; resulting elips file.
+;;
 (defun psimacs/config/load-configuration-file (orgfile)
   "Load the given configuration file unless it equals to 'init.el' itself.
 
@@ -218,6 +340,49 @@ No byte compiling is performed for any elips file generated by the tangling proc
       (psimacs/config/tangle-config-org orgfile elfile))
     (unless (equal (file-name-nondirectory elfile) "init.el")
       (load (file-name-sans-extension elfile)))))
+
+(defun psimacs/file-system/copy-directory-files (src dst &optional only-newer-files)
+  "Copy all files from SRC directory into DST directory recursively.
+If optional argument ONLY-NEWER-FILES is non nil source files are copied only if their time stamp is
+newer then the time stamp of the destination file."
+  (when (file-exists-p src)
+    (unless (file-exists-p dst)
+      (make-directory dst t))
+    (dolist (f (directory-files-recursively src ".*" t))
+      (if (file-directory-p f)
+          (let ((f-relative (file-relative-name f src)))
+            (when f-relative (let ((dst-dir (concat (file-name-as-directory dst) f-relative)))
+                               (unless (file-exists-p dst-dir)
+                                 (make-directory dst-dir t)))))
+        ;; ...else is file
+        (let* ((src-dir (file-name-directory f))
+               (f-relative (file-relative-name src-dir src))
+               (dst-dir dst)
+               (dst-file))
+          (when f-relative
+            (setq dst-dir (concat (file-name-as-directory dst) f-relative)))
+          (unless (file-exists-p dst-dir)
+            (make-directory dst-dir t))
+          (setq dst-file (concat (file-name-as-directory dst-dir)
+                                 (file-name-nondirectory f)))
+
+                                        ;(if (file-exists-p dst-file)
+          (if only-newer-files (when (file-newer-than-file-p f dst-file)
+                                 (copy-file f dst-file t t))
+            ;; ...else always copy
+            (copy-file f dst-file t t))
+                                        ;)
+          )))))
+
+(defun psimacs/file-system/synchronize-directories(src dst)
+  "This function synchronizes two directories.
+All files that are found in SRC and that are either not in DST or newer in SRC are copied to DST.
+All files that are found in DST and that are either not in SRC or newer in DST are copied to SRC.
+
+After this function is finished the two directories are identical.
+ "
+  (psimacs/file-system/copy-directory-files src dst t)
+  (psimacs/file-system/copy-directory-files dst src t))
 
 ;;
 ;; Sync with dropbox
@@ -260,60 +425,25 @@ No byte compiling is performed for any elips file generated by the tangling proc
           (require 'json)
           (cdr (assoc 'path (car (json-read-file json-path))))) nil)))
 
+;;
+;; Initialize the directory constants for dropbox...
+;;
 (defconst psimacs/config/dropbox-dir
   (let ( (f (psimacs/config/find-dropbox-folder)) )
     (if f (file-name-as-directory f) nil))
   "The psimacs dropbox directory or nil.")
 
+;;
+;; ... and the its emacs configuration directory
+;;
 (defconst psimacs/config/dropbox-emacs-dir
   (if psimacs/config/dropbox-dir (file-name-as-directory (concat psimacs/config/dropbox-dir
                                                                  "emacs/psimacs/emacs")) nil)
   "The psimacs dropbox emacs configuration directory or nil.")
 
-(defun psimacs/file-system/copy-directory-files (src dst &optional only-newer-files)
-  "Copy all files from SRC directory into DST directory recursively.
-If optional argument ONLY-NEWER-FILES is non nil source files are copied only if their time stamp is
-newer then the time stamp of the destination file."
-  (when (file-exists-p src)
-    (unless (file-exists-p dst)
-      (make-directory dst t))
-    (dolist (f (directory-files-recursively src ".*" t))
-      (if (file-directory-p f)
-          (let ((f-relative (file-relative-name f src)))
-            (when f-relative (let ((dst-dir (concat (file-name-as-directory dst) f-relative)))
-                               (unless (file-exists-p dst-dir)
-                                 (make-directory dst-dir t)))))
-        ;; ...else is file
-        (let* ((src-dir (file-name-directory f))
-               (f-relative (file-relative-name src-dir src))
-               (dst-dir dst)
-               (dst-file))
-          (when f-relative
-            (setq dst-dir (concat (file-name-as-directory dst) f-relative)))
-          (unless (file-exists-p dst-dir)
-            (make-directory dst-dir t))
-          (setq dst-file (concat (file-name-as-directory dst-dir)
-                                 (file-name-nondirectory f)))
-
-                                        ;(if (file-exists-p dst-file)
-          (if only-newer-files (when (file-newer-than-file-p f dst-file)
-                                 (copy-file f dst-file t t))
-            ;; ...else always copy
-            (copy-file f dst-file t t))
-                                        ;)
-          )))))
-
-
-(defun psimacs/file-system/synchronize-directories(src dst)
-  "This function synchronizes two directories.
-All files that are found in SRC and that are either not in DST or newer in SRC are copied to DST.
-All files that are found in DST and that are either not in SRC or newer in DST are copied to SRC.
-
-After this function is finished the two directories are identical.
- "
-  (psimacs/file-system/copy-directory-files src dst t)
-  (psimacs/file-system/copy-directory-files dst src t))
-
+;;
+;; The synchronization function.
+;;
 (defun psimacs/config/sync-with-dropbox ()
   "Synchronize with dropbox directory if it exists.
 
@@ -385,3 +515,4 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
 ;;
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
                                                                   psimacs/config/main-org-file)))
+

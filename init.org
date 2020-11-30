@@ -10,44 +10,765 @@
 # #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 #+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
 
-* Print a message
+* References to Org-Mode markup
+An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic [[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail explanation about
+the markup rules used in [[https://orgmode.org][org-mode]] files.
+
+* Keybinding
+I am trying to setup keybinding in a /mnemonics/ way so it's easy to remember (and use).
+I am staying with the /standard/ emacs keybinding as much as possible.
+
+*Emacs*'s keybindings has well-defined conventions listed at [[https://www.gnu.org/software/emacs/manual/html%5Fnode/elisp/Key-Binding-Conventions.html][Emacs Key Bindings Convention]].
+In summary, the general rules are:
+- =C-x= reserved for Emacs native essential keybindings: buffer, window, frame, file, directory, etc.
+- =F5= ... =F9= without modifier keys are reserved for users to define.
+- =C-c=
+    - =C-c C-letter=, =C-c digit= are reserved for major modes.
+    - =C-c punctuation= with punctuation in { } < > : ; are also reserved for major modes.
+    - =C-c punctuation= with any other punctuation are allocated for minor modes.
+    - =C-c letter= are reserved for users.
+- Don't rebind =C-g=, =C-h= and =ESC=.
+
+Worth readings about *Emacs* keybindings are [[https://karl-voit.at/2018/07/08/emacs-key-bindings/][UOMF: My Emacs Key Binding Strategy]], [[https://www.masteringemacs.org/article/mastering-key-bindings-emacs][Mastering Key Bindings in Emacs]] and
+[[http://www.wilfred.me.uk/blog/2018/01/06/the-emacs-guru-guide-to-key-bindings/][The Emacs Guru Guide to Key Bindings]].
+
+* Early initialization
+
+Starting with *Emacs* 27, an early-init.el file can be used to do early configuration and optimization.
+For more information read [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Starting-Up.html#Starting-Up][Starting Up Emacs]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Init-File.html][The Init File]].
+
+#+BEGIN_QUOTE
+Emacs can now be configured using an early init file. The file is called early-init.el, in user-emacs-directory.
+It is loaded very early in the startup process: before graphical elements such as the tool bar are initialized,
+and before the package manager is initialized. The primary purpose is to allow customizing how the package
+system is initialized given that initialization now happens before loading the regular init file (see below).
+
+We recommend against putting any customizations in this file that don't need to be set up before initializing
+installed add-on packages, because the early init file is read too early into the startup process, and some
+important parts of the Emacs session, such as 'window-system' and other GUI features, are not yet set up,
+which could make some customization fail to work.
+#+END_QUOTE
+
+*Psimacs* uses the =early-init.el= for three purposes. At first, the evaluation of this file tangles the =init.org= file's
+embedded elips source code into the corresponding elips files. Especially, the =early-init.el= file is itself
+updated on this way, as it is also described in the =init.org= file. Crazy isn't is :-). Secondly, the =early-init.el=
+is responsible for synchronizing with a *Psimacs* /dropbox/ repository. This is quite useful when working with multiple
+machines and sharing the very same *Emacs* environment. Thirdly, the primary duty of the =early-init.el= file is to
+optimize the *Emacs* startup procedure.
+
+As mentioned above, the elisp source of this section is tangled directly into the =early-init.el= file. Since the
+tangling happens at startup time on evaluation of the =early-init.el= file, the =early-init.el= might overwritten
+itself at startup.
+
+** Preamble
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;; Copyright (C) 2020-2021 Johannes Brunen (hatlafax)
+
+;; Author: Johannes Brunen <hatlafax@gmx.de>
+;; URL: https://github.com/hatlafax/psimacs
+
+;; This file is not part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+;; Floor, Boston, MA 02110-1301, USA.
+;;
+
+;;; Commentary:
+;;
+;; Emacs 27 introduces early-init.el, which is run before init.el,
+;; before package and UI initialization happens.
+;;
+#+END_SRC
+
+** Some basic constants
+*** Tangle early-init.el at startup
+
+*Psimacs* allows the tangling of the =early-init.el= file at startup by itself. The following flag suppresses
+this feature.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Tangling procedure constants.
+;;
+(defconst psimacs/config/tangle-early-init-file t
+  "If this flag is t the early-init.el file might be generated at startup.")
+#+END_SRC
+
+*** Some size numbers
+
+Huge byte sizes are conveniently written in /Mega Bytes/ or even in /Giga Bytes/ by *Psimacs*. Therefore we define
+some size constants early.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Conveniency byte size constants
+;;
+(defconst   1MB (* 1024 1024))
+(defconst  20MB (*  20 1MB))
+(defconst  30MB (*  30 1MB))
+(defconst  50MB (*  50 1MB))
+(defconst  64MB (*  64 1MB))
+(defconst 128MB (* 128 1MB))
+#+END_SRC
+
+*** Primary initalization files and directories
+
+The primary initialization files and directories must be known by the initialization process early in time in order
+to allow the =early-init.el= to full fill its duty. These files are evaluated and/or synchronized with a possible
+/dropbox/ repository.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Primary Psimacs file and directory constants use for tangling and synchronization
+;;
+(defconst psimacs/config/main-org-file "init.org"
+  "The psimacs initialization file.")
+
+(defconst psimacs/config/icon-file "psi.ico"
+  "The psimacs icon file.")
+
+(defconst psimacs/config/license-file "LICENSE"
+  "The psimacs license file.")
+
+(defconst psimacs/config/custom-file "custom.el"
+  "The psimacs custom elips file.")
+
+(defconst psimacs/config/agenda-dir "agenda"
+  "The psimacs agenda directory.")
+
+(defconst psimacs/config/assets-dir "assets"
+  "The psimacs assets directory.")
+ #+END_SRC
+
+
+*** Garbage collection
+
+Fine tuning the garbage collection after startup initialization.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defconst psimacs/config/gc-cons-threshold 64MB
+  "The default value to use for 'gc-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst psimacs/config/gc-cons-percentage 0.1
+  "This variable specifies the amount of consing before garbage collection occurs.
+It is the fraction of the current heap size."
+)
+#+END_SRC
+
+** Some early optimization settings
+
+- Lexical Scope and binding
+
+  [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Lexical-Binding.html][Lexical Binding]] is condensed to the following quote:
+
+#+BEGIN_QUOTE
+  A lexically-bound variable has /lexical scope/, meaning that any reference to the variable must be located
+  textually within the binding construct.
+#+END_QUOTE
+
+  Its usage is explained in the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Using-Lexical-Binding.html][Emacs manual]].
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Use lexical binding instead of dynamic binding.
+;;
+(setq-default lexical-binding t)
+#+END_SRC
+
+-  Before *Emacs* 27, the init file was responsible for initializing the package manager by calling
+  =package-initialize=. *Emacs* 27 changed the default behavior: It now calls =package-initialize= before loading the
+  init file. Since we use the =straight= package manager in *Psimacs*, we inhibit the package manager initialization
+  at all.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Inhibit the package manager at all
+;;
+(setq package-enable-at-startup nil)
+#+END_SRC
+
+- Let's inhibit resizing the frame at early stage.
+
+  [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Implied-Frame-Resizing.html][Implied Frame Resizing]]:
+#+BEGIN_QUOTE
+  By default, Emacs tries to keep the number of lines and columns of a frame's text area unaltered when, for example,
+  toggling its menu or tool bar, changing its default font or setting the width of any of its scroll bars. This means
+  that in such case Emacs must ask the window manager to resize the frame's window in order to accommodate the size
+  change.
+
+  Occasionally, such implied frame resizing may be unwanted, for example, when a frame has been maximized or made
+  full-screen (where it's turned off by default). In general, users can disable implied resizing with the following
+  option:
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; If this option is nil, changing a frame' font, menu bar, tool bar, internal borders,
+;; fringes or scroll bars may resize its outer frame in order to keep the number of
+;; columns or lines of its text area unaltered. If this option is t, no such resizing
+;; is done.
+;;
+(setq frame-inhibit-implied-resize t)
+#+END_SRC
+
+- Never use the menu-bar, the tool-bar or the scroll-bar:
+
+  It will be faster to disable them here before they've been initialized.
+
+  *Psimacs* does disable these features by default because these items make Emacs really beautiful on every platform.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Beautify Emacs
+;;
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
+#+END_SRC
+
+- Avoid blank screen, the follwing match dracula theme
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Change color to avoid blank screen
+;;
+(when (display-graphic-p)
+  (set-face-background 'default "#282a36" nil)
+  (set-face-foreground 'default "#f8f8f2" nil)
+)
+#+END_SRC
+
+- Avoid garbage collection at startup
+
+  For detail information read the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Garbage-Collection.html][Garbage Collection manual entry]].
+
+  Later in the initialization process the garbage collection procedure is even more fine tuned.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Garbage collection optimization
+;;
+(setq gc-cons-threshold  most-positive-fixnum
+      ;; The value of this variable is the number of bytes of storage that must
+      ;; be allocated for Lisp objects after one garbage collection in order to
+      ;; trigger another garbage collection.
+
+      gc-cons-percentage 0.6
+      ;; The value of this variable specifies the amount of consing before a
+      ;; garbage collection occurs, as a fraction of the current heap size.
+)
+
+
+;;
+;; After initialization set the garbage collection threshold to a reasonable value.
+;;
+(add-hook 'emacs-startup-hook
+          `(lambda ()
+            (setq gc-cons-threshold  psimacs/config/gc-cons-threshold
+                  gc-cons-percentage psimacs/config/gc-cons-percentage)
+            (garbage-collect)
+                  ) t)
+#+END_SRC
+
+
+- Another small optimization concerns on =file-name-handler-alist=
+
+  On every .el and .elc file loaded during start up, it has to runs those regexps against the filename;
+  setting it to nil and after initialization finished put the value back make the initialization process quicker.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defvar psimacs/config/file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+;;
+;; After initialization reset the file-name-handler-alist
+;;
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq file-name-handler-alist psimacs/config/file-name-handler-alist)
+            (makunbound 'psimacs/config/file-name-handler-alist)
+            ))
+#+END_SRC
+
+- Disable warnings generated when functions are redefined with defadvice
+
+  Defines what to do with redefinitions during Advice de/activation.
+  Redefinition occurs if a previously activated function that already has an
+  original definition associated with it gets redefined and then de/activated.
+  In such a case we can either accept the current definition as the new
+  original definition, discard the current definition and replace it with the
+  old original, or keep it and raise an error. The values `accept', `discard',
+  `error' or `warn' govern what will be done. `warn' is just like `accept' but
+  it additionally prints a warning message. All other values will be
+  interpreted as `error'.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Suppressing ad-handle-definition warnings
+;;
+(setq ad-redefinition-action 'accept)
+#+END_SRC
+
+
+- Debugging on error and message buffer limit
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(setq debug-on-error  t                 ; That will open the debugger when the error is raised.
+      message-log-max t                 ; Specifies how many lines to keep in the *Messages* buffer.
+                                        ; The value t means there is no limit on how many lines to keep.
+)
+#+END_SRC
+
+** Tangling support without org-bable
+
+Sections that are marked as =Canceled= or =Disabled= should be filtered.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defun psimacs/config/tangle-section-canceled ()
+  "Return t if the current section header was 'CANCELED' or 'DISABLED', else nil.
+
+Section headers starts with '*', '**', etc, e.g.:
+
+'** CANCELED Some section header text'"
+  (save-excursion (if (re-search-backward "^\\*+\\s-+\\(.*?\\)?\\s-*$" nil t)
+                      (or (string-prefix-p "CANCELED" (match-string 1) t)
+                          (string-prefix-p "DISABLED" (match-string 1) t)) nil)))
+#+END_SRC
+
+
+The main tangling function.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defun psimacs/config/tangle-config-org (orgfile elfile)
+  "This function will write all source blocks from 'file.org' into 'file.el' that are ...
+        - not marked as :tangle no
+        - have a source-code of =emacs-lisp=
+        - doesn't have the todo-markers CANCELED or DISABLED
+
+Elisp source code blocks that are marked as ':tangle foo.el' are written to file 'foo.el' instead.
+For these files extra header and footer are written. In this case, also an additional header argument
+':var file-description \"text\" is evaluated and used in the file header.
+
+Shortly, all tangled source code blocks for file foo.el are written to one file 'foo.el' that look like
+
+;; foo.el --- text -*- lexical-binding: t -*-
+;;
+;; Don't edit this file, edit file.org instead ...
+;;
+...
+(provide 'foo)
+
+Source code blocks that tangle to early-init.el are handled differently. In this case neither a
+'require' statement in file.el nor the 'provide' clause is added to the file early-init.el.
+"
+  (let* ((body-list ())
+         (src-block-regexp   (concat
+                              ;; (1) indentation                 (2) lang
+                              "^\\([ \t]*\\)#\\+begin_src[ \t]+\\([^ \f\t\n\r\v]+\\)[ \t]*"
+                              ;; (3) switches
+                              "\\([^\":\n]*\"[^\"\n*]*\"[^\":\n]*\\|[^\":\n]*\\)"
+                              ;; (4) header arguments
+                              "\\([^\n]*\\)\n"
+                              ;; (5) body
+                              "\\([^\000]*?\n\\)??[ \t]*#\\+end_src"))
+         (found-files-alist ())
+         (found-load-dir-alist ()))
+    (with-temp-buffer (insert-file-contents orgfile)
+                      (goto-char (point-min))
+                      (while (re-search-forward src-block-regexp nil t)
+                        (let ((lang (match-string 2))
+                              (args (match-string 4))
+                              (body (match-string 5))
+                              (canc (psimacs/config/tangle-section-canceled)))
+                          (when (and (string= lang "emacs-lisp")
+                                     (not (string-match-p "^.*:tangle\\s-+no.*$" args))
+                                     (not canc))
+                            (when (string-match "^.*:tangle\\s-+\\([^:]+\\).*$" args)
+                              (let ((dst (string-trim (match-string 1 args)))
+                                    (dst-file)
+                                    (dst-dir)
+                                    (line)
+                                    (package-name)
+                                    (relative-dir))
+                                (if (string= dst "yes")
+                                    (progn
+                                      (setq body (concat body "\n"))
+                                      (add-to-list 'body-list body))
+                                  ;; ...else a .el file is requested explicitly.
+                                  (progn
+                                    (setq dst-file (expand-file-name (concat user-emacs-directory dst)))
+                                    (setq dst-dir  (file-name-directory dst-file))
+                                    (setq package-name (file-name-sans-extension (file-name-nondirectory dst-file)))
+
+                                    (when (or
+                                           (not (equal package-name "early-init"))
+                                           (and
+                                            (equal package-name "early-init")
+                                            psimacs/config/tangle-early-init-file))
+                                      (unless (cdr (assoc dst-file found-files-alist))
+                                        (when (file-exists-p dst-file)
+                                          (delete-file dst-file))
+
+                                        (unless (file-exists-p dst-dir)
+                                          (make-directory dst-dir t))
+
+                                        (setq relative-dir (file-relative-name (file-name-directory dst-dir)
+                                                                               user-emacs-directory))
+
+                                        (unless (or
+                                                 (cdr (assoc dst-dir found-load-dir-alist))
+                                                 (equal relative-dir "./"))
+                                          (setq line (format
+                                                      "(add-to-list 'load-path (concat user-emacs-directory \"%s\"))\n\n"
+                                                      relative-dir))
+                                          (add-to-list 'body-list line)
+                                          (map-put found-load-dir-alist dst-dir t)
+                                        )
+
+                                        (unless (equal package-name "early-init")
+                                          (setq line (format "(require '%s)\n\n" package-name))
+                                          (add-to-list 'body-list line)
+                                        )
+
+                                        (let ((description " "))
+                                          (when (string-match
+                                                 "^.*:var\\s-+file-description\\s-+\"\\([^\"]+\\).*$"
+                                                 args)
+                                            (setq description (concat " " (string-trim (match-string 1
+                                                                                                     args))
+                                                                      " ")))
+                                          (with-temp-buffer (insert (format
+                                                                     ";;; %s ---%s-*- lexical-binding: t -*-\n"
+                                                                     (file-name-nondirectory dst-file)
+                                                                     description))
+                                                            (insert         ";;\n")
+                                                            (insert (format
+                                                                     ";; Don't edit this file, edit %s instead ...\n"
+                                                                     orgfile))
+                                                            (insert         ";;\n")
+                                                            (insert         "\n")
+                                                            (write-region (point-min)
+                                                                          (point-max) dst-file t))
+                                        )
+                                        (map-put found-files-alist dst-file t)
+                                      )
+                                      (with-temp-buffer (insert body)
+                                                        (insert "\n")
+                                                        (write-region (point-min)
+                                                                      (point-max) dst-file t)))))))))))
+
+    ;;
+    ;; Add the config pathes to Emacs load path list and add the final provide-clause to the
+    ;; written emacs package files.
+    ;;
+    (dolist (element found-files-alist)
+      (let* ((file (car element))
+             (package-name (file-name-sans-extension (file-name-nondirectory file))))
+
+        (unless (equal package-name "early-init")
+          (with-temp-buffer (insert (format "(provide '%s)\n" package-name))
+                            (write-region (point-min)
+                                          (point-max) file t)))))
+    (with-temp-file elfile (insert (format
+                                    ";;; %s --- Initialization file -*- lexical-binding: t -*-\n"
+                                    (file-name-nondirectory elfile)))
+                    (insert         ";;\n")
+                    (insert (format ";; Don't edit this file, edit %s instead ...\n" orgfile))
+                    (insert         ";;\n")
+                    (apply 'insert (reverse body-list))
+                    (insert         "\n"))
+
+    ;; Byte compiling the init file is not recommendet
+    ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html
+    ;;(byte-compile-file elfile)
+    ))
+#+END_SRC
+
+
+In case that the resulting configuration file is named =init.el= no explicit loading is necessary. Otherwise, we
+must load the =.el= file.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Next function extracts the elips code from the org-file and possibly loads the
+;; resulting elips file.
+;;
+(defun psimacs/config/load-configuration-file (orgfile)
+  "Load the given configuration file unless it equals to 'init.el' itself.
+
+File 'init.el' is loaded automatically at startup. No extra loading is necessary.
+This function is basically an efficient replacement of org-babel-load-file.
+However, it performs some extra task on extraction of the elisp source code blocks.
+This happens in the tangle-config-org function.
+No byte compiling is performed for any elips file generated by the tangling procedure.
+"
+  (let* ((base-name (file-name-sans-extension orgfile))
+         (elfile    (concat base-name ".el"))
+         ;;(elcfile (concat base-name ".elc")) ;; Byte compiling the init file is not recommendet
+         )
+    (when (or (not (file-exists-p elfile))
+              (file-newer-than-file-p orgfile elfile)
+
+              ;; Byte compiling the init file is not recommendet
+              ;;(file-newer-than-file-p orgfile elcfile)
+              ;;(file-newer-than-file-p elfile  elcfile)
+              )
+      (psimacs/config/tangle-config-org orgfile elfile))
+    (unless (equal (file-name-nondirectory elfile) "init.el")
+      (load (file-name-sans-extension elfile)))))
+#+END_SRC
+
+
+** Directory synchronization system functions
+
+Two useful functions that allow one or two way directory synchronizations.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defun psimacs/file-system/copy-directory-files (src dst &optional only-newer-files)
+  "Copy all files from SRC directory into DST directory recursively.
+If optional argument ONLY-NEWER-FILES is non nil source files are copied only if their time stamp is
+newer then the time stamp of the destination file."
+  (when (file-exists-p src)
+    (unless (file-exists-p dst)
+      (make-directory dst t))
+    (dolist (f (directory-files-recursively src ".*" t))
+      (if (file-directory-p f)
+          (let ((f-relative (file-relative-name f src)))
+            (when f-relative (let ((dst-dir (concat (file-name-as-directory dst) f-relative)))
+                               (unless (file-exists-p dst-dir)
+                                 (make-directory dst-dir t)))))
+        ;; ...else is file
+        (let* ((src-dir (file-name-directory f))
+               (f-relative (file-relative-name src-dir src))
+               (dst-dir dst)
+               (dst-file))
+          (when f-relative
+            (setq dst-dir (concat (file-name-as-directory dst) f-relative)))
+          (unless (file-exists-p dst-dir)
+            (make-directory dst-dir t))
+          (setq dst-file (concat (file-name-as-directory dst-dir)
+                                 (file-name-nondirectory f)))
+
+                                        ;(if (file-exists-p dst-file)
+          (if only-newer-files (when (file-newer-than-file-p f dst-file)
+                                 (copy-file f dst-file t t))
+            ;; ...else always copy
+            (copy-file f dst-file t t))
+                                        ;)
+          )))))
+#+END_SRC
+
+Two way synchronization if possible with the following function.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defun psimacs/file-system/synchronize-directories(src dst)
+  "This function synchronizes two directories.
+All files that are found in SRC and that are either not in DST or newer in SRC are copied to DST.
+All files that are found in DST and that are either not in SRC or newer in DST are copied to SRC.
+
+After this function is finished the two directories are identical.
+ "
+  (psimacs/file-system/copy-directory-files src dst t)
+  (psimacs/file-system/copy-directory-files dst src t))
+#+END_SRC
+
+
+** Dropbox configuration sharing support
+
+The following functionality allows the synchronization between the user *Psimacs* configuration and a shared
+/Dropbox/ configuration repository. Basically, allowing multiple machines to share the same *Psimacs* setup.
+
+The /Dropbox/ location is determined at run time.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Sync with dropbox
+;;   The main config file is taken from the dropbox folder but it is loaded from
+;;   the local directory (see below). Therefore we copy the main config file from
+;;   the dropbox emacs folder into the emacs home directory. If the main config
+;;   file in the emacs home directory is newer than the file in the dropbox folder
+;;   we update that one with the newer local one.
+;;   The agenda files are worked on the dropbox directly, but a local copy is made
+;;   for backup purpose.
+;;
+(defun psimacs/config/find-dropbox-folder ()
+  "Get the current dropbox folder on the running machine. Otherwise nil"
+  (interactive)
+  (let* ((db-appdat-info-file      (concat (expand-file-name (file-name-as-directory (getenv
+                                                                                      "APPDATA")))
+                                           "Dropbox/info.json"))
+         (db-localappdat-info-file (concat (expand-file-name (file-name-as-directory (getenv
+                                                                                      "LOCALAPPDATA")))
+                                           "Dropbox/info.json"))
+         (db-user-home-info-file   "~/Dropbox/info.json")
+         (json-path (cond ((eq system-type 'windows-nt)
+                           (if (file-exists-p db-appdat-info-file) db-appdat-info-file (if
+                                                                                           (file-exists-p
+                                                                                            db-localappdat-info-file)
+                                                                                           db-localappdat-info-file
+                                                                                         (if
+                                                                                             (file-exists-p
+                                                                                              db-user-home-info-file)
+                                                                                             db-user-home-info-file
+                                                                                           nil))))
+                          ((or
+                            (eq system-type 'darwin)
+                            (eq system-type 'gnu-linux))
+                           (if (file-exists-p db-user-home-info-file) db-user-home-info-file
+                             nil)))))
+    (if (and json-path
+             (file-exists-p json-path))
+        (progn
+          (require 'json)
+          (cdr (assoc 'path (car (json-read-file json-path))))) nil)))
+#+END_SRC
+
+*Psimacs* is expected to reside in sub-directory =emacs/psimacs/emacs=. The author uses the same sub-directory
+in its home directory and avoids the =.emcad.d= directory completely. Instead the use of environment variable
+=XDG_CONFIG_HOME= allows to run various *Emacs* configuration simultaneously.
+
+The following /Windows Batch-File/ is used for starting *Psimacs*:
+
+#+BEGIN_SRC
+@echo off
+
+set XDG_CONFIG_HOME=c:\home\emacs\psimacs
+C:\utils\Emacs\bin\runemacs.exe
+#+END_SRC
+
+The constant =psimacs/config/dropbox-dir= is the actual /Dropbox/ directory found on your machine. It is determined by
+the function =psimacs/config/find-dropbox-folder= at initialization time. The constant
+=psimacs/config/dropbox-emacs-dir= is a sub directory to =psimacs/config/dropbox-dir=. For a multiple configuration
+setup it should be =emacs/psimacs/emacs=. In a traditional Emacs setup, it would be set to =.emacs.d=.
+Other configurations then can exchange the /psimacs/ string to something other.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Initialize the directory constants for dropbox...
+;;
+(defconst psimacs/config/dropbox-dir
+  (let ( (f (psimacs/config/find-dropbox-folder)) )
+    (if f (file-name-as-directory f) nil))
+  "The psimacs dropbox directory or nil.")
+
+;;
+;; ... and the its emacs configuration directory
+;;
+(defconst psimacs/config/dropbox-emacs-dir
+  (if psimacs/config/dropbox-dir (file-name-as-directory (concat psimacs/config/dropbox-dir
+                                                                 "emacs/psimacs/emacs")) nil)
+  "The psimacs dropbox emacs configuration directory or nil.")
+#+END_SRC
+
+The actual synchronization function. In its preamble it creates list of files and directories that should be
+synchronized. These list might be adapted in the future as the configuration evolves.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; The synchronization function.
+;;
+(defun psimacs/config/sync-with-dropbox ()
+  "Synchronize with dropbox directory if it exists.
+
+The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
+"
+  (if (and psimacs/config/dropbox-dir
+           (file-directory-p psimacs/config/dropbox-dir))
+      (let* ((db-dir psimacs/config/dropbox-emacs-dir)
+             (sync-files-alist ())
+             (sync-dirs-alist  ()))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/main-org-file)
+                                             (concat db-dir psimacs/config/main-org-file)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file)
+                                             (concat db-dir psimacs/config/icon-file)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/license-file)
+                                             (concat db-dir psimacs/config/license-file)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/custom-file)
+                                             (concat db-dir psimacs/config/custom-file)))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/agenda-dir))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/agenda-dir))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/assets-dir))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/assets-dir))))
+
+        ;;
+        ;; Create missing dropbox emacs directory
+        ;;
+        (unless (file-directory-p db-dir)
+          (make-directory db-dir t))
+        (dolist (files sync-files-alist)
+          (let ((file    (car files))
+                (db-file (cdr files)))
+            ;;
+            ;; Try to copy the file from dropbox to emacs directory...
+            ;;
+            (if (file-exists-p db-file)
+                (progn
+                  ;;
+                  ;; If the local file is newer, we update dropbox first
+                  ;;
+                  (when (file-newer-than-file-p file db-file)
+                    (copy-file file db-file t t))
+                  (when (or (not (file-exists-p file))
+                            (file-newer-than-file-p db-file file))
+                    (copy-file db-file file t t)))
+
+              ;; ...else try to upload to dropbox
+              (if (file-exists-p file)
+                  (copy-file file db-file t t)))))
+        (dolist (files sync-dirs-alist)
+          (let ((directory    (car files))
+                (db-directory (cdr files)))
+            (psimacs/file-system/synchronize-directories db-directory directory))))))
+#+END_SRC
+
+** Execution of the Dropbox synchronization
+
+This starts the synchronization between the user *Psimacs* configuration and the Dropbox configuration repository.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Synchronize with dropbox
+;;
+(psimacs/config/sync-with-dropbox)
+#+END_SRC
+
+** Tangling the main org file.
+
+This starts the processing of this org file resulting in the final configuration files for *Psimacs*.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Extract elisp code from org files if necessary and load that code into
+;; emacs.
+;;
+(psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
+                                                                  psimacs/config/main-org-file)))
+#+END_SRC
+
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(message "Hallo Linda")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(message "Hallo Benny")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(message "Hallo Klaus")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle config/my-test.el :var file-description "My test configuration"
-(message "Hallo Sabine")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle config/my-test.el
-(message "Hallo Harald")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle config/my-test-1.el
-(message "Hallo Louis")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle config/my-test-2.el :var file-description "My test2 configuration"
-(message "Hallo Alex")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle config-1/my-test-3.el :var file-description "My test3 configuration"
-(message "Hallo Jonny")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(message "Hallo Tinka")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(message "Hallo Sandy")
+(message "from init.el")
 #+END_SRC
