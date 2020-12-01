@@ -1,19 +1,19 @@
-;;; early-init.el --- -*- lexical-binding: t -*-
+;;; early-init.el --- Early initialization -*- lexical-binding: t -*-
 ;;
-;; Don't edit this file, edit c:/home/emacs/psimacs/emacs/init.org instead ...
+;; Don't edit this file, edit init.org instead ...
 ;;
 
 ;; Copyright (C) 2020-2021 Johannes Brunen (hatlafax)
 
-;; Author: Johannes Brunen <hatlafax@gmx.de>
-;; URL: https://github.com/hatlafax/psimacs
+;; Author:  Johannes Brunen <hatlafax@gmx.de>
+;; URL:     https://github.com/hatlafax/psimacs
+;; License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 ;; This file is not part of GNU Emacs.
 ;;
 ;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation; either version 2, or
-;; (at your option) any later version.
+;; modify it under the terms of the GNU GENERAL PUBLIC LICENSE
+;; Version 3, 29 June 2007 published by the Free Software Foundation.
 ;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,7 @@
 ;; General Public License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
+;; along with this program; see the file LICENSE.  If not, write to
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 ;;
@@ -68,6 +68,17 @@
 
 (defconst psimacs/config/assets-dir "assets"
   "The psimacs assets directory.")
+
+(defconst psimacs/config/assets-dir "assets"
+  "The psimacs assets directory.")
+
+(defconst psimacs/config/copyright/year       "2020-2021")
+(defconst psimacs/config/copyright/author     "Johannes Brunen")
+(defconst psimacs/config/copyright/pseudonyme "hatlafax")
+(defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
+(defconst psimacs/config/copyright/url        "https://github.com/hatlafax/psimacs")
+(defconst psimacs/config/copyright/license    "GNU GENERAL PUBLIC LICENSE")
+(defconst psimacs/config/copyright/version    "Version 3, 29 June 2007")
 
 (defconst psimacs/config/gc-cons-threshold 64MB
   "The default value to use for 'gc-cons-threshold'.
@@ -157,6 +168,55 @@ It is the fraction of the current heap size."
 (setq debug-on-error  t                 ; That will open the debugger when the error is raised.
       message-log-max t                 ; Specifies how many lines to keep in the *Messages* buffer.
                                         ; The value t means there is no limit on how many lines to keep.
+)
+
+;;
+;; Preamble support
+;;
+(defun psimacs/config/generate-preamble (file org-file description)
+  "Generate a proper preamble string for the given file.
+FILE        : el file that get generated
+ORG-FILE    : org mode file that is prints
+DESCRIPTION : short description text"
+  (let (
+        (preamble (concat (format ";;; %s ---%s-*- lexical-binding: t -*-\n" (file-name-nondirectory file) description)
+                                  ";;\n"
+                          (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
+                                  ";;\n"
+                                  "\n"
+                          (format ";; Copyright (C) %s %s (%s)\n"
+                                  psimacs/config/copyright/year
+                                  psimacs/config/copyright/author
+                                  psimacs/config/copyright/pseudonyme)
+                                  "\n"
+                          (format ";; Author:  %s <%s>\n"
+                                  psimacs/config/copyright/author
+                                  psimacs/config/copyright/email)
+                          (format ";; URL:     %s\n" psimacs/config/copyright/url)
+                          (format ";; License: %s %s\n"
+                                  psimacs/config/copyright/license
+                                  psimacs/config/copyright/version)
+                                  "\n"
+                                  ";; This file is not part of GNU Emacs.\n"
+                                  ";;\n"
+                                  ";; This program is free software; you can redistribute it and/or\n"
+                          (format ";; modify it under the terms of the %s\n"
+                                  psimacs/config/copyright/license)
+                          (format ";; %s published by the Free Software Foundation.\n" psimacs/config/copyright/version)
+                                  ";;\n"
+                                  ";; This program is distributed in the hope that it will be useful,\n"
+                                  ";; but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+                                  ";; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+                                  ";; General Public License for more details.\n"
+                                  ";;\n"
+                                  ";; You should have received a copy of the GNU General Public License\n"
+                                  ";; along with this program; see the file LICENSE.  If not, write to\n"
+                                  ";; the Free Software Foundation, Inc., 51 Franklin Street, Fifth\n"
+                                  ";; Floor, Boston, MA 02110-1301, USA.\n"
+                                  ";;\n"
+                                  "\n")))
+    preamble
+  )
 )
 
 (defun psimacs/config/tangle-section-canceled ()
@@ -262,21 +322,15 @@ Source code blocks that tangle to early-init.el are handled differently. In this
 
                                         (let ((description " "))
                                           (when (string-match
-                                                 "^.*:var\\s-+file-description\\s-+\"\\([^\"]+\\).*$"
+                                                 "^.*:var\\s-+file-description\\s-*=\\s-*\"\\([^\"]+\\).*$"
                                                  args)
                                             (setq description (concat " " (string-trim (match-string 1
                                                                                                      args))
                                                                       " ")))
-                                          (with-temp-buffer (insert (format
-                                                                     ";;; %s ---%s-*- lexical-binding: t -*-\n"
-                                                                     (file-name-nondirectory dst-file)
+                                          (with-temp-buffer (insert (psimacs/config/generate-preamble
+                                                                     dst-file
+                                                                     orgfile
                                                                      description))
-                                                            (insert         ";;\n")
-                                                            (insert (format
-                                                                     ";; Don't edit this file, edit %s instead ...\n"
-                                                                     orgfile))
-                                                            (insert         ";;\n")
-                                                            (insert         "\n")
                                                             (write-region (point-min)
                                                                           (point-max) dst-file t))
                                         )
@@ -299,14 +353,10 @@ Source code blocks that tangle to early-init.el are handled differently. In this
           (with-temp-buffer (insert (format "(provide '%s)\n" package-name))
                             (write-region (point-min)
                                           (point-max) file t)))))
-    (with-temp-file elfile (insert (format
-                                    ";;; %s --- Initialization file -*- lexical-binding: t -*-\n"
-                                    (file-name-nondirectory elfile)))
-                    (insert         ";;\n")
-                    (insert (format ";; Don't edit this file, edit %s instead ...\n" orgfile))
-                    (insert         ";;\n")
-                    (apply 'insert (reverse body-list))
-                    (insert         "\n"))
+    (with-temp-file elfile
+      (insert (psimacs/config/generate-preamble elfile orgfile " Initialization file "))
+      (apply 'insert (reverse body-list))
+      (insert "\n"))
 
     ;; Byte compiling the init file is not recommendet
     ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html

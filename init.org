@@ -10,9 +10,198 @@
 # #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 #+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
 
-* References to Org-Mode markup
+* Introduction
+This is *Psimacs*, a /modern/ *Emacs* configuration build from the ground up using a [[https://de.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
+The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is the file that your are
+currently reading.
+
+This document not only describes the *Psimacs* configuration, but also some additional information useful
+for working with *Emacs* in general. In this respect it serves as a kind of mind map for the author.
+
+** Motivation
+
+A lot of *Emacs* configurations can be found on the Internet. Many of them are well crafted and could be used out of
+the box. Especially, the great *Emacs* distributions like [[https://www.spacemacs.org/][Spacemacs]], [[https://github.com/hlissner/doom-emacs][Doom-Emacs]] and [[https://github.com/seagle0128/.emacs.d][Centaur-Emacs]] are worth giving a try.
+But I wanted to craft my own configuration that is tailored to my needs and that allowed me to learn more about the
+vast *Emacs* universe. My configuration it not perfect for everyone and it will not be able to compete against the big
+frameworks that are build by a lot of talented people. So feel free to use it or blame it. I am fine with it.
+
+The name *Psimacs* is arbitrarily. I was in search for a catchy name with just one syllable in front of the *macs*.
+
+** Installation
+
+This configuration uses *Emacs* >= 27. Clone the git repository into your *.emcas.d* directory
+
+#+BEGIN_EXAMPLE
+mv ~/.emacs.d ~/.emacs.d.bak
+git clone https://github.com/hatlafax/psimacs.git ~/.emacs.d
+#+END_EXAMPLE
+
+and just run *Emacs*.
+
+However, the configuration do have some dependencies that should be installed separately and beforehand of *Psimacs*.
+On default the non *Emacs* dependencies are expected to be installed into directory *c:/utils/* .
+
+** Disclaimer
+
+This is an *Emacs* beginners configuration and the usage is at one's own risk. It is not tested thoroughly. Please
+bear in mind.
+
+Many of the configuration settings are borrowed from other similar endeavors out there.
+
+This is work in progress. Sometimes this *Readme* is ahead of times or not yet updated.
+
+** Limitations / Known Issues
+
+- Tested on Windows operating system only
+
+** License (GPL v3)
+
+Copyright (C) 2020-2021 Johannes Brunen (hatlafax@gmx.de)
+
+License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* Working with Org-Mode
+** Embedding code
+[[https://orgmode.org/][Org-mode]] allows embedding of source code blocks into =.org=-files and evaluating them by [[https://orgmode.org/worg/org-contrib/babel/][babel]] a core feature build
+into [[https://orgmode.org/manual/Working-with-Source-Code.html][org]]. The [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into special code blocks:
+
+#+BEGIN_EXAMPLE
+#+BEGIN_SRC emacs-lisp :tangle no
+<BODY>
+#+END_SRC
+#+END_EXAMPLE
+
+Code block with =:tangle yes= or with =:tangle filename= are part of the configuration. However, any code block
+can be deactivated, i.e. omitted from the configuration, by using =:tangle no= in the
+block declaration.
+
+#+BEGIN_EXAMPLE
+#+BEGIN_SRC emacs-lisp :tangle no
+(message "this should never be seen in the Message buffer!")
+#+END_SRC
+#+END_EXAMPLE
+
+Additionally, a whole section can also be deactivated by a /CANCELED/ or a /DISABLED/ item, e.g.:
+
+*** CANCELED Avoid generating /Emacs Lisp/ code per section
+
+The following [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] block should therefore also not be part of the generated =.el= file although the =:tangle yes=
+attribute was used.
+
+#+BEGIN_EXAMPLE
+#+BEGIN_SRC emacs-lisp :tangle yes
+(message "this should not be seen in the Message buffer!")
+#+END_SRC
+#+END_EXAMPLE
+
+** Debugging the configuration
+
+Loading of the configuration can always be halted on spot by entering and activating the following source code block
+which will enter enter the debugger on execution.
+
+#+BEGIN_EXAMPLE
+#+BEGIN_SRC emacs-lisp :tangle no
+(debug)
+#+END_SRC
+#+END_EXAMPLE
+
+*** Debugging ELisp with EDebug
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]] is a source-level debugger for Emacs Lisp programs that is very useful developing /Lisp/ code. In the following
+you can find a some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+
+Embedding a breakpoint into source code: =(edebug)=
+
+| Keybinding      | Command                               | Description                                                                 |
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=C-u C-M-x=      |=M-x eval-defun=                       |Instrument the Lisp code at point. Any call to the function activates Edebug.|
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=h=              |=M-x edebug-goto-here=                 |Proceed to the stop point near where point is.                               |
+|=f=              |=M-x edebug-forward-sexp=              |Run the program for one expression.                                          |
+|=o=              |=M-x edebug-step-out=                  |Run the program until the end of the containing sexp.                        |
+|=i=              |=M-x edebug-step-in=                   |Step into the function or macro called by the form after point.              |
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=b=              |=M-x edebug-set-breakpoint=            |Set a breakpoint at the stop point at or after point. If you use a prefix argument, the breakpoint is temporary -- it turns off the first time it stops the program.|
+|=u=              |=M-x edebug-unset-breakpoint=          |Unset the breakpoint (if any) at the stop point at or after point.           |
+|=U=              |=M-x edebug-unset-breakpoints=         |Unset any breakpoints in the current form.                                   |
+|=D=              |=M-x edebug-toggle-disable-breakpoint= |Toggle whether to disable the breakpoint near point.                         |
+|=x condition RET=|=M-x edebug-set-conditional-breakpoint=|Set a conditional breakpoint which stops the program only if evaluating condition produces a non-nil value.|
+|=B=              |=M-x edebug-next-breakpoint=           |Move point to the next breakpoint in the current definition.                 |
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=S=              |=M-x edebug-stop=                      |Stop: don't execute any more of the program, but wait for more Edebug commands|
+|=SPC=            |=M-x edebug-step-mode=                 |Step: stop at the next stop point encountered.                               |
+|=n=              |=M-x edebug-next-mode=                 |Next: stop at the next stop point encountered after an expression.           |
+|=t=              |=M-x edebug-trace-mode=                |Trace: pause (normally one second) at each Edebug stop point.                |
+|=T=              |=M-x edebug-Trace-fast-mode=           |Rapid trace: update the display at each stop point, but don't actually pause.|
+|=g=              |=M-x edebug-go-mode=                   |Go: run until the next breakpoint.                                           |
+|=c=              |=M-x edebug-continue-mode=             |Continue: pause one second at each breakpoint, and then continue.            |
+|=C=              |=M-x edebug-Continue-fast-mode=        |Rapid continue: move point to each breakpoint, but don't pause.              |
+|=G=              |=M-x edebug-Go-nonstop-mode=           |Go non-stop: ignore breakpoints. You can still stop the program by typing S, or any editing command.|
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=?=              |=M-x edebug-help=                      |Display the help message for Edebug.                                         |
+|=C-]=            |=M-x abort-recursive-edit=             |Abort one level back to the previous command level                           |
+|=q=              |=M-x top-level=                        |Return to the top level editor command loop. This exits all recursive editing levels, including all levels of Edebug activity.|
+|=Q=              |=M-x edebug-top-level-nonstop=         |Like q, but don't stop even for protected code. Like q, but don't stop even for protected code.|
+|=r=              |=M-x edebug-previous-result=           |Redisplay the most recently known expression result in the echo area.        |
+|=d=              |=M-x edebug-backtrace=                 |Display a backtrace, excluding Edebug's own functions for clarity.           |
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=v=              |=M-x edebug-view-outside=              |Switch to viewing the outside window configuration.  Type =C-x X w= to return to Edebug.|
+|=p=              |=M-x edebug-bounce-point=              |Temporarily display the outside current buffer with point at its outside position, pausing for one second before returning to Edebug. With a prefix argument n, pause for n seconds instead.|
+|=w=              |=M-x edebug-where=                     |Move point back to the current stop point in the source code buffer.         |
+|=W=              |=M-x edebug-toggle-save-windows=       |Toggle whether Edebug saves and restores the outside window configuration.   |
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+|=e exp RET=      |=M-x edebug-eval-expression=           |Evaluate expression exp in the context outside of Edebug. That is, Edebug tries to minimize its interference with the evaluation.|
+|=M-: exp RET=    |=M-x eval-expression=                  |Evaluate expression exp in the context of Edebug itself.                     |
+|=C-x C-e=        |=M-x edebug-eval-last-sexp=            |Evaluate the expression before point, in the context outside of Edebug.      |
+|=C-u 0 C-x C-e=  |=C-u 0 M-x edebug-eval-last-sexp=      |Dito, but don't shorten long items (like strings and lists).                 |
+|=E=              |=M-x edebug-visit-eval-list=           |Switch to the evaluation list buffer *edebug*                                |
+|=C-j=            |=M-x edebug-eval-print-last-sexp=      |Evaluate the expression before point, in the outside context, and insert the value in the buffer.|
+|=C-u 0 C-j=      |=C-u 0 M-x edebug-eval-print-last-sexp=|Dito, but don't shorten long items (like strings and lists).                 |
+|=C-c C-u=        |=M-x edebug-update-eval-list=          |Build a new evaluation list from the contents of the buffer.                 |
+|=C-c C-d=        |=M-x edebug-delete-eval-item=          |Delete the evaluation list group that point is in.                           |
+|=C-c C-w=        |=M-x edebug-where=                     |Switch back to the source code buffer at the current stop point.             |
+|-----------------+---------------------------------------------------------------------------------------------------------------------|
+
+** References to Org-Mode markup
 An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic [[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail explanation about
 the markup rules used in [[https://orgmode.org][org-mode]] files.
+
+** References to Org-Mode
+The following links might be useful for diving deeper into [[http://orgmode.org/][Org-Mode]]:
+- [[http://orgmode.org/manual/index.html][Org Mode Manual]]
+- [[http://orgmode.org/worg/][Worg, the Org Mode Community]]
+- [[https://www.emacswiki.org/emacs/OrgMode][EmacsWiki: Org Mode]]
+- [[https://www.suenkler.info/notes/emacs-orgmode/][Aufgabenverwaltung im Emacs Org mode]]
+- [[https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html][Dig Into Org Mode]]
+- [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]]
+- [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]]
+- [[https://org-babel.readthedocs.io/en/latest/][Readthedocs about Org Babel]]
+- [[http://orgmode.org/worg/orgcard.html][Org Mode reference card]]
+- [[http://orgmode.org/orgcard.pdf][Org Mode Ref Card]]
+- [[http://ergoemacs.org/emacs/emacs_org_markup.html][Org Mode Markup Cheatsheet]]
+- [[http://pragmaticemacs.com/][Pragmatic Emacs]]
+- [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
+
+** References to Emacs Lisp
+The following links might be useful for diving deeper into [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]]:
+- [[https://www.gnu.org/software/emacs/manual/eintr.html][Introduction to Programming in Emacs Lisp]]
+- [[https://www.emacswiki.org/emacs/ElispCookbook][EmacsWiki: Lisp Cookbook]]
+- [[http://wikemacs.org/wiki/Emacs_Lisp_Cookbook][WikEmacs: Emacs Lisp Cookbook]]
+- [[https://github.com/chrisdone/elisp-guide][Emacs Lisp Guide]]
+
 
 * Keybinding
 I am trying to setup keybinding in a /mnemonics/ way so it's easy to remember (and use).
@@ -62,30 +251,7 @@ itself at startup.
 
 ** Preamble
 
-#+BEGIN_SRC emacs-lisp :tangle early-init.el
-;; Copyright (C) 2020-2021 Johannes Brunen (hatlafax)
-
-;; Author: Johannes Brunen <hatlafax@gmx.de>
-;; URL: https://github.com/hatlafax/psimacs
-
-;; This file is not part of GNU Emacs.
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation; either version 2, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
-;;
-
+#+BEGIN_SRC emacs-lisp :tangle early-init.el :var file-description="Early initialization"
 ;;; Commentary:
 ;;
 ;; Emacs 27 introduces early-init.el, which is run before init.el,
@@ -151,8 +317,25 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 
 (defconst psimacs/config/assets-dir "assets"
   "The psimacs assets directory.")
+
+(defconst psimacs/config/assets-dir "assets"
+  "The psimacs assets directory.")
  #+END_SRC
 
+
+*** Copyright and author information
+
+Copyright information that should be inserted into all tangled code.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defconst psimacs/config/copyright/year       "2020-2021")
+(defconst psimacs/config/copyright/author     "Johannes Brunen")
+(defconst psimacs/config/copyright/pseudonyme "hatlafax")
+(defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
+(defconst psimacs/config/copyright/url        "https://github.com/hatlafax/psimacs")
+(defconst psimacs/config/copyright/license    "GNU GENERAL PUBLIC LICENSE")
+(defconst psimacs/config/copyright/version    "Version 3, 29 June 2007")
+ #+END_SRC
 
 *** Garbage collection
 
@@ -335,7 +518,66 @@ It is the fraction of the current heap size."
 )
 #+END_SRC
 
+** Preamble for any =.el= file
+
+Any generated initialization file should start with the same preamble concerning author, license etc.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Preamble support
+;;
+(defun psimacs/config/generate-preamble (file org-file description)
+  "Generate a proper preamble string for the given file.
+FILE        : el file that get generated
+ORG-FILE    : org mode file that is prints
+DESCRIPTION : short description text"
+  (let (
+        (preamble (concat (format ";;; %s ---%s-*- lexical-binding: t -*-\n" (file-name-nondirectory file) description)
+                                  ";;\n"
+                          (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
+                                  ";;\n"
+                                  "\n"
+                          (format ";; Copyright (C) %s %s (%s)\n"
+                                  psimacs/config/copyright/year
+                                  psimacs/config/copyright/author
+                                  psimacs/config/copyright/pseudonyme)
+                                  "\n"
+                          (format ";; Author:  %s <%s>\n"
+                                  psimacs/config/copyright/author
+                                  psimacs/config/copyright/email)
+                          (format ";; URL:     %s\n" psimacs/config/copyright/url)
+                          (format ";; License: %s %s\n"
+                                  psimacs/config/copyright/license
+                                  psimacs/config/copyright/version)
+                                  "\n"
+                                  ";; This file is not part of GNU Emacs.\n"
+                                  ";;\n"
+                                  ";; This program is free software; you can redistribute it and/or\n"
+                          (format ";; modify it under the terms of the %s\n"
+                                  psimacs/config/copyright/license)
+                          (format ";; %s published by the Free Software Foundation.\n" psimacs/config/copyright/version)
+                                  ";;\n"
+                                  ";; This program is distributed in the hope that it will be useful,\n"
+                                  ";; but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+                                  ";; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+                                  ";; General Public License for more details.\n"
+                                  ";;\n"
+                                  ";; You should have received a copy of the GNU General Public License\n"
+                                  ";; along with this program; see the file LICENSE.  If not, write to\n"
+                                  ";; the Free Software Foundation, Inc., 51 Franklin Street, Fifth\n"
+                                  ";; Floor, Boston, MA 02110-1301, USA.\n"
+                                  ";;\n"
+                                  "\n")))
+    preamble
+  )
+)
+#+END_SRC
+
 ** Tangling support without org-bable
+
+The code generation process is not performed with the [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]] functionality. That is because the startup
+should be pretty fast and not rely on loading [[https://orgmode.org][org-mode]] only for this task. Additionally, the tangling function
+does do some special stuff that is not supported by the  [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]] framework.
 
 Sections that are marked as =Canceled= or =Disabled= should be filtered.
 
@@ -448,21 +690,15 @@ Source code blocks that tangle to early-init.el are handled differently. In this
 
                                         (let ((description " "))
                                           (when (string-match
-                                                 "^.*:var\\s-+file-description\\s-+\"\\([^\"]+\\).*$"
+                                                 "^.*:var\\s-+file-description\\s-*=\\s-*\"\\([^\"]+\\).*$"
                                                  args)
                                             (setq description (concat " " (string-trim (match-string 1
                                                                                                      args))
                                                                       " ")))
-                                          (with-temp-buffer (insert (format
-                                                                     ";;; %s ---%s-*- lexical-binding: t -*-\n"
-                                                                     (file-name-nondirectory dst-file)
+                                          (with-temp-buffer (insert (psimacs/config/generate-preamble
+                                                                     dst-file
+                                                                     orgfile
                                                                      description))
-                                                            (insert         ";;\n")
-                                                            (insert (format
-                                                                     ";; Don't edit this file, edit %s instead ...\n"
-                                                                     orgfile))
-                                                            (insert         ";;\n")
-                                                            (insert         "\n")
                                                             (write-region (point-min)
                                                                           (point-max) dst-file t))
                                         )
@@ -485,14 +721,10 @@ Source code blocks that tangle to early-init.el are handled differently. In this
           (with-temp-buffer (insert (format "(provide '%s)\n" package-name))
                             (write-region (point-min)
                                           (point-max) file t)))))
-    (with-temp-file elfile (insert (format
-                                    ";;; %s --- Initialization file -*- lexical-binding: t -*-\n"
-                                    (file-name-nondirectory elfile)))
-                    (insert         ";;\n")
-                    (insert (format ";; Don't edit this file, edit %s instead ...\n" orgfile))
-                    (insert         ";;\n")
-                    (apply 'insert (reverse body-list))
-                    (insert         "\n"))
+    (with-temp-file elfile
+      (insert (psimacs/config/generate-preamble elfile orgfile " Initialization file "))
+      (apply 'insert (reverse body-list))
+      (insert "\n"))
 
     ;; Byte compiling the init file is not recommendet
     ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html
@@ -755,9 +987,9 @@ This starts the synchronization between the user *Psimacs* configuration and the
 (psimacs/config/sync-with-dropbox)
 #+END_SRC
 
-** Tangling the main org file.
+** Tangling the main =init.org= file.
 
-This starts the processing of this org file resulting in the final configuration files for *Psimacs*.
+This starts the processing of this org file (=init.org=), resulting in the final configuration files for *Psimacs*.
 
 #+BEGIN_SRC emacs-lisp :tangle early-init.el
 ;;
@@ -768,6 +1000,17 @@ This starts the processing of this org file resulting in the final configuration
                                                                   psimacs/config/main-org-file)))
 #+END_SRC
 
+* Preamble to the =init.el= file
+
+Each =.el= initialization file should start w
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;;; Commentary:
+;;
+;; Emacs 27 introduces early-init.el, which is run before init.el,
+;; before package and UI initialization happens.
+;;
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (message "from init.el")
