@@ -127,52 +127,52 @@ Embedding a breakpoint into source code: =(edebug)=
 
 | Keybinding      | Command                               | Description                                                                 |
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=C-u C-M-x=      |=M-x eval-defun=                       |Instrument the Lisp code at point. Any call to the function activates Edebug.|
+| =C-u C-M-x=     | =M-x eval-defun=                      |Instrument the Lisp code at point. Any call to the function activates Edebug.|
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=h=              |=M-x edebug-goto-here=                 |Proceed to the stop point near where point is.                               |
-|=f=              |=M-x edebug-forward-sexp=              |Run the program for one expression.                                          |
-|=o=              |=M-x edebug-step-out=                  |Run the program until the end of the containing sexp.                        |
-|=i=              |=M-x edebug-step-in=                   |Step into the function or macro called by the form after point.              |
+|h               |M-x edebug-goto-here                  |Proceed to the stop point near where point is.                               |
+|f               |M-x edebug-forward-sexp               |Run the program for one expression.                                          |
+|o               |M-x edebug-step-out                   |Run the program until the end of the containing sexp.                        |
+|i               |M-x edebug-step-in                    |Step into the function or macro called by the form after point.              |
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=b=              |=M-x edebug-set-breakpoint=            |Set a breakpoint at the stop point at or after point. If you use a prefix argument, the breakpoint is temporary -- it turns off the first time it stops the program.|
-|=u=              |=M-x edebug-unset-breakpoint=          |Unset the breakpoint (if any) at the stop point at or after point.           |
-|=U=              |=M-x edebug-unset-breakpoints=         |Unset any breakpoints in the current form.                                   |
-|=D=              |=M-x edebug-toggle-disable-breakpoint= |Toggle whether to disable the breakpoint near point.                         |
-|=x condition RET=|=M-x edebug-set-conditional-breakpoint=|Set a conditional breakpoint which stops the program only if evaluating condition produces a non-nil value.|
-|=B=              |=M-x edebug-next-breakpoint=           |Move point to the next breakpoint in the current definition.                 |
+|b               |M-x edebug-set-breakpoint             |Set a breakpoint at the stop point at or after point. If you use a prefix argument, the breakpoint is temporary -- it turns off the first time it stops the program.|
+|u               |M-x edebug-unset-breakpoint           |Unset the breakpoint (if any) at the stop point at or after point.           |
+|U               |M-x edebug-unset-breakpoints          |Unset any breakpoints in the current form.                                   |
+|D               |M-x edebug-toggle-disable-breakpoint  |Toggle whether to disable the breakpoint near point.                         |
+|x condition RET |M-x edebug-set-conditional-breakpoint |Set a conditional breakpoint which stops the program only if evaluating condition produces a non-nil value.|
+|B               |M-x edebug-next-breakpoint            |Move point to the next breakpoint in the current definition.                 |
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=S=              |=M-x edebug-stop=                      |Stop: don't execute any more of the program, but wait for more Edebug commands|
-|=SPC=            |=M-x edebug-step-mode=                 |Step: stop at the next stop point encountered.                               |
-|=n=              |=M-x edebug-next-mode=                 |Next: stop at the next stop point encountered after an expression.           |
-|=t=              |=M-x edebug-trace-mode=                |Trace: pause (normally one second) at each Edebug stop point.                |
-|=T=              |=M-x edebug-Trace-fast-mode=           |Rapid trace: update the display at each stop point, but don't actually pause.|
-|=g=              |=M-x edebug-go-mode=                   |Go: run until the next breakpoint.                                           |
-|=c=              |=M-x edebug-continue-mode=             |Continue: pause one second at each breakpoint, and then continue.            |
-|=C=              |=M-x edebug-Continue-fast-mode=        |Rapid continue: move point to each breakpoint, but don't pause.              |
-|=G=              |=M-x edebug-Go-nonstop-mode=           |Go non-stop: ignore breakpoints. You can still stop the program by typing S, or any editing command.|
+|S               |M-x edebug-stop                       |Stop: don't execute any more of the program, but wait for more Edebug commands|
+|SPC             |M-x edebug-step-mode                  |Step: stop at the next stop point encountered.                               |
+|n               |M-x edebug-next-mode                  |Next: stop at the next stop point encountered after an expression.           |
+|t               |M-x edebug-trace-mode                 |Trace: pause (normally one second) at each Edebug stop point.                |
+|T               |M-x edebug-Trace-fast-mode            |Rapid trace: update the display at each stop point, but don't actually pause.|
+|g               |M-x edebug-go-mode                    |Go: run until the next breakpoint.                                           |
+|c               |M-x edebug-continue-mode              |Continue: pause one second at each breakpoint, and then continue.            |
+|C               |M-x edebug-Continue-fast-mode         |Rapid continue: move point to each breakpoint, but don't pause.              |
+|G               |M-x edebug-Go-nonstop-mode            |Go non-stop: ignore breakpoints. You can still stop the program by typing S, or any editing command.|
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=?=              |=M-x edebug-help=                      |Display the help message for Edebug.                                         |
-|=C-]=            |=M-x abort-recursive-edit=             |Abort one level back to the previous command level                           |
-|=q=              |=M-x top-level=                        |Return to the top level editor command loop. This exits all recursive editing levels, including all levels of Edebug activity.|
-|=Q=              |=M-x edebug-top-level-nonstop=         |Like q, but don't stop even for protected code. Like q, but don't stop even for protected code.|
-|=r=              |=M-x edebug-previous-result=           |Redisplay the most recently known expression result in the echo area.        |
-|=d=              |=M-x edebug-backtrace=                 |Display a backtrace, excluding Edebug's own functions for clarity.           |
+|?               |M-x edebug-help                       |Display the help message for Edebug.                                         |
+|C-]             |M-x abort-recursive-edit              |Abort one level back to the previous command level                           |
+|q               |M-x top-level                         |Return to the top level editor command loop. This exits all recursive editing levels, including all levels of Edebug activity.|
+|Q               |M-x edebug-top-level-nonstop          |Like q, but don't stop even for protected code. Like q, but don't stop even for protected code.|
+|r               |M-x edebug-previous-result            |Redisplay the most recently known expression result in the echo area.        |
+|d               |M-x edebug-backtrace                  |Display a backtrace, excluding Edebug's own functions for clarity.           |
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=v=              |=M-x edebug-view-outside=              |Switch to viewing the outside window configuration.  Type =C-x X w= to return to Edebug.|
-|=p=              |=M-x edebug-bounce-point=              |Temporarily display the outside current buffer with point at its outside position, pausing for one second before returning to Edebug. With a prefix argument n, pause for n seconds instead.|
-|=w=              |=M-x edebug-where=                     |Move point back to the current stop point in the source code buffer.         |
-|=W=              |=M-x edebug-toggle-save-windows=       |Toggle whether Edebug saves and restores the outside window configuration.   |
+|v               |M-x edebug-view-outside               |Switch to viewing the outside window configuration.  Type =C-x X w= to return to Edebug.|
+|p               |M-x edebug-bounce-point               |Temporarily display the outside current buffer with point at its outside position, pausing for one second before returning to Edebug. With a prefix argument n, pause for n seconds instead.|
+|w               |M-x edebug-where                      |Move point back to the current stop point in the source code buffer.         |
+|W               |M-x edebug-toggle-save-windows        |Toggle whether Edebug saves and restores the outside window configuration.   |
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
-|=e exp RET=      |=M-x edebug-eval-expression=           |Evaluate expression exp in the context outside of Edebug. That is, Edebug tries to minimize its interference with the evaluation.|
-|=M-: exp RET=    |=M-x eval-expression=                  |Evaluate expression exp in the context of Edebug itself.                     |
-|=C-x C-e=        |=M-x edebug-eval-last-sexp=            |Evaluate the expression before point, in the context outside of Edebug.      |
-|=C-u 0 C-x C-e=  |=C-u 0 M-x edebug-eval-last-sexp=      |Dito, but don't shorten long items (like strings and lists).                 |
-|=E=              |=M-x edebug-visit-eval-list=           |Switch to the evaluation list buffer *edebug*                                |
-|=C-j=            |=M-x edebug-eval-print-last-sexp=      |Evaluate the expression before point, in the outside context, and insert the value in the buffer.|
-|=C-u 0 C-j=      |=C-u 0 M-x edebug-eval-print-last-sexp=|Dito, but don't shorten long items (like strings and lists).                 |
-|=C-c C-u=        |=M-x edebug-update-eval-list=          |Build a new evaluation list from the contents of the buffer.                 |
-|=C-c C-d=        |=M-x edebug-delete-eval-item=          |Delete the evaluation list group that point is in.                           |
-|=C-c C-w=        |=M-x edebug-where=                     |Switch back to the source code buffer at the current stop point.             |
+|e exp RET       |M-x edebug-eval-expression            |Evaluate expression exp in the context outside of Edebug. That is, Edebug tries to minimize its interference with the evaluation.|
+|M-: exp RET     |M-x eval-expression                   |Evaluate expression exp in the context of Edebug itself.                     |
+|C-x C-e         |M-x edebug-eval-last-sexp             |Evaluate the expression before point, in the context outside of Edebug.      |
+|C-u 0 C-x C-e   |C-u 0 M-x edebug-eval-last-sexp       |Dito, but don't shorten long items (like strings and lists).                 |
+|E=              |M-x edebug-visit-eval-list            |Switch to the evaluation list buffer *edebug*                                |
+|C-j             |M-x edebug-eval-print-last-sexp       |Evaluate the expression before point, in the outside context, and insert the value in the buffer.|
+|C-u 0 C-j       |C-u 0 M-x edebug-eval-print-last-sexp |Dito, but don't shorten long items (like strings and lists).                 |
+|C-c C-u         |M-x edebug-update-eval-list           |Build a new evaluation list from the contents of the buffer.                 |
+|C-c C-d         |M-x edebug-delete-eval-item           |Delete the evaluation list group that point is in.                           |
+|C-c C-w         |M-x edebug-where                      |Switch back to the source code buffer at the current stop point.             |
 |-----------------+---------------------------------------------------------------------------------------------------------------------|
 
 ** References to Org-Mode markup
