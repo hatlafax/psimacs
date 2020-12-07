@@ -239,11 +239,22 @@ In summary, the general rules are:
     - =C-c C-letter=, =C-c digit= are reserved for major modes.
     - =C-c punctuation= with punctuation in { } < > : ; are also reserved for major modes.
     - =C-c punctuation= with any other punctuation are allocated for minor modes.
-    - =C-c letter= are reserved for users.
+    - =C-c letter= are reserved for users. In practice most third-party packages don't give a hoot
+      and will gladly stuff their own key binds in there.
 - Don't rebind =C-g=, =C-h= and =ESC=.
+- =hyper= and =super= are two prefix keys reserved to you. They are remnants from ancient keyboards used in the 80s,
+  but live on today in Emacs. Most PC-compatible  keyboards won't have a =super= or =hyper= key so we rebind
+  the =<lwindow>= and =<rwindow>= /Windows/ keys and the =<apps> /Application Context/ key to be the =super=
+  and =hyper= prefix keys instead.
 
-Worth readings about *Emacs* keybindings are [[https://karl-voit.at/2018/07/08/emacs-key-bindings/][UOMF: My Emacs Key Binding Strategy]], [[https://www.masteringemacs.org/article/mastering-key-bindings-emacs][Mastering Key Bindings in Emacs]] and
-[[http://www.wilfred.me.uk/blog/2018/01/06/the-emacs-guru-guide-to-key-bindings/][The Emacs Guru Guide to Key Bindings]].
+*Psimacs* uses the =super= and =hyper= key prefixes for all of its own key bindings.
+
+Worth readings about *Emacs* keybindings:
+- [[https://karl-voit.at/2018/07/08/emacs-key-bindings/][UOMF: My Emacs Key Binding Strategy]]
+- [[https://www.masteringemacs.org/article/mastering-key-bindings-emacs][Mastering Key Bindings in Emacs]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Windows-Keyboard.html][Keyboard Usage on MS-Windows]]
+- [[http://www.wilfred.me.uk/blog/2018/01/06/the-emacs-guru-guide-to-key-bindings/][The Emacs Guru Guide to Key Bindings]]
+- [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Bind Super Hyper Keys]]
 
 * Early initialization
 
@@ -335,6 +346,7 @@ some size constants early.
 ;; Conveniency byte size constants
 ;;
 (defconst   1MB (* 1024 1024))
+(defconst   4MB (*   4 1MB))
 (defconst  20MB (*  20 1MB))
 (defconst  30MB (*  30 1MB))
 (defconst  50MB (*  50 1MB))
@@ -354,6 +366,9 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 ;;
 (defconst psimacs/config/main-org-file "init.org"
   "The psimacs initialization file.")
+
+(defconst psimacs/config/main-html-file "init.html"
+  "The psimacs htmlized initialization file.")
 
 (defconst psimacs/config/icon-file "psi.ico"
   "The psimacs icon file.")
@@ -393,6 +408,9 @@ Copyright information that should be inserted into all tangled code.
 Fine tuning the garbage collection after startup initialization.
 
 #+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Psimacs default garbage collection parameters
+;;
 (defconst psimacs/config/gc-cons-threshold 64MB
   "The default value to use for 'gc-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
@@ -416,6 +434,12 @@ It is the fraction of the current heap size."
 #+END_QUOTE
 
   Its usage is explained in the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Using-Lexical-Binding.html][Emacs manual]].
+
+Use lexical-binding. [[https://nullprogram.com/blog/2016/12/22/][Why? Explanation]].
+
+=lexical-binding: t= has significant advantages, both in performance and static analysis,
+and so it should be used for all future Elisp code. The only reason it's not the default
+is because it breaks some old (badly written) code.
 
 #+BEGIN_SRC emacs-lisp :tangle early-init.el
 ;;
@@ -446,7 +470,7 @@ It is the fraction of the current heap size."
   change.
 
   Occasionally, such implied frame resizing may be unwanted, for example, when a frame has been maximized or made
-  full-screen (where it's turned off by default). In general, users can disable implied resizing with the following
+   full-screen (where it's turned off by default). In general, users can disable implied resizing with the following
   option:
 #+END_QUOTE
 
@@ -989,6 +1013,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/main-org-file)
                                              (concat db-dir psimacs/config/main-org-file)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/main-html-file)
+                                             (concat db-dir psimacs/config/main-html-file)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file)
                                              (concat db-dir psimacs/config/icon-file)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
@@ -1134,6 +1161,21 @@ This functions always prefers DIR on dropbox."
     (if dropbox-dir
         (psimacs/file-system/concat-directory dropbox-dir dir)
       local-dir)))
+#+END_SRC
+
+** Helper functions for message printing
+
+Some convenience function for message printing.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-config-helper.el
+;;
+;; Easy message function for lists
+;;
+(defun psimacs/config/message-elements-of-list (list)
+  "Print each element of LIST to the message buffer on a line of its own."
+  (while list
+    (message (car list))
+    (setq list (cdr list))))
 #+END_SRC
 
 * Configuration constants
@@ -1375,7 +1417,7 @@ repository.
     "The psimacs customization file.")
 #+END_SRC
 
-** Latex file sharing
+** Latex
 
 LaTeX bibliography should be shared.
 
@@ -1386,6 +1428,12 @@ LaTeX bibliography should be shared.
 (defconst psimacs/config/latex-share-dir
   (psimacs/file-system/prefer-dropbox-directory "latex")
   "The psimacs shared latex directory.")
+
+(defconst psimacs/config/tex-runtime-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "MiKTeX/miktex/bin/x64")
+  ;;(psimacs/file-system/concat-directory psimacs/config/system-utils-dir "texlive/bin/win32")
+  "The psimacs tex runtime directory.")
+
 #+END_SRC
 
 ** The Amx file
@@ -1436,9 +1484,12 @@ the following commands:
 - pacman -S mingw-w64-x86_64-aspell
 - pacman -S mingw-w64-x86_64-aspell-de
 - pacman -S mingw-w64-x86_64-aspell-en
+- pacman -S mingw-w64-x86_64-gnutls
 
 Some of the packages are not really required but I use them and I would like to memorize my installation procedure
 here. So, feel free to only install the packages you require.
+
+*** Constants
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
 ;;
@@ -1550,13 +1601,13 @@ are to be installed into the following directory.
   "The psimacs personal snippets directory.")
 #+END_SRC
 
-** Python tools
+** Python
 
 [[https://www.python.org/][Python]] is one of my favorite languages. I use the Windows OS [[https://www.python.org/][Python]] installer and not the [[https://www.msys2.org/][MSYS2]] python package.
 
-Installation of the following packages is recommended: autopep8, black, cmake-language-server, flake8, ipython, jupyter,
-mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle, pycparser, pydocstyle,
-pywin32, pywinpty
+Installation of the following packages is recommended: autopep8, black, certifi, cmake-language-server, flake8,
+ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
+pycparser, pydocstyle, pywin32, pywinpty
 
 *Psimacs* installation does reference the python tools explicitly. Nevertheless, the Windows OS [[https://www.python.org/][Python]] runtime directory
 as well as the Windows OS [[https://www.python.org/][Python]] scripts directory will be added to the environment search path list prior to [[https://www.msys2.org/][MSYS2]]
@@ -1681,7 +1732,7 @@ The portable [[https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0df
 
 ** Git
 
-[[https://git-scm.com/][Git]] is a very important external tool to be installed. *Psimacs* uses the [[https://github.com/raxod502/straight.el][straight]] package manager which relies on a
+[[https://git-scm.com/][Git]] is a very important external tool to be installed. *Psimacs* uses the [[https://github.com/raxod502/straight.el][Straight]] package manager which relies on a
 properly installed [[https://git-scm.com/][Git]] program. A portable version is available at from their [[https://git-scm.com/download/win][download site]].
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
@@ -1809,11 +1860,219 @@ Some usefule references for C++:
   "The psimacs clang-refactor executable.")
 #+END_SRC
 
+* Environment
+
+Extent the execution search path by the external tools that *Psimacs* supports. Do not rely solely on the
+correct parents search path setup. Be explicit. Additionally, synchronize the environment search path with
+*Emacs*'s =exec-path=.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-environment.el :var file-description="Search path setup"
+;;
+;; Explicitely set the environment to the tools that are important. Do not rely on the parent
+;; environment. Synchronize execution path and the environment search path
+;;
+(setq exec-path
+      (append `(
+                ,psimacs/config/python-runtime-dir
+                ,psimacs/config/python-scripts-dir
+                ,psimacs/config/java-runtime-dir
+                ,psimacs/config/git-runtime-dir
+                ,psimacs/config/mingw-runtime-dir
+                ,psimacs/config/msys-runtime-dir
+                ,psimacs/config/tex-runtime-dir
+                ;;,psimacs/config/cmake-runtime-dir       ; cmake is part of mingw
+                ;;,psimacs/config/graphviz-runtime-dir    ; dito for graphviz
+                )
+              exec-path))
+
+(setenv "PATH" (mapconcat #'identity exec-path path-separator))
+
+;;(message (getenv "PATH"))
+;;
+;; Print the current exec-path to the message buffer
+;;
+(psimacs/config/message-elements-of-list exec-path)
+#+END_SRC
+
+* Package management
+
+In this section some security measures are configured and the package manager is initialized.
+
+** Making Emacs secure
+
+Some safety tips regarding your editor are covered in the excellent article [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor is Malware]].
+So, before going on with the configuration, let's get some things straight. First of all, enable checking
+trust on TLS connections.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-secure.el :var file-description="Secure Emacs"
+(setq tls-checktrust t)
+#+END_SRC
+
+*Emacs* is now no able to fetch HTTPS anymore! Emacs does not distribute trust root certificates.
+We have to solve this problem. The [[https://www.python.org/][Python]] package [[https://pypi.org/project/certifi/][certifi]] /provides Mozilla's carefully curated collection of
+Root Certificates for validating the trustworthiness of SSL certificates while verifying the identity of TLS hosts./
+The [[https://www.python.org/][Python]] package [[https://pypi.org/project/certifi/][certifi]] should be installed by =pip install certifi=. The following [[https://gitlab.com/DiegoVicente/my-emacs/-/tree/master/][code snippet from Diego Vicente]]
+allows the evaluation of the generated trustfile.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-secure.el
+;;
+;; With curtsy to https://gitlab.com/DiegoVicente/my-emacs/-/tree/master/
+;;
+(let
+    (
+     (trustfile
+      (replace-regexp-in-string
+       "\\\\" "/"
+       (replace-regexp-in-string
+        "\n" ""
+        ;; requires "pip install certifi"
+        (shell-command-to-string (concat psimacs/config/python-runtime-exe " -m certifi"))))
+      )
+     )
+
+  (setq tls-program (list (format
+                           "gnutls-cli%s --x509cafile %s -p %%p %%h"
+                           (if (eq window-system 'w32) ".exe" "") trustfile)))
+
+  ;;(message "%s" trustfile)
+  ;;(message "%s" tls-program)
+
+  (setq gnutls-verify-error t)
+  (setq gnutls-trustfiles (list trustfile))
+)
+#+END_SRC
+
+It is important to have added MELPA as an HTTPS site for this secure configuration to work.
+
+The following function allows us to check if this setup is properly done. Thanks again to [[https://gitlab.com/DiegoVicente/my-emacs/-/tree/master/][Diego Vicente]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-secure.el
+;;
+;; Test function with curtsy to https://gitlab.com/DiegoVicente/my-emacs/-/tree/master/
+;;
+(defun psimacs/config/check-tls-config ()
+    "Check for correctness in the TLS configuration for Emacs."
+    (interactive)
+    (let ((bad-hosts
+        (cl-loop for bad in '("https://wrong.host.badssl.com/" "https://self-signed.badssl.com/")
+            if (condition-case e (url-retrieve bad (lambda (retrieved) t))
+                (error nil))
+            collect bad)))
+        (if bad-hosts
+            (error (format "TLS misconfigured; retrieved %s ok" bad-hosts))
+        (url-retrieve "https://badssl.com" (lambda (retrieved) t))))
+)
+#+END_SRC
+
+** Straight package manager
+
+*Psimacs* uses the [[https://github.com/raxod502/straight.el][Straight]] package manager. Note that this package manager depends on [[https://git-scm.com/][Git]].
+
+*** Bootstrap straight.el
+
+To get running at all, the [[https://github.com/raxod502/straight.el][Straight]] package must be installed itself. The code is taken from the [[https://github.com/raxod502/straight.el][Straight]]
+/Getting Started/ section.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el :var file-description="Package Manager"
+;;
+;; bootstrap package straight.el
+;;
+(defvar bootstrap-version)
+(let (
+        (bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5)
+    )
+    (unless (file-exists-p bootstrap-file)
+        (with-current-buffer
+            (url-retrieve-synchronously
+                "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+                'silent 'inhibit-cookies
+            )
+            (goto-char (point-max))
+            (eval-print-last-sexp)
+        )
+    )
+    (load bootstrap-file nil 'nomessage)
+)
+#+END_SRC
+
+*** use-package
+Replace =use-package= automatically by =straight-use-package= in our configuration.
+
+[[https://github.com/jwiegley/use-package][use-package]] is a macro that provides convenient syntactic sugar for many common tasks
+related to installing and configuring *Emacs* packages. Of course, it does not actually
+install the packages, but instead defers to a package manager, like [[https://github.com/raxod502/straight.el][Straight]].
+
+To use use-package, first install it with [[https://github.com/raxod502/straight.el][Straight]]:
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el
+;;
+;; To use use-package, first install it with straight.el
+;;
+(straight-use-package 'use-package)
+#+END_SRC
+
+Now =use-package= will use [[https://github.com/raxod502/straight.el][Straight]] to automatically install missing packages if you provide =:straight t=.
+
+Customize =straight-use-package-by-default= to make it so that =:straight t= is assumed unless you explicitly
+override it with =:straight nil=.
+
+Specifying =:straight t= is unnecessary if you set =straight-use-package-by-default= to a non-nil value.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el
+;;
+;; No more ':straight t' necessary anymore
+;;
+(setq straight-use-package-by-default t)
+#+END_SRC
+
+Any code that relates to /[[https://wikemacs.org/wiki/Package.el][package.el]]/ should be removed; for example, references to =package-initialize=,
+=package-archives=, and (if you're using =use-package=) =:ensure= or =use-package-always-ensure=.
+
+While it is technically possible to use both  /[[https://wikemacs.org/wiki/Package.el][package.el]]/ and [[https://github.com/raxod502/straight.el][Straight]] at the same time, there is no real
+reason to, and it might result in oddities like packages getting loaded more than once.
+
+Out of the box, you can install any package listed on [[https://melpa.org/#/][MELPA]], [[https://elpa.gnu.org/][GNU ELPA]], or [[https://github.com/emacsmirror][Emacsmirror]], which is to say any
+package in existence. (Although  [[https://melpa.org/#/][MELPA]] is used as a package listing, packages are installed by cloning their
+[[https://git-scm.com/][Git]] repositories rather than by downloading tarballs like /[[https://wikemacs.org/wiki/Package.el][package.el]]/ does.)
+
+If the package or your configurations aren't being loaded, you probably have something wrong with your
+usage of =:init= and =:config=. By default, the behavior of =use-package= is inconsistent:
+You must set either =use-package-always-defer= (override with =:demand t=) or =use-package-always-demand=
+(override with =:defer t=) to set a default for whether evaluating a =use-package= form will load the
+package and your configurations.
+
+If you've set a package to be deferred, you then need to make sure there's a way for it to get loaded when
+needed, for example by means of an autoload (either provided by the package, or set up automatically
+by =use-package= via =:bind=, or set up manually through =use-package= via =:commands=) or by an explicit
+require in one of your custom commands.
+
+If you do want to start optimizing your startup, you will likely end up using just =:hook= for mode triggered
+loading and =:defer t= for command triggered loading!
+
+*** Provide the diminish.el package
+
+[[https://github.com/emacsmirror/diminish][Diminish]] implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el
+;;
+;; Avoid mode line cluttering by using :diminish
+;;
+(use-package diminish
+  :demand t
+  :config
+        (diminish 'org-indent-mode)
+)
+#+END_SRC
+
 * Basic setup
 
 Some fundamental setting that *Psimacs* uses are collected here.
 
 ** Measuring the startup performance
+
+*** Print the startup time
 
 In order to get expressive timing information about the initialization process, *Psimacs* always prints the
 actual startup time into the *Message* buffer.
@@ -1833,6 +2092,46 @@ actual startup time into the *Message* buffer.
 )
 #+END_SRC
 
+*** Detail startup benchmarking
+
+This is a simple benchmark of calls to *Emacs* /require/ and /load/ functions. It can be used to keep track
+of where time is being spent during *Emacs* startup in order to optimize startup times.
+
+Usage: The following commands and functions can be used to govern the benchmarking.
+
+
+| =benchmark-init/show-durations-tabulated= |
+| =benchmark-init/show-durations-tree=      |
+|                                           |
+| =benchmark-init/activate=                 |
+| =benchmark-init/deactivate=               |
+
+
+Using =:defer N= with an integer is for a rare scenario where you do want the package to always be unconditionally
+loaded on startup (and not reactively as the result of a file mode or executed command) and want to kick it out by
+a few seconds to technically save some startup time.
+
+I personally don't recommend this since it's not going to speed up your actual "time to full functionality," but
+instead just improve a narrowly defined metric of "startup time."
+
+References to benchmarking:
+- [[https://www.emacswiki.org/emacs/BenchmarkInit][BenchmarkInit]]
+- [[https://github.com/dholm/benchmark-init-el][benchmark-init]]
+- [[https://www.emacswiki.org/emacs/OptimizingEmacsStartup][OptimizingEmacsStartup]]
+- [[https://www.emacswiki.org/emacs/ProfileDotEmacs][Profile Dot Emacs]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Detail benchmarking: see benchmark-init/show-durations-tabulated and benchmark-init/show-durations-tree
+;; Activated on default.
+;;
+(use-package benchmark-init
+    :demand t
+    :init
+      (benchmark-init/activate)
+)
+#+END_SRC
+
 ** Avoid truncated output, i.e annoying ellipsis
 
 The options eval-expression-print-level and eval-expression-print-length control the maximum depth
@@ -1846,7 +2145,6 @@ are described in the [[https://www.gnu.org/software/emacs/manual/html_node/emacs
 (setq eval-expression-print-level nil)
 (setq eval-expression-print-length nil)
 #+END_SRC
-
 
 ** Personal information
 
@@ -1880,6 +2178,239 @@ Package =private/init-private.el= is loaded if it exists and its settings are ap
           (lambda ()
             (message "Emacs configured for user %s %s in %s" user-full-name user-mail-address calendar-location-name)))
 #+END_SRC
+
+** Performance optimizations
+
+Try to optimize *Psimacs* as much as possible (as far as my *Emacs* knowledge goes).
+
+*** Garbage collect when out of focus
+
+Let *Psimacs* perform garbage collection if it does not have the focus.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el :var file-description="Performance optimizations"
+;;
+;; Garbage collect when out of focus
+;;
+(add-hook 'emacs-startup-hook
+    (lambda ()
+      (if (boundp 'after-focus-change-function)
+          (add-function :after after-focus-change-function
+                        (lambda ()
+                          (unless (frame-focus-state)
+                            (garbage-collect))))
+        (add-hook 'after-focus-change-function 'garbage-collect))))
+#+END_SRC
+
+*** Avoid garbage collection in minibuffer
+
+Avoid performing garbage collection operations when using the minibuffer. We do this by enlarging the
+garbage collection threshold.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el
+;;
+;; Avoid garbage collection in minibuffer
+;;
+(defun psimacs/config/gc-minibuffer-setup-hook ()
+  "Enlarge the current gc-cons-threshold"
+  (setq gc-cons-threshold (* psimacs/config/gc-cons-threshold 2)))
+
+(defun psimacs/config/gc-minibuffer-exit-hook ()
+  "Garbage collect and reset the gc-cons-threshold"
+  (garbage-collect)
+  (setq gc-cons-threshold psimacs/config/gc-cons-threshold))
+
+(add-hook 'minibuffer-setup-hook #'psimacs/config/gc-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook  #'psimacs/config/gc-minibuffer-exit-hook)
+#+END_SRC
+
+*** Use the garbage collector magic hack
+
+Enforce a sneaky Garbage Collection strategy to minimize GC interference with the activity.
+
+During normal use a high GC threshold is set. When idling GC is immediately triggered and a low threshold is set.
+The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hack)]] package provides us with this functionality.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el
+;;
+;; Use the garbage collector magic hack
+;;
+(use-package gcmh
+    :diminish gcmh-mode
+    :init (gcmh-mode 1)
+)
+#+END_SRC
+
+*** Process data exchange
+Basically, this is an optimization with respect to the data exchange between [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]] servers and
+its clients.
+
+[[https://emacs-lsp.github.io/lsp-mode/][lsp-mode: Language Server Protocol Support for Emacs]], aims to provide IDE-like experience by providing optional
+integration with the most popular *Emacs* packages like [[https://company-mode.github.io/][company]], [[https://www.flycheck.org/en/latest/][flycheck]] and [[https://github.com/bbatsov/projectile][projectile]].
+
+Increase the amount of data which *Emacs* reads from the process. Again the *Emacs* default is too low 4K
+considering that the some of the language server responses are in 800k - 3M range.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el
+;;
+;; lsp-mode optimization
+;;
+(setq read-process-output-max 4MB)
+#+END_SRC
+
+** Keyboard configuration
+
+References about keyboard configuration and key bindings:
+- [[https://karl-voit.at/2018/07/08/emacs-key-bindings/][UOMF: My Emacs Key Binding Strategy]]
+- [[https://www.masteringemacs.org/article/mastering-key-bindings-emacs][Mastering Key Bindings in Emacs]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Windows-Keyboard.html][Keyboard Usage on MS-Windows]]
+- [[http://www.wilfred.me.uk/blog/2018/01/06/the-emacs-guru-guide-to-key-bindings/][The Emacs Guru Guide to Key Bindings]]
+- [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Bind Super Hyper Keys]]
+
+*** Base configuration of the keyboard
+
+Basically, we stay with the default *Emacs* keyboard configuration. We swallow the =<lwindow>=, =<rwindow>= and =<apps>=
+keys as far as possible. We will use them for =super= and =<hyper>= prefix keys for *Psimacs* own key bindings.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Base keyboard configuration: Stay with the defaults, but swallow <lwindow>, <rwindow> ans <apps> if possible
+;;
+(setq w32-alt-is-meta t                ;; The meta modifier is interpreted as the Alt key (the default)
+      ;;w32-register-hot-key [M-tab]   ;; Allow a key sequence M-tab to be seen by Emacs instead of being grabbed by
+                                       ;; Windows. Normal Windows handling is probably the better option :-)
+
+
+
+      ;;w32-capslock-is-shiftlock t    ;; The CapsLock key will affect non-character keys as well, as if you pressed
+                                       ;; the Shift key while typing the non-character key.
+
+      w32-enable-caps-lock t           ;; If the variable w32-enable-caps-lock is set to a nil value, the CapsLock
+                                       ;; key produces the symbol capslock instead of the shifted version of they keys.
+                                       ;; The default value is t.
+
+      w32-enable-num-lock t            ;; If w32-enable-num-lock is nil, the NumLock key will produce the symbol
+                                       ;; kp-numlock. The default is t, which causes NumLock to work as expected:
+                                       ;; toggle the meaning of the keys on the numeric keypad.
+
+      32-recognize-altgr t             ;; Whether the <AltGr> key (if it exists on your keyboard), or its equivalent,
+                                       ;; the combination of the right <Alt> and left <Ctrl> keys pressed together,
+                                       ;; is recognized as the <AltGr> key. The default is t, which means these keys
+                                       ;; produce AltGr; setting it to nil causes <AltGr> or the equivalent key
+                                       ;; combination to be interpreted as the combination of <Ctrl> and <Meta>
+                                       ;; modifiers.
+
+      w32-pass-lwindow-to-system nil   ;; the <lwindow> key is silently swallowed by Emacs, and not passed to Windows.
+      w32-pass-rwindow-to-system nil   ;; the <rwindow> key is silently swallowed by Emacs, and not passed to Windows.
+      w32-pass-apps-to-system nil      ;; the    <apps> key is silently swallowed by Emacs, and not passed to Windows.
+
+      w32-scroll-lock-modifier nil     ;; Do not specialize the scroll lock key
+)
+#+END_SRC
+
+*** Hyper and Super prefix keys
+
+*Psimacs* uses the =super= and =hyper= key prefixes for all of its own key bindings.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; <lwindow>, <rwindow> and <apps>
+;;
+(setq  w32-lwindow-modifier 'super
+       w32-rwindow-modifier 'super
+       w32-apps-modifier    'hyper
+       )
+
+(w32-register-hot-key [s-])
+(w32-register-hot-key [H-])
+
+;; (defun psimacs/config/prefix-key-test-super ()
+;;   (interactive)
+;;   (message "Super key pressed"))
+
+;; (defun psimacs/config/prefix-key-test-hyper ()
+;;   (interactive)
+;;   (message "Hyper key pressed"))
+
+;; (global-set-key [(super t)] 'psimacs/config/prefix-key-test-super)
+;; (global-set-key [(hyper t)] 'psimacs/config/prefix-key-test-hyper)
+#+END_SRC
+
+*** Strip unused key bindings
+
+Free up unused and unnecessary keybindings.
+
+There are a great many keybindings that are actively hostile, in that they are bound to useless or obsolete functions
+that are really easy to trigger accidentally.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Strip unused key bindings
+;;
+(dotimes (n 10)
+    (global-unset-key (kbd (format "C-%d" n)))
+    (global-unset-key (kbd (format "M-%d" n)))
+)
+
+(unbind-key "C-x C-f")          ;; find-file-read-only
+(unbind-key "C-x C-d")          ;; list-directory
+(unbind-key "C-z")              ;; suspend-frame
+(unbind-key "M-o")              ;; facemenu-mode
+(unbind-key "<mouse-2>")        ;; pasting with mouse-wheel click
+(unbind-key "<C-wheel-down>")   ;; text scale adjust
+#+END_SRC
+
+*** Personal key prefix map
+
+For *Psimacs* own functions and goodies a separate key prefix map is defined. This is reached by pressing key =s-c=.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+(define-prefix-command 'psimacs-global-key-map-1)
+(define-prefix-command 'psimacs-global-key-map-2)
+
+(global-set-key (kbd "<f9>") psimacs-global-key-map-1)
+(global-set-key (kbd "H-m" ) psimacs-global-key-map-2)
+
+(defun psimacs/config/greetings ()
+   (interactive)
+   (message "hello from psimacs"))
+
+(define-key psimacs-global-key-map-1 (kbd "C-t C-t") 'psimacs/config/greetings)
+(define-key psimacs-global-key-map-2 (kbd "C-t C-t") 'psimacs/config/greetings)
+#+END_SRC
+
+** Automatically compile outdated elips files
+
+The [[https://github.com/emacscollective/auto-compile][Auto-compile]] package provides two minor modes which automatically recompile Emacs Lisp source files.
+Together these modes guarantee that Emacs never loads outdated byte code files.
+
+Further reading: [[https://www.emacswiki.org/emacs/AutoRecompile][EmacsWiki: Auto Recompile]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Automatically recomile elips files
+;;
+(use-package auto-compile
+    :demand t
+    :config
+        (auto-compile-on-load-mode)  ;; Force recompilation on load of .el file.
+        (auto-compile-on-save-mode)  ;; Force recompilation on save of .el file.
+
+        (setq load-prefer-newer t    ;; Avoid byte-compiled files that are older than their respective source files.
+              auto-compile-display-buffer nil  ;; Avoid annoying pop up of the Compile-Log buffer when a file is saved
+              auto-compile-mode-line-counter t ;; Only show the number of compile warnings for the current file in
+                                               ;; the mode-line.
+
+              auto-compile-source-recreate-deletes-dest t  ;; Whether to delete leftover byte code file when creating
+                                                           ;; source file.
+        )
+
+        ;(setq auto-compile-toggle-deletes-nonlib-dest   t)      ; Whether to delete non-library byte code files when toggling compilation.
+        ;(setq auto-compile-update-autoloads             t)      ; Whether to update autoloads after compiling.
+        ;(add-hook 'auto-compile-inhibit-compile-hook
+        ;          'auto-compile-inhibit-compile-detached-git-head)
+)
+#+END_SRC
+
 
 * Utility Lisp functions
 
