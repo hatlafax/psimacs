@@ -22,6 +22,9 @@ desired.
 This document not only describes the *Psimacs* configuration, but also some additional information useful
 for working with *Emacs* in general. In this respect it serves as a kind of mind map for the author.
 
+Some great useful *Emacs* references:
+- [[http://ergoemacs.org/][Xah Emacs Site]]
+
 ** Motivation
 
 A lot of *Emacs* configurations can be found on the Internet. Many of them are well crafted and could be used out of
@@ -226,6 +229,8 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 - [[https://www.emacswiki.org/emacs/ElispCookbook][EmacsWiki: Lisp Cookbook]]
 - [[http://wikemacs.org/wiki/Emacs_Lisp_Cookbook][WikEmacs: Emacs Lisp Cookbook]]
 - [[https://github.com/chrisdone/elisp-guide][Emacs Lisp Guide]]
+- [[https://www.masteringemacs.org/article/evaluating-elisp-emacs][Evaluating Elisp in Emacs]]
+- [[http://ergoemacs.org/emacs/elisp.html][Practical Emacs Lisp]]
 
 * Keybinding
 I am trying to setup keybinding in a /mnemonics/ way so it's easy to remember (and use).
@@ -1499,6 +1504,10 @@ here. So, feel free to only install the packages you require.
   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "msys64")
   "The psimacs msys64 root directory.")
 
+(defconst psimacs/config/msys-info-dir
+  (psimacs/file-system/concat-directory psimacs/config/msys-root-dir "usr/share/info")
+  "The psimacs msys64 info directory.")
+
 (defconst psimacs/config/msys-runtime-dir
   (psimacs/file-system/concat-directory psimacs/config/msys-root-dir "usr/bin")
   "The psimacs msys runtime directory.")
@@ -1510,6 +1519,10 @@ here. So, feel free to only install the packages you require.
 (defconst psimacs/config/mingw-root-dir
   (psimacs/file-system/concat-directory psimacs/config/msys-root-dir "mingw64")
   "The psimacs mingw64 root directory.")
+
+(defconst psimacs/config/mingw-info-dir
+  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "share/info")
+  "The psimacs mingw64 info directory.")
 
 (defconst psimacs/config/mingw-runtime-dir
   (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "bin")
@@ -1583,7 +1596,7 @@ Printing relies on an installed [[https://www.ghostscript.com/][Ghostscript]] in
 ;; Ghostscript interpreter for PostScript and PDF files
 ;;
 (defconst psimacs/config/ghostscript-exe
-  (psimacs/file-system/concat-file  psimacs/config/mingw-runtime-dir "gswin32c.exe")
+  (psimacs/file-system/concat-file  psimacs/config/system-utils-dir "gs/gs9.53.3/bin/gswin64c.exe")
   "The psimacs ghost script executable.")
 #+END_SRC
 
@@ -2070,6 +2083,43 @@ loading and =:defer t= for command triggered loading!
 
 Some fundamental setting that *Psimacs* uses are collected here.
 
+** Personal information
+
+Personal information settings for *Psimacs*. The /private/ folder content is not part of the public bundle.
+Package =private/init-private.el= is loaded if it exists and its settings are applied.
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el :var file-description="Basic setup"
+
+;;
+;; Private directory and file might exists; not mandatory.
+;;
+(defconst psimacs/config/private-dir (psimacs/file-system/concat-directory user-emacs-directory "private")
+  "A directory that contains non public, i.e.  private data."
+)
+
+(defconst psimacs/config/private-file (psimacs/file-system/concat-file psimacs/config/private-dir "init-private.el")
+  "A directory that contains non public, i.e.  private data."
+)
+
+(setq user-full-name    "Your Name"
+      user-mail-address "Your Email"
+      calendar-latitude  0
+      calendar-longitude 0
+      calendar-location-name "Your city, country"
+)
+
+(when (file-directory-p psimacs/config/private-dir)
+  (add-to-list 'load-path psimacs/config/private-dir)
+
+  (when (file-exists-p psimacs/config/private-file)
+    (require 'init-private)))
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs configured for user %s %s in %s" user-full-name user-mail-address calendar-location-name)))
+#+END_SRC
+
 ** Measuring the startup performance
 
 *** Print the startup time
@@ -2077,7 +2127,7 @@ Some fundamental setting that *Psimacs* uses are collected here.
 In order to get expressive timing information about the initialization process, *Psimacs* always prints the
 actual startup time into the *Message* buffer.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el :var file-description="Basic setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
 ;;
 ;; Perfromance measuring at the end of the initialization
 ;;
@@ -2128,7 +2178,7 @@ References to benchmarking:
 (use-package benchmark-init
     :demand t
     :init
-      (benchmark-init/activate)
+        (benchmark-init/activate)
 )
 #+END_SRC
 
@@ -2144,39 +2194,6 @@ are described in the [[https://www.gnu.org/software/emacs/manual/html_node/emacs
 ;;
 (setq eval-expression-print-level nil)
 (setq eval-expression-print-length nil)
-#+END_SRC
-
-** Personal information
-
-Personal information settings for *Psimacs*. The /private/ folder content is not part of the public bundle.
-Package =private/init-private.el= is loaded if it exists and its settings are applied.
-
-
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
-
-;;
-;; Might exists, not mandatory.
-;;
-(defconst psimacs/config/private-dir (file-name-as-directory (concat user-emacs-directory "private"))
-  "A directory that contains non public, i.e.  private data."
-)
-
-(setq user-full-name    "Your Name"
-      user-mail-address "Your Email"
-      calendar-latitude  0
-      calendar-longitude 0
-      calendar-location-name "Your city, country"
-)
-
-(when (file-directory-p psimacs/config/private-dir)
-  (add-to-list 'load-path psimacs/config/private-dir)
-
-  (when (file-exists-p (concat psimacs/config/private-dir "init-private.el"))
-    (require 'init-private)))
-
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "Emacs configured for user %s %s in %s" user-full-name user-mail-address calendar-location-name)))
 #+END_SRC
 
 ** Performance optimizations
@@ -2318,7 +2335,7 @@ keys as far as possible. We will use them for =super= and =<hyper>= prefix keys 
 (setq  w32-lwindow-modifier 'super
        w32-rwindow-modifier 'super
        w32-apps-modifier    'hyper
-       )
+)
 
 (w32-register-hot-key [s-])
 (w32-register-hot-key [H-])
@@ -2361,21 +2378,57 @@ that are really easy to trigger accidentally.
 
 *** Personal key prefix map
 
-For *Psimacs* own functions and goodies a separate key prefix map is defined. This is reached by pressing key =s-c=.
+For *Psimacs* own functions and goodies separate key prefix maps are defined:
+
+| Prefix command                       | Description               |
+|--------------------------------------+---------------------------|
+| =H-h= and =s-h=                      | Hydras                    |
+| =H-c= and =s-c=                      | common user commands      |
+| =H-x= and =s-x=                      | common execution commands |
+| =H-m=, =H-,= =s-m=, =s-,= and =<f9>= | special user commands     |
+
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
-(define-prefix-command 'psimacs-global-key-map-1)
-(define-prefix-command 'psimacs-global-key-map-2)
+;;
+;; Separate prefix key maps for Psimacs own bindings
+;;
+(define-prefix-command 'psimacs-global-key-map-common)     ;; used for common user commands
+(define-prefix-command 'psimacs-global-key-map-special)    ;; special user commands
+(define-prefix-command 'psimacs-global-key-map-execute)    ;; used for common execution commands
+(define-prefix-command 'psimacs-global-key-map-hydra)      ;; uses solely for accessing hydras
 
-(global-set-key (kbd "<f9>") psimacs-global-key-map-1)
-(global-set-key (kbd "H-m" ) psimacs-global-key-map-2)
+(global-set-key (kbd "H-h" ) psimacs-global-key-map-hydra)
+(global-set-key (kbd "H-c" ) psimacs-global-key-map-common)
+(global-set-key (kbd "H-x" ) psimacs-global-key-map-execute)
+
+(global-set-key (kbd "s-h" ) psimacs-global-key-map-hydra)
+(global-set-key (kbd "s-c" ) psimacs-global-key-map-common)
+(global-set-key (kbd "s-x" ) psimacs-global-key-map-execute)
+
+(global-set-key (kbd "<f9>") psimacs-global-key-map-special)
+(global-set-key (kbd "H-m" ) psimacs-global-key-map-special)
+(global-set-key (kbd "H-," ) psimacs-global-key-map-special)
+(global-set-key (kbd "s-m" ) psimacs-global-key-map-special)
+(global-set-key (kbd "s-," ) psimacs-global-key-map-special)
 
 (defun psimacs/config/greetings ()
    (interactive)
    (message "hello from psimacs"))
 
-(define-key psimacs-global-key-map-1 (kbd "C-t C-t") 'psimacs/config/greetings)
-(define-key psimacs-global-key-map-2 (kbd "C-t C-t") 'psimacs/config/greetings)
+(define-key psimacs-global-key-map-common  (kbd "C-t C-t") 'psimacs/config/greetings)
+(define-key psimacs-global-key-map-special (kbd "C-t C-t") 'psimacs/config/greetings)
+#+END_SRC
+
+** User Site-Lisp load path
+We have one directory that we use for user elips code. We add this path the the list of load pathes.
+
+Our own /Emacs/ code resides in one directory that must be added to the load path.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Our site-lisp directory.
+;;
+(add-to-list 'load-path psimacs/config/site-lisp-dir)
 #+END_SRC
 
 ** Automatically compile outdated elips files
@@ -2411,6 +2464,253 @@ Further reading: [[https://www.emacswiki.org/emacs/AutoRecompile][EmacsWiki: Aut
 )
 #+END_SRC
 
+** Info system
+
+Add the [[https://www.msys2.org/][MSYS2]] info pathes to the *Emacs Info* search path.
+
+*Attention:* In case that the =info/dir= files in the [[https://www.msys2.org/][MSYS2]] installation are missing or not up to date run in a [[https://www.msys2.org/][MSYS2]]
+bash shell the following code each =info= directory. This will create or update the =info/dir= files.
+
+#+BEGIN_SRC
+cd c:/utils/msys64/usr/share/info
+for i in *info*; do install-info.exe $i dir; done
+
+cd c:/utils/msys64/mingw64/share/info
+for i in *info*; do install-info.exe $i dir; done
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Extend Emacs info system with the msys2 info material
+;;
+(add-to-list 'Info-additional-directory-list psimacs/config/msys-info-dir)
+(add-to-list 'Info-additional-directory-list psimacs/config/mingw-info-dir)
+#+END_SRC
+
+** Printing on Windows
+
+*Psimacs* currently supports two sets of commands for printing on windows:
+
+| Keybinding      | Command                          | Description                                     |
+|-----------------+----------------------------------+-------------------------------------------------|
+| =H-m C-p C-p b= | =M-x print-buffer=               | B/W print hardcopy of buffer on default printer |
+| =H-m C-p C-p r= | =M-x print-region=               | B/W print hardcopy of region on default printer |
+|-----------------+----------------------------------+-------------------------------------------------|
+| =H-m C-p C-q p= | =M-x ps-print-buffer=            | B/W print buffer via Ghostscript                |
+| =H-m C-p C-q r= | =M-x ps-print-region=            | B/W print region via Ghostscript                |
+|-----------------+----------------------------------+-------------------------------------------------|
+| =H-m C-p C-f p= | =M-x ps-print-buffer-with-faces= | Color print buffer via Ghostscript              |
+| =H-m C-p C-f r= | =M-x ps-print-region-with-faces= | Color print region via Ghosts                   |
+|-----------------+----------------------------------+-------------------------------------------------|
+
+For the =print-\*= commands to function, I was forced to do some extra work outside of *Emacs*. The reason is that
+I am using a network printer with its own IP address. IMHO, *Emacs* does not handle this situation out of the box.
+At first I followed the [[https://www.emacswiki.org/emacs/MsWindowsNetworkPrinter][Ms Windows Network Printer]] instructions. That basically work for me. However, I discovered
+that I just need to share my printer and then call the following =shell-command= to create a virtual printer
+port /LPT3/:
+
+#+BEGIN_SRC
+net use LPT3: "\\127.0.0.1\EPSON ET-4750 Series"
+#+END_SRC
+
+I simply integrated this call into my =psimacs.cmd= command and set the =printer-name= to the virtual printer
+port /LPT3/ in the configuration.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Support for the printer-* commands
+;;
+(setq printer-name "LPT3:")
+#+END_SRC
+
+For the =ps-print-\*= commands to work I needed to install [[https://www.ghostscript.com/][Ghostscript]]. First I tried the [[https://www.msys2.org/][MSYS2]] which I was not able
+to get working correctly. Therefore I tried the 64 Bit [[https://www.ghostscript.com/download/gsdnld.html][Windows installer]] from the [[https://www.ghostscript.com/][Ghostscript]] download site. This worked
+perfectly. In order to set this up I followed the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Windows-Printing.html][Printing and MS-Windows]] *Emacs* manual instructions.
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Support for the ps-print-* commands
+;;
+(setq ps-printer-name t)
+(setq ps-lpr-command psimacs/config/ghostscript-exe)
+(setq ps-lpr-switches '("-q" "-dNOPAUSE" "-dBATCH" "-sDEVICE=mswinpr2" "-sPAPERSIZE=a4"))
+
+;;
+;; Some extra printing customizations that I currently not use
+;;
+;; (setq ps-top-margin 0
+;;       ps-left-margin 0
+;;       ps-right-margin 0
+;;       ps-inter-column 0
+;;       ps-landscape-mode t
+;;       ps-number-of-columns 2
+;;       ps-paper-type 'a4
+;;       ps-font-size 8.25
+;;       ps-line-number t
+;;       ps-line-number-font-size 10
+;;       ps-line-number-step 10
+;;       ps-print-color-p 'black-white
+;;       ps-print-header nil
+;; )
+
+#+END_SRC
+
+** Basic ELisp Libraries
+Load some basic packages that provide support for more elegant [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] programming.
+
+The following links might be useful for diving deeper into [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]]:
+- [[https://www.gnu.org/software/emacs/manual/eintr.html][Introduction to Programming in Emacs Lisp]]
+- [[https://www.emacswiki.org/emacs/ElispCookbook][EmacsWiki: Lisp Cookbook]]
+- [[http://wikemacs.org/wiki/Emacs_Lisp_Cookbook][WikEmacs: Emacs Lisp Cookbook]]
+- [[https://github.com/chrisdone/elisp-guide][Emacs Lisp Guide]]
+- [[https://www.masteringemacs.org/article/evaluating-elisp-emacs][Evaluating Elisp in Emacs]]
+- [[http://ergoemacs.org/emacs/elisp.html][Practical Emacs Lisp]]
+
+*** Dash Library
+
+[[https://github.com/magnars/dash.el][Dash]] is a modern list api for *Emacs*. No 'cl required.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Some basic library packages that mordenize elisp programming
+;;
+(use-package dash
+    :config
+        (dash-enable-font-lock)
+)
+
+(use-package dash-functional)
+#+END_SRC
+
+*** String manipulation with the s.el library
+
+[[https://github.com/magnars/s.el][s]] is a [[https://github.com/magnars/s.el][string manipulation library]] that provides lots of =s-name= functions for easing string programming tasks.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; A string manipulation library
+;;
+(use-package s)
+#+END_SRC
+
+*** A file system library named f.el
+
+[[https://github.com/rejeep/f.el][f]] is a [[https://github.com/rejeep/f.el][file system library]] that provides lots of =f-name= functions for easing file system programming tasks.
+Basically it provides a modern API for working with files and directories in *Emacs*.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; A file system library
+;;
+(use-package f)
+#+END_SRC
+
+*** Alert an alternative notification interface
+
+Just use [[https://github.com/jwiegley/alert][alert]] instead of message to get a stylized customizable notification interface for *Emacs*.
+
+Usage exaples:
+
+| =(alert "This is an alert")=                                    |
+| =(alert "This is an alert" :severity 'high)=                    |
+| =(alert "This is an alert" :severity 'trivial)=                 |
+| =(alert "This is an alert" :title "My Alert")=                  |
+| =(alert "This is an alert" :title "My Alert" :category 'debug)= |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; A enhanced notification interface
+;;
+(use-package alert
+    :commands alert
+    :config
+        (setq alert-default-style 'message))
+#+END_SRC
+
+** Customizations
+
+*Psimacs* uses a special file =custom.el= that it uses for writing customization code.
+That should avoid always changing the =init.el= file.
+
+You can always create a /custom-file/ by running command =customize-save-customized=.
+
+References about customization:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Customizations.html][Saving Customizations]]
+- [[https://www.emacswiki.org/emacs/CustomizingAndSaving][EmacsWiki: Customizing And Saving]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Handling of the customization file
+;;
+(setq custom-file psimacs/config/custom-file)
+
+(if (file-exists-p psimacs/config/custom-file)
+    (load custom-file)
+)
+
+(add-hook 'kill-emacs-query-functions 'custom-prompt-customize-unsaved-options)
+#+END_SRC
+
+** Look and feel
+** Handling
+
+*** Edit region indirectly in another buffer
+
+The package [[https://github.com/Fanael/edit-indirect][edit-indirect]] is a useful enhancement for editing. It provides a command =edit-indirect-region= that
+allows the editing of a region in a separate buffer.
+
+The region is copied, without text properties, to a separate buffer, called *edit-indirect buffer*. The major
+is guessed.
+
+After finishing the editing the command =edit-indirect-commit= replaces the original region with the content of
+the *edit-indirect buffer*. Alternatively, the command =edit-indirect-abort= drops the modification and leaves the
+region unchanged. Very useful!
+
+| Keybinding    | Command                    | Description                                                                                       |
+|---------------+----------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-c C-e= | =M-x edit-indirect-region= | Edit region in separate buffer *edit-indirect buffer*                                             |
+| =C-c C-c=     | =M-x edit-indirect-commit= | Commit the modification done in *edit-indirect buffer*                                            |
+| =C-c C-k=     | =M-x edit-indirect-abort== | Abort indirect editing; kill buffer *edit-indirect buffer*                                        |
+| =C-x C-s=     | =M-x edit-indirect-save=   | Replace the original region in the parent buffer with the contents of the *edit-indirect buffer*. |
+|               |                            |                                                                                                   |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Edit regions in a separate buffer
+;;
+(use-package edit-indirect
+  :bind (
+         :map psimacs-global-key-map-common
+              ("C-e" . edit-indirect-region)
+        )
+)
+#+END_SRC
+
+*** First errors in compilation buffer
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html][Running Compilations under Emacs]] describes a useful variable that allows that scrolling of the compilation output
+automatically stops when the first error appears, leaving point at that error.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Stop at first error, no further scrolling
+;;
+(setq compilation-scroll-output 'first-error)
+#+END_SRC
+
+*** Apropos
+
+Each of the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.html][apropos]] commands reads an apropos pattern in the minibuffer, searches for items that match the pattern,
+and displays the results in a different window. Some of them use prefix arguments to widen the scope of the search.
+The follwoing statement let most of the apropos commands behaves as if they had been given a prefix argument.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+;;
+;; Always prefix apropos commands
+;;
+(setq apropos-do-all t)
+#+END_SRC
 
 * Utility Lisp functions
 
