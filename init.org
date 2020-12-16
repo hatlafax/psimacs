@@ -601,7 +601,7 @@ is because it breaks some old (badly written) code.
 )
 #+END_SRC
 
-** Preamble for any =.el= file
+** Preamble for any /.el/ file
 
 Any generated initialization file should start with the same preamble concerning author, license etc.
 
@@ -1085,9 +1085,9 @@ This starts the synchronization between the user *Psimacs* configuration and the
   (psimacs/config/sync-with-dropbox))
 #+END_SRC
 
-** Tangling the main =init.org= file.
+** Tangling the main /init.org/ file.
 
-This starts the processing of this org file (=init.org=), resulting in the final configuration files for *Psimacs*.
+This starts the processing of this org file (=init.org=), resulting in tbe final configuration files for *Psimacs*.
 
 #+BEGIN_SRC emacs-lisp :tangle early-init.el
 ;;
@@ -1098,7 +1098,7 @@ This starts the processing of this org file (=init.org=), resulting in the final
                                                                   psimacs/config/main-org-file)))
 #+END_SRC
 
-* Preamble to the =init.el= file
+* Preamble to the /init.el/ file
 
 Until this point, all *Psimacs* source code tangled to the =early-inti.el= file. From now on, the actual configuration
 file is setup. It starts with a commentary preamble written to the primary =init.el= file.
@@ -1123,11 +1123,224 @@ of its own.
 
 This has to be provided early in the initialization process so that it is available for the subsequent code.
 
+** Startup frame size and position
+
+Early up we set the *Psimacs* frame's size and position in order to avoid distracting frame repositioning and resizing.
+*Psimacs* provides three simple strategies for positioning and sizing new frames. These strategies can be activated
+by the following function which are actually defined in section [[Frame size and position][Frame size and position]].
+
+| Keybinding        | Command                                                 | Description                                                                               |
+|-------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------|
+| =H-m C-w C-x 5 l= | =M-x psimacs/window/set-frame-creation-strategy-layout= | Place and size new frames left and right to the main frame. This is the default strategy. |
+| =H-m C-w C-x 5 m= | =M-x psimacs/window/set-frame-creation-strategy-main=   | Always use the same placement and size as the initial main frame.                         |
+| =H-m C-w C-x 5 s= | =M-x psimacs/window/set-frame-creation-strategy-system= | Let Emacs and the operating system decide.                                                |
+
+If you do not like the =layout= preset, change variable =psimacs/config/default-frame-creation-strategy= according
+to it's documentation string.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-config-helper.el :var file-description="Configuration helper"
+;;
+;; Define initial Emacs frame size and position...
+;;
+(setq frame-resize-pixelwise t)
+
+(let* ((primary-monitor (car (display-monitor-attributes-list)))
+       (geometry        (assoc 'geometry primary-monitor))
+       (width           (nth 3 geometry))
+       (height          (nth 4 geometry)))
+
+
+  (defconst psimacs/config/initial-frame-pos-x  (* 28 (/ width 100)))
+  (defconst psimacs/config/initial-frame-pos-y  0)
+  (defconst psimacs/config/initial-frame-size-x (* 60 (/ width 100)))
+  (defconst psimacs/config/initial-frame-size-y (- height 80))
+
+  (defconst psimacs/config/default-frame-offset-x 20)
+  (defconst psimacs/config/default-frame-offset-y 20)
+
+  (defconst psimacs/config/default-frame-1-pos-x  0)
+  (defconst psimacs/config/default-frame-1-pos-y  psimacs/config/initial-frame-pos-y)
+  (defconst psimacs/config/default-frame-1-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-1-pos-x 20)))
+  (defconst psimacs/config/default-frame-1-size-y (/ psimacs/config/initial-frame-size-y 2))
+
+  (defconst psimacs/config/default-frame-2-pos-x  0)
+  (defconst psimacs/config/default-frame-2-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y 35))
+  (defconst psimacs/config/default-frame-2-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-2-pos-x 20)))
+  (defconst psimacs/config/default-frame-2-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
+
+
+  (defconst psimacs/config/default-frame-3-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x 20))
+  (defconst psimacs/config/default-frame-3-pos-y  psimacs/config/initial-frame-pos-y)
+  (defconst psimacs/config/default-frame-3-size-x (- width psimacs/config/default-frame-3-pos-x))
+  (defconst psimacs/config/default-frame-3-size-y (/ psimacs/config/initial-frame-size-y 2))
+
+  (defconst psimacs/config/default-frame-4-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x 20))
+  (defconst psimacs/config/default-frame-4-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y 35))
+  (defconst psimacs/config/default-frame-4-size-x (- width psimacs/config/default-frame-4-pos-x))
+  (defconst psimacs/config/default-frame-4-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
+
+  (defvar psimacs/config/default-frame-placement-counter 1)
+
+  ;;
+  ;; The initial frame
+  ;;
+  (set-frame-position (selected-frame) psimacs/config/initial-frame-pos-x  psimacs/config/initial-frame-pos-y)
+  (set-frame-size     (selected-frame) psimacs/config/initial-frame-size-x psimacs/config/initial-frame-size-y t)
+
+  ;;
+  ;; Somewhat redundant
+  ;;
+  (add-to-list 'initial-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+  (add-to-list 'initial-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+  (add-to-list 'initial-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+  (add-to-list 'initial-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+
+  ;;
+  ;; Track the current frame creation strategy
+  ;;
+  (defvar psimacs/config/default-frame-creation-strategy "layout"
+    "The strategy that is used for placing and sizing new frames.
+
+Supported strategies are:
+  'layout'      -> new frames surround the main frame
+  'main'        -> new frames get always the same size and position of the main frame
+  'system'      -> let emacs decide")
+
+  ;;
+  ;; Prepare for the choosen frame creation strategy
+  ;;
+  (defun psimacs/window/set-frame-creation-strategy ()
+    "Apply the current frame creation strategy."
+    (cond ((string= psimacs/config/default-frame-creation-strategy "layout")
+           (psimacs/window/set-frame-creation-strategy-layout))
+          ((string= psimacs/config/default-frame-creation-strategy "main")
+           (psimacs/window/set-frame-creation-strategy-main))
+          ((string= psimacs/config/default-frame-creation-strategy "system")
+           (psimacs/window/set-frame-creation-strategy-system)))
+    )
+
+  (defun psimacs/window/set-frame-creation-strategy-layout ()
+    "Set the frame layout creation strategy to 'layout'."
+    (interactive)
+    (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+
+    (when (= psimacs/config/default-frame-placement-counter 1)
+      (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-1-pos-x))
+      (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-1-pos-y))
+      (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
+      (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
+      )
+
+    (when (= psimacs/config/default-frame-placement-counter 2)
+      (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-2-pos-x))
+      (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-2-pos-y))
+      (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
+      (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
+      )
+
+    (when (= psimacs/config/default-frame-placement-counter 3)
+      (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-3-pos-x))
+      (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-3-pos-y))
+      (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
+      (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
+      )
+
+    (when (= psimacs/config/default-frame-placement-counter 4)
+      (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-4-pos-x))
+      (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-4-pos-y))
+      (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
+      (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
+      )
+    (setq psimacs/config/default-frame-creation-strategy "layout")
+    (message "Switched to frame layout creation strategy."))
+
+  (defun psimacs/window/set-frame-creation-strategy-main ()
+    "Set the frame layout creation strategy to 'main'."
+    (interactive)
+    (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+    (setq psimacs/config/default-frame-creation-strategy "main")
+    (message "Switched to main frame creation strategy."))
+
+  (defun psimacs/window/set-frame-creation-strategy-system ()
+    "Set the frame layout creation strategy to 'system'."
+    (interactive)
+    (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+    (setq psimacs/config/default-frame-creation-strategy "system")
+    (message "Switched to system frame creation strategy."))
+
+  ;;
+  ;; Initialize the frame creation strategy
+  ;;
+  (psimacs/window/set-frame-creation-strategy-layout)
+
+  ;;
+  ;; Prepare for the next frame creation
+  ;;
+  (add-hook 'after-make-frame-functions
+            #'(lambda (frame)
+                (when (equal psimacs/config/default-frame-creation-strategy "layout")
+                  (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+                  (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+                  (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+                  (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+
+                  (setq psimacs/config/default-frame-placement-counter (+ psimacs/config/default-frame-placement-counter 1))
+
+                  (when (> psimacs/config/default-frame-placement-counter 4)
+                    (setq psimacs/config/default-frame-placement-counter 1)
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 1)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-1-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-1-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 2)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-2-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-2-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 3)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-3-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-3-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 4)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-4-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-4-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
+                    )
+                  )
+                )
+            )
+  )
+#+END_SRC
+
 ** System constants flags
 
 The following boolean constants are defined for convenience.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-config-helper.el :var file-description="Configuration helper"
+#+BEGIN_SRC emacs-lisp :tangle config/init-config-helper.el
 ;;
 ;; System constants for convenience
 ;;
@@ -1986,7 +2199,7 @@ The following function allows us to check if this setup is properly done. Thanks
 To get running at all, the [[https://github.com/raxod502/straight.el][Straight]] package must be installed itself. The code is taken from the [[https://github.com/raxod502/straight.el][Straight]]
 /Getting Started/ section.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el :var file-description="Package Manager"
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el :var file-description="Package manager"
 ;;
 ;; bootstrap package straight.el
 ;;
@@ -2089,7 +2302,7 @@ Personal information settings for *Psimacs*. The /private/ folder content is not
 Package =private/init-private.el= is loaded if it exists and its settings are applied.
 
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el :var file-description="Basic setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-private.el :var file-description="Basic private setup"
 
 ;;
 ;; Private directory and file might exists; not mandatory.
@@ -2127,7 +2340,7 @@ Package =private/init-private.el= is loaded if it exists and its settings are ap
 In order to get expressive timing information about the initialization process, *Psimacs* always prints the
 actual startup time into the *Message* buffer.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el :var file-description="Basic system setup"
 ;;
 ;; Perfromance measuring at the end of the initialization
 ;;
@@ -2170,7 +2383,7 @@ References to benchmarking:
 - [[https://www.emacswiki.org/emacs/OptimizingEmacsStartup][OptimizingEmacsStartup]]
 - [[https://www.emacswiki.org/emacs/ProfileDotEmacs][Profile Dot Emacs]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Detail benchmarking: see benchmark-init/show-durations-tabulated and benchmark-init/show-durations-tree
 ;; Activated on default.
@@ -2188,7 +2401,7 @@ The options eval-expression-print-level and eval-expression-print-length control
 and length of lists to print in the result of the evaluation commands before abbreviating them. They
 are described in the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Lisp-Eval.html][Lisp evaluation]] section of the *Emacs* manual.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Avoid truncated output, i.e annoying ellipsis
 ;;
@@ -2204,7 +2417,7 @@ Try to optimize *Psimacs* as much as possible (as far as my *Emacs* knowledge go
 
 Let *Psimacs* perform garbage collection if it does not have the focus.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el :var file-description="Performance optimizations"
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-optimizations.el :var file-description="Basic performance optimizations"
 ;;
 ;; Garbage collect when out of focus
 ;;
@@ -2223,7 +2436,7 @@ Let *Psimacs* perform garbage collection if it does not have the focus.
 Avoid performing garbage collection operations when using the minibuffer. We do this by enlarging the
 garbage collection threshold.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-optimizations.el
 ;;
 ;; Avoid garbage collection in minibuffer
 ;;
@@ -2247,7 +2460,7 @@ Enforce a sneaky Garbage Collection strategy to minimize GC interference with th
 During normal use a high GC threshold is set. When idling GC is immediately triggered and a low threshold is set.
 The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hack)]] package provides us with this functionality.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-optimizations.el
 ;;
 ;; Use the garbage collector magic hack
 ;;
@@ -2267,7 +2480,7 @@ integration with the most popular *Emacs* packages like [[https://company-mode.g
 Increase the amount of data which *Emacs* reads from the process. Again the *Emacs* default is too low 4K
 considering that the some of the language server responses are in 800k - 3M range.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-optimizations.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-optimizations.el
 ;;
 ;; lsp-mode optimization
 ;;
@@ -2288,7 +2501,7 @@ References about keyboard configuration and key bindings:
 Basically, we stay with the default *Emacs* keyboard configuration. We swallow the =<lwindow>=, =<rwindow>= and =<apps>=
 keys as far as possible. We will use them for =super= and =<hyper>= prefix keys for *Psimacs* own key bindings.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Base keyboard configuration: Stay with the defaults, but swallow <lwindow>, <rwindow> ans <apps> if possible
 ;;
@@ -2328,7 +2541,7 @@ keys as far as possible. We will use them for =super= and =<hyper>= prefix keys 
 
 *Psimacs* uses the =super= and =hyper= key prefixes for all of its own key bindings.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; <lwindow>, <rwindow> and <apps>
 ;;
@@ -2359,7 +2572,7 @@ Free up unused and unnecessary keybindings.
 There are a great many keybindings that are actively hostile, in that they are bound to useless or obsolete functions
 that are really easy to trigger accidentally.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Strip unused key bindings
 ;;
@@ -2388,35 +2601,35 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 | =H-m=, =H-,= =s-m=, =s-,= and =<f9>= | special user commands     |
 
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Separate prefix key maps for Psimacs own bindings
 ;;
-(define-prefix-command 'psimacs-global-key-map-common)     ;; used for common user commands
-(define-prefix-command 'psimacs-global-key-map-special)    ;; special user commands
-(define-prefix-command 'psimacs-global-key-map-execute)    ;; used for common execution commands
-(define-prefix-command 'psimacs-global-key-map-hydra)      ;; uses solely for accessing hydras
+(define-prefix-command 'psimacs/config/global-key-map/common)     ;; used for common user commands
+(define-prefix-command 'psimacs/config/global-key-map/special)    ;; special user commands
+(define-prefix-command 'psimacs/config/global-key-map/execute)    ;; used for common execution commands
+(define-prefix-command 'psimacs/config/global-key-map/hydra)      ;; uses solely for accessing hydras
 
-(global-set-key (kbd "H-h" ) psimacs-global-key-map-hydra)
-(global-set-key (kbd "H-c" ) psimacs-global-key-map-common)
-(global-set-key (kbd "H-x" ) psimacs-global-key-map-execute)
+(global-set-key (kbd "H-h" ) psimacs/config/global-key-map/hydra)
+(global-set-key (kbd "H-c" ) psimacs/config/global-key-map/common)
+(global-set-key (kbd "H-x" ) psimacs/config/global-key-map/execute)
 
-(global-set-key (kbd "s-h" ) psimacs-global-key-map-hydra)
-(global-set-key (kbd "s-c" ) psimacs-global-key-map-common)
-(global-set-key (kbd "s-x" ) psimacs-global-key-map-execute)
+(global-set-key (kbd "s-h" ) psimacs/config/global-key-map/hydra)
+(global-set-key (kbd "s-c" ) psimacs/config/global-key-map/common)
+(global-set-key (kbd "s-x" ) psimacs/config/global-key-map/execute)
 
-(global-set-key (kbd "<f9>") psimacs-global-key-map-special)
-(global-set-key (kbd "H-m" ) psimacs-global-key-map-special)
-(global-set-key (kbd "H-," ) psimacs-global-key-map-special)
-(global-set-key (kbd "s-m" ) psimacs-global-key-map-special)
-(global-set-key (kbd "s-," ) psimacs-global-key-map-special)
+(global-set-key (kbd "<f9>") psimacs/config/global-key-map/special)
+(global-set-key (kbd "H-m" ) psimacs/config/global-key-map/special)
+(global-set-key (kbd "H-," ) psimacs/config/global-key-map/special)
+(global-set-key (kbd "s-m" ) psimacs/config/global-key-map/special)
+(global-set-key (kbd "s-," ) psimacs/config/global-key-map/special)
 
 (defun psimacs/config/greetings ()
    (interactive)
    (message "hello from psimacs"))
 
-(define-key psimacs-global-key-map-common  (kbd "C-t C-t") 'psimacs/config/greetings)
-(define-key psimacs-global-key-map-special (kbd "C-t C-t") 'psimacs/config/greetings)
+(define-key psimacs/config/global-key-map/common  (kbd "C-t C-t") 'psimacs/config/greetings)
+(define-key psimacs/config/global-key-map/special (kbd "C-t C-t") 'psimacs/config/greetings)
 #+END_SRC
 
 ** User Site-Lisp load path
@@ -2424,7 +2637,7 @@ We have one directory that we use for user elips code. We add this path the the 
 
 Our own /Emacs/ code resides in one directory that must be added to the load path.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Our site-lisp directory.
 ;;
@@ -2438,7 +2651,7 @@ Together these modes guarantee that Emacs never loads outdated byte code files.
 
 Further reading: [[https://www.emacswiki.org/emacs/AutoRecompile][EmacsWiki: Auto Recompile]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Automatically recomile elips files
 ;;
@@ -2479,7 +2692,7 @@ cd c:/utils/msys64/mingw64/share/info
 for i in *info*; do install-info.exe $i dir; done
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Extend Emacs info system with the msys2 info material
 ;;
@@ -2503,7 +2716,7 @@ for i in *info*; do install-info.exe $i dir; done
 | =H-m C-p C-f r= | =M-x ps-print-region-with-faces= | Color print region via Ghosts                   |
 |-----------------+----------------------------------+-------------------------------------------------|
 
-For the =print-\*= commands to function, I was forced to do some extra work outside of *Emacs*. The reason is that
+For the =print-*= commands to function, I was forced to do some extra work outside of *Emacs*. The reason is that
 I am using a network printer with its own IP address. IMHO, *Emacs* does not handle this situation out of the box.
 At first I followed the [[https://www.emacswiki.org/emacs/MsWindowsNetworkPrinter][Ms Windows Network Printer]] instructions. That basically work for me. However, I discovered
 that I just need to share my printer and then call the following =shell-command= to create a virtual printer
@@ -2516,19 +2729,19 @@ net use LPT3: "\\127.0.0.1\EPSON ET-4750 Series"
 I simply integrated this call into my =psimacs.cmd= command and set the =printer-name= to the virtual printer
 port /LPT3/ in the configuration.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Support for the printer-* commands
 ;;
 (setq printer-name "LPT3:")
 #+END_SRC
 
-For the =ps-print-\*= commands to work I needed to install [[https://www.ghostscript.com/][Ghostscript]]. First I tried the [[https://www.msys2.org/][MSYS2]] which I was not able
+For the =ps-print-*= commands to work I needed to install [[https://www.ghostscript.com/][Ghostscript]]. First I tried the [[https://www.msys2.org/][MSYS2]] which I was not able
 to get working correctly. Therefore I tried the 64 Bit [[https://www.ghostscript.com/download/gsdnld.html][Windows installer]] from the [[https://www.ghostscript.com/][Ghostscript]] download site. This worked
 perfectly. In order to set this up I followed the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Windows-Printing.html][Printing and MS-Windows]] *Emacs* manual instructions.
 
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Support for the ps-print-* commands
 ;;
@@ -2571,7 +2784,7 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 
 [[https://github.com/magnars/dash.el][Dash]] is a modern list api for *Emacs*. No 'cl required.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Some basic library packages that mordenize elisp programming
 ;;
@@ -2587,7 +2800,7 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 
 [[https://github.com/magnars/s.el][s]] is a [[https://github.com/magnars/s.el][string manipulation library]] that provides lots of =s-name= functions for easing string programming tasks.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; A string manipulation library
 ;;
@@ -2599,7 +2812,7 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 [[https://github.com/rejeep/f.el][f]] is a [[https://github.com/rejeep/f.el][file system library]] that provides lots of =f-name= functions for easing file system programming tasks.
 Basically it provides a modern API for working with files and directories in *Emacs*.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; A file system library
 ;;
@@ -2618,7 +2831,7 @@ Usage exaples:
 | =(alert "This is an alert" :title "My Alert")=                  |
 | =(alert "This is an alert" :title "My Alert" :category 'debug)= |
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; A enhanced notification interface
 ;;
@@ -2639,7 +2852,7 @@ References about customization:
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Customizations.html][Saving Customizations]]
 - [[https://www.emacswiki.org/emacs/CustomizingAndSaving][EmacsWiki: Customizing And Saving]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Handling of the customization file
 ;;
@@ -2653,6 +2866,455 @@ References about customization:
 #+END_SRC
 
 ** Look and feel
+
+Explicit user interface setup, like look and feel or theming.
+
+*** Basic user interface
+
+No distracting splash screen or annoying startup message :-)
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el :var file-description="Basic user interface setup"
+;;
+;; No startup cludder
+;;
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t
+      inhibit-splash-screen t
+)
+
+;;
+;; Get Emacs a bit more consistent, replace all yes or no questions with simple y or n.
+;;
+(fset 'yes-or-no-p 'y-or-n-p)
+
+#+END_SRC
+
+*** Bells
+
+Avoid annoying bells as described in [[https://www.emacswiki.org/emacs/AlarmBell][Alarm Bell]] on [[https://www.emacswiki.org][EmacsWiki]].
+The follwoing settings determines that *Emacs* should flash the mode line to represent a bell.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Flash mode line instead of bell
+;;
+(defun psimacs/config/flash-mode-line ()
+  (invert-face 'mode-line)
+  (run-with-timer 0.1 nil #'invert-face 'mode-line))
+
+(setq visible-bell nil
+      ring-bell-function 'psimacs/config/flash-mode-line)
+#+END_SRC
+
+*** Cursor
+
+The cursor representation is described in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Cursor-Display.html][Displaying the Cursor]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Cursor-Parameters.html][Cursor Parameters]]. *Psimacs* just show a box
+cursor in the active window only.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Cursor visible only in the active window
+;;
+(setq-default cursor-in-non-selected-windows nil)
+;;(setq-default cursor-type 'bar)
+
+(setq blink-cursor-delay    10
+      blink-cursor-interval 0.7)
+#+END_SRC
+
+*** Highlight current line
+
+As described in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Cursor-Display.html#index-highlight-current-line][Displaying the Cursor]] and in [[https://www.emacswiki.org/emacs/HighlightCurrentLine][WikiEmacs: HighlightCurrentLine]] *Psimacs* makes the cursor even more
+visible, by the use of hl-line-mode, a minor mode that highlights the line containing point.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Highlight line containing point
+;;
+(use-package hl-line
+    :straight nil
+    :hook ((text-mode prog-mode) . hl-line-mode)
+    ;;:config
+        ;; (global-hl-line-mode 1)
+        ;; (set-face-background 'hl-line "seashell2")
+
+        ;; (set-face-attribute 'hl-line nil :background "gray21")
+        ;; (set-face-background 'hl-line "seashell2")
+)
+#+END_SRC
+
+*** Beacon, highlight line on scrolling
+
+Whenever the window scrolls up or down a light will blink on your cursor with the help of the [[https://github.com/Malabarba/beacon][beacon]] package.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Highlight on scrolling
+;;
+(use-package beacon
+    :diminish beacon-mode
+    :config
+        (beacon-mode 1)
+        (setq beacon-push-mark 35)
+        (setq beacon-color "#666600")
+)
+#+END_SRC
+
+*** Yanking position
+
+Do not yank at the mouse position but at cursor position.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Do not yank at the mouse position but at cursor position.
+;;
+(setq mouse-yank-at-point t)
+#+END_SRC
+
+*** Mode line: time and column information
+
+Show time in the mode line with the usual dispay time format as is customary in my part of the world.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Show time on mode line
+;;
+(setq display-time-24hr-format t)
+(display-time-mode 1)
+#+END_SRC
+
+Beside the row I'd also like to see the column in the mode line.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Show rows and columns in the mode line.
+;;
+(column-number-mode)
+#+END_SRC
+
+*** Scrolling
+
+Do not centre the point before scrolling. Scroll one line at a time (less "jumpy" than defaults).
+Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Textual-Scrolling.html#Textual-Scrolling][Textual Scrolling]] in the *Emacs* manual.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Scrolling: Adjust to your likening...
+;;
+(setq scroll-step 1                                ; keyboard scroll: one line at a time
+      mouse-wheel-scroll-amount '(1 ((shift) . 1)) ; dito with wheel: one line at a time
+      mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
+      mouse-wheel-follow-mouse 't                  ; scroll window under mouse
+      scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
+      auto-window-vscroll nil
+      scroll-preserve-screen-position nil          ; this is not windows like, i.e. quite foreign
+)
+#+END_SRC
+
+*** Smooth Scrolling
+
+The [[https://github.com/aspiers/smooth-scrolling][smooth-scrolling]] package offers a minor mode which make emacs scroll smoothly. It keeps the point away from
+the top and bottom of the current buffer's window in order to keep lines of context around the point visible as
+much as possible, whilst minimising the frequency of sudden scroll jumps which are visually confusing.
+
+You can toogle the  [[https://github.com/aspiers/smooth-scrolling][smooth-scrolling-mode]] with the following command.
+
+| Keybinding      | Command                     | Description                                  |
+|-----------------+-----------------------------+----------------------------------------------|
+| =H-m C-w C-s s= | =M-x smooth-scrolling-mode= | Enable or disable the smooth scrolling mode. |
+|                 |                             |                                              |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; ...or additionally/alternatively use the smooth-scrolling package
+;;
+(use-package smooth-scrolling
+    :demand t
+    :config (smooth-scrolling-mode 1)
+    :bind (
+         :map psimacs/config/global-key-map/special
+              ("C-w C-s s" . smooth-scrolling-mode)
+        )
+)
+#+END_SRC
+
+*** Confirmation request
+
+Avoid annoying confirmations in various situations as described in [[https://www.masteringemacs.org/article/disabling-prompts-emacs][Disabling Prompts in Emacs]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Avoid annyoing conformations
+;;
+(setq confirm-nonexistent-file-or-buffer nil   ;; annoying confirmation if a file or buffer does not exist
+                                               ;; when you use C-x C-f or C-x b
+      ido-create-new-buffer 'always            ;; disabling the prompt that asks you if you want to create a
+                                               ;; new buffer if you enter a non-existent buffer in C-x b
+      kill-buffer-query-functions (remq        ;; do not asks if you want to kill a buffer with a live process attached
+                                   'process-kill-buffer-query-function
+                                   kill-buffer-query-functions)
+)
+#+END_SRC
+
+Allow some things that emacs would otherwise liked to have confirmed.
+
+E.g. be able to do =C-x C-u= / =C-x C-l= to upper/lowercase regions without confirmation.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Allow some things that emacs would otherwise liked to have confirmed.
+;;
+(put 'eval-expression  'disabled nil)
+(put 'downcase-region  'disabled nil)
+(put 'upcase-region    'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'set-goal-column  'disabled nil)
+#+END_SRC
+
+*** Titlebar
+
+Have the titlebar contain name and file name of the current buffer.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; frame titelbar contains the name of the current buffer and the file name.
+;;
+(setq frame-title-format '("%b" (buffer-file-name ": %f")))
+#+END_SRC
+
+** Backups
+
+*Psimacs* does make backups, uses auto saving and provides minibuffer histories.
+
+*** Backups
+
+*Psimacs* uses a central [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Backup.html#Backup][backup]] directory. I like to have a [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Backup.html#Backup][backup]] on each save and with the correct relative
+path below of my central backup directory. Each new backup file is created by appending a '~' character to
+the orginal file name. If this file already exists in the backup location then this file is itself renamed
+etc. until we can rename our original file.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-backups.el :var file-description="Basic backup system setup"
+;;
+;; Provide the backup directory
+;;
+(unless (file-directory-p psimacs/config/backup-dir)
+    (make-directory psimacs/config/backup-dir t)
+)
+
+;;
+;; Handle backup files
+;;
+(defun psimacs/config/track-backup-files (bckFile &optional counter)
+    "Rename or delete backup files.
+
+Backup files are files appended by '~' charactes to the original file name.
+
+If the bckFile already exists, then a new backup file name is generated and
+the bckFile is accordingly renamed. If the counter argunment, however, exceeds
+the value of the psimacs/config/backup-max-number-files configuration constants,
+then the bckFile is removed instead.
+
+This function calls itself recursively on the generated new backup file name
+before taken any action. This way all existing backup files for the original
+file are properly renamed of deleted."
+    (if (file-exists-p bckFile)
+        (let (
+                (newbckFile (concat bckFile "~"))
+            )
+
+            (if (not counter)
+                (setq counter 0)
+                (setq counter (1+ counter))
+            )
+
+            (psimacs/config/track-backup-files newbckFile counter)
+
+            (if (< counter psimacs/config/backup-max-number-files)
+                (rename-file bckFile newbckFile)
+                (delete-file bckFile)
+            )
+        )
+    )
+)
+
+;;
+;; Backup files are stored with path information
+;;
+(defun psimacs/config/backup-file-name (fpath)
+    "Return a new file path of a given file path.
+
+If the new path's directories does not exist, create them."
+    (let* (
+            (backupRootDir psimacs/config/backup-dir)
+            (filePath (replace-regexp-in-string "\\(:\\|/cygdrive/\\)" "/" fpath ))
+            (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~")))
+        )
+
+        (unless (or
+                (string-equal (expand-file-name fpath) (expand-file-name psimacs/config/recent-file))
+                (string-equal (expand-file-name fpath) (expand-file-name psimacs/config/history-file))
+                (string-equal (expand-file-name fpath) (expand-file-name psimacs/config/save-places-file))
+                (string-equal (expand-file-name fpath) (expand-file-name psimacs/config/custom-file))
+                (string-equal (expand-file-name fpath) (expand-file-name psimacs/config/amx-file))
+            )
+
+            (psimacs/config/track-backup-files backupFilePath)
+        )
+
+        (mkdir (file-name-directory backupFilePath) t)
+
+        backupFilePath
+    )
+)
+
+;;
+;; Before safe the backup save marker is removed, leading to a new backup.
+;;
+(defun psimacs/config/force-backup-of-buffer ()
+  "Clear backup save marker"
+  (setq buffer-backed-up nil))
+
+;;
+;; Backup on each save
+;;
+(add-hook 'before-save-hook
+          'psimacs/config/force-backup-of-buffer)
+
+;;
+;; Define how to make a backup
+;;
+(setq make-backup-file-name-function 'psimacs/config/backup-file-name)
+
+;;
+;; Backup files can be made by copying the old file or by renaming it
+;;
+(setq backup-by-copying t)
+#+END_SRC
+
+*** Auto-Save
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save.html#Auto-Save][Autosave]] automatically saves each visited file in a separate file, without altering the file you actually use.
+It uses a central [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save.html#Auto-Save][auto-save]] directory for that.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el :var file-description="Basic auto saving system setup"
+;;
+;; Setup Psimacs auto-save strategy
+;;
+(let ((auto-save-dir psimacs/config/auto-save-dir))
+    (unless (file-directory-p auto-save-dir)
+        (make-directory auto-save-dir t)
+    )
+
+    (setq auto-save-default    t) ;; each time you visit a file, auto-saving is turned on
+    (setq auto-save-interval 300) ;; specifies how many characters there are between auto-saves
+    (setq auto-save-timeout   30) ;; also auto-save after 30 seconds of idleness
+
+    (setq auto-save-list-file-prefix (concat auto-save-dir ".auto-saves-"))
+    (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
+
+    (setq-default tramp-auto-save-directory auto-save-dir)
+)
+#+END_SRC
+
+*** Super-Save
+
+[[https://github.com/bbatsov/super-save][Super-save]] additionally auto-saves your buffers, when certain events happen - e.g. you switch between buffers,
+an Emacs frame loses focus, etc. You can think of it as both something that augments and replaces the standard
+auto-save-mode.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
+;;
+;; And more automatic file saving :-)
+;;
+(use-package super-save
+    :diminish super-save-mode
+    :config
+        (super-save-mode +1)
+        (setq super-save-auto-save-when-idle t)
+)
+#+END_SRC
+
+*** History
+
+Package [[https://www.emacswiki.org/emacs/SaveHist][savehist]] automatically save minibuffer, kill-ring, search-ring and regexp-search-ring histories to a file.
+It also deletes duplicates entries.
+
+Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][savehist.el]] is available on [[https://github.com/emacs-mirror/emacs][emacs-mirror]].
+
+| Keybinding    | Command                            | Description                              |
+|---------------+------------------------------------+------------------------------------------|
+| =H-m C-c C-h= | (find-file-read-only history-file) | Open the history file in read-only mode. |
+|               |                                    |                                          |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
+;;
+;; Automatically save minibuffer, kill-ring, search-ring and regexp-search-ring histories
+;;
+(defun psimacs/history/visit-history-file ()
+  "Open the save history file in buffer in read-only mode."
+  (interactive)
+  (when (file-exists-p psimacs/config/history-file)
+    (find-file-read-only psimacs/config/history-file)))
+
+(use-package savehist
+    :straight nil
+    :config
+        (setq savehist-file psimacs/config/history-file)
+        (savehist-mode 1)
+        (setq history-length t)
+        (setq history-delete-duplicates t)
+        (setq savehist-save-minibuffer-history 1)
+        (setq savehist-additional-variables
+              '(kill-ring
+                search-ring
+                regexp-search-ring))
+    :bind (
+           :map psimacs/config/global-key-map/special
+              ("C-c C-h" . psimacs/history/visit-history-file)
+          )
+)
+#+END_SRC
+
+*** Recent files
+
+[[https://www.emacswiki.org/emacs/RecentFiles][Recentf-mode]] is a minor mode that builds a list of recently opened files. This list is automatically saved
+across sessions on exiting *Emacs* - you can then access this list
+through the command =C-x C-r=.
+
+| Keybinding | Command                         | Description                                                  |
+|------------+---------------------------------+--------------------------------------------------------------|
+| =H-x r=    | =M-x recentf-open-files=        | Show a dialog to open a recent file.                         |
+| =H-x C-r=  | =M-x recentf-open-more-files=   | Show a dialog to open a recent file that is not in the menu. |
+|            | =M-x recentf-cleanup=           | Cleanup the recent file list.                                |
+|------------+---------------------------------+--------------------------------------------------------------|
+| =H-x f=    | =M-x counsel-recentf=           | Find a file on recent file list.                             |
+| =H-x C-f=  | =M-x counsel-buffer-or-recentf= | Find a buffer visiting a file or file on recent file list.   |
+|            |                                 |                                                              |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
+;;
+;; Track recently visited files
+;;
+(use-package recentf
+    :diminish recentf-mode
+    :bind (
+           :map psimacs/config/global-key-map/execute
+              ("r"   . recentf-open-files)
+              ("C-r" . recentf-open-more-files)
+              ("f"   . counsel-recentf)
+              ("C-f" . counsel-buffer-or-recentf)
+        )
+
+    :init
+        (setq recentf-max-menu-items 20)
+        (setq recentf-save-file psimacs/config/recent-file)
+
+        (recentf-mode t)
+
+        (run-at-time nil (* 5 60) 'recentf-save-list)
+)
+#+END_SRC
+
 ** Handling
 
 *** Edit region indirectly in another buffer
@@ -2667,21 +3329,21 @@ After finishing the editing the command =edit-indirect-commit= replaces the orig
 the *edit-indirect buffer*. Alternatively, the command =edit-indirect-abort= drops the modification and leaves the
 region unchanged. Very useful!
 
-| Keybinding    | Command                    | Description                                                                                       |
-|---------------+----------------------------+---------------------------------------------------------------------------------------------------|
-| =H-m C-c C-e= | =M-x edit-indirect-region= | Edit region in separate buffer *edit-indirect buffer*                                             |
-| =C-c C-c=     | =M-x edit-indirect-commit= | Commit the modification done in *edit-indirect buffer*                                            |
-| =C-c C-k=     | =M-x edit-indirect-abort== | Abort indirect editing; kill buffer *edit-indirect buffer*                                        |
-| =C-x C-s=     | =M-x edit-indirect-save=   | Replace the original region in the parent buffer with the contents of the *edit-indirect buffer*. |
-|               |                            |                                                                                                   |
+| Keybinding | Command                    | Description                                                                                       |
+|------------+----------------------------+---------------------------------------------------------------------------------------------------|
+| =H-c C-e=  | =M-x edit-indirect-region= | Edit region in separate buffer *edit-indirect buffer*                                             |
+| =C-c C-c=  | =M-x edit-indirect-commit= | Commit the modification done in *edit-indirect buffer*                                            |
+| =C-c C-k=  | =M-x edit-indirect-abort== | Abort indirect editing; kill buffer *edit-indirect buffer*                                        |
+| =C-x C-s=  | =M-x edit-indirect-save=   | Replace the original region in the parent buffer with the contents of the *edit-indirect buffer*. |
+|            |                            |                                                                                                   |
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
 ;;
 ;; Edit regions in a separate buffer
 ;;
 (use-package edit-indirect
   :bind (
-         :map psimacs-global-key-map-common
+         :map psimacs/config/global-key-map/common
               ("C-e" . edit-indirect-region)
         )
 )
@@ -2692,7 +3354,7 @@ region unchanged. Very useful!
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html][Running Compilations under Emacs]] describes a useful variable that allows that scrolling of the compilation output
 automatically stops when the first error appears, leaving point at that error.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Stop at first error, no further scrolling
 ;;
@@ -2705,11 +3367,278 @@ Each of the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.
 and displays the results in a different window. Some of them use prefix arguments to widen the scope of the search.
 The follwoing statement let most of the apropos commands behaves as if they had been given a prefix argument.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basics.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Always prefix apropos commands
 ;;
 (setq apropos-do-all t)
+#+END_SRC
+
+*** Unique buffer names
+
+Change [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html][uniquify]] to put the disambiguate part of the buffer file name at the front. The library  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html][uniquify]]
+overrides *Emacs*'s default mechanism for making buffer names unique (using suffixes like <2>, <3> etc.)
+with a more sensible behavior which use parts of the file names to make the buffer names distinguishable.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Unique buffer names: includes part of the file's directory name at the beginning of the buffer name
+;;
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+#+END_SRC
+
+*** Imortal buffers
+
+Some buffers should never be deleted. Even if you type =C-x k= in them.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Make some buffers immortal
+;;
+(defun psimacs/config/immortal-buffers ()
+    (if (or (eq (current-buffer) (get-buffer "*scratch*"))
+            (eq (current-buffer) (get-buffer "*Messages*")))
+                (progn (bury-buffer)
+                    nil)
+        t
+    )
+)
+
+(add-hook 'kill-buffer-query-functions 'psimacs/config/immortal-buffers)
+#+END_SRC
+
+*** Improved Info-Mode
+
+Library [[https://www.emacswiki.org/emacs/InfoPlus][Info Plus]] extends the standard Emacs library /info/ in several ways.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(use-package info+)
+#+END_SRC
+
+*** Parenthesis
+
+When on, typing any left bracket automatically insert the right matching bracket. This is accomplished by *Emacs*'s
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
+
+At the moment I have disabled it, because I would like to try [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]] alternative to the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
+Actually, I always had some problems with the  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+(setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
+(electric-pair-mode 1)
+#+END_SRC
+
+The following code [[http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html][Emacs: Insert Brackets by Pair]] is taken from [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]]. It tries to solve some of the
+problems that arise with [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Wonderful bracket inserter taken from Xah Lee at
+;; http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html
+;;
+(defun psimacs/pair/insert-bracket-pair (@left-bracket @right-bracket &optional @wrap-method)
+  "Insert brackets around selection, word, at point, and maybe move cursor in between.
+
+ ,*left-bracket and *right-bracket are strings.
+ ,*wrap-method must be either 'line or 'block. 'block means between empty lines.
+
+• if there's a region, add brackets around region.
+• if *wrap-method is 'line, wrap around line.
+• if *wrap-method is 'block, wrap around block.
+• if cursor is at beginning of line and its not empty line and contain at least 1 space, wrap around the line.
+• if cursor is at end of a word or buffer, one of the following will happen:
+        xyz▮ → xyz(▮)
+        xyz▮ → (xyz▮) if in one of the lisp modes.
+• wrap brackets around word if any. e.g. xy▮z → (xyz▮). Or just (▮)
+
+URL `http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html'
+Version 2017-01-17"
+  (if (use-region-p)
+      (progn ; there's active region
+        (let (
+              ($p1 (region-beginning))
+              ($p2 (region-end)))
+          (goto-char $p2)
+          (insert @right-bracket)
+          (goto-char $p1)
+          (insert @left-bracket)
+          (goto-char (+ $p2 2))))
+    (progn ; no text selection
+      (let ($p1 $p2)
+        (cond
+         ((eq @wrap-method 'line)
+          (setq $p1 (line-beginning-position) $p2 (line-end-position))
+          (goto-char $p2)
+          (insert @right-bracket)
+          (goto-char $p1)
+          (insert @left-bracket)
+          (goto-char (+ $p2 (length @left-bracket))))
+         ((eq @wrap-method 'block)
+          (save-excursion
+            (progn
+              (if (re-search-backward "\n[ \t]*\n" nil 'move)
+                  (progn (re-search-forward "\n[ \t]*\n")
+                         (setq $p1 (point)))
+                (setq $p1 (point)))
+              (if (re-search-forward "\n[ \t]*\n" nil 'move)
+                  (progn (re-search-backward "\n[ \t]*\n")
+                         (setq $p2 (point)))
+                (setq $p2 (point))))
+            (goto-char $p2)
+            (insert @right-bracket)
+            (goto-char $p1)
+            (insert @left-bracket)
+            (goto-char (+ $p2 (length @left-bracket)))))
+         ( ;  do line. line must contain space
+          (and
+           (eq (point) (line-beginning-position))
+           ;; (string-match " " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+           (not (eq (line-beginning-position) (line-end-position))))
+          (insert @left-bracket )
+          (end-of-line)
+          (insert  @right-bracket))
+         ((and
+           (or ; cursor is at end of word or buffer. i.e. xyz?
+            (looking-at "[^-_[:alnum:]]")
+            (eq (point) (point-max)))
+           (not (or
+                 (string-equal major-mode "emacs-lisp-mode")
+                 (string-equal major-mode "lisp-mode")
+                 (string-equal major-mode "lisp-interaction-mode")
+                 (string-equal major-mode "common-lisp-mode")
+                 (string-equal major-mode "clojure-mode")
+                 (string-equal major-mode "scheme-mode"))))
+          (progn
+            (setq $p1 (point) $p2 (point))
+            (insert @left-bracket @right-bracket)
+            (search-backward @right-bracket )))
+         (t (progn
+              ;; wrap around 'word'. basically, want all alphanumeric, plus hyphen and underscore, but don't want space or punctuations.
+              (skip-chars-backward "-_[:alnum:]")
+              (setq $p1 (point))
+              (skip-chars-forward "-_[:alnum:]")
+              (setq $p2 (point))
+              (goto-char $p2)
+              (insert @right-bracket)
+              (goto-char $p1)
+              (insert @left-bracket)
+              (goto-char (+ $p2 (length @left-bracket))))))))))
+#+END_SRC
+
+And some convenience functions that use the =psimacs/pair/insert-bracket-pair= function.
+
+Additionally, *Psimacs* provides the following key bindings:
+
+| Keybinding | Command                                      | Description                    |
+|------------+----------------------------------------------+--------------------------------|
+| =H-m (=    | =M-x psimacs/pair/insert-paren=              | Insert paranthesis (▮).        |
+| =H-m [=    | =M-x psimacs/pair/insert-bracket=            | Insert brackets [▮]            |
+| =H-m {=    | =M-x psimacs/pair/insert-brace=              | Insert braces {▮}              |
+| =H-m "=    | =M-x psimacs/pair/insert-ascii-double-quote= | Insert ascii double quotes "▮" |
+| =H-m '=    | =M-x psimacs/pair/insert-ascii-single-quote= | Insert ascii single quotes '▮' |
+| =H-m e=    | =M-x psimacs/pair/insert-emacs-quote=        | Insert emacs quotes `▮'        |
+|            |                                              |                                |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Convenience functions using psimacs/pair/insert-bracket-pair
+;;
+(defun psimacs/pair/insert-paren                    () "Insert paranthesis (▮)"                (interactive) (psimacs/pair/insert-bracket-pair "("  ")"))
+(defun psimacs/pair/insert-bracket                  () "Insert brackets [▮]"                   (interactive) (psimacs/pair/insert-bracket-pair "["  "]"))
+(defun psimacs/pair/insert-brace                    () "Insert braces {▮}"                     (interactive) (psimacs/pair/insert-bracket-pair "{"  "}"))
+(defun psimacs/pair/insert-double-curly-quote       () "Insert double curly quotes “▮“"        (interactive) (psimacs/pair/insert-bracket-pair "“"  "”"))
+(defun psimacs/pair/insert-curly-single-quote       () "Insert curly single quotes ‘▮‘"        (interactive) (psimacs/pair/insert-bracket-pair "‘"  "’"))
+(defun psimacs/pair/insert-single-angle-quote       () "Insert single angle quotes ‹▮›"        (interactive) (psimacs/pair/insert-bracket-pair "‹"  "›"))
+(defun psimacs/pair/insert-double-angle-quote       () "Insert double angle quotes «▮»"        (interactive) (psimacs/pair/insert-bracket-pair "«"  "»"))
+(defun psimacs/pair/insert-ascii-double-quote       () "Insert ascii double quotes \"▮\""      (interactive) (psimacs/pair/insert-bracket-pair "\"" "\""))
+(defun psimacs/pair/insert-ascii-single-quote       () "Insert ascii single quotes '▮'"        (interactive) (psimacs/pair/insert-bracket-pair "'"  "'"))
+(defun psimacs/pair/insert-emacs-quote              () "Insert emacs quotes `▮'"               (interactive) (psimacs/pair/insert-bracket-pair "`"  "'"))
+(defun psimacs/pair/insert-corner-bracket           () "Insert corner brackets 「▮」"           (interactive) (psimacs/pair/insert-bracket-pair "「"  "」"))
+(defun psimacs/pair/insert-white-corner-bracket     () "Insert white corner brackets 『▮』"     (interactive) (psimacs/pair/insert-bracket-pair "『"  "』"))
+(defun psimacs/pair/insert-angle-bracket            () "Insert angle brackets 〈▮〉"            (interactive) (psimacs/pair/insert-bracket-pair "〈"  "〉"))
+(defun psimacs/pair/insert-double-angle-bracket     () "Insert double angle brackets 《▮》"     (interactive) (psimacs/pair/insert-bracket-pair "《"  "》"))
+(defun psimacs/pair/insert-white-lenticular-bracket () "Insert white lenticular brackets 〖▮〗" (interactive) (psimacs/pair/insert-bracket-pair "〖" "〗"))
+(defun psimacs/pair/insert-black-lenticular-bracket () "Insert black lenticular brackets 【▮】" (interactive) (psimacs/pair/insert-bracket-pair "【"  "】"))
+(defun psimacs/pair/insert-tortoise-shell-bracket   () "Insert tortoise shell brackets 〔▮〕"   (interactive) (psimacs/pair/insert-bracket-pair "〔"  "〕"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+;;
+;; Add the missing key bindings for the frame creation strategy promised above.
+;;
+(define-key psimacs/config/global-key-map/special (kbd "(")  'psimacs/pair/insert-paren)
+(define-key psimacs/config/global-key-map/special (kbd "[")  'psimacs/pair/insert-bracket)
+(define-key psimacs/config/global-key-map/special (kbd "{")  'psimacs/pair/insert-brace)
+(define-key psimacs/config/global-key-map/special (kbd "\"") 'psimacs/pair/insert-ascii-double-quote)
+(define-key psimacs/config/global-key-map/special (kbd "'")  'psimacs/pair/insert-ascii-single-quote)
+(define-key psimacs/config/global-key-map/special (kbd "e")  'psimacs/pair/insert-emacs-quote)
+#+END_SRC
+
+
+See matching pairs of parenthesis and other characters. When point is on one of the
+paired characters, the other is highlighted.
+
+See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+(use-package paren
+    :diminish show-paren-mode
+    :hook (after-init . show-paren-mode)
+    :config
+        (setq show-paren-delay 0)
+        (setq show-paren-style 'mixed)
+        ;(setq show-paren-style 'parenthesis)
+        ;(setq show-paren-style 'expression)
+
+        (setq show-paren-when-point-inside-paren t)
+        (setq show-paren-when-point-in-periphery t)
+)
+#+END_SRC
+
+** Windows and frame layout
+
+*** Frame size and position
+
+Add key bindings for the frame creation strategy commands, as promised in the [[Startup frame size and position][Startup frame size and position]] section.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+;;
+;; Add the missing key bindings for the frame creation strategy promised above.
+;;
+(define-key psimacs/config/global-key-map/special (kbd "C-w C-x 5 l") 'psimacs/window/set-frame-creation-strategy-layout)
+(define-key psimacs/config/global-key-map/special (kbd "C-w C-x 5 m") 'psimacs/window/set-frame-creation-strategy-main)
+(define-key psimacs/config/global-key-map/special (kbd "C-w C-x 5 s") 'psimacs/window/set-frame-creation-strategy-system)
+#+END_SRC
+
+*** Golden-Ratio for new buffers
+
+The package [[https://github.com/roman/golden-ratio.el][Golden-Ratio]] provides the /golden-ratio-mode/ that will automatically adjust buffers sizes to keep
+the golden ration.
+
+| Keybinding    | Command                 | Description                                         |
+|---------------+-------------------------+-----------------------------------------------------|
+| =H-m C-w C-r= | =M-x golden-ratio-mode= | Toggle automatic window resizing with golden ratio. |
+|               |                         |                                                     |
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el :var file-description="Basic layout setup"
+;;
+;; Always keep buffer sizes in golden ratios
+;;
+(use-package golden-ratio
+    :diminish golden-ratio-mode
+    :config
+        (golden-ratio-mode 1)
+	(setq golden-ratio-auto-scale nil)
+
+        (setq golden-ratio-adjust-factor 1.0)
+        (setq golden-ratio-wide-adjust-factor .8)
+    :bind (
+         :map psimacs/config/global-key-map/special
+              ("C-w C-r" . golden-ratio-mode)
+        )
+)
 #+END_SRC
 
 * Utility Lisp functions
@@ -2730,7 +3659,7 @@ References of string functionality:
 - [[http://ergoemacs.org/emacs/elisp_trim_string.html][Elisp: Trim String Functions by Xah Lee]]
 - [[https://github.com/magnars/s.el][*s.el*: The long lost Emacs string manipulation library.]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-functions.el :var file-description="Useful Elisp functions"
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el :var file-description="Basic elisp functions"
 ;;
 ;; Deprecated helper functions for string processing
 ;;
