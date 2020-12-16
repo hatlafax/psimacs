@@ -3530,15 +3530,18 @@ And some convenience functions that use the =psimacs/pair/insert-bracket-pair= f
 
 Additionally, *Psimacs* provides the following key bindings:
 
-| Keybinding | Command                                      | Description                      |
-|------------+----------------------------------------------+----------------------------------|
-| =H-m (=    | =M-x psimacs/pair/insert-paren=              | Insert paranthesis (▮).          |
-| =H-m [=    | =M-x psimacs/pair/insert-bracket=            | Insert brackets [▮]              |
-| =H-m {=    | =M-x psimacs/pair/insert-brace=              | Insert braces {▮}                |
-| =H-m "=    | =M-x psimacs/pair/insert-ascii-double-quote= | Insert ascii double quotes ~"▮"~ |
-| =H-m \'=   | =M-x psimacs/pair/insert-ascii-single-quote= | Insert ascii single quotes '▮'   |
-| =H-m e=    | =M-x psimacs/pair/insert-emacs-quote=        | Insert emacs quotes `▮'          |
-| ~H-m "~    | =M-x psimacs/pair/insert-ascii-double-quote= | Insert ascii double quotes ~"▮"~ |
+| Keybinding | Command                                      | Description                       |
+|------------+----------------------------------------------+-----------------------------------|
+| =H-m (=    | =M-x psimacs/pair/insert-paren=              | Insert paranthesis =(▮)=.         |
+| =H-m [=    | =M-x psimacs/pair/insert-bracket=            | Insert brackets =[▮]=.            |
+| =H-m {=    | =M-x psimacs/pair/insert-brace=              | Insert braces ={▮}=.              |
+| =H-m "=    | =M-x psimacs/pair/insert-ascii-double-quote= | Insert ascii double quotes ="▮"=. |
+| =H-m '=    | =M-x psimacs/pair/insert-ascii-single-quote= | Insert ascii single quotes ='▮'=. |
+| =H-m e=    | =M-x psimacs/pair/insert-emacs-quote=        | Insert emacs quotes =`▮'=.        |
+| =H-m ==    | =M-x psimacs/pair/insert-equal=              | Insert equality signs ==▮==.      |
+| =H-m *=    | =M-x psimacs/pair/insert-star=               | Insert stars =*▮*=.               |
+| =H-m /=    | =M-x psimacs/pair/insert-slash=              | Insert slashes =/▮/=.             |
+|            |                                              |                                   |
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 ;;
@@ -3561,6 +3564,9 @@ Additionally, *Psimacs* provides the following key bindings:
 (defun psimacs/pair/insert-white-lenticular-bracket () "Insert white lenticular brackets 〖▮〗" (interactive) (psimacs/pair/insert-bracket-pair "〖" "〗"))
 (defun psimacs/pair/insert-black-lenticular-bracket () "Insert black lenticular brackets 【▮】" (interactive) (psimacs/pair/insert-bracket-pair "【"  "】"))
 (defun psimacs/pair/insert-tortoise-shell-bracket   () "Insert tortoise shell brackets 〔▮〕"   (interactive) (psimacs/pair/insert-bracket-pair "〔"  "〕"))
+(defun psimacs/pair/insert-equal                    () "Insert equality sign =▮="              (interactive) (psimacs/pair/insert-bracket-pair "="  "="))
+(defun psimacs/pair/insert-star                     () "Insert star characters *▮*"            (interactive) (psimacs/pair/insert-bracket-pair "*"  "*"))
+(defun psimacs/pair/insert-slash                    () "Insert slash characters /▮/"           (interactive) (psimacs/pair/insert-bracket-pair "/"  "/"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
@@ -3573,6 +3579,9 @@ Additionally, *Psimacs* provides the following key bindings:
 (define-key psimacs/config/global-key-map/special (kbd "\"") 'psimacs/pair/insert-ascii-double-quote)
 (define-key psimacs/config/global-key-map/special (kbd "'")  'psimacs/pair/insert-ascii-single-quote)
 (define-key psimacs/config/global-key-map/special (kbd "e")  'psimacs/pair/insert-emacs-quote)
+(define-key psimacs/config/global-key-map/special (kbd "=")  'psimacs/pair/insert-equal)
+(define-key psimacs/config/global-key-map/special (kbd "*")  'psimacs/pair/insert-star)
+(define-key psimacs/config/global-key-map/special (kbd "/")  'psimacs/pair/insert-slash)
 #+END_SRC
 
 
