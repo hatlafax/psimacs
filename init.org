@@ -1149,34 +1149,32 @@ to it's documentation string.
        (width           (nth 3 geometry))
        (height          (nth 4 geometry)))
 
+  (defconst psimacs/config/default-frame-offset 20)
 
-  (defconst psimacs/config/initial-frame-pos-x  (* 28 (/ width 100)))
+  (defconst psimacs/config/initial-frame-pos-x  (round (* 28 (/ width 100))))
   (defconst psimacs/config/initial-frame-pos-y  0)
-  (defconst psimacs/config/initial-frame-size-x (* 60 (/ width 100)))
+  (defconst psimacs/config/initial-frame-size-x (round (* 60 (/ width 100))))
   (defconst psimacs/config/initial-frame-size-y (- height 80))
-
-  (defconst psimacs/config/default-frame-offset-x 20)
-  (defconst psimacs/config/default-frame-offset-y 20)
 
   (defconst psimacs/config/default-frame-1-pos-x  0)
   (defconst psimacs/config/default-frame-1-pos-y  psimacs/config/initial-frame-pos-y)
-  (defconst psimacs/config/default-frame-1-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-1-pos-x 20)))
-  (defconst psimacs/config/default-frame-1-size-y (/ psimacs/config/initial-frame-size-y 2))
+  (defconst psimacs/config/default-frame-1-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-1-pos-x psimacs/config/default-frame-offset)))
+  (defconst psimacs/config/default-frame-1-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
 
   (defconst psimacs/config/default-frame-2-pos-x  0)
-  (defconst psimacs/config/default-frame-2-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y 35))
-  (defconst psimacs/config/default-frame-2-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-2-pos-x 20)))
+  (defconst psimacs/config/default-frame-2-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* psimacs/config/default-frame-offset 1.75))))
+  (defconst psimacs/config/default-frame-2-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-2-pos-x psimacs/config/default-frame-offset)))
   (defconst psimacs/config/default-frame-2-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
 
 
-  (defconst psimacs/config/default-frame-3-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x 20))
+  (defconst psimacs/config/default-frame-3-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x psimacs/config/default-frame-offset))
   (defconst psimacs/config/default-frame-3-pos-y  psimacs/config/initial-frame-pos-y)
-  (defconst psimacs/config/default-frame-3-size-x (- width psimacs/config/default-frame-3-pos-x))
-  (defconst psimacs/config/default-frame-3-size-y (/ psimacs/config/initial-frame-size-y 2))
+  (defconst psimacs/config/default-frame-3-size-x (- width (+ psimacs/config/default-frame-3-pos-x (round (* psimacs/config/default-frame-offset 1.5)))))
+  (defconst psimacs/config/default-frame-3-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
 
-  (defconst psimacs/config/default-frame-4-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x 20))
-  (defconst psimacs/config/default-frame-4-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y 35))
-  (defconst psimacs/config/default-frame-4-size-x (- width psimacs/config/default-frame-4-pos-x))
+  (defconst psimacs/config/default-frame-4-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x psimacs/config/default-frame-offset))
+  (defconst psimacs/config/default-frame-4-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* psimacs/config/default-frame-offset 1.75))))
+  (defconst psimacs/config/default-frame-4-size-x (- width (+ psimacs/config/default-frame-4-pos-x (round (* psimacs/config/default-frame-offset 1.5)))))
   (defconst psimacs/config/default-frame-4-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
 
   (defvar psimacs/config/default-frame-placement-counter 1)
@@ -1500,6 +1498,20 @@ Auto saving is performed by *Psimacs* a lot.
   (psimacs/file-system/concat-file psimacs/config/bookmarks-dir ".bm-bookmarks")
   "The psimacs bm bookmarks file.")
 #+END_SRC
+
+** Abbreviations
+
+*Psimacs uses the default *Emacs* [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbreviation]] facility.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for abbreviations
+;;
+(defconst psimacs/config/abbrev-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".abbreviations")
+  "The psimacs abbreviation file.")
+#+END_SRC
+
 
 ** Emacs client/server
 
@@ -2292,6 +2304,17 @@ loading and =:defer t= for command triggered loading!
 )
 #+END_SRC
 
+*** Provide the dim.el package
+
+The [[https://github.com/alezost/dim.el][dim]] package can be used to change the names of major and minor modes that are displayed in the mode-line.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el
+;;
+;; Allow better names for major and minor modes on the command line.
+;;
+(use-package dim :demand t)
+#+END_SRC
+
 * Basic setup
 
 Some fundamental setting that *Psimacs* uses are collected here.
@@ -2495,6 +2518,26 @@ References about keyboard configuration and key bindings:
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Windows-Keyboard.html][Keyboard Usage on MS-Windows]]
 - [[http://www.wilfred.me.uk/blog/2018/01/06/the-emacs-guru-guide-to-key-bindings/][The Emacs Guru Guide to Key Bindings]]
 - [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Bind Super Hyper Keys]]
+- [[https://www.emacswiki.org/emacs/AltGrKey][AltGrKey]]
+
+*** How to type C-@ on a German Windows keyboard
+
+Emacs keys may seem to be /hidden/ because MS Windows implements =AltGr= as =Alt + Left Control=.
+Therefore key bindings such as =C-@= are quite difficult to type.
+
+Solutions:
+- Using the right control key
+
+#+BEGIN_QUOTE
+  The trick is that you must type =AltGr= as the first key, and =Ctrl= must be the right control key,
+  not the left one.
+#+END_QUOTE
+
+- Using =C-SPC= instead of =C-@=
+
+#+BEGIN_QUOTE
+  It turns out that instead of =C-@= you can always type =C-SPC=.
+#+END_QUOTE
 
 *** Base configuration of the keyboard
 
@@ -2576,13 +2619,6 @@ that are really easy to trigger accidentally.
 ;;
 ;; Strip unused key bindings
 ;;
-(dotimes (n 10)
-    (global-unset-key (kbd (format "C-%d" n)))
-    (global-unset-key (kbd (format "M-%d" n)))
-)
-
-(unbind-key "C-x C-f")          ;; find-file-read-only
-(unbind-key "C-x C-d")          ;; list-directory
 (unbind-key "C-z")              ;; suspend-frame
 (unbind-key "M-o")              ;; facemenu-mode
 (unbind-key "<mouse-2>")        ;; pasting with mouse-wheel click
@@ -2630,6 +2666,20 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 
 (define-key psimacs/config/global-key-map/common  (kbd "C-t C-t") 'psimacs/config/greetings)
 (define-key psimacs/config/global-key-map/special (kbd "C-t C-t") 'psimacs/config/greetings)
+
+;;
+;; Provide the Windows OS default frame closing expirience
+;;
+(defun psimacs/config/delete-frame ()
+    "This function deletes the selected frame. If the last frame it leaves emacs."
+    (interactive)
+    (if (= (length (frame-list)) 1)
+        (save-buffers-kill-terminal)
+      (delete-frame)
+      )
+)
+
+(global-set-key (kbd "M-<f4>" ) 'psimacs/config/delete-frame)
 #+END_SRC
 
 ** User Site-Lisp load path
@@ -2770,6 +2820,7 @@ perfectly. In order to set this up I followed the [[https://www.gnu.org/software
 #+END_SRC
 
 ** Basic ELisp Libraries
+
 Load some basic packages that provide support for more elegant [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] programming.
 
 The following links might be useful for diving deeper into [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]]:
@@ -2863,6 +2914,51 @@ References about customization:
 )
 
 (add-hook 'kill-emacs-query-functions 'custom-prompt-customize-unsaved-options)
+#+END_SRC
+
+** Encoding system
+
+I am in no means an expert in Encoding systems. I have not studied all the variables floating in encoding soup.
+Below you find the encoding settings that I have in use. Probably this is to much or even wrong. Sorry, for
+that.
+
+See also:
+- [[https://www.emacswiki.org/emacs/ChangingEncodings][EmacsWiki: ChangingEncodings]]
+- [[https://www.emacswiki.org/emacs/UnicodeEncoding][EmacsWiki: UnicodeEncoding]]
+- [[http://ergoemacs.org/emacs/emacs_encoding_decoding_faq.html][Emacs File Encoding FAQ]]
+- [[https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs][Working with Coding Systems and Unicode in Emacs]]
+- [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
+- [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
+
+| Keybinding                        | Command                                | Description                                                                                                                                                                                                      |
+|-----------------------------------+----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                                   | =M-x revert-buffer-with-coding-system= |                                                                                                                                                                                                                  |
+|                                   | =M-x set-buffer-file-coding-system=    |                                                                                                                                                                                                                  |
+|                                   | =M-x describe-coding-system=           | Information about coding system.                                                                                                                                                                                 |
+|                                   | =M-x list-coding-systems=              |                                                                                                                                                                                                                  |
+|                                   | =M-x find-file-literally=              | Open file without any conversion.                                                                                                                                                                                |
+| =C-h v buffer-file-coding-system= |                                        |                                                                                                                                                                                                                  |
+| =C-x RET c=                       | M-x universal-coding-system-argument   | takes as an argument the coding system you want to use, and a command to execute it with. That makes it possible to open files, shells or run Emacs commands as though you were using a different coding system. |
+|                                   |                                        |                                                                                                                                                                                                                  |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Ensure that Emacs is totally UTF-8
+;;
+(set-charset-priority 'unicode)
+(set-locale-environment "en_US.UTF-8")
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)         ; configured by prefer-coding-system
+(set-keyboard-coding-system 'utf-8)         ; configured by prefer-coding-system
+(set-selection-coding-system 'utf-16-le)    ; important on windows os
+(set-clipboard-coding-system 'utf-16-le)    ; included by set-selection-coding-system
+(set-w32-system-coding-system 'utf-8)
+(set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
+(setq locale-coding-system 'utf-8)
+(set-file-name-coding-system 'utf-8)
+(set-language-environment "UTF-8")          ; How to permanently choose a encoding system in emacs for opening and saving
+(setq default-process-coding-system '(utf-8-dos . utf-8-dos))
 #+END_SRC
 
 ** Look and feel
@@ -3080,6 +3176,243 @@ Have the titlebar contain name and file name of the current buffer.
 ;; frame titelbar contains the name of the current buffer and the file name.
 ;;
 (setq frame-title-format '("%b" (buffer-file-name ": %f")))
+#+END_SRC
+
+*** Automatically revert buffer
+
+Whenever a file that *Psimacs* is editing has been changed by another program the user normally have to execute
+the command =revert-buffer= to load the new content of the file into *Psimacs*. We will
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Avoid handy revert-buffer calls
+;;
+(global-auto-revert-mode t)
+#+END_SRC
+
+*** Delete seleted text when typing.
+
+This is standard behavior on the Windows Operating System platform.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Delete selected text when typing
+;;
+(delete-selection-mode 1)
+#+END_SRC
+
+*** Line numbering
+
+*Psimacs* uses line numbering on default in many major modes.
+
+See also: [[https://www.emacswiki.org/emacs/LineNumbers][EmacsWike: LineNumbers]] and the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Display-Custom.html][Emacs manual]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Enable line numbers for almost all major-modes
+;;
+(require 'display-line-numbers)
+
+(defcustom psimacs/config/display-line-numbers-exempt-modes
+    '(  vterm-mode
+        eshell-mode
+        shell-mode
+        term-mode
+        ansi-term-mode
+        org-mode
+        neotree-mode
+        dashboard-mode
+    )
+    "Major modes on which to disable the linum mode, exempts them from global requirement"
+    :group 'display-line-numbers
+    :type 'list
+    :version "green"
+)
+
+;;
+;; To disable this in certain major modes, redefine display-line-numbers--turn-on
+;;
+(defun display-line-numbers--turn-on ()
+    "Turn on line numbers but excempting certain majore modes defined in
+'psimacs/config/display-line-numbers-exempt-modes'"
+    (if (and
+            (not (member major-mode psimacs/config/display-line-numbers-exempt-modes))
+                (not (minibufferp))
+        )
+
+        (display-line-numbers-mode)
+    )
+)
+
+(global-display-line-numbers-mode 1)
+#+END_SRC
+
+*** Spaces between sentences
+
+In my world, sentences end with a single space. This makes sentence navigation commands
+work for me.
+
+See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Sentences.html][Emacs Manual: Sentence]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Sentence end with one space
+;;
+(setq sentence-end-double-space nil)
+#+END_SRC
+
+*** Fringes
+
+On graphical displays, each Emacs window normally has narrow fringes (gutters/margins)
+on the left and right edges. The fringes are used to display symbols that provide
+information about the text in the window.
+
+See the following references for fringes:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Fringes.html][Window Fringes]]
+- [[https://emacsredux.com/blog/2015/01/18/customizing-the-fringes/][Customizing the Fringes]]
+- [[https://www.flycheck.org/en/latest/user/error-reports.html][FlyCheck -> See errors in buffers -> Fringe and margin icons]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Usually, fringes defaults to 8 pixel width
+;;
+(set-fringe-mode 16)
+;;(defun my-tone-down-fringes ()
+;;  (set-face-attribute 'fringe nil
+;;                      :foreground (face-foreground 'default)
+;;                      :background (face-background 'default)))
+#+END_SRC
+
+*** Scratch buffer
+
+Show an empty scratch buffer on startup.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Show an empty scratch buffer on startup.
+;;
+(setq initial-scratch-message "")
+#+END_SRC
+
+*** CANCELED Undo in commands
+
+Fix undo in commands affecting the mark.
+
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/The-Mark.html][The Mark -> mark-even-if-inactive]]
+- Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
+
+Remark: I have canceled the following setting. I am unsure about the right setting.
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+(setq mark-even-if-inactive nil)
+#+END_SRC
+
+*** No dialog boxes
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dialog-Boxes.html][Using Dialog Boxes]] describes the variable =use-dialog-box=. If this is set to =nil= not dialog boxes appear for
+/yes-or-no/ questions beside others special questions. This way *Emacs* always performs /yes-or-no/ prompts using
+the echo area and keyboard input.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Prompts should go in the minibuffer, not in a GUI.
+;;
+(setq use-dialog-box nil)
+#+END_SRC
+
+*** Mark and Pop
+
+Handy way of getting back to previous places.
+
+Immediately after you type =C-u C-<SPC>=, you can type =C-<SPC>= instead of =C-u C-<SPC>= to
+cycle through the mark ring.
+
+From the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Mark-Ring.html][Emacs Manual: The Mark Ring]]:
+
+#+BEGIN_QUOTE
+Each buffer remembers previous locations of the mark, in the mark ring. Commands that set the mark also push the old
+mark onto this ring. One of the uses of the mark ring is to remember spots that you may want to go back to.
+#+END_QUOTE
+
+| Keybinding                      | Command                                    | Description                                                                                                                                                                                    |
+|---------------------------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC=, =C-@=                  | =M-x cua-set-mark=, =M-x set-mark-command= | Set mark at where point is, clear mark, or jump to mark.                                                                                                                                       |
+|                                 |                                            | With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
+| =C-u C-SPC=, =C-u C-@=, =C-x p= | =M-x pop-to-mark-command=                  | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                             |
+| =C-x C-@=                       | =M-x pop-global-mark=                      | Jump to a mark off the global mark ring.                                                                                                                                                       |
+| =C-SPC C-SPC=                   |                                            | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                            |
+| =C-u C-u C-SPC=                 |                                            | Unconditionally set mark.                                                                                                                                                                      |
+
+If you set =set-mark-command-repeat-pop= to non-nil, then immediately after you type =C-u C-SPC=, you can type =C-SPC=
+instead of =C-u C-SPC= to cycle through the mark ring.
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+;;
+;; Handy way of getting back to previous places.
+;;
+(setq set-mark-command-repeat-pop t)
+(bind-key "C-x p" 'pop-to-mark-command)
+#+END_SRC
+
+*** Indentation and Tab stops
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Indent-Convenience.html][Electric Indent mode]] is a global minor mode that automatically indents the line after every =<RET>= you type.
+This mode is enabled by default, which we turn off.
+
+Use instead:
+
+| Keybinding | Command                  | Description         |
+|------------+--------------------------+---------------------|
+| =C-j=      | =M-x newline-and-indent= | Indent current line |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Matter of taste, do not automatically indent on <RET>
+;;
+(setq electric-indent-mode nil)
+#+END_SRC
+
+Do not use tab characters -> fill spaces instead.
+Insert a real tab character with =C-q TAB=.
+
+| Keybinding | Command             | Description                                                                                     |
+|------------+---------------------+-------------------------------------------------------------------------------------------------|
+| =C-q TAB=  | =M-x quoted-insert= | Read next input character (TAB) and insert it. This is useful for inserting control characters. |
+|            |                     |                                                                                                 |
+
+See also:
+- [[https://www.emacswiki.org/emacs/IndentationBasics][Indentation Basics]]
+- [[https://www.emacswiki.org/emacs/NoTabs][No Tabs]]
+- [[https://www.emacswiki.org/emacs/TabsAreEvil][Tabs Are Evil]]
+- [[http://ergoemacs.org/emacs/emacs_tabs_space_indentation_setup.html][Tabs, Space, Indentation Setup]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Always insert space characters instead of tab characters.
+;;
+(setq-default indent-tabs-mode nil)
+#+END_SRC
+
+Use of standard tab width, that is the length of the =TAB= character.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; We interpret a TAB character with a length of 8 space characters
+;;
+(setq-default tab-width 8)
+#+END_SRC
+
+Tab stop positions: =M-i=, i.e. =tab-to-tab-stop= moves to the next position.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; This variable defines the tab stop columns used by tab-to-tab-stop.
+;; A list of increasing integers, which need not be evenly spaced.
+;; The list is implicitly extended to infinity through repetition of the interval
+;; between the last and penultimate elements
+;;
+(setq tab-stop-list '(4 8))
 #+END_SRC
 
 ** Backups
@@ -3317,6 +3650,8 @@ through the command =C-x C-r=.
 
 ** Handling
 
+This section provides setting and packages that enhance the user experience with *Emacs* considerably.
+
 *** Edit region indirectly in another buffer
 
 The package [[https://github.com/Fanael/edit-indirect][edit-indirect]] is a useful enhancement for editing. It provides a command =edit-indirect-region= that
@@ -3424,7 +3759,7 @@ When on, typing any left bracket automatically insert the right matching bracket
 At the moment I have disabled it, because I would like to try [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]] alternative to the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 Actually, I always had some problems with the  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-handling.el
 (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
 (electric-pair-mode 1)
 #+END_SRC
@@ -3432,7 +3767,7 @@ Actually, I always had some problems with the  [[https://www.gnu.org/software/em
 The following code [[http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html][Emacs: Insert Brackets by Pair]] is taken from [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]]. It tries to solve some of the
 problems that arise with [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Wonderful bracket inserter taken from Xah Lee at
 ;; http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html
@@ -3543,7 +3878,10 @@ Additionally, *Psimacs* provides the following key bindings:
 | =H-m /=    | =M-x psimacs/pair/insert-slash=              | Insert slashes =/▮/=.             |
 |            |                                              |                                   |
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+Remark: The HTML rendering on GitHub is not correct. With normal HTML export of *Emacs*'s Org-Mode, however, the
+rendering is perfectly fine. I couldn't resolve the issue.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Convenience functions using psimacs/pair/insert-bracket-pair
 ;;
@@ -3569,7 +3907,9 @@ Additionally, *Psimacs* provides the following key bindings:
 (defun psimacs/pair/insert-slash                    () "Insert slash characters /▮/"           (interactive) (psimacs/pair/insert-bracket-pair "/"  "/"))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+Define key bindings for the most important =psimacs/pair/insert-*= commands only.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Add the missing key bindings for the frame creation strategy promised above.
 ;;
@@ -3584,13 +3924,15 @@ Additionally, *Psimacs* provides the following key bindings:
 (define-key psimacs/config/global-key-map/special (kbd "/")  'psimacs/pair/insert-slash)
 #+END_SRC
 
-
 See matching pairs of parenthesis and other characters. When point is on one of the
 paired characters, the other is highlighted.
 
 See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Highlight matching pairs
+;;
 (use-package paren
     :diminish show-paren-mode
     :hook (after-init . show-paren-mode)
@@ -3605,13 +3947,233 @@ See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.h
 )
 #+END_SRC
 
+*** Buffer List
+
+Use command =ibuffer= instead of the default =list-buffers= for =C-x C-b=. The command =ibuffer= is an improved
+version of =list-buffers=. *IBuffer* colors the files by type and [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]] introduces it in [[http://ergoemacs.org/emacs/emacs_buffer_management.html][Emacs: List Buffers]].
+
+| Keybinding | Command                | Description                                    |
+|------------+------------------------+------------------------------------------------|
+| =C-x C-b=  | =M-x ibuffer=          | Begin using IBuffer to edit a list of buffers. |
+| =C-x b=    | =M-x switch-to-buffer= | Switch to buffer, selected from list.          |
+| =C-x k=    | =M-x kill-buffer=      | Close the current buffer.                      |
+|            |                        |                                                |
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Completely replace list-buffers by ibuffer. Implies automatically ibuffer on C-x C-b
+;;
+(defalias 'list-buffers 'ibuffer)
+;;(global-set-key (kbd "C-x C-b") 'ibuffer)
+#+END_SRC
+
+*** Cua Mode
+
+When [[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]] is enabled, the keys =C-x=, =C-c=, =C-v=, and =C-z= invoke commands that cut (kill),
+copy, paste (yank), and undo respectively.
+
+To enter an *Emacs* command like =C-x C-f= while the mark is active, use one of the following
+methods:
+- either hold Shift together with the prefix key, e.g., =S-C-x C-f=,
+- or quickly type the prefix key twice, e.g., =C-x C-x C-f=
+- or disable [[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]] by pressing =<f12>= or =H-m c=.
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]] provides enhanced rectangle support with visible rectangle highlighting.
+Use =C-<RET>= to start a rectangle, extend it using the movement commands, and cut or copy
+it using =C-x= or =C-c=. =<RET>= moves the cursor to the next (clockwise) corner of the rectangle,
+so you can easily expand it in any direction. Normal text you type is inserted to the left
+or right of each line in the rectangle (on the same side as the cursor).
+
+With CUA you can easily copy text and rectangles into and out of registers by providing a
+one-digit numeric prefix to the kill, copy, and yank commands, e.g., =C-1 C-c= copies the
+region into register 1, and =C-2 C-v= yanks the contents of register 2.
+
+CUA mode also has a global mark feature which allows easy moving and copying of text
+between buffers. Use =C-S-<SPC>= to toggle the global mark on and off. When the global
+mark is on, all text that you kill or copy is automatically inserted at the global
+mark, and text you type is inserted at the global mark rather than at the current
+position.
+
+See also:
+- [[http://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][Manual: Cua-Bindings]],
+- [[https://www.emacswiki.org/emacs/CuaMode][EmacsWiki: Cua Mode]],
+- [[https://emacs.stackexchange.com/questions/26874/what-am-i-giving-up-by-activating-cua-mode][What am I giving up by activating CUA mode?]]
+- [[http://ergoemacs.org/misc/emacs_keybinding_and_cua-mode_keys.html][Emacs cua-mode Keybinding Problems]]
+
+| Keybinding | Command                      | Description                                  |
+|------------+------------------------------+----------------------------------------------|
+| =<f12>=    | =M-x cua-mode=               | Toggle CUA mode.                             |
+| =H-m c=    | =M-x cua-mode=               | Toggle CUA mode.                             |
+|------------+------------------------------+----------------------------------------------|
+| =C-x=      |                              | Windows conform cut if CUA-mode is active.   |
+| =C-c=      |                              | Windows conform copy if CUA-mode is active.  |
+| =C-v=      |                              | Windows conform paste if CUA-mode is active. |
+| =C-z=      |                              | Undo command if CUA-mode is active.          |
+| =C-S-z=    |                              | Redo command if CUA-mode is active.          |
+|------------+------------------------------+----------------------------------------------|
+| =C-<RET>=  | =M-x cua-set-rectangle-mark= | Start a rectangle.                           |
+| =<Ret>=    | =M-x cua-rotate-rectangle=   | Move to next corner.                         |
+| =C-1 C-c=  |                              | Copy rectangle to register 1                 |
+| =...=      |                              | ...                                          |
+| =C-9 C-c=  |                              | Copy rectangle to register 9                 |
+| =C-1 C-x=  |                              | Cut rectangle to register 1                  |
+| =...=      |                              | ...                                          |
+| =C-9 C-x=  |                              | Cut rectangle to register 9                  |
+| =C-1 C-v=  |                              | Yank rectangle from register 1               |
+| =...=      |                              | ...                                          |
+| =C-9 C-v=  |                              | Yank  rectangle from register 9              |
+|            |                              |                                              |
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; CUA-Mode: Enabled on default
+;;
+(cua-mode t)
+(setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
+(setq cua-keep-region-after-copy t)   ;; Standard Windows behaviour
+(setq cua-delete-selection t)
+(global-set-key (kbd "<f12>") 'cua-mode)
+(define-key psimacs/config/global-key-map/special (kbd "c") 'cua-mode)
+#+END_SRC
+
+*** Perspective
+
+The [[https://github.com/nex3/perspective-el][perspective]] package provides multiple named workspaces
+(or "perspectives") in *Emacs*, similar to multiple desktops in window managers.
+
+Each [[https://github.com/nex3/perspective-el][perspective]] has its own buffer list and its own window
+layout. This makes it easy to work on many separate projects without getting lost in all the buffers.
+Switching to a [[https://github.com/nex3/perspective-el][perspective]] activates its window configuration,
+and when in a [[https://github.com/nex3/perspective-el][perspective]], only its buffers
+are available (by default).
+
+Each *Emacs* frame has a distinct list of [[https://github.com/nex3/perspective-el][perspectives]].
+
+Commands are all prefixed by =C-x x= by default. To change the prefix key, customize =persp-mode-prefix-key=.
+Additionally, creating a key binding for =persp-mode-map= will also activate the prefix.
+
+| Keybinding                 | Command                      | Description                                                                                         |
+|----------------------------+------------------------------+-----------------------------------------------------------------------------------------------------|
+| =C-x x=                    |                              | Prefix key for all perspective commands.                                                            |
+| =C-x x s=                  | =M-x persp-switch=           | Query a perspective to switch to, or create                                                         |
+| =C-x x k=                  | =M-x persp-remove-buffer=    | Query a buffer to remove from current perspective                                                   |
+| =C-x x c=                  | =M-x persp-kill=             | Query a perspective to kill                                                                         |
+| =C-x x r=                  | =M-x persp-rename=           | Rename current perspective                                                                          |
+| =C-x x a=                  | =M-x persp-add-buffer=       | Query an open buffer to add to current perspective                                                  |
+| =C-x x A=                  | =M-x persp-set-buffer=       | Add buffer to current perspective and remove it from all others                                     |
+| =C-x x b=                  | =M-x persp-switch-to-buffer= | Like switch-to-buffer; includes all buffers from all perspectives; changes perspective if necessary |
+| =C-x x i=                  | =M-x persp-import=           | Import a given perspective from another frame.                                                      |
+| =C-x x n=, =C-x x <right>= | =M-x persp-next=             | Switch to next perspective                                                                          |
+| =C-x x p=, =C-x x <left>=  | =M-x persp-prev=             | Switch to previous perspective                                                                      |
+| =C-x x C-s=                | =M-x persp-state-save=       | Save all perspectives in all frames to a file                                                       |
+| =C-x x C-l=                | =M-x persp-state-load=       | Load all perspectives from a file                                                                   |
+
+Since [[https://github.com/nex3/perspective-el][perspective]]  maintains distinct buffer lists for each [[https://github.com/nex3/perspective-el][perspective]], it helps to use a
+Perspective-aware buffer switcher.
+
+| Ido           | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                                  |
+| bs.el         | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                    |
+| IBuffer       | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                    |
+| Helm          | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                   |
+| Ivy / Counsel | Perspective provides two commands for listing buffers using Ivy and Counsel: =persp-ivy-switch-buffer= and =persp-counsel-switch-buffer=. When these functions are called normally, they show a list of buffers filtered by the current perspective. With a prefix argument, they shows a list of buffers in all perspectives. |
+|               |                                                                                                                                                                                                                                                                                                                                |
+
+Currently, *Psimacs* has not enabled [[https://github.com/nex3/perspective-el][perspective]] on default. I have to think about its usefulness for my working habit.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(use-package perspective
+  :bind (
+         ("C-x b" . persp-switch-to-buffer*)
+         ("C-x k" . persp-kill-buffer*)
+         )
+;  :config
+;      (persp-mode)
+  )
+#+END_SRC
+
+*** Abbreviations
+
+*Emacs's* [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][Abbrevs]] feature lets you type a short word and expand into a full word or code template.
+
+Emacs has a nice feature to expand abbreviations. If for example, you wanted
+an abbreviation for 'Your Name' to be 'yn', just type 'yn' and with your point
+after the 'n' do =C-x a i g= (mnemonic add inverse global) and enter the expansion,
+in this case 'Your Name'. In the future, whenever you type 'yn' your name will be
+inserted. The abbrevs are automatically saved between sessions in a file.
+
+If you don't like an abbrev that you have set up, then do =M-x edit-abbrevs=.
+You can have different abbrevs for each mode (cperl, c++, Message);
+the g in =C-x a i g= is for global, meaning every mode.
+
+Suppose you want to define "bg" for "background": Type =M-x add-global-abbrev=, i.e. =C-x a g= and
+then type "bg" in the prompt. Now, when you type "bg" followed by a space or return, it will expand
+to "background".
+
+If you want the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbrev]] only
+for the current major mode: Type =M-x add-mode-abbrev=, i.e. =C-x a l= ...
+
+If the expanded text is more than one word, for example, suppose you want to define "faq" for
+"frequently asked questions". Type "frequently asked questions", then select the text and do
+=C-u C-x a g= rspl. =C-u C-x a l=.
+
+Remove an abbreviation by =C-u -1 C-x a g= rspl. =C-u -1 C-x a l= followed by the memnomic, e.g. "bg".
+
+Other commands: =M-x list-abbrevs=, =M-x edit-abbrevs=, =M-x edit-abbrevs-redefine=, =M-x abbrev-edit-save-buffe=
+and =M-x abbrev-edit-save-to-file=.
+
+Additionally, =M-x read-abbrev-file= and =M-x write-abbrev-file=.
+
+| Keybinding       | Command                         | Description                                                           |
+|------------------+---------------------------------+-----------------------------------------------------------------------|
+| =C-x a i g=      | =M-x inverse-add-global-abbrev= | add inverse global abbreviation, i.e. 'yn'→ =C-x a i g= → 'Your Name' |
+| =C-x=a g=        | =M-x add-global-abbrev=         | add global abbreviation, i.e. 'Name' → =C-x a g= → 'n'                |
+| =C-u C-x=a g=    | =M-x add-global-abbrev=         | add region global abbreviation, i.e. 'Your Name' → =C-x a g= → 'yn'   |
+| =C-u -1 C-x a g= |                                 | remove global abbreviation, i.e. 'yn'                                 |
+|------------------+---------------------------------+-----------------------------------------------------------------------|
+| =C-x a i l=      | =M-x inverse-add-mode-abbrev=   | add inverse mode abbreviation, i.e. 'yn'→ =C-x a i l= → 'Your Name'   |
+| =C-x=a l=        | =M-x add-mode-abbrev=           | add mode abbreviation, i.e. 'Name' → =C-x a l= → 'n'                  |
+| =C-u C-x=a l=    | =M-x add-mode-abbrev=           | add mode abbreviation, i.e. 'Your Name' → =C-x a l= → 'yn'            |
+| =C-u -1 C-x a l= |                                 | remove mode abbreviation, i.e. 'yn'                                   |
+|------------------+---------------------------------+-----------------------------------------------------------------------|
+|                  | =M-x edit-abbrevs=              |                                                                       |
+|                  | =M-x edit-abbrevs-redefine=     |                                                                       |
+|                  | =M-x list-abbrevs=              |                                                                       |
+|                  | =M-x abbrev-edit-save-buffer=   |                                                                       |
+|                  | =M-x abbrev-edit-save-to-file=  |                                                                       |
+
+See also:
+- [[https://www.emacswiki.org/emacs/AbbrevMode][Abbrev-Mode]]
+- [[http://ergoemacs.org/emacs/emacs_abbrev_mode.html][Abbrev Mode]]
+- [[http://ergoemacs.org/emacs/emacs_abbrev_mode_tutorial.html][Abbrev Mode Tutorial]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Setup the abbreviation facility.
+;;
+(use-package abbrev
+  :straight nil
+  :bind (
+         :map psimacs/config/global-key-map/special
+              ("C-x C-a" . abbrev-mode)
+         )
+  :init
+      (dim-minor-name 'abbrev-mode "?𝓐")
+
+      (setq save-abbrevs 'silently)
+      (setq abbrev-file-name psimacs/config/abbrev-file)
+      (if (file-exists-p psimacs/config/abbrev-file)
+          (quietly-read-abbrev-file psimacs/config/abbrev-file))
+)
+#+END_SRC
+
 ** Windows and frame layout
 
 *** Frame size and position
 
 Add key bindings for the frame creation strategy commands, as promised in the [[Startup frame size and position][Startup frame size and position]] section.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el :var file-description="Basic layout setup"
 ;;
 ;; Add the missing key bindings for the frame creation strategy promised above.
 ;;
@@ -3631,7 +4193,7 @@ the golden ration.
 |               |                         |                                                     |
 
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el :var file-description="Basic layout setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
 ;;
 ;; Always keep buffer sizes in golden ratios
 ;;
