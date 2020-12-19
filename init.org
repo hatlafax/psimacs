@@ -232,7 +232,7 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 - [[https://www.masteringemacs.org/article/evaluating-elisp-emacs][Evaluating Elisp in Emacs]]
 - [[http://ergoemacs.org/emacs/elisp.html][Practical Emacs Lisp]]
 
-* Keybinding
+* Key binding
 I am trying to setup keybinding in a /mnemonics/ way so it's easy to remember (and use).
 I am staying with the /standard/ emacs keybinding as much as possible.
 
@@ -615,7 +615,7 @@ FILE        : el file that get generated
 ORG-FILE    : org mode file that is prints
 DESCRIPTION : short description text"
   (let (
-        (preamble (concat (format ";;; %s ---%s-*- lexical-binding: t -*-\n" (file-name-nondirectory file) description)
+        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8 -*- lexical-binding: t -*-\n" (file-name-nondirectory file) description)
                                   ";;\n"
                           (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
                                   ";;\n"
@@ -692,7 +692,7 @@ For these files extra header and footer are written. In this case, also an addit
 
 Shortly, all tangled source code blocks for file foo.el are written to one file 'foo.el' that look like
 
-;; foo.el --- text -*- lexical-binding: t -*-
+;; foo.el --- text -*- coding: utf-8 -*- lexical-binding: t -*-
 ;;
 ;; Don't edit this file, edit file.org instead ...
 ;;
@@ -1129,11 +1129,12 @@ Early up we set the *Psimacs* frame's size and position in order to avoid distra
 *Psimacs* provides three simple strategies for positioning and sizing new frames. These strategies can be activated
 by the following function which are actually defined in section [[Frame size and position][Frame size and position]].
 
-| Keybinding        | Command                                                 | Description                                                                               |
+| Key binding       | Command                                                 | Description                                                                               |
 |-------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------|
 | =H-m C-w C-x 5 l= | =M-x psimacs/window/set-frame-creation-strategy-layout= | Place and size new frames left and right to the main frame. This is the default strategy. |
 | =H-m C-w C-x 5 m= | =M-x psimacs/window/set-frame-creation-strategy-main=   | Always use the same placement and size as the initial main frame.                         |
 | =H-m C-w C-x 5 s= | =M-x psimacs/window/set-frame-creation-strategy-system= | Let Emacs and the operating system decide.                                                |
+|-------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------|
 
 If you do not like the =layout= preset, change variable =psimacs/config/default-frame-creation-strategy= according
 to it's documentation string.
@@ -1511,7 +1512,6 @@ Auto saving is performed by *Psimacs* a lot.
   (psimacs/file-system/concat-file psimacs/config/session-dir ".abbreviations")
   "The psimacs abbreviation file.")
 #+END_SRC
-
 
 ** Emacs client/server
 
@@ -2635,6 +2635,7 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 | =H-c= and =s-c=                      | common user commands      |
 | =H-x= and =s-x=                      | common execution commands |
 | =H-m=, =H-,= =s-m=, =s-,= and =<f9>= | special user commands     |
+|--------------------------------------+---------------------------|
 
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
@@ -2754,7 +2755,7 @@ for i in *info*; do install-info.exe $i dir; done
 
 *Psimacs* currently supports two sets of commands for printing on windows:
 
-| Keybinding      | Command                          | Description                                     |
+| Key binding     | Command                          | Description                                     |
 |-----------------+----------------------------------+-------------------------------------------------|
 | =H-m C-p C-p b= | =M-x print-buffer=               | B/W print hardcopy of buffer on default printer |
 | =H-m C-p C-p r= | =M-x print-region=               | B/W print hardcopy of region on default printer |
@@ -2930,7 +2931,7 @@ See also:
 - [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
 - [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
 
-| Keybinding                        | Command                                | Description                                                                                                                                                                                                      |
+| Key binding                       | Command                                | Description                                                                                                                                                                                                      |
 |-----------------------------------+----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                                   | =M-x revert-buffer-with-coding-system= |                                                                                                                                                                                                                  |
 |                                   | =M-x set-buffer-file-coding-system=    |                                                                                                                                                                                                                  |
@@ -2959,6 +2960,56 @@ See also:
 (set-file-name-coding-system 'utf-8)
 (set-language-environment "UTF-8")          ; How to permanently choose a encoding system in emacs for opening and saving
 (setq default-process-coding-system '(utf-8-dos . utf-8-dos))
+#+END_SRC
+
+** Emacs server
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Emacs-Server.html][Using Emacs as a Server]] describes the details about configuration of an *Emacs server*. *Psimacs* uses a configuration
+method that allows multiple different *Emacs's* be run simultaneously. However, only one can drive the *Emacs server*
+at a time. *Psimacs* is configured in such a way that is starts the server only if no other *Emacs* instance exists
+that does already run the server. /First come first serve/ principle. For that it uses the =EMACS_SERVER_FILE=
+environment variable for server detection. If it is actually, the first one it sets the =EMACS_SERVER_FILE= variable
+accordingly.
+
+Caveat: This is only Windows OS specific and I do not know how to setup that on other systems.
+
+References:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Emacs-Server.html][Using Emacs as a Server]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/TCP-Emacs-server.html#TCP-Emacs-server][TCP Emacs server]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/emacsclient-Options.html][emacsclient Options]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-server.el :var file-description="Emacs server setup"
+;;
+;; Initialize Emacs server if it is not already running.
+;;
+(defvar psimacs/config/found-server-file
+   (getenv "EMACS_SERVER_FILE")
+   "The active server file.")
+
+(when (and psimacs/system/is-gui-flag
+           psimacs/system/is-windows-nt-flag
+           (or (not psimacs/config/found-server-file)
+               (equal psimacs/config/found-server-file psimacs/config/server-file)))
+   (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
+   (add-hook 'kill-emacs-hook
+             (lambda ()
+               (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
+
+    (unless (file-directory-p psimacs/config/server-dir)
+        (make-directory psimacs/config/server-dir t)
+    )
+
+    (require 'server)
+
+    (unless (server-running-p)
+        (defun server-ensure-safe-dir (dir) "Noop" t)   ; Suppress error "directory
+                                                        ; ~/.emacs.d/server is unsafe"
+                                                        ; on windows.
+
+        (message "server-start")
+        (server-start)
+    )
+)
 #+END_SRC
 
 ** Look and feel
@@ -3104,6 +3155,7 @@ Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/
       scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
       auto-window-vscroll nil
       scroll-preserve-screen-position nil          ; this is not windows like, i.e. quite foreign
+      next-line-add-newlines nil                   ; Don't automatically add new lines when scrolling down at the bottom of a buffer.
 )
 #+END_SRC
 
@@ -3115,10 +3167,10 @@ much as possible, whilst minimising the frequency of sudden scroll jumps which a
 
 You can toogle the  [[https://github.com/aspiers/smooth-scrolling][smooth-scrolling-mode]] with the following command.
 
-| Keybinding      | Command                     | Description                                  |
+| Key binding     | Command                     | Description                                  |
 |-----------------+-----------------------------+----------------------------------------------|
 | =H-m C-w C-s s= | =M-x smooth-scrolling-mode= | Enable or disable the smooth scrolling mode. |
-|                 |                             |                                              |
+|-----------------+-----------------------------+----------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 ;;
@@ -3335,7 +3387,7 @@ Each buffer remembers previous locations of the mark, in the mark ring. Commands
 mark onto this ring. One of the uses of the mark ring is to remember spots that you may want to go back to.
 #+END_QUOTE
 
-| Keybinding                      | Command                                    | Description                                                                                                                                                                                    |
+| Key binding                     | Command                                    | Description                                                                                                                                                                                    |
 |---------------------------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-SPC=, =C-@=                  | =M-x cua-set-mark=, =M-x set-mark-command= | Set mark at where point is, clear mark, or jump to mark.                                                                                                                                       |
 |                                 |                                            | With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
@@ -3362,9 +3414,9 @@ This mode is enabled by default, which we turn off.
 
 Use instead:
 
-| Keybinding | Command                  | Description         |
-|------------+--------------------------+---------------------|
-| =C-j=      | =M-x newline-and-indent= | Indent current line |
+| Key binding | Command                  | Description         |
+|-------------+--------------------------+---------------------|
+| =C-j=       | =M-x newline-and-indent= | Indent current line |
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 ;;
@@ -3376,10 +3428,10 @@ Use instead:
 Do not use tab characters -> fill spaces instead.
 Insert a real tab character with =C-q TAB=.
 
-| Keybinding | Command             | Description                                                                                     |
-|------------+---------------------+-------------------------------------------------------------------------------------------------|
-| =C-q TAB=  | =M-x quoted-insert= | Read next input character (TAB) and insert it. This is useful for inserting control characters. |
-|            |                     |                                                                                                 |
+| Key binding | Command             | Description                                                                                     |
+|-------------+---------------------+-------------------------------------------------------------------------------------------------|
+| =C-q TAB=   | =M-x quoted-insert= | Read next input character (TAB) and insert it. This is useful for inserting control characters. |
+|             |                     |                                                                                                 |
 
 See also:
 - [[https://www.emacswiki.org/emacs/IndentationBasics][Indentation Basics]]
@@ -3413,6 +3465,64 @@ Tab stop positions: =M-i=, i.e. =tab-to-tab-stop= moves to the next position.
 ;; between the last and penultimate elements
 ;;
 (setq tab-stop-list '(4 8))
+#+END_SRC
+
+*** Lock file
+
+Disable creation of lock-files named =.#<filename>=. I do not have problem with simultaneous file editing.
+
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Interlocking.html][Protection against Simultaneous Editing]]
+- [[https://www.emacswiki.org/emacs/LockFiles][LockFiles]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; No lock-files named .#<filename>
+;;
+(setq-default create-lockfiles nil)
+#+END_SRC
+
+*** Newline at end
+
+Last line automatically appending with newline as described in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Customize-Save.html][Customizing Saving of Files]] of the manual.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Yes, always add a final newline
+;;
+(setq require-final-newline t)
+#+END_SRC
+
+*** Case sensitive searches only on capitalization
+
+By default, we want case sensitivity in searches and replaces to be smart.
+That is, if your search doesn't use capital letters, *Emacs* will /ignore case/.
+If it does, *Emacs* will be /case-sensitive/.
+
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Searching-and-Case.html][Searching and Case]]
+- [[https://www.emacswiki.org/emacs/CaseFoldSearch][Case Fold Search]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Case sensitive searches only on capitalization
+;;
+(setq-default case-fold-search t)
+#+END_SRC
+
+*** Calendar
+
+Weeks starts on Mondays.
+
+References:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Calendar_002fDiary.html#Calendar_002fDiary][The Calendar and the Diary]]
+- [[https://www.emacswiki.org/emacs/CalendarLocalization][Calendar Localization]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Weeks starts on Mondays
+;;
+(setq calendar-week-start-day t)
 #+END_SRC
 
 ** Backups
@@ -3574,10 +3684,10 @@ It also deletes duplicates entries.
 
 Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][savehist.el]] is available on [[https://github.com/emacs-mirror/emacs][emacs-mirror]].
 
-| Keybinding    | Command                            | Description                              |
+| Key binding   | Command                            | Description                              |
 |---------------+------------------------------------+------------------------------------------|
 | =H-m C-c C-h= | (find-file-read-only history-file) | Open the history file in read-only mode. |
-|               |                                    |                                          |
+|---------------+------------------------------------+------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
 ;;
@@ -3614,15 +3724,15 @@ Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][sa
 across sessions on exiting *Emacs* - you can then access this list
 through the command =C-x C-r=.
 
-| Keybinding | Command                         | Description                                                  |
-|------------+---------------------------------+--------------------------------------------------------------|
-| =H-x r=    | =M-x recentf-open-files=        | Show a dialog to open a recent file.                         |
-| =H-x C-r=  | =M-x recentf-open-more-files=   | Show a dialog to open a recent file that is not in the menu. |
-|            | =M-x recentf-cleanup=           | Cleanup the recent file list.                                |
-|------------+---------------------------------+--------------------------------------------------------------|
-| =H-x f=    | =M-x counsel-recentf=           | Find a file on recent file list.                             |
-| =H-x C-f=  | =M-x counsel-buffer-or-recentf= | Find a buffer visiting a file or file on recent file list.   |
-|            |                                 |                                                              |
+| Key binding | Command                         | Description                                                  |
+|-------------+---------------------------------+--------------------------------------------------------------|
+| =H-x r=     | =M-x recentf-open-files=        | Show a dialog to open a recent file.                         |
+| =H-x C-r=   | =M-x recentf-open-more-files=   | Show a dialog to open a recent file that is not in the menu. |
+|             | =M-x recentf-cleanup=           | Cleanup the recent file list.                                |
+|-------------+---------------------------------+--------------------------------------------------------------|
+| =H-x f=     | =M-x counsel-recentf=           | Find a file on recent file list.                             |
+| =H-x C-f=   | =M-x counsel-buffer-or-recentf= | Find a buffer visiting a file or file on recent file list.   |
+|-------------+---------------------------------+--------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
 ;;
@@ -3664,13 +3774,13 @@ After finishing the editing the command =edit-indirect-commit= replaces the orig
 the *edit-indirect buffer*. Alternatively, the command =edit-indirect-abort= drops the modification and leaves the
 region unchanged. Very useful!
 
-| Keybinding | Command                    | Description                                                                                       |
-|------------+----------------------------+---------------------------------------------------------------------------------------------------|
-| =H-c C-e=  | =M-x edit-indirect-region= | Edit region in separate buffer *edit-indirect buffer*                                             |
-| =C-c C-c=  | =M-x edit-indirect-commit= | Commit the modification done in *edit-indirect buffer*                                            |
-| =C-c C-k=  | =M-x edit-indirect-abort== | Abort indirect editing; kill buffer *edit-indirect buffer*                                        |
-| =C-x C-s=  | =M-x edit-indirect-save=   | Replace the original region in the parent buffer with the contents of the *edit-indirect buffer*. |
-|            |                            |                                                                                                   |
+| Key binding | Command                    | Description                                                                                       |
+|-------------+----------------------------+---------------------------------------------------------------------------------------------------|
+| =H-c C-e=   | =M-x edit-indirect-region= | Edit region in separate buffer *edit-indirect buffer*                                             |
+| =C-c C-c=   | =M-x edit-indirect-commit= | Commit the modification done in *edit-indirect buffer*                                            |
+| =C-c C-k=   | =M-x edit-indirect-abort== | Abort indirect editing; kill buffer *edit-indirect buffer*                                        |
+| =C-x C-s=   | =M-x edit-indirect-save=   | Replace the original region in the parent buffer with the contents of the *edit-indirect buffer*. |
+|-------------+----------------------------+---------------------------------------------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
 ;;
@@ -3865,18 +3975,18 @@ And some convenience functions that use the =psimacs/pair/insert-bracket-pair= f
 
 Additionally, *Psimacs* provides the following key bindings:
 
-| Keybinding | Command                                      | Description                       |
-|------------+----------------------------------------------+-----------------------------------|
-| =H-m (=    | =M-x psimacs/pair/insert-paren=              | Insert paranthesis =(▮)=.         |
-| =H-m [=    | =M-x psimacs/pair/insert-bracket=            | Insert brackets =[▮]=.            |
-| =H-m {=    | =M-x psimacs/pair/insert-brace=              | Insert braces ={▮}=.              |
-| =H-m "=    | =M-x psimacs/pair/insert-ascii-double-quote= | Insert ascii double quotes ="▮"=. |
-| =H-m '=    | =M-x psimacs/pair/insert-ascii-single-quote= | Insert ascii single quotes ='▮'=. |
-| =H-m e=    | =M-x psimacs/pair/insert-emacs-quote=        | Insert emacs quotes =`▮'=.        |
-| =H-m ==    | =M-x psimacs/pair/insert-equal=              | Insert equality signs ==▮==.      |
-| =H-m *=    | =M-x psimacs/pair/insert-star=               | Insert stars =*▮*=.               |
-| =H-m /=    | =M-x psimacs/pair/insert-slash=              | Insert slashes =/▮/=.             |
-|            |                                              |                                   |
+| Key binding | Command                                      | Description                       |
+|-------------+----------------------------------------------+-----------------------------------|
+| =H-m (=     | =M-x psimacs/pair/insert-paren=              | Insert paranthesis =(▮)=.         |
+| =H-m [=     | =M-x psimacs/pair/insert-bracket=            | Insert brackets =[▮]=.            |
+| =H-m {=     | =M-x psimacs/pair/insert-brace=              | Insert braces ={▮}=.              |
+| =H-m "=     | =M-x psimacs/pair/insert-ascii-double-quote= | Insert ascii double quotes ="▮"=. |
+| =H-m '=     | =M-x psimacs/pair/insert-ascii-single-quote= | Insert ascii single quotes ='▮'=. |
+| =H-m e=     | =M-x psimacs/pair/insert-emacs-quote=        | Insert emacs quotes =`▮'=.        |
+| =H-m ==     | =M-x psimacs/pair/insert-equal=              | Insert equality signs ==▮==.      |
+| =H-m *=     | =M-x psimacs/pair/insert-star=               | Insert stars =*▮*=.               |
+| =H-m /=     | =M-x psimacs/pair/insert-slash=              | Insert slashes =/▮/=.             |
+|-------------+----------------------------------------------+-----------------------------------|
 
 Remark: The HTML rendering on GitHub is not correct. With normal HTML export of *Emacs*'s Org-Mode, however, the
 rendering is perfectly fine. I couldn't resolve the issue.
@@ -3952,12 +4062,12 @@ See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.h
 Use command =ibuffer= instead of the default =list-buffers= for =C-x C-b=. The command =ibuffer= is an improved
 version of =list-buffers=. *IBuffer* colors the files by type and [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]] introduces it in [[http://ergoemacs.org/emacs/emacs_buffer_management.html][Emacs: List Buffers]].
 
-| Keybinding | Command                | Description                                    |
-|------------+------------------------+------------------------------------------------|
-| =C-x C-b=  | =M-x ibuffer=          | Begin using IBuffer to edit a list of buffers. |
-| =C-x b=    | =M-x switch-to-buffer= | Switch to buffer, selected from list.          |
-| =C-x k=    | =M-x kill-buffer=      | Close the current buffer.                      |
-|            |                        |                                                |
+| Key binding | Command                | Description                                    |
+|-------------+------------------------+------------------------------------------------|
+| =C-x C-b=   | =M-x ibuffer=          | Begin using IBuffer to edit a list of buffers. |
+| =C-x b=     | =M-x switch-to-buffer= | Switch to buffer, selected from list.          |
+| =C-x k=     | =M-x kill-buffer=      | Close the current buffer.                      |
+|             |                        |                                                |
 
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
@@ -3999,31 +4109,31 @@ See also:
 - [[http://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][Manual: Cua-Bindings]],
 - [[https://www.emacswiki.org/emacs/CuaMode][EmacsWiki: Cua Mode]],
 - [[https://emacs.stackexchange.com/questions/26874/what-am-i-giving-up-by-activating-cua-mode][What am I giving up by activating CUA mode?]]
-- [[http://ergoemacs.org/misc/emacs_keybinding_and_cua-mode_keys.html][Emacs cua-mode Keybinding Problems]]
+- [[http://ergoemacs.org/misc/emacs_keybinding_and_cua-mode_keys.html][Emacs cua-mode Key Binding Problems]]
 
-| Keybinding | Command                      | Description                                  |
-|------------+------------------------------+----------------------------------------------|
-| =<f12>=    | =M-x cua-mode=               | Toggle CUA mode.                             |
-| =H-m c=    | =M-x cua-mode=               | Toggle CUA mode.                             |
-|------------+------------------------------+----------------------------------------------|
-| =C-x=      |                              | Windows conform cut if CUA-mode is active.   |
-| =C-c=      |                              | Windows conform copy if CUA-mode is active.  |
-| =C-v=      |                              | Windows conform paste if CUA-mode is active. |
-| =C-z=      |                              | Undo command if CUA-mode is active.          |
-| =C-S-z=    |                              | Redo command if CUA-mode is active.          |
-|------------+------------------------------+----------------------------------------------|
-| =C-<RET>=  | =M-x cua-set-rectangle-mark= | Start a rectangle.                           |
-| =<Ret>=    | =M-x cua-rotate-rectangle=   | Move to next corner.                         |
-| =C-1 C-c=  |                              | Copy rectangle to register 1                 |
-| =...=      |                              | ...                                          |
-| =C-9 C-c=  |                              | Copy rectangle to register 9                 |
-| =C-1 C-x=  |                              | Cut rectangle to register 1                  |
-| =...=      |                              | ...                                          |
-| =C-9 C-x=  |                              | Cut rectangle to register 9                  |
-| =C-1 C-v=  |                              | Yank rectangle from register 1               |
-| =...=      |                              | ...                                          |
-| =C-9 C-v=  |                              | Yank  rectangle from register 9              |
-|            |                              |                                              |
+| Key binding | Command                      | Description                                  |
+|-------------+------------------------------+----------------------------------------------|
+| =<f12>=     | =M-x cua-mode=               | Toggle CUA mode.                             |
+| =H-m c=     | =M-x cua-mode=               | Toggle CUA mode.                             |
+|-------------+------------------------------+----------------------------------------------|
+| =C-x=       |                              | Windows conform cut if CUA-mode is active.   |
+| =C-c=       |                              | Windows conform copy if CUA-mode is active.  |
+| =C-v=       |                              | Windows conform paste if CUA-mode is active. |
+| =C-z=       |                              | Undo command if CUA-mode is active.          |
+| =C-S-z=     |                              | Redo command if CUA-mode is active.          |
+|-------------+------------------------------+----------------------------------------------|
+| =C-<RET>=   | =M-x cua-set-rectangle-mark= | Start a rectangle.                           |
+| =<Ret>=     | =M-x cua-rotate-rectangle=   | Move to next corner.                         |
+| =C-1 C-c=   |                              | Copy rectangle to register 1                 |
+| =...=       |                              | ...                                          |
+| =C-9 C-c=   |                              | Copy rectangle to register 9                 |
+| =C-1 C-x=   |                              | Cut rectangle to register 1                  |
+| =...=       |                              | ...                                          |
+| =C-9 C-x=   |                              | Cut rectangle to register 9                  |
+| =C-1 C-v=   |                              | Yank rectangle from register 1               |
+| =...=       |                              | ...                                          |
+| =C-9 C-v=   |                              | Yank  rectangle from register 9              |
+|             |                              |                                              |
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
@@ -4053,7 +4163,7 @@ Each *Emacs* frame has a distinct list of [[https://github.com/nex3/perspective-
 Commands are all prefixed by =C-x x= by default. To change the prefix key, customize =persp-mode-prefix-key=.
 Additionally, creating a key binding for =persp-mode-map= will also activate the prefix.
 
-| Keybinding                 | Command                      | Description                                                                                         |
+| Key binding                | Command                      | Description                                                                                         |
 |----------------------------+------------------------------+-----------------------------------------------------------------------------------------------------|
 | =C-x x=                    |                              | Prefix key for all perspective commands.                                                            |
 | =C-x x s=                  | =M-x persp-switch=           | Query a perspective to switch to, or create                                                         |
@@ -4124,7 +4234,9 @@ and =M-x abbrev-edit-save-to-file=.
 
 Additionally, =M-x read-abbrev-file= and =M-x write-abbrev-file=.
 
-| Keybinding       | Command                         | Description                                                           |
+| Key binding      | Command                         | Description                                                           |
+|------------------+---------------------------------+-----------------------------------------------------------------------|
+| =H-m C-x C-a=    | =M-x abbrev-mode=               | Enable/Disable abbreviation mode.                                     |
 |------------------+---------------------------------+-----------------------------------------------------------------------|
 | =C-x a i g=      | =M-x inverse-add-global-abbrev= | add inverse global abbreviation, i.e. 'yn'→ =C-x a i g= → 'Your Name' |
 | =C-x=a g=        | =M-x add-global-abbrev=         | add global abbreviation, i.e. 'Name' → =C-x a g= → 'n'                |
@@ -4141,6 +4253,7 @@ Additionally, =M-x read-abbrev-file= and =M-x write-abbrev-file=.
 |                  | =M-x list-abbrevs=              |                                                                       |
 |                  | =M-x abbrev-edit-save-buffer=   |                                                                       |
 |                  | =M-x abbrev-edit-save-to-file=  |                                                                       |
+|------------------+---------------------------------+-----------------------------------------------------------------------|
 
 See also:
 - [[https://www.emacswiki.org/emacs/AbbrevMode][Abbrev-Mode]]
@@ -4167,6 +4280,38 @@ See also:
 )
 #+END_SRC
 
+*** Save cursor places
+
+We save the current cursor position for use in the next session on a per file/buffer basis.
+
+See also:
+- [[https://www.emacswiki.org/emacs/SavePlace][EmacsWiki: SavePlace]]
+- [[http://ergoemacs.org/emacs/emacs_save_cursor_position.html][Emacs: Save Cursor Position]]
+- [[https://github.com/emacs-mirror/emacs/blob/master/lisp/saveplace.el][Emacs mirror: saveplace.el]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(use-package saveplace
+    :straight nil
+    :diminish save-place-mode
+    :config
+        (progn
+            (setq save-place-file psimacs/config/save-places-file)
+            (setq save-place-forget-unreadable-files nil)
+            (save-place-mode 1)
+        )
+)
+#+END_SRC
+
+*** Hex file modes
+
+Associate certain binary files to hexl-mode.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(setq auto-mode-alist
+    (append '(("\\.\\(obj\\|exe\\|dll\\|com\\)$" . hexl-mode)) auto-mode-alist)
+)
+#+END_SRC
+
 ** Windows and frame layout
 
 *** Frame size and position
@@ -4187,10 +4332,10 @@ Add key bindings for the frame creation strategy commands, as promised in the [[
 The package [[https://github.com/roman/golden-ratio.el][Golden-Ratio]] provides the /golden-ratio-mode/ that will automatically adjust buffers sizes to keep
 the golden ration.
 
-| Keybinding    | Command                 | Description                                         |
+| Key binding   | Command                 | Description                                         |
 |---------------+-------------------------+-----------------------------------------------------|
 | =H-m C-w C-r= | =M-x golden-ratio-mode= | Toggle automatic window resizing with golden ratio. |
-|               |                         |                                                     |
+|---------------+-------------------------+-----------------------------------------------------|
 
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
@@ -4209,6 +4354,401 @@ the golden ration.
          :map psimacs/config/global-key-map/special
               ("C-w C-r" . golden-ratio-mode)
         )
+)
+#+END_SRC
+
+** Basic Tools
+*** Ediff
+The [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] package provides a
+comprehensive visual interface to Unix diff and patch utilities.
+
+From the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff Introduction]]
+#+BEGIN_QUOTE
+Ediff provides a convenient way for simultaneous browsing through the differences between a pair
+(or a triple) of files or buffers. The files being compared, file-A, file-B, and file-C are shown
+in separate windows (side by side, one above the another, or in separate frames), and the
+differences are highlighted as you step through them.
+You can also copy difference regions from one buffer to another (and recover old differences
+if you change your mind).
+
+Another powerful feature is the ability to merge a pair of files into a third buffer.
+Merging with an ancestor file, (a.k.a. 3way merges) is also supported. Furthermore,
+Ediff is equipped with directory-level capabilities that allow the user to conveniently
+launch browsing or merging sessions on groups of files in two (or three) different directories.
+
+In addition, Ediff can apply a patch to a file and then let you step through both files, the
+patched and the original one, simultaneously, difference-by-difference.
+#+END_QUOTE
+
+| Command                                             | Description                                                                                                                                                                                                                                                                                                                       |
+|-----------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                                                                |
+| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                                                        |
+| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                                                           |
+| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                                                            |
+| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                                                        |
+| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                      |
+| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                        |
+| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                                                      |
+| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                                                                   |
+| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                                                                   |
+| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                                                      |
+| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                                                            |
+| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                                                                   |
+| =M-x ediff-patch-file=                              | Patch a file or multiple files, then compare. Since the patch might be in a buffer or a file, you will be asked which is the case. To avoid this extra prompt, you can invoke this command with a prefix argument. With an odd prefix argument, Ediff assumes the patch is in a file; with an even argument, a buffer is assumed. |
+| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                                                                 |
+| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                                                                  |
+| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                                                                 |
+| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                                                                |
+| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
+| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                                                           |
+| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                                                     |
+| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
+| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                                                       |
+| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                                                     |
+| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                                                            |
+|-----------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+
+Remarks:
+- All Ediff commands are displayed in a Quick Help window, unless you type =?= to shrink the window to just one line. You can redisplay the help window by typing =?= again.
+- Many Ediff commands take numeric prefix arguments.
+- Some commands take negative prefix arguments as well.
+- Without the prefix argument, all commands operate on the currently selected difference region.
+
+| Command         | Description                                                                                                                                                                                                                          |
+|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =?=             | Toggles the Ediff Quick Help window ON and OFF.                                                                                                                                                                                      |
+| =E=             | Brings up the top node of the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                          |
+| =v=             | Scrolls up buffers A and B (and buffer C where appropriate) in a coordinated fashion.                                                                                                                                                |
+| =V=             | Scrolls the buffers down.                                                                                                                                                                                                            |
+| =<=             | Scrolls the buffers to the left simultaneously.                                                                                                                                                                                      |
+| =>=             | Scrolls buffers to the right.                                                                                                                                                                                                        |
+| =wd=            | Saves the output from the diff utility, for further reference.                                                                                                                                                                       |
+| =wa=            | Saves buffer A, if it was modified.                                                                                                                                                                                                  |
+| =wb=            | Saves buffer B, if it was modified.                                                                                                                                                                                                  |
+| =wc=            | Saves buffer C, if it was modified                                                                                                                                                                                                   |
+| =a=             | In comparison sessions: Copies the current difference region from buffer A to buffer B (see rb).                                                                                                                                     |
+| =a=             | In merge sessions: Copies the current difference region from buffer A to the merge buffer (r).                                                                                                                                       |
+| =ab=            | Copies the current difference region from buffer A to buffer B.                                                                                                                                                                      |
+| =ac=            | Copies the difference region from buffer A to buffer C.                                                                                                                                                                              |
+| =ba=            | Copies the difference region from buffer B to buffer A.                                                                                                                                                                              |
+| =bc=            | Copies the difference region from buffer B to buffer C.                                                                                                                                                                              |
+| =ca=            | Copies the difference region from buffer C to buffer A.                                                                                                                                                                              |
+| =cb=            | Copies the difference region from buffer C to buffer B.                                                                                                                                                                              |
+| =p=, =DEL=      | Makes the previous difference region current.                                                                                                                                                                                        |
+| =n=, =SPC=      | Makes the next difference region current.                                                                                                                                                                                            |
+| =j=, =-j=, =Nj= | Makes the very first difference region current. Makes the very first difference region current. Typing a number, N, and then j makes the difference region N current.                                                                |
+| =ga=            | Makes current the difference region closest to the position of the point in buffer A.                                                                                                                                                |
+| =gb=            | Makes current the difference region closest to the position of the point in buffer B.                                                                                                                                                |
+| =gc=            | Makes current the difference region closest to the position of the point in buffer C.                                                                                                                                                |
+| =!=             | Recomputes the difference regions, bringing them up to date.                                                                                                                                                                         |
+| =*=             | Forces refinement of the current difference region, which highlights the exact words of disagreement among the buffers                                                                                                               |
+| =m=             | Displays the current Ediff session in a frame as wide as the physical display.                                                                                                                                                       |
+| =┃=             | Toggles the horizontal/vertical split of the Ediff display.                                                                                                                                                                          |
+| =@=             | Toggles auto-refinement of difference regions.                                                                                                                                                                                       |
+| =h=             | Cycles between full highlighting, the mode where fine differences are not highlighted (but computed), and the mode where highlighting is done with ASCII strings.                                                                    |
+| =r=             | Restores the old contents of the region in the merge buffer.                                                                                                                                                                         |
+| =ra=            | Restores the old contents of the current difference region in buffer A.                                                                                                                                                              |
+| =rb=            | Restores the old contents of the current difference region in buffer B.                                                                                                                                                              |
+| =rc=            | Restores the old contents of the current difference region in buffer C.                                                                                                                                                              |
+| =##=            | Tell Ediff to skip over regions that disagree among themselves only in the amount of white space and line breaks.                                                                                                                    |
+| =#c=            | Toggle case sensitivity in the diff program.                                                                                                                                                                                         |
+| =#h=            | Ediff prompts you to specify regular expressions for each variant. Difference regions where each variant’s region matches the corresponding regular expression will be skipped from then on.                                         |
+| =#f=            | Does dual job: it focuses on regions that match the corresponding regular expressions. All other regions will be skipped over.                                                                                                       |
+| =A=             | Toggles the read-only property in buffer A.                                                                                                                                                                                          |
+| =B=             | Toggles the read-only property in buffer B.                                                                                                                                                                                          |
+| =C=             | Toggles the read-only property in buffer C.                                                                                                                                                                                          |
+| =~=             | Swaps the windows where buffers A and B are displayed.                                                                                                                                                                               |
+| =i=             | Displays all kinds of useful data about the current Ediff session.                                                                                                                                                                   |
+| =D=             | Runs =ediff-custom-diff-program= on the variants and displays the buffer containing the output.                                                                                                                                      |
+| =R=             | Displays a list of currently active Ediff sessions—the Ediff Registry.                                                                                                                                                               |
+| =M=             | Shows the session group buffer that invoked the current Ediff session.                                                                                                                                                               |
+| =z=             | Suspends the current Ediff session. The easiest way to resume a suspended Ediff session is through the registry of active sessions.                                                                                                  |
+| =q=             | Terminates this Ediff session.                                                                                                                                                                                                       |
+| =%=             | Toggles narrowing in Ediff buffers.                                                                                                                                                                                                  |
+| =C-l=           | Restores the usual Ediff window setup. This is the quickest way to resume an Ediff session, but it works only if the control panel of that session is visible.                                                                       |
+| =$$=            | Skipping the regions where only one of the variants clashes with the ancestor but the other variant agrees with it. Typing $$ again undoes this setting.                                                                             |
+| =$*=            | When merging files with large number of differences, it is sometimes convenient to be able to skip the difference regions for which you already decided which variant is most appropriate. Typing $* will accomplish precisely this. |
+| =/=             | Toggle to display the ancestor file in 3way merges.                                                                                                                                                                                  |
+| =&=             | On merge the right course of action is not always clear, and Ediff would use a default action. The above command changes the default action.                                                                                         |
+| =s=             | Causes the merge window shrink to its minimum size, thereby exposing as much of the variant buffers as possible. Typing s again restores the original size of that window.                                                           |
+| =+=             | Combines the difference regions from buffers A and B and copies the result into the merge buffer.                                                                                                                                    |
+| ===             | Creates a child Ediff session for comparing regions in buffers A, B or C.                                                                                                                                                            |
+|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+See also:
+- [[https://www.emacswiki.org/emacs/EdiffMode][EmacsWiki: Ediff Mode]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/ediff/][Ediff Manual]]
+- [[https://oremacs.com/2015/01/17/setting-up-ediff/][Setting up Ediff]]
+- [[http://www.sentia.com.au/blog/ediff-for-the-brainically-challenged][Ediff For The Brainically Challenged]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el :var file-description="Basic tools setup"
+;;
+;; A comprehensive visual interface to Unix diff and patch utilities.
+;;
+(use-package ediff)
+
+;; Don't use the weird setup with the control panel in a separate frame.
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;; Split the windows horizontally instead of vertically.
+;; This way, it's much easier to follow the changes.
+(setq ediff-split-window-function
+    (lambda (&optional arg)
+        (if (> (frame-width) 150)
+            (split-window-horizontally arg)
+            (split-window-vertically arg)
+        )
+    )
+)
+
+;; Ignore white space.
+(setq ediff-diff-options "-w")
+
+;; only highlight the current diff
+(setq-default ediff-highlight-all-diffs 'nil)
+#+END_SRC
+
+*** Visible Bookmarks
+
+The package [[https://github.com/joodland/bm][Visible bookmarks]] provides visible, buffer local, bookmarks and the
+ability to jump forward and backward to the next bookmark. They are quite similar to the /MS Visual Studio/ bookmarks
+I am used to.
+
+See also:
+- [[https://www.emacswiki.org/emacs/VisibleBookmarks][EmacsWiki: Visible Bookmarks]]
+
+| Key binding | Command                      | Description                                 |
+|-------------+------------------------------+---------------------------------------------|
+| =<f2>=      | bm-next                      | Jump to the next bookmark.                  |
+| =S-<f2>=    | bm-previous                  | Jump to the previous bookmark.              |
+| =C-<f2>=    | bm-toggle                    | Set or unset bookmark.                      |
+| =C-S-<f2>=  | bm-remove-all-current-buffer | Remove all bookmarks of the current buffer. |
+|-------------+------------------------------+---------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+(unless (file-directory-p psimacs/config/bookmarks-dir)
+    (make-directory psimacs/config/bookmarks-dir t)
+)
+
+(use-package bm
+    :init
+        (setq bm-restore-repository-on-load t)
+    :config
+        (setq bm-cycle-all-buffers nil)
+        (setq bm-repository-file psimacs/config/bm-bookmarks-file)
+
+        (setq-default bm-buffer-persistence t)
+
+        (setq bm-highlight-style 'bm-highlight-only-fringe)     ; bm-highlight-only-line
+                                                                ; bm-highlight-line-and-fringe
+
+        (add-hook 'after-init-hook   #'bm-repository-load)
+        (add-hook 'kill-buffer-hook  #'bm-buffer-save)
+        (add-hook 'kill-emacs-hook   #'(lambda nil
+                                         (bm-buffer-save-all)
+                                         (bm-repository-save)))
+
+        (add-hook 'find-file-hooks   #'bm-buffer-restore)
+        (add-hook 'after-revert-hook #'bm-buffer-restore)
+
+        (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
+
+    :bind (
+        ("<f2>"     . bm-next)
+        ("S-<f2>"   . bm-previous)
+        ("C-<f2>"   . bm-toggle)
+        ("C-S-<f2>" . bm-remove-all-current-buffer)
+    )
+)
+#+END_SRC
+
+*** Avy - jumping to visible text
+[[https://github.com/abo-abo/avy][Avy]] is a GNU Emacs package for jumping to visible text using
+a char-based decision tree.
+
+| Key binding     | Command                          | Description                                                                                                                           |
+|-----------------+----------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s C-a c= | =M-x avy-goto-char=              | Input one char, jump to it with a tree.                                                                                               |
+| =H-m C-s C-a C= | =M-x avy-goto-char-2=            | Input two consecutive chars, jump to the first one with a tree.                                                                       |
+| =H-m C-s C-a t= | =M-x avy-goto-char-timer=        | Input an arbitrary amount of consecutive chars, jump to the first one with a tree.                                                    |
+| =H-m C-s C-a T= | =M-x avy-org-goto-heading-timer= | Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy. |
+| =H-m C-s C-a l= | =M-x avy-goto-line=              | Input zero chars, jump to a line start with a tree.                                                                                   |
+| =H-m C-s C-a w= | =M-x avy-goto-word-1=            | Input one char at word start, jump to a word start with a tree.                                                                       |
+| =H-m C-s C-a W= | =M-x avy-goto-word-0=            | Input zero chars, jump to a word start with a tree.                                                                                   |
+|-----------------+----------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+(use-package avy
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-s C-a c" . avy-goto-char)
+            ("C-s C-a C" . avy-goto-char-2)
+            ("C-s C-a t" . avy-goto-char-timer)
+            ("C-s C-a T" . avy-org-goto-heading-timer)
+            ("C-s C-a l" . avy-goto-line)
+            ("C-s C-a w" . avy-goto-word-1)
+            ("C-s C-a W" . avy-goto-word-0)
+        )
+    :custom
+        (avy-timeout-seconds 0.5)
+        (avy-style 'pre)
+    :custom-face
+        (avy-lead-face ((t (:background "#51afef" :foreground "#870000" :weight bold))))
+)
+#+END_SRC
+
+* Advanced Setup
+
+Now that the basic setup is finished we can take credit of the enormous amount of useful *Emacs* packages out
+there. It is one of *Psimacs* goals to be a /modern/ editor. Let's see...
+
+** Which Key
+
+[[https://github.com/justbur/emacs-which-key][Which-key]] is a minor mode for *Emacs* that
+displays the key bindings following your currently entered incomplete command (a prefix)
+in a popup. IMHO, this package is one of the most useful packages for *Emacs*.
+
+| Key binding     | Command                                   | Description                                   |
+|-----------------+-------------------------------------------+-----------------------------------------------|
+| =H-m C-u C-w t= | =M-x psimacs/which-key/toogle-sort-order= | Toggle the which-key-mode sort order.         |
+| =H-m C-u C-w c= | =M-x psimacs/which-key/cycle-sort-order=  | Cycle through the which-key-mode sort orders. |
+|-----------------+-------------------------------------------+-----------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-which-key.el :var file-description="Advances which-key setup"
+;;
+;; Configuration of the which-key package
+;;
+(defvar psimacs/config/which-key-sort-order 'which-key-key-order-alpha
+    "The psimacs default which key sort order.
+
+Lexicographically, single characters are sorted alphabetically.")
+
+(defun psimacs/which-key/toogle-sort-order ()
+    "Toggle the which-key-mode sort order.
+
+    If which key sort order is 'which-key-key-order-alpha' then the
+    sort order is set to 'which-key-description-order'. Else it is
+    set to 'which-key-key-order-alpha'.
+    "
+    (interactive "")
+
+    (let ((sort-order psimacs/config/which-key-sort-order))
+        (if (eq which-key-sort-order 'which-key-description-order)
+            (setq sort-order psimacs/config/which-key-sort-order)
+            (setq sort-order 'which-key-description-order)
+        )
+
+        (setq which-key-sort-order sort-order)
+        (message "which-key sort order is %s" sort-order)
+    )
+)
+
+(defun psimacs/which-key/cycle-sort-order ()
+    "Cycle the which-key-mode sort order.
+
+'which-key-key-order
+    The default order is to sort lexicographically within
+    each class of key, where the classes and their order are:
+        - Special (SPC, TAB, ...)
+        - Single Character (ASCII) (a, ...)
+        - Modifier (C-, M-, ...)
+        - Other
+
+'which-key-key-order-alpha
+    Same as default, except single characters are sorted alphabetically.
+
+'which-key-prefix-then-key-order
+    Same as default, except all prefix keys are grouped together at the end
+
+'which-key-local-then-key-order
+    Same as default, except all keys from local maps shown first.
+
+'which-key-description-order
+    Sort based on the key description ignoring case
+
+'which-key-description-order
+    Sort based on the key description ignoring case"
+
+    (interactive "")
+
+    (let ((sort-order psimacs/config/which-key-sort-order))
+
+        (if (eq which-key-sort-order 'which-key-key-order)
+            (setq sort-order 'which-key-key-order-alpha)
+
+            (if (eq which-key-sort-order 'which-key-key-order-alpha)
+                (setq sort-order 'which-key-prefix-then-key-order)
+
+                (if (eq which-key-sort-order 'which-key-prefix-then-key-order)
+                    (setq sort-order 'which-key-local-then-key-order)
+
+                    (if (eq which-key-sort-order 'which-key-local-then-key-order)
+                        (setq sort-order 'which-key-description-order)
+
+                        (if (eq which-key-sort-order 'which-key-description-order)
+                            (setq sort-order 'which-key-key-order)
+                        )
+                    )
+                )
+            )
+        )
+
+        (setq which-key-sort-order sort-order)
+        (message "which-key sort order is %s" sort-order)
+
+        (if (not (eq which-key-sort-order 'which-key-description-order))
+            (setq psimacs/config/which-key-sort-order sort-order)
+        )
+    )
+)
+
+(use-package which-key
+    :demand t
+    :diminish which-key-mode
+    :bind (
+           :map psimacs/config/global-key-map/special
+              ("C-u C-w t" . psimacs/which-key/toogle-sort-order)
+              ("C-u C-w c" . psimacs/which-key/cycle-sort-order)
+           )
+    :init
+        (setq which-key-sort-order psimacs/config/which-key-sort-order)
+        (setq which-key-idle-delay 0.3)
+    :config
+        (setq which-key-key-replacement-alist '(
+            ("<\\([[:alnum:]-]+\\)>" . "\\1")
+            ("left"                  . "◄")
+            ("right"                 . "►")
+            ("up"                    . "▲")
+            ("down"                  . "▼")
+            ("delete"                . "DEL") ; delete key
+            ("\\`DEL\\'"             . "BS")  ; backspace key
+            ("next"                  . "PgDn")
+            ("prior"                 . "PgUp"))
+        )
+
+        (setq which-key-max-description-length 60)
+        (which-key-setup-side-window-right-bottom)
+
+        (which-key-mode t)
 )
 #+END_SRC
 
@@ -4262,3 +4802,79 @@ References of string functionality:
                                 ""
                                 str))
 #+END_SRC
+
+* Overview of Psimacs key bindings
+
+The following tables summarizes the key bindings added explicitly by *Psimacs*. Neither shown are the bindings provided
+by the various packages nor by *Emacs* itself.
+
+| Prefix command                       | Description               |
+|--------------------------------------+---------------------------|
+| =H-h= and =s-h=                      | Hydras                    |
+| =H-c= and =s-c=                      | common user commands      |
+| =H-x= and =s-x=                      | common execution commands |
+| =H-m=, =H-,= =s-m=, =s-,= and =<f9>= | special user commands     |
+|--------------------------------------+---------------------------|
+
+| Psimacs key binding | Command                                                 | Description                                                                                                                           |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x p=             | =M-x pop-to-mark-command=                               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                    |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =<f2>=              | bm-next                                                 | Jump to the next bookmark.                                                                                                            |
+| =S-<f2>=            | bm-previous                                             | Jump to the previous bookmark.                                                                                                        |
+| =C-<f2>=            | bm-toggle                                               | Set or unset bookmark.                                                                                                                |
+| =C-S-<f2>=          | bm-remove-all-current-buffer                            | Remove all bookmarks of the current buffer.                                                                                           |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-c C-e=           | =M-x edit-indirect-region=                              | Edit region in separate buffer *edit-indirect buffer*                                                                                 |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m (=             | =M-x psimacs/pair/insert-paren=                         | Insert paranthesis =(▮)=.                                                                                                             |
+| =H-m [=             | =M-x psimacs/pair/insert-bracket=                       | Insert brackets =[▮]=.                                                                                                                |
+| =H-m {=             | =M-x psimacs/pair/insert-brace=                         | Insert braces ={▮}=.                                                                                                                  |
+| =H-m "=             | =M-x psimacs/pair/insert-ascii-double-quote=            | Insert ascii double quotes ="▮"=.                                                                                                     |
+| =H-m '=             | =M-x psimacs/pair/insert-ascii-single-quote=            | Insert ascii single quotes ='▮'=.                                                                                                     |
+| =H-m e=             | =M-x psimacs/pair/insert-emacs-quote=                   | Insert emacs quotes =`▮'=.                                                                                                            |
+| =H-m ==             | =M-x psimacs/pair/insert-equal=                         | Insert equality signs ==▮==.                                                                                                          |
+| =H-m *=             | =M-x psimacs/pair/insert-star=                          | Insert stars =*▮*=.                                                                                                                   |
+| =H-m /=             | =M-x psimacs/pair/insert-slash=                         | Insert slashes =/▮/=.                                                                                                                 |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =<f12>=             | =M-x cua-mode=                                          | Toggle CUA mode.                                                                                                                      |
+| =H-m c=             | =M-x cua-mode=                                          | Toggle CUA mode.                                                                                                                      |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-c C-h=       | (find-file-read-only history-file)                      | Open the history file in read-only mode.                                                                                              |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-p b=     | =M-x print-buffer=                                      | B/W print hardcopy of buffer on default printer                                                                                       |
+| =H-m C-p C-p r=     | =M-x print-region=                                      | B/W print hardcopy of region on default printer                                                                                       |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-q p=     | =M-x ps-print-buffer=                                   | B/W print buffer via Ghostscript                                                                                                      |
+| =H-m C-p C-q r=     | =M-x ps-print-region=                                   | B/W print region via Ghostscript                                                                                                      |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-f p=     | =M-x ps-print-buffer-with-faces=                        | Color print buffer via Ghostscript                                                                                                    |
+| =H-m C-p C-f r=     | =M-x ps-print-region-with-faces=                        | Color print region via Ghosts                                                                                                         |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s C-a c=     | =M-x avy-goto-char=                                     | Input one char, jump to it with a tree.                                                                                               |
+| =H-m C-s C-a C=     | =M-x avy-goto-char-2=                                   | Input two consecutive chars, jump to the first one with a tree.                                                                       |
+| =H-m C-s C-a t=     | =M-x avy-goto-char-timer=                               | Input an arbitrary amount of consecutive chars, jump to the first one with a tree.                                                    |
+| =H-m C-s C-a T=     | =M-x avy-org-goto-heading-timer=                        | Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy. |
+| =H-m C-s C-a l=     | =M-x avy-goto-line=                                     | Input zero chars, jump to a line start with a tree.                                                                                   |
+| =H-m C-s C-a w=     | =M-x avy-goto-word-1=                                   | Input one char at word start, jump to a word start with a tree.                                                                       |
+| =H-m C-s C-a W=     | =M-x avy-goto-word-0=                                   | Input zero chars, jump to a word start with a tree.                                                                                   |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-u C-w t=     | =M-x psimacs/which-key/toogle-sort-order=               | Toggle the which-key-mode sort order.                                                                                                 |
+| =H-m C-u C-w c=     | =M-x psimacs/which-key/cycle-sort-order=                | Cycle through the which-key-mode sort orders.                                                                                         |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-x 5 l=   | =M-x psimacs/window/set-frame-creation-strategy-layout= | Place and size new frames left and right to the main frame. This is the default strategy.                                             |
+| =H-m C-w C-x 5 m=   | =M-x psimacs/window/set-frame-creation-strategy-main=   | Always use the same placement and size as the initial main frame.                                                                     |
+| =H-m C-w C-x 5 s=   | =M-x psimacs/window/set-frame-creation-strategy-system= | Let Emacs and the operating system decide.                                                                                            |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-s s=     | =M-x smooth-scrolling-mode=                             | Enable or disable the smooth scrolling mode.                                                                                          |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-r=       | =M-x golden-ratio-mode=                                 | Toggle automatic window resizing with golden ratio.                                                                                   |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C-a=       | =M-x abbrev-mode=                                       | Enable/Disable abbreviation mode.                                                                                                     |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x r=             | =M-x recentf-open-files=                                | Show a dialog to open a recent file.                                                                                                  |
+| =H-x C-r=           | =M-x recentf-open-more-files=                           | Show a dialog to open a recent file that is not in the menu.                                                                          |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x f=             | =M-x counsel-recentf=                                   | Find a file on recent file list.                                                                                                      |
+| =H-x C-f=           | =M-x counsel-buffer-or-recentf=                         | Find a buffer visiting a file or file on recent file list.                                                                            |
+|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
