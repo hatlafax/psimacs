@@ -4358,7 +4358,9 @@ the golden ration.
 #+END_SRC
 
 ** Basic Tools
+
 *** Ediff
+
 The [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] package provides a
 comprehensive visual interface to Unix diff and patch utilities.
 
@@ -4536,13 +4538,13 @@ I am used to.
 See also:
 - [[https://www.emacswiki.org/emacs/VisibleBookmarks][EmacsWiki: Visible Bookmarks]]
 
-| Key binding | Command                      | Description                                 |
-|-------------+------------------------------+---------------------------------------------|
-| =<f2>=      | bm-next                      | Jump to the next bookmark.                  |
-| =S-<f2>=    | bm-previous                  | Jump to the previous bookmark.              |
-| =C-<f2>=    | bm-toggle                    | Set or unset bookmark.                      |
-| =C-S-<f2>=  | bm-remove-all-current-buffer | Remove all bookmarks of the current buffer. |
-|-------------+------------------------------+---------------------------------------------|
+| Key binding | Command                            | Description                                 |
+|-------------+------------------------------------+---------------------------------------------|
+| =<f2>=      | =M-x bm-next=                      | Jump to the next bookmark.                  |
+| =S-<f2>=    | =M-x bm-previous=                  | Jump to the previous bookmark.              |
+| =C-<f2>=    | =M-x bm-toggle=                    | Set or unset bookmark.                      |
+| =C-S-<f2>=  | =M-x bm-remove-all-current-buffer= | Remove all bookmarks of the current buffer. |
+|-------------+------------------------------------+---------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
 (unless (file-directory-p psimacs/config/bookmarks-dir)
@@ -4582,6 +4584,7 @@ See also:
 #+END_SRC
 
 *** Avy - jumping to visible text
+
 [[https://github.com/abo-abo/avy][Avy]] is a GNU Emacs package for jumping to visible text using
 a char-based decision tree.
 
@@ -4616,6 +4619,76 @@ a char-based decision tree.
 )
 #+END_SRC
 
+*** HTMLize
+
+The [[https://github.com/hniksic/emacs-htmlize][htmlize]] package converts the buffer text and the associated decorations to HTML.
+
+To use it, just switch to the buffer you want HTML-ized and type =M-x htmlize-buffer=.
+You will be switched to a new buffer that contains the resulting HTML code. You can
+edit and inspect this buffer, or you can just save it with =C-x C-w=.
+=M-x htmlize-file= will find a file, fontify it, and save the HTML version in FILE.html,
+without any additional intervention. =M-x htmlize-many-files= allows you to htmlize any
+number of files in the same manner. =M-x htmlize-many-files-dired= does the same for files
+marked in a dired buffer.
+
+This support package is used by [[https://orgmode.org][org-mode]] to produce colored htmls.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+(use-package htmlize)
+#+END_SRC
+
+
+* Utility Lisp functions
+
+All functions defined in *Psimacs* are prefixed by =psimacs/category=. For example
+the /string/ related function /starts-with/ is defined as =psimacs/string/starts-with=.
+
+** String processing
+
+Utiltiy functions that help with handling of strings.
+
+The following simple string functions are part of the configuration for historical reason. Today, the build-in *Emacs*
+functions for string processing should be used instead.
+
+References of string functionality:
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Strings-and-Characters.html#Strings-and-Characters][*Emacs* Manual: String and Characters]]
+- [[http://ergoemacs.org/emacs/elisp_string_functions.html][Elips: String Functions by Xah Lee]]
+- [[http://ergoemacs.org/emacs/elisp_trim_string.html][Elisp: Trim String Functions by Xah Lee]]
+- [[https://github.com/magnars/s.el][*s.el*: The long lost Emacs string manipulation library.]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el :var file-description="Basic elisp functions"
+;;
+;; Deprecated helper functions for string processing
+;;
+(defun psimacs/string/starts-with (s begins)
+    "Return non-nil if string S starts with BEGINS."
+    (cond (
+            (>= (length s) (length begins))
+            (string-equal (substring s 0 (length begins)) begins)
+        )
+        (t nil)
+    ))
+
+(defun psimacs/string/ends-with (string suffix)
+    "Return t if STRING ends with SUFFIX."
+    (and (string-match (rx-to-string `(: ,suffix eos) t) string) t))
+
+(defun psimacs/string/reverse (str)
+    "Reverse the str where str is a string"
+    (apply #'string (reverse  (string-to-list str))))
+
+(defun psimacs/string/chomp-end (str)
+    "Chomp tailing whitespace from STR."
+    (replace-regexp-in-string (rx (* (any " \t\n")) eos) "" str))
+
+(defun psimacs/string/chomp (str)
+    "Chomp leading and tailing whitespace from STR."
+    (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
+                                      (: (* (any " \t\n")) eos)))
+                                ""
+                                str))
+#+END_SRC
+
 * Advanced Setup
 
 Now that the basic setup is finished we can take credit of the enormous amount of useful *Emacs* packages out
@@ -4633,7 +4706,7 @@ in a popup. IMHO, this package is one of the most useful packages for *Emacs*.
 | =H-m C-u C-w c= | =M-x psimacs/which-key/cycle-sort-order=  | Cycle through the which-key-mode sort orders. |
 |-----------------+-------------------------------------------+-----------------------------------------------|
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-which-key.el :var file-description="Advances which-key setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-which-key.el :var file-description="Advanced which-key setup"
 ;;
 ;; Configuration of the which-key package
 ;;
@@ -4752,55 +4825,805 @@ Lexicographically, single characters are sorted alphabetically.")
 )
 #+END_SRC
 
-* Utility Lisp functions
+** Swiper / Ivy / Counsel
 
-All functions defined in *Psimacs* are prefixed by =psimacs/category=. For example
-the /string/ related function /starts-with/ is defined as =psimacs/string/starts-with=.
+[[https://github.com/abo-abo/swiper][Swiper]] gives us a really efficient incremental search
+with regular expressions and [[https://oremacs.com/swiper/][Ivy]] / [[https://oremacs.com/swiper/][Counsel]]
+replace a lot of ido or helms completion functionality
 
-** String processing
+See also:
+- [[https://writequit.org/denver-emacs/presentations/2017-04-11-ivy.html][Ivy, Counsel and Swiper]],
+- [[https://oremacs.com/2015/04/09/counsel-completion/][Counsel]]
 
-Utiltiy functions that help with handling of strings.
+| Key binding | Command                | Description                                                              |
+|-------------+------------------------+--------------------------------------------------------------------------|
+| =C-s=       | =M-x swiper-iseach=    | A =swiper= that’s not line-based. Incrementally search with an overview. |
+| =C-r=       | =M-x swiper=           | Incrementally search with an overview.                                   |
+| =C-c v=     | =M-x ivy-push-view=    | Push the current window tree on =ivy-views=                              |
+| =C-c V=     | =M-x ivy-pop-view=     | Delete a view to delete from =ivy-views=.                                |
+| =H-m C-s a= | =M-x swiper-all=       | Incrementally search in all open buffers.                                |
+| =H-m C-s s= | =M-x isearch-forward=  | Incrementally search forward.                                            |
+| =H-m C-s r= | =M-x isearch-backward= | Incrementally search backward.                                           |
+|-------------+------------------------+--------------------------------------------------------------------------|
 
-The following simple string functions are part of the configuration for historical reason. Today, the build-in *Emacs*
-functions for string processing should be used instead.
+*** Ivy
 
-References of string functionality:
-- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Strings-and-Characters.html#Strings-and-Characters][*Emacs* Manual: String and Characters]]
-- [[http://ergoemacs.org/emacs/elisp_string_functions.html][Elips: String Functions by Xah Lee]]
-- [[http://ergoemacs.org/emacs/elisp_trim_string.html][Elisp: Trim String Functions by Xah Lee]]
-- [[https://github.com/magnars/s.el][*s.el*: The long lost Emacs string manipulation library.]]
+[[https://github.com/abo-abo/swiper][Ivy]] is for quick and easy selection from a list. When *Emacs* prompts for a string
+from a list of several possible choices, Ivy springs into action to assist in
+narrowing and picking the right string from a vast number of choices.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el :var file-description="Basic elisp functions"
+| Key binding | Command                 | Description                                                             |
+|-------------+-------------------------+-------------------------------------------------------------------------|
+| =C-x b=     | =M-x ivy-switch-buffer= | Switch to another buffer.                                               |
+| =C-c C-S-r= | =M-x ivy-resume=        | Resumes the last Ivy-based completion.                                  |
+| =M-y=       | =M-x ivy-next-line=     | In minibuffer, Move cursor vertically down.                             |
+| =C-'=       | =M-x ivy-avy=           | Uses avy to select one of the candidates on the current candidate page. |
+|-------------+-------------------------+-------------------------------------------------------------------------|
+
+See also [[https://oremacs.com/swiper/][Ivy User Manual]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-swiper-key.el :var file-description="Advanced Ivy, Counsel and Swiper setup"
 ;;
-;; Deprecated helper functions for string processing
+;; First configure ivy...
 ;;
-(defun psimacs/string/starts-with (s begins)
-    "Return non-nil if string S starts with BEGINS."
-    (cond (
-            (>= (length s) (length begins))
-            (string-equal (substring s 0 (length begins)) begins)
+(use-package ivy
+    :demand t
+    :diminish
+    :bind (
+        ("C-s" . swiper-isearch)
+        ("C-r" . swiper)
+        ("C-x b"     . ivy-switch-buffer)
+        ("C-c C-S-r" . ivy-resume)
+        ("C-c v"   . ivy-push-view)
+        ("C-c V"   . ivy-pop-view)
+        :map ivy-minibuffer-map
+            ("M-y"   . ivy-next-line)
+        :map ivy-mode-map
+            ("C-'"   . ivy-avy)
+        :map psimacs/config/global-key-map/special
+            ("C-s a" . swiper-all)
+            ("C-s s" . isearch-forward)
+            ("C-s r" . isearch-backward)
+       )
+    :config
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)        ; ﻿add recent files and/or bookmarks to ‘ivy-switch-buffer’
+        (setq enable-recursive-minibuffers t)   ; if this variable is non-nil, you can invoke commands (such as find-file)
+                                                ; that use minibuffers even while the minibuffer is active. Such invocation
+                                                ; produces a recursive editing level for a new minibuffer. The outer-level
+                                                ; minibuffer is invisible while you are editing the inner one.
+        (setq ivy-height 10)                    ; number of result lines to display
+        (setq ivy-count-format "%d/%d ")        ; displays the current and total number in the collection in the prompt
+        (setq ivy-initial-inputs-alist nil)     ; no regexp by default
+        (setq ivy-re-builders-alist             ; configure regexp engine.
+            '((t . ivy--regex-ignore-order)))   ; allow input not in order
+
+        (setq ivy-re-builders-alist
+            '(
+                (ivy-switch-buffer . ivy--regex-plus )
+                (swiper            . ivy--regex-plus )
+                (counsel-M-x       . ivy--regex-plus )
+                (t                 . ivy--regex-plus )
+             )
         )
-        (t nil)
-    ))
 
-(defun psimacs/string/ends-with (string suffix)
-    "Return t if STRING ends with SUFFIX."
-    (and (string-match (rx-to-string `(: ,suffix eos) t) string) t))
+        (setq ivy-initial-inputs-alist nil)
+        (define-key ivy-minibuffer-map (kbd "<return>") 'ivy-alt-done)
 
-(defun psimacs/string/reverse (str)
-    "Reverse the str where str is a string"
-    (apply #'string (reverse  (string-to-list str))))
+        (setq magit-completing-read-function 'ivy-completing-read)
+        (setq projectile-completion-system 'ivy)
+)
+#+END_SRC
 
-(defun psimacs/string/chomp-end (str)
-    "Chomp tailing whitespace from STR."
-    (replace-regexp-in-string (rx (* (any " \t\n")) eos) "" str))
+*** Counsel
+To keep concerns separated, Ivy doesn't have a lot of other functionality. That's where Counsel comes in.
 
-(defun psimacs/string/chomp (str)
-    "Chomp leading and tailing whitespace from STR."
-    (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
-                                      (: (* (any " \t\n")) eos)))
-                                ""
-                                str))
+[[https://github.com/abo-abo/swiper][Ivy mode]] ensures that any Emacs command using =completing-read-function=
+uses [[https://github.com/abo-abo/swiper][ivy]] for completion.
+Counsel takes this further, providing versions of common *Emacs* commands that are customised to make
+the best use of [[https://github.com/abo-abo/swiper][ivy]].
+
+| Key binding | Command                          | Description                                                              |
+|-------------+----------------------------------+--------------------------------------------------------------------------|
+| =M-x=       | =M-x counsel-M-x=                | Ivy version of =execute-extended-command=.                               |
+| =C-M-i=     | =M-x counsel-imenu=              | Jump to a buffer position indexed by =imenu=.                            |
+| =C-x C-f=   | =M-x counsel-find-file=          | Counsel, forward to =find-file=.                                         |
+| =C-c b=     | =M-x counsel-bookmark=           | Forward to =bookmark-jump= or =bookmark-set= if bookmark does not exist. |
+| =C-c c=     | =M-x counsel-compile=            | Call =compile= completing with smart suggestions, optionally for DIR.    |
+| =C-c d=     | =M-x counsel-dired-jump=         | Jump to a directory below the current directory.                         |
+| =C-c F=     | =M-x counsel-org-file=           | Browse all attachments for current Org file.                             |
+| =C-c g=     | =M-x counsel-git=                | Find file in the current git repository.                                 |
+| =C-c j=     | =M-x counsel-git-grep=           | Grep for a string in the current Git repository.                         |
+| =C-c L=     | =M-x counsel-git-log=            | Call the =git log --grep= shell command.                                 |
+| =C-c J=     | =M-x counsel-file-jump=          | Jump to a file below the current directory..                             |
+| =C-c k=     | =M-x counsel-ag=                 | Grep for a string in a root directory using =ag=.                        |
+| =C-c l=     | =M-x counsel-locate=             | Call a "locate" style shell command.                                     |
+| =M-y=       | =M-x counsel-yank-pop=           | Ivy replacement for =yank-pop=.                                          |
+| =C-h f=     | =M-x counsel-describe-function=  | Forward to =describe-function=.                                          |
+| =C-h i=     | =M-x counsel-info-lookup-symbol= | Forward SYMBOL to =info-lookup-symbol= with ivy completion.              |
+| =C-h j=     | =M-x counsel-set-variable=       | Set a variable SYM with completion.                                      |
+| =C-h l=     | =M-x counsel-find-library=       | Find Emacs Lisp source. Forward to =find-library=.                       |
+| =C-h u=     | =M-x counsel-unicode-char=       | Insert COUNT copies of a unicode char at point.                          |
+| =C-h v=     | =M-x counsel-describe-variable=  | Forward to =describe-function=.                                          |
+| =C-r=       | =M-x counsel-minibuffer-history= | Browse minibuffer history.                                               |
+| =C-r=       | =M-x counsel-expression-history= | In =read-expression-map=                                                 |
+|-------------+----------------------------------+--------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-swiper-key.el
+;;
+;; ... then counsel
+;;
+(use-package counsel
+    :after ivy
+    :diminish
+    :bind (
+        ("M-x"     . counsel-M-x)
+        ("C-M-i"   . counsel-imenu)
+        ("C-x C-f" . counsel-find-file)
+        ("C-c b"   . counsel-bookmark)
+        ("C-c c"   . counsel-compile)
+        ("C-c d"   . counsel-dired-jump)
+        ("C-c g"   . counsel-git)
+        ("C-c j"   . counsel-git-grep)
+        ("C-c L"   . counsel-git-log)
+        ("C-c J"   . counsel-file-jump)
+        ("C-c k"   . counsel-ag)
+        ("C-c l"   . counsel-locate)
+        ("M-y"     . counsel-yank-pop)
+        :map help-map
+            ("f"   . counsel-describe-function)
+            ("v"   . counsel-describe-variable)
+            ("l"   . counsel-find-library)
+            ("u"   . counsel-unicode-char)
+            ("j"   . counsel-set-variable)
+            ("i"   . counsel-info-lookup-symbol)
+        :map read-expression-map
+            ("C-r" . counsel-expression-history)
+        :map ivy-minibuffer-map
+            ("C-r" . counsel-minibuffer-history)
+        )
+    :config
+        (setq counsel-find-file-at-point t)
+)
+#+END_SRC
+
+** Org-Mode
+
+Package [[https://orgmode.org][org-mode]] is for keeping notes, maintaining TODO lists,
+planning projects, and authoring documents with a fast and effective plain-text system.
+
+The following links might be useful for diving deeper into [[http://orgmode.org/][Org-Mode]]:
+- [[http://orgmode.org/manual/index.html][Org Mode Manual]]
+- [[http://orgmode.org/worg/][Worg, the Org Mode Community]]
+- [[https://www.emacswiki.org/emacs/OrgMode][EmacsWiki: Org Mode]]
+- [[https://www.suenkler.info/notes/emacs-orgmode/][Aufgabenverwaltung im Emacs Org mode]]
+- [[https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html][Dig Into Org Mode]]
+- [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]]
+- [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]]
+- [[https://org-babel.readthedocs.io/en/latest/][Readthedocs about Org Babel]]
+- [[http://orgmode.org/worg/orgcard.html][Org Mode reference card]]
+- [[http://orgmode.org/orgcard.pdf][Org Mode Ref Card]]
+- [[http://ergoemacs.org/emacs/emacs_org_markup.html][Org Mode Markup Cheatsheet]]
+- [[http://pragmaticemacs.com/][Pragmatic Emacs]]
+- [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
+
+*** Temporarily workaround Org-Mode problem
+
+*Psimacs* relies on features provided by the [[https://orgmode.org/worg/org-contrib/][Org-mode Contributed Packages]].
+At the time of working on this setup, I encountered a problem in the =org-plus-contrib-20200907= package.
+
+The code in this section circumvented the problem by patching one file in this package.
+Hopefully, I can get rid of this hack in the near future.
+
+Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
+;;
+;; Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
+;;
+(require 'cl-seq)
+(setq load-path
+      (cl-remove-if
+       (lambda (x)
+         (string-match-p "org$" x))
+       load-path))
+#+END_SRC
+
+The current =org-plus-contrib-20200907= package does have an error in file =org.el= in line 5320.
+We use a loaclly patched version of this package with a fixed =org.el=.
+We load this patched package by the following =load-path=  modification.
+
+Check on [[https://orgmode.org/elpa/][OrgElpa]] and on [[https://code.orgmode.org/bzg/org-mode][org-mode]].
+
+Hopefully, this will be fixed upstream in the near future. In that case the following statement is
+to be removed and the =:ensure org-plus-contrib= is to be activated.
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el
+;;
+;; Add local path to org-plus-contrib to search path
+;;
+(add-to-list 'load-path (concat psimacs/config/site-lisp-dir "org-plus-contrib-20200907"))
+#+END_SRC
+
+*** The main Org-Mode configuration
+
+If the temporary hack workaround is in use, the =:require org-plus-contrib= statement needs to be commented!
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
+;;
+;; The main org-mode configuration
+;;
+(use-package org
+    :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
+    :straight org-plus-contrib
+    :config
+        (setq org-return-follows-link t)
+        (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "LOGBOOK" "CLOCK")))
+        (setq org-log-done 'time)
+        (setq org-log-into-drawer t)
+        ;(setq org-completion-use-ido t)
+        ;(setq org-tags-exclude-from-inheritance '("review")))
+
+        (setq
+            org-todo-keywords '(
+                (sequence "TODO(t/!)" "WORK(w/!)" "WAIT(a/!)" "HOLD(h@/!)" "|" "DONE(d/!)" "STOP(s@/!)")
+                (sequence "REPORT(r/!)" "BUG(b/!)" "FEEDBACK(f@/!)" "WAITING(i@/!)" "VERIFY(v@/!)" "KNOWNCAUSE(k@/!)" "|" "FIXED(x/!)")
+                (sequence "|" "CANCELLED(c@/!)" "DELEGATED(e@/!)")
+            )
+        )
+
+        ;(setq
+        ;    org-todo-keyword-faces '(
+        ;        ("TODO"         . org-todo)
+        ;        ("WORK"         . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("WAIT"         . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("HOLD"         . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("DONE"         . (org-done))
+        ;        ("STOP"         . (org-done))
+
+        ;        ("REPORT"       . org-todo)
+        ;        ("BUG"          . org-todo)
+        ;        ("FEEDBACK"     . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("WAITING"      . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("VERIFY"       . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("KNOWNCAUSE"   . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
+        ;        ("FIXED"        . (org-done))
+
+        ;        ("CANCELLED"    . (org-done))
+        ;        ("DELEGATED"    . (org-done))
+        ;    )
+        ;)
+
+        (setq org-tag-alist
+            (quote (
+                ; Rough task assignment
+                (:startgroup)
+                ("Science"      . ?s)
+                ("Learn"        . ?l)
+                ("Develop"      . ?d)
+                ("Information"  . ?i)
+                ("Bug"          . ?b)
+                ("System"       . ?y)
+                ("Configuration". ?f)
+                (:endgroup)
+
+                ; Category of the task
+                (:startgroup)
+                ("CADdy"        . ?c)
+                ("RenderEngine" . ?r)
+                ("Zinc"         . ?z)
+                ("OpenSG"       . ?o)
+                ("OpenGL"       . ?g)
+                ("Boost"        . ?t)
+                ("Emacs"        . ?e)
+                ("BuildSystem"  . ?m)
+                ("CADdyPython"  . ?p)
+                (:endgroup)
+
+                ; Context
+                (:startgroup)
+                ("2D"           . ?2)
+                ("3D"           . ?3)
+                ("Graphic"      . ?h)
+                (:endgroup)
+
+                ; Language
+                (:startgroup)
+                ("Cpp"          . ?+)
+                ("Python"       . ?P)
+                ("Lisp"         . ?L)
+                ("Bash"         . ?S)
+                ("Prolog"       . ?J)
+                (:endgroup)
+
+                ; ToDo-Keywrds
+                (:startgroup)
+                ("TODO"         . ?T)
+                ("WORK"         . ?W)
+                ("WAIT"         . ?A)
+                ("HOLD"         . ?H)
+                ("DONE"         . ?D)
+                ("STOP"         . ?O)
+
+                ("REPORT"       . ?R)
+                ("BUG"          . ?B)
+                ("FEEDBACK"     . ?F)
+                ("WAITING"      . ?I)
+                ("VERIFY"       . ?V)
+                ("KNOWNCAUSE"   . ?K)
+                ("FIXED"        . ?X)
+
+                ("CANCELLED"    . ?C)
+                ("DELEGATED"    . ?E)
+                (:endgroup)
+
+                ; Common unspecied tags
+                ("Faq"          . ??)
+                ("Question"     . ?&)
+                ("Note"         . ?n)
+                ("Meeting"      . ?x)
+                ("Private"      . ?a)
+                ("Time"         . ?k)
+                ("Important"    . ?#)
+                ("Flagged"      . ?!)
+            ))
+        )
+
+        ; maybe later
+        ;(setq org-fast-tag-selection-single-key (quote auto))
+        ;(setq org-fast-tag-selection-single-key (quote expert))
+
+        (setq org-use-fast-tag-selection t)
+        (setq org-complete-tags-always-offer-all-agenda-tags t)
+
+        (add-hook 'org-capture-mode-hook
+            (lambda ()
+                (setq-local org-tag-alist (org-global-tags-completion-table))
+            )
+        )
+
+        ;(add-hook 'org-capture-mode-hook
+        ;    (lambda ()
+        ;        (save-restriction
+        ;            (widen)
+        ;            (setq-local org-tag-alist (org-get-buffer-tags))
+        ;        )
+        ;    )
+        ;)
+
+        (setq org-todo-state-tags-triggers
+            (quote (
+                ("TODO"                 ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("TODO"       . t))
+                ("WORK"        ("TODO")          ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("WORK"       . t))
+                ("WAIT"        ("TODO") ("WORK")          ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("WAIT"       . t))
+                ("HOLD"        ("TODO") ("WORK") ("WAIT")          ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("HOLD"       . t))
+                ("DONE"        ("TODO") ("WORK") ("WAIT") ("HOLD")          ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("DONE"       . t))
+                ("STOP"        ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE")          ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("DONE"       . t))
+
+                ("REPORT"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP")            ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("REPORT"     . t))
+                ("BUG"         ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT")         ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("BUG"        . t))
+                ("FEEDBACK"    ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG")              ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("FEEDBACK"   . t))
+                ("WAITING"     ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK")             ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("WAITING"    . t))
+                ("VERIFY"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING")            ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("VERIFY"     . t))
+                ("KNOWNCAUSE"  ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY")                ("FIXED") ("CANCELLED") ("DELEGATED") ("KNOWNCAUSE" . t))
+                ("FIXED"       ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE")           ("CANCELLED") ("DELEGATED") ("FIXED"      . t))
+
+                ("CANCELLED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED")               ("DELEGATED") ("CANCELLED"  . t))
+                ("DELEGATED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED")               ("DELEGATED"  . t))
+            ))
+        )
+
+        (defun psimacs/internal/org-remove-empty-drawer-on-clock-out()
+            (save-excursion
+                (beginning-of-line 0)
+                (org-remove-empty-drawer-at "LOGBOOK" (point))
+            )
+        )
+
+        (add-hook 'org-clock-out-hook 'psimacs/internal/org-remove-empty-drawer-on-clock-out 'append)
+
+        (setq org-use-fast-todo-selection t)
+        (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+        (setq org-src-fontify-natively t)
+        (setq org-list-description-max-indent 5)
+
+        (setq org-adapt-indentation nil)
+        ;(setq org-hide-leading-stars 'hidestars) ; see org-superstar
+
+        (setq org-indent-mode-turns-off-org-adapt-indentation t)
+        (setq org-indent-mode-turns-on-hiding-stars t)
+
+        (setq org-src-preserve-indentation t)
+
+        (org-indent-mode t)
+
+        (setq org-agenda-files (list psimacs/config/org-agenda-dir))
+
+        (setq org-highest-priority ?A)
+        (setq org-lowest-priority  ?C)
+        (setq org-default-priority ?A)
+
+        (setq org-priority-faces '(
+            (?A . (:background "Snow" :foreground "Red"))
+            (?B . (:background "Snow" :foreground "BlueViolet"))
+            (?C . (:background "Snow" :foreground "DarkGreen"))
+        ))
+
+        (setq org-agenda-window-setup 'current-window)
+
+        (unless (file-directory-p psimacs/config/org-agenda-dir)
+            (mkdir psimacs/config/org-agenda-dir t)
+        )
+
+        (defun psimacs/internal/org-capture-file-link ()
+            (let (
+                (result "")
+                (file (org-capture-get :original-file))
+                )
+                (when file
+                    (setq result
+                        (concat
+                            "[[file:"
+                            file
+                            "::"
+                            (with-current-buffer (org-capture-get :original-file-nondirectory) (number-to-string (line-number-at-pos)))
+                            "]["
+                            (org-capture-get :original-file-nondirectory)
+                            "]]")))
+                result
+            )
+        )
+
+        (defun psimacs/internal/org-capture-code-block ()
+            (let (region-text result mode arg)
+                (setq retult "")
+                (setq region-text (org-capture-get :initial))
+                (if (> (length region-text) 0)
+                    (progn
+                        (setq mode (with-current-buffer (org-capture-get :original-file-nondirectory) major-mode))
+                        (setq arg "")
+                        (when (equal mode 'awk-mode)          (setq arg "awk"))
+                        (when (equal mode 'c++-mode)          (setq arg "cpp"))
+                        (when (equal mode 'c-mode)            (setq arg "C"))
+                        (when (equal mode 'calc-mode)         (setq arg "calc"))
+                        (when (equal mode 'graphviz-dot-mode) (setq arg "dot"))
+                        (when (equal mode 'lisp-mode)         (setq arg "emacs-lisp"))
+                        (when (equal mode 'latex-mode)        (setq arg "latex"))
+                        (when (equal mode 'org-mode)          (setq arg "org"))
+                        (when (equal mode 'perl-mode)         (setq arg "perl"))
+                        (when (equal mode 'plantuml-mode)     (setq arg "plantuml"))
+                        (when (equal mode 'python-mode)       (setq arg "python"))
+                        (when (equal mode 'sh-mode)           (setq arg "shell"))
+                        (when (equal mode 'prolig-mode)       (setq arg "prolog"))
+
+                        (setq result (concat
+                            "\n"
+                            "#+BEGIN_SRC" " " arg "\n"
+                            region-text "\n"
+                            "#+END_SRC" "\n"
+                            ))))
+                result
+            )
+        )
+
+        (defun psimacs/internal/org-catpure-set-templates ()
+            (let (
+                    (code-point-template "* %? %^G\nEntered: %U\n%(psimacs/internal/org-capture-file-link)\n %(psimacs/internal/org-capture-code-block)\n")
+                    (todo-template      "* TODO [#A] %? %^G\nEntered:   %U\nScheduled: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%i\n")
+                    (note-template      "* %? :Note:%^G\nEntered: %U\n")
+                    (meeting-template   "* %? :Meeting:%^G\nEntered:   %U\nScheduled: %T\n")
+                    (journal-template   "** %^{Heading}\nEntered: %U\n%i\n%a")
+                    (log-time-template  "** %U - %^{Activity} :Time:")
+
+                    (code-diary-file (concat psimacs/config/org-agenda-dir psimacs/config/org-capture-coding-diary-file))
+                    (diary-file      (concat psimacs/config/org-agenda-dir "Diary.org"))
+                    (journal-file    (concat psimacs/config/org-agenda-dir "Journal.org"))
+                    (time-log-file   (concat psimacs/config/org-agenda-dir "TimeLog.org"))
+                )
+
+                (setq org-capture-templates
+                    `(
+                        ("c" "Code Point" entry (file+headline ,diary-file      "Code Points") ,code-point-template :empty-lines 1)
+                        ("C" "Code Point" entry (file+headline ,code-diary-file "Code Points") ,code-point-template :empty-lines 1)
+                        ("t" "ToDo"       entry (file+headline ,diary-file      "Tasks")       ,todo-template       :empty-lines 1)
+                        ("T" "ToDo"       entry (file+headline ,code-diary-file "Tasks")       ,todo-template       :empty-lines 1)
+                        ("n" "Note"       entry (file+headline ,diary-file      "Notes")       ,note-template       :empty-lines 1)
+                        ("N" "Note"       entry (file+headline ,code-diary-file "Notes")       ,note-template       :empty-lines 1)
+                        ("m" "Meeting"    entry (file+headline ,diary-file      "Meetings")    ,meeting-template    :empty-lines 1)
+                        ("M" "Meeting"    entry (file+headline ,code-diary-file "Meetings")    ,meeting-template    :empty-lines 1)
+                        ("j" "Journal"    entry (file+datetree ,journal-file)                  ,journal-template)
+                        ("l" "Log Time"   entry (file+datetree ,time-log-file)                 ,log-time-template)
+                    )
+                )
+            )
+        )
+
+        (psimacs/internal/org-catpure-set-templates)
+
+        ;
+        ; Counsel tag completion does not work properly.
+        ;
+        (require 'counsel)
+        (with-eval-after-load 'org
+            (define-key org-mode-map (kbd "C-c C-S-q") #'counsel-org-tag))
+        (with-eval-after-load 'org-agenda
+            (define-key org-agenda-mode-map (kbd "C-c C-S-q") #'counsel-org-tag-agenda))
+
+        ; warn me of any deadlines in next 7 days
+        (setq org-deadline-warning-days 7)
+        ; show me tasks scheduled or due in next fortnight
+        (setq org-agenda-span (quote fortnight))
+        ; don't show tasks as scheduled if they are already shown as a deadline
+        (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+        ; don't give awarning colour to tasks with impending deadlines if they are scheduled to be done
+        (setq org-agenda-skip-deadline-prewarning-if-scheduled (quote pre-scheduled))
+        ; don't show tasks that are scheduled or have deadlines in the normal todo list
+        (setq org-agenda-todo-ignore-deadlines (quote all))
+        (setq org-agenda-todo-ignore-scheduled (quote all))
+        ; sort tasks in order of when they are due and then by priority
+        (setq org-agenda-sorting-strategy
+            (quote
+                (
+                    (agenda deadline-up priority-down)
+                    (todo priority-down category-keep)
+                    (tags priority-down category-keep)
+                    (search category-keep)
+                )
+            )
+        )
+
+        ; Do not dim blocked tasks
+        (setq org-agenda-dim-blocked-tasks nil)
+        ; Compact the block agenda view
+        (setq org-agenda-compact-blocks t)
+
+        (setq org-confirm-babel-evaluate nil)
+
+
+        (defun psimacs/internal/org-inline-css-hook (exporter)
+            "Insert custom inline css on html export.
+
+Insert custom inline css to automatically set the background of
+code to whatever theme I'm using's background."
+            (when (eq exporter 'html)
+                (let* (
+                        (pre-bg (face-background 'default))
+                        (pre-fg (face-foreground 'default))
+                    )
+                    (setq org-html-head-extra
+                        (concat
+                            org-html-head-extra
+                            (format "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n" pre-bg pre-fg)
+                        )
+                    )
+                )
+            )
+        )
+
+        (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
+
+        ;; Org babel language support
+        (org-babel-do-load-languages 'org-babel-load-languages '(
+            (C . t)
+            (python . t)
+            (plantuml . t)
+            (dot . t)
+            (emacs-lisp . t)
+            (latex . t)
+        ))
+
+        (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
+
+    :bind (
+        ("C-c a" . org-agenda)
+    )
+    :bind* (
+        ("C-c c" . org-capture)
+    )
+)
+#+END_SRC
+
+*** Org-babel configuration
+
+Maybe in the future...
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el
+;;
+;; Org babel language support
+;;
+(with-eval-after-load 'org
+    (progn
+        (org-babel-do-load-languages 'org-babel-load-languages '(
+            (C . t)
+            (python . t)
+            (plantuml . t)
+            (dot . t)
+            (emacs-lisp . t)
+            (latex . t)
+        ))
+
+        (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
+    )
+)
+#+END_SRC
+
+*** Prettify headings with Org-Superstar
+
+Prettify headings and plain lists in Org mode. Package [[https://github.com/integral-dw/org-superstar-mode][org-superstar]] is a direct descendant of
+[[https://github.com/sabof/org-bullets][org-bullets]], with most of the code base completely rewritten.
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+;;
+;; Prettify headings and plain lists in Org mode
+;;
+(use-package org-superstar
+    :after org
+    :config
+        ;(setq org-superstar-special-todo-items t)
+
+        ;(setq org-superstar-headline-bullets-list '( "Ⅰ" "Ⅱ" "Ⅲ" "Ⅳ" "Ⅴ" "Ⅵ" "Ⅶ" "Ⅷ" "Ⅸ" "Ⅹ" ))
+        (setq org-superstar-headline-bullets-list '( "✸" "◆" "★" "▶" "✿" "✜" "■" "●" ))
+        (setq org-superstar-item-bullet-alist '( (?* . ?☆) (?+ . ?○) (?- . ?▷) ))
+
+        ;    ;; Document Title, (\huge)
+        (set-face-attribute 'org-document-title nil
+                             :height 2.074
+                             :foreground 'unspecified
+                             :inherit 'default
+        )
+
+        (set-face-attribute 'org-superstar-item nil :height 1.2)
+        (set-face-attribute 'org-superstar-header-bullet nil :height 1.2)
+        (set-face-attribute 'org-superstar-leading nil :height 1.3)
+
+        (setq org-hide-leading-stars nil)
+        ;(setq org-superstar-leading-bullet ?\s)
+        ;(setq org-superstar-leading-bullet ".")
+        (setq org-superstar-leading-bullet "‧")
+
+        ;(setq org-superstar-remove-leading-stars t)
+
+        ;; Hide away leading stars on terminal.
+        (setq org-superstar-leading-fallback ?\s)
+
+        ;(setq inhibit-compacting-font-caches t)
+
+        (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+)
+#+END_SRC
+
+*** Insert links from the clipboard
+
+The [[https://github.com/rexim/org-cliplink][org-cliplink]] package inserts [[https://orgmode.org][org-mode]] links from the clipboard.
+
+A simple command =C-x p i= that takes a URL from the clipboard and inserts an [[https://orgmode.org][org-mode]] link with a title
+of a page found by the URL into the current buffer.
+
+See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
+
+| Keybinding | Command            | Description                               |
+|------------+--------------------+-------------------------------------------|
+| =C-x p i=  | =M-x org-cliplink= | Insert [[https://orgmode.org][org-mode]] links from the clipboard. |
+|------------+--------------------+-------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+;;
+;; Insert links from the clipboard
+;;
+(use-package org-cliplink
+    :after org
+    :bind*
+        ("C-x p i" . org-cliplink)
+)
+#+END_SRC
+
+
+*** Auto completion for Org-Mode
+
+[[https://github.com/aki2o/org-ac][Org-ac]] is an extension of *Emacs* that provide auto-complete sources for [[https://orgmode.org][org-mode]].
+You'll be able to use auto-complete as substitute for pcomplete which is bound
+to =M-<TAB>=.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+;;
+;; Provide auto-complete sources for org-mode
+;;
+(use-package org-ac
+    :after org
+    :init
+        (org-ac/config-default)
+)
+#+END_SRC
+
+*** Presentation with Org-Mode
+
+Presenting with [[https://orgmode.org][org-mode]]:
+- [[http://orgmode.org/worg/exporters/beamer/ox-beamer.html][Org Manual: Beamer presentations]]
+- [[http://orgcandman.github.io/blog/2016/01/:dat/Writing-emacs-presentations-with-beamer.html][Writing presentations in emacs with Beamer]]
+- [[https://github.com/eschulte/epresent][epresent Package]]
+- [[http://orgmode.org/worg/org-tutorials/non-beamer-presentations.html][Writing Non-Beamer presentations in org-mode]]
+- [[http://sachachua.com/blog/2013/04/how-to-present-using-org-mode-in-emacs/][How to present using Org-mode in Emacs]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+;;
+;; Presentations with org-mode
+;;
+(use-package ox-beamer :straight nil :after org)
+(use-package epresent :straight t :after org)
+#+END_SRC
+
+*** Keybinding for Org-Mode
+
+Some personal org-mode Key-bindings. This is only a suggestion from [[http://doc.norang.ca/org-mode.html][Organize Your Life In Plain Text!]].
+Therefore it is currently diasabled and should be activated after getting familiar with [[https://orgmode.org][org-mode]].
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el
+;;
+;; Custom Org-Mode key bindings
+;;
+(global-set-key (kbd "<f12>") 'org-agenda)
+(global-set-key (kbd "<f5>") 'bh/org-todo)
+(global-set-key (kbd "<S-f5>") 'bh/widen)
+(global-set-key (kbd "<f7>") 'bh/set-truncate-lines)
+(global-set-key (kbd "<f8>") 'org-cycle-agenda-files)
+(global-set-key (kbd "<f9> <f9>") 'bh/show-org-agenda)
+(global-set-key (kbd "<f9> b") 'bbdb)
+(global-set-key (kbd "<f9> c") 'calendar)
+(global-set-key (kbd "<f9> f") 'boxquote-insert-file)
+(global-set-key (kbd "<f9> g") 'gnus)
+(global-set-key (kbd "<f9> h") 'bh/hide-other)
+(global-set-key (kbd "<f9> n") 'bh/toggle-next-task-display)
+
+(global-set-key (kbd "<f9> I") 'bh/punch-in)
+(global-set-key (kbd "<f9> O") 'bh/punch-out)
+
+(global-set-key (kbd "<f9> o") 'bh/make-org-scratch)
+
+(global-set-key (kbd "<f9> r") 'boxquote-region)
+(global-set-key (kbd "<f9> s") 'bh/switch-to-scratch)
+
+(global-set-key (kbd "<f9> t") 'bh/insert-inactive-timestamp)
+(global-set-key (kbd "<f9> T") 'bh/toggle-insert-inactive-timestamp)
+
+(global-set-key (kbd "<f9> v") 'visible-mode)
+(global-set-key (kbd "<f9> l") 'org-toggle-link-display)
+(global-set-key (kbd "<f9> SPC") 'bh/clock-in-last-task)
+(global-set-key (kbd "C-<f9>") 'previous-buffer)
+(global-set-key (kbd "M-<f9>") 'org-toggle-inline-images)
+(global-set-key (kbd "C-x n r") 'narrow-to-region)
+(global-set-key (kbd "C-<f10>") 'next-buffer)
+(global-set-key (kbd "<f11>") 'org-clock-goto)
+(global-set-key (kbd "C-<f11>") 'org-clock-in)
+(global-set-key (kbd "C-s-<f12>") 'bh/save-then-publish)
+(global-set-key (kbd "C-c c") 'org-capture)
+
+(defun bh/hide-other ()
+    (interactive)
+    (save-excursion
+        (org-back-to-heading 'invisible-ok)
+        (hide-other)
+        (org-cycle)
+        (org-cycle)
+        (org-cycle)))
+
+(defun bh/set-truncate-lines ()
+    "Toggle value of truncate-lines and refresh window display."
+    (interactive)
+    (setq truncate-lines (not truncate-lines))
+    ;; now refresh window display (an idiom from simple.el):
+    (save-excursion
+        (set-window-start (selected-window)
+            (window-start (selected-window)))))
+
+(defun bh/make-org-scratch ()
+    (interactive)
+    (find-file "/tmp/publish/scratch.org")
+    (gnus-make-directory "/tmp/publish"))
+
+(defun bh/switch-to-scratch ()
+    (interactive)
+    (switch-to-buffer "*scratch*"))
 #+END_SRC
 
 * Overview of Psimacs key bindings
@@ -4816,65 +5639,104 @@ by the various packages nor by *Emacs* itself.
 | =H-m=, =H-,= =s-m=, =s-,= and =<f9>= | special user commands     |
 |--------------------------------------+---------------------------|
 
-| Psimacs key binding | Command                                                 | Description                                                                                                                           |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x p=             | =M-x pop-to-mark-command=                               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                    |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =<f2>=              | bm-next                                                 | Jump to the next bookmark.                                                                                                            |
-| =S-<f2>=            | bm-previous                                             | Jump to the previous bookmark.                                                                                                        |
-| =C-<f2>=            | bm-toggle                                               | Set or unset bookmark.                                                                                                                |
-| =C-S-<f2>=          | bm-remove-all-current-buffer                            | Remove all bookmarks of the current buffer.                                                                                           |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-c C-e=           | =M-x edit-indirect-region=                              | Edit region in separate buffer *edit-indirect buffer*                                                                                 |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m (=             | =M-x psimacs/pair/insert-paren=                         | Insert paranthesis =(▮)=.                                                                                                             |
-| =H-m [=             | =M-x psimacs/pair/insert-bracket=                       | Insert brackets =[▮]=.                                                                                                                |
-| =H-m {=             | =M-x psimacs/pair/insert-brace=                         | Insert braces ={▮}=.                                                                                                                  |
-| =H-m "=             | =M-x psimacs/pair/insert-ascii-double-quote=            | Insert ascii double quotes ="▮"=.                                                                                                     |
-| =H-m '=             | =M-x psimacs/pair/insert-ascii-single-quote=            | Insert ascii single quotes ='▮'=.                                                                                                     |
-| =H-m e=             | =M-x psimacs/pair/insert-emacs-quote=                   | Insert emacs quotes =`▮'=.                                                                                                            |
-| =H-m ==             | =M-x psimacs/pair/insert-equal=                         | Insert equality signs ==▮==.                                                                                                          |
-| =H-m *=             | =M-x psimacs/pair/insert-star=                          | Insert stars =*▮*=.                                                                                                                   |
-| =H-m /=             | =M-x psimacs/pair/insert-slash=                         | Insert slashes =/▮/=.                                                                                                                 |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =<f12>=             | =M-x cua-mode=                                          | Toggle CUA mode.                                                                                                                      |
-| =H-m c=             | =M-x cua-mode=                                          | Toggle CUA mode.                                                                                                                      |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-c C-h=       | (find-file-read-only history-file)                      | Open the history file in read-only mode.                                                                                              |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-p C-p b=     | =M-x print-buffer=                                      | B/W print hardcopy of buffer on default printer                                                                                       |
-| =H-m C-p C-p r=     | =M-x print-region=                                      | B/W print hardcopy of region on default printer                                                                                       |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-p C-q p=     | =M-x ps-print-buffer=                                   | B/W print buffer via Ghostscript                                                                                                      |
-| =H-m C-p C-q r=     | =M-x ps-print-region=                                   | B/W print region via Ghostscript                                                                                                      |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-p C-f p=     | =M-x ps-print-buffer-with-faces=                        | Color print buffer via Ghostscript                                                                                                    |
-| =H-m C-p C-f r=     | =M-x ps-print-region-with-faces=                        | Color print region via Ghosts                                                                                                         |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-s C-a c=     | =M-x avy-goto-char=                                     | Input one char, jump to it with a tree.                                                                                               |
-| =H-m C-s C-a C=     | =M-x avy-goto-char-2=                                   | Input two consecutive chars, jump to the first one with a tree.                                                                       |
-| =H-m C-s C-a t=     | =M-x avy-goto-char-timer=                               | Input an arbitrary amount of consecutive chars, jump to the first one with a tree.                                                    |
-| =H-m C-s C-a T=     | =M-x avy-org-goto-heading-timer=                        | Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy. |
-| =H-m C-s C-a l=     | =M-x avy-goto-line=                                     | Input zero chars, jump to a line start with a tree.                                                                                   |
-| =H-m C-s C-a w=     | =M-x avy-goto-word-1=                                   | Input one char at word start, jump to a word start with a tree.                                                                       |
-| =H-m C-s C-a W=     | =M-x avy-goto-word-0=                                   | Input zero chars, jump to a word start with a tree.                                                                                   |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-u C-w t=     | =M-x psimacs/which-key/toogle-sort-order=               | Toggle the which-key-mode sort order.                                                                                                 |
-| =H-m C-u C-w c=     | =M-x psimacs/which-key/cycle-sort-order=                | Cycle through the which-key-mode sort orders.                                                                                         |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-w C-x 5 l=   | =M-x psimacs/window/set-frame-creation-strategy-layout= | Place and size new frames left and right to the main frame. This is the default strategy.                                             |
-| =H-m C-w C-x 5 m=   | =M-x psimacs/window/set-frame-creation-strategy-main=   | Always use the same placement and size as the initial main frame.                                                                     |
-| =H-m C-w C-x 5 s=   | =M-x psimacs/window/set-frame-creation-strategy-system= | Let Emacs and the operating system decide.                                                                                            |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-w C-s s=     | =M-x smooth-scrolling-mode=                             | Enable or disable the smooth scrolling mode.                                                                                          |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-w C-r=       | =M-x golden-ratio-mode=                                 | Toggle automatic window resizing with golden ratio.                                                                                   |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x C-a=       | =M-x abbrev-mode=                                       | Enable/Disable abbreviation mode.                                                                                                     |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x r=             | =M-x recentf-open-files=                                | Show a dialog to open a recent file.                                                                                                  |
-| =H-x C-r=           | =M-x recentf-open-more-files=                           | Show a dialog to open a recent file that is not in the menu.                                                                          |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x f=             | =M-x counsel-recentf=                                   | Find a file on recent file list.                                                                                                      |
-| =H-x C-f=           | =M-x counsel-buffer-or-recentf=                         | Find a buffer visiting a file or file on recent file list.                                                                            |
-|---------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+
+| Key binding       | Command                                                 | Description                                                                                                                           |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =M-<f4>=          | =M-x psimacs/config/delete-frame=                       | Delete current frame.                                                                                                                 |
+| =C-x p=           | =M-x pop-to-mark-command=                               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                    |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =<f2>=            | =M-x bm-next=                                           | Jump to the next bookmark.                                                                                                            |
+| =S-<f2>=          | =M-x bm-previous=                                       | Jump to the previous bookmark.                                                                                                        |
+| =C-<f2>=          | =M-x bm-toggle=                                         | Set or unset bookmark.                                                                                                                |
+| =C-S-<f2>=        | =M-x bm-remove-all-current-buffer=                      | Remove all bookmarks of the current buffer.                                                                                           |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =C-s=             | =M-x swiper-iseach=                                     | A =swiper= that’s not line-based. Incrementally search with an overview.                                                              |
+| =C-r=             | =M-x swiper=                                            | Incrementally search with an overview.                                                                                                |
+| =C-c v=           | =M-x ivy-push-view=                                     | Push the current window tree on =ivy-views=                                                                                           |
+| =C-c V=           | =M-x ivy-pop-view=                                      | Delete a view to delete from =ivy-views=.                                                                                             |
+| =C-x b=           | =M-x ivy-switch-buffer=                                 | Switch to another buffer.                                                                                                             |
+| =C-c C-S-r=       | =M-x ivy-resume=                                        | Resumes the last Ivy-based completion.                                                                                                |
+| =M-y=             | =M-x ivy-next-line=                                     | In minibuffer, Move cursor vertically down.                                                                                           |
+| =C-'=             | =M-x ivy-avy=                                           | Uses avy to select one of the candidates on the current candidate page.                                                               |
+| =M-x=             | =M-x counsel-M-x=                                       | Ivy version of =execute-extended-command=.                                                                                            |
+| =C-M-i=           | =M-x counsel-imenu=                                     | Jump to a buffer position indexed by =imenu=.                                                                                         |
+| =C-x C-f=         | =M-x counsel-find-file=                                 | Counsel, forward to =find-file=.                                                                                                      |
+| =C-c b=           | =M-x counsel-bookmark=                                  | Forward to =bookmark-jump= or =bookmark-set= if bookmark does not exist.                                                              |
+| =C-c c=           | =M-x counsel-compile=                                   | Call =compile= completing with smart suggestions, optionally for DIR.                                                                 |
+| =C-c d=           | =M-x counsel-dired-jump=                                | Jump to a directory below the current directory.                                                                                      |
+| =C-c F=           | =M-x counsel-org-file=                                  | Browse all attachments for current Org file.                                                                                          |
+| =C-c g=           | =M-x counsel-git=                                       | Find file in the current git repository.                                                                                              |
+| =C-c j=           | =M-x counsel-git-grep=                                  | Grep for a string in the current Git repository.                                                                                      |
+| =C-c L=           | =M-x counsel-git-log=                                   | Call the =git log --grep= shell command.                                                                                              |
+| =C-c J=           | =M-x counsel-file-jump=                                 | Jump to a file below the current directory..                                                                                          |
+| =C-c k=           | =M-x counsel-ag=                                        | Grep for a string in a root directory using =ag=.                                                                                     |
+| =C-c l=           | =M-x counsel-locate=                                    | Call a "locate" style shell command.                                                                                                  |
+| =M-y=             | =M-x counsel-yank-pop=                                  | Ivy replacement for =yank-pop=.                                                                                                       |
+| =C-h f=           | =M-x counsel-describe-function=                         | Forward to =describe-function=.                                                                                                       |
+| =C-h i=           | =M-x counsel-info-lookup-symbol=                        | Forward SYMBOL to =info-lookup-symbol= with ivy completion.                                                                           |
+| =C-h j=           | =M-x counsel-set-variable=                              | Set a variable SYM with completion.                                                                                                   |
+| =C-h l=           | =M-x counsel-find-library=                              | Find Emacs Lisp source. Forward to =find-library=.                                                                                    |
+| =C-h u=           | =M-x counsel-unicode-char=                              | Insert COUNT copies of a unicode char at point.                                                                                       |
+| =C-h v=           | =M-x counsel-describe-variable=                         | Forward to =describe-function=.                                                                                                       |
+| =C-r=             | =M-x counsel-minibuffer-history=                        | Browse minibuffer history.                                                                                                            |
+| =C-r=             | =M-x counsel-expression-history=                        | In =read-expression-map=                                                                                                              |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x p i=         | =M-x org-cliplink=                                      | Insert [[https://orgmode.org][org-mode]] links from the clipboard.                                                                                             |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-c C-e=         | =M-x edit-indirect-region=                              | Edit region in separate buffer *edit-indirect buffer*                                                                                 |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m (=           | =M-x psimacs/pair/insert-paren=                         | Insert paranthesis =(▮)=.                                                                                                             |
+| =H-m [=           | =M-x psimacs/pair/insert-bracket=                       | Insert brackets =[▮]=.                                                                                                                |
+| =H-m {=           | =M-x psimacs/pair/insert-brace=                         | Insert braces ={▮}=.                                                                                                                  |
+| =H-m "=           | =M-x psimacs/pair/insert-ascii-double-quote=            | Insert ascii double quotes ="▮"=.                                                                                                     |
+| =H-m '=           | =M-x psimacs/pair/insert-ascii-single-quote=            | Insert ascii single quotes ='▮'=.                                                                                                     |
+| =H-m e=           | =M-x psimacs/pair/insert-emacs-quote=                   | Insert emacs quotes =`▮'=.                                                                                                            |
+| =H-m ==           | =M-x psimacs/pair/insert-equal=                         | Insert equality signs ==▮==.                                                                                                          |
+| =H-m *=           | =M-x psimacs/pair/insert-star=                          | Insert stars =*▮*=.                                                                                                                   |
+| =H-m /=           | =M-x psimacs/pair/insert-slash=                         | Insert slashes =/▮/=.                                                                                                                 |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =<f12>=           | =M-x cua-mode=                                          | Toggle CUA mode.                                                                                                                      |
+| =H-m c=           | =M-x cua-mode=                                          | Toggle CUA mode.                                                                                                                      |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-c C-h=     | (find-file-read-only history-file)                      | Open the history file in read-only mode.                                                                                              |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-p b=   | =M-x print-buffer=                                      | B/W print hardcopy of buffer on default printer                                                                                       |
+| =H-m C-p C-p r=   | =M-x print-region=                                      | B/W print hardcopy of region on default printer                                                                                       |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-q p=   | =M-x ps-print-buffer=                                   | B/W print buffer via Ghostscript                                                                                                      |
+| =H-m C-p C-q r=   | =M-x ps-print-region=                                   | B/W print region via Ghostscript                                                                                                      |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-f p=   | =M-x ps-print-buffer-with-faces=                        | Color print buffer via Ghostscript                                                                                                    |
+| =H-m C-p C-f r=   | =M-x ps-print-region-with-faces=                        | Color print region via Ghosts                                                                                                         |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s C-a c=   | =M-x avy-goto-char=                                     | Input one char, jump to it with a tree.                                                                                               |
+| =H-m C-s C-a C=   | =M-x avy-goto-char-2=                                   | Input two consecutive chars, jump to the first one with a tree.                                                                       |
+| =H-m C-s C-a t=   | =M-x avy-goto-char-timer=                               | Input an arbitrary amount of consecutive chars, jump to the first one with a tree.                                                    |
+| =H-m C-s C-a T=   | =M-x avy-org-goto-heading-timer=                        | Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy. |
+| =H-m C-s C-a l=   | =M-x avy-goto-line=                                     | Input zero chars, jump to a line start with a tree.                                                                                   |
+| =H-m C-s C-a w=   | =M-x avy-goto-word-1=                                   | Input one char at word start, jump to a word start with a tree.                                                                       |
+| =H-m C-s C-a W=   | =M-x avy-goto-word-0=                                   | Input zero chars, jump to a word start with a tree.                                                                                   |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s a=       | =M-x swiper-all=                                        | Incrementally search in all open buffers.                                                                                             |
+| =H-m C-s s=       | =M-x isearch-forward=                                   | Incrementally search forward.                                                                                                         |
+| =H-m C-s r=       | =M-x isearch-backward=                                  | Incrementally search backward.                                                                                                        |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-u C-w t=   | =M-x psimacs/which-key/toogle-sort-order=               | Toggle the which-key-mode sort order.                                                                                                 |
+| =H-m C-u C-w c=   | =M-x psimacs/which-key/cycle-sort-order=                | Cycle through the which-key-mode sort orders.                                                                                         |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-x 5 l= | =M-x psimacs/window/set-frame-creation-strategy-layout= | Place and size new frames left and right to the main frame. This is the default strategy.                                             |
+| =H-m C-w C-x 5 m= | =M-x psimacs/window/set-frame-creation-strategy-main=   | Always use the same placement and size as the initial main frame.                                                                     |
+| =H-m C-w C-x 5 s= | =M-x psimacs/window/set-frame-creation-strategy-system= | Let Emacs and the operating system decide.                                                                                            |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-s s=   | =M-x smooth-scrolling-mode=                             | Enable or disable the smooth scrolling mode.                                                                                          |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-r=     | =M-x golden-ratio-mode=                                 | Toggle automatic window resizing with golden ratio.                                                                                   |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C-a=     | =M-x abbrev-mode=                                       | Enable/Disable abbreviation mode.                                                                                                     |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x r=           | =M-x recentf-open-files=                                | Show a dialog to open a recent file.                                                                                                  |
+| =H-x C-r=         | =M-x recentf-open-more-files=                           | Show a dialog to open a recent file that is not in the menu.                                                                          |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x f=           | =M-x counsel-recentf=                                   | Find a file on recent file list.                                                                                                      |
+| =H-x C-f=         | =M-x counsel-buffer-or-recentf=                         | Find a buffer visiting a file or file on recent file list.                                                                            |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
