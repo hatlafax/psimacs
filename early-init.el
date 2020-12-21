@@ -1,4 +1,4 @@
-;;; early-init.el --- Early initialization -*- lexical-binding: t -*-
+;;; early-init.el --- Early initialization -*- coding: utf-8 -*- lexical-binding: t -*-
 ;;
 ;; Don't edit this file, edit init.org instead ...
 ;;
@@ -239,21 +239,84 @@ DESCRIPTION : short description text"
   )
 )
 
+(defun psimacs/config/tangle-canceled-p (token)
+    "Return t if token is matching the 'canceled' criteria."
+    (when (or (string-prefix-p "CANCELED" token t)
+              (string-prefix-p "DISABLED" token t)
+              (string-match-p "^.*:NOEXPORT:.*$" (upcase token))
+          )
+        t
+    )
+)
+
 (defun psimacs/config/tangle-section-canceled ()
-  "Return t if the current section header was 'CANCELED' or 'DISABLED', else nil.
+  "Return t if the current section header is 'CANCELED' or 'DISABLED' ':noexport:', else nil.
 
 Section headers starts with '*', '**', etc, e.g.:
 
-'** CANCELED Some section header text'"
-  (save-excursion (if (re-search-backward "^\\*+\\s-+\\(.*?\\)?\\s-*$" nil t)
-                      (or (string-prefix-p "CANCELED" (match-string 1) t)
-                          (string-prefix-p "DISABLED" (match-string 1) t)) nil)))
+'** CANCELED Some section header text'
+
+This function searches the header tree up to the root. The current header is
+regarded 'canceled' if he or any of its parent headers is regarded 'canceled'.
+"
+    ;;(save-excursion (if (re-search-backward "^\\*+\\s-+\\(.*?\\)?\\s-*$" nil t)
+    ;;                   (or (string-prefix-p "CANCELED" (match-string 1) t)
+    ;;                       (string-prefix-p "DISABLED" (match-string 1) t)
+    ;;                       (string-match-p "^.*:NOEXPORT:.*$" (match-string 1))
+    ;;                   ) nil))
+    ;;(message "---------------------------------------------------------------------------------------------")
+    (save-excursion
+        (let ( (result nil) (loop t) (n 0) (i 0) )
+            (while (and (not result) loop)
+                (if (re-search-backward "^\\(\\*+\\)\\s-+\\(.*?\\)?\\s-*$" nil t)
+                    (progn
+                        ;;(message "%s" (match-string 0))
+                        (setq i (length (match-string 1)))
+                        (if (= n 0)
+                            (progn
+                                (setq n i)
+                                (when (psimacs/config/tangle-canceled-p (match-string 2))
+                                    (setq result t)
+                                    (setq loop nil)
+                                    ;;(message "=> early canceled -> result t %s" (match-string 0))
+                                )
+                            )
+                            ;; else n > 0
+                            (when (not result)
+                                (if (< i n)
+                                    (progn
+                                        (when (psimacs/config/tangle-canceled-p (match-string 2))
+                                            (setq result t)
+                                            ;;(message "=> canceled!!! %s" (match-string 0))
+                                        )
+
+                                        (when (<= i 1)
+                                            (setq loop nil)
+                                            ;;(message "=> stopped!!! %s" (match-string 0))
+                                        )
+
+                                        (setq n i)
+                                    )
+                                  ;;(message "=> discarded i = %s, n = %s" i n)
+                                )
+                            )
+                        )
+                    )
+                  (setq loop nil)
+                )
+            )
+            ;;(message "=> final result %s" result)
+            result
+        )
+    )
+)
 
 (defun psimacs/config/tangle-config-org (orgfile elfile)
   "This function will write all source blocks from 'file.org' into 'file.el' that are ...
         - not marked as :tangle no
         - have a source-code of =emacs-lisp=
         - doesn't have the todo-markers CANCELED or DISABLED
+        - doesn't be tagged by :noexport:
 
 Elisp source code blocks that are marked as ':tangle foo.el' are written to file 'foo.el' instead.
 For these files extra header and footer are written. In this case, also an additional header argument

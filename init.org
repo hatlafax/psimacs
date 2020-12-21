@@ -129,7 +129,7 @@ Additionally, a whole section can also be deactivated by a /CANCELED/ or a /DISA
 *** CANCELED Avoid generating /Emacs Lisp/ code per section
 
 The following [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] block should therefore also not be part of the generated =.el= file although the =:tangle yes=
-attribute was used.
+attribute was used. Same is true for /Disabled/ as well as tag /:noexport:/
 
 #+BEGIN_EXAMPLE
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -680,7 +680,7 @@ Sections that are tagged by =:noexport:= are not exported to html.
 )
 
 (defun psimacs/config/tangle-section-canceled ()
-  "Return t if the current section header is 'CANCELED' or 'DISABLED', else nil.
+  "Return t if the current section header is 'CANCELED' or 'DISABLED' ':noexport:', else nil.
 
 Section headers starts with '*', '**', etc, e.g.:
 
@@ -750,6 +750,7 @@ The main tangling function.
         - not marked as :tangle no
         - have a source-code of =emacs-lisp=
         - doesn't have the todo-markers CANCELED or DISABLED
+        - doesn't be tagged by :noexport:
 
 Elisp source code blocks that are marked as ':tangle foo.el' are written to file 'foo.el' instead.
 For these files extra header and footer are written. In this case, also an additional header argument
@@ -3411,7 +3412,7 @@ Show an empty scratch buffer on startup.
 (setq initial-scratch-message "")
 #+END_SRC
 
-*** DISABLED Undo in commands
+*** Undo in commands :noexport:
 
 Fix undo in commands affecting the mark.
 
@@ -3421,7 +3422,7 @@ See also:
 
 Remark: I have canceled the following setting. I am unsure about the right setting.
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 (setq mark-even-if-inactive nil)
 #+END_SRC
 
@@ -3928,7 +3929,7 @@ Library [[https://www.emacswiki.org/emacs/InfoPlus][Info Plus]] extends the stan
 
 *** Parenthesis
 
-**** DISABLED Automatically insert matching bracket
+**** Automatically insert matching bracket :noexport:
 
 When on, typing any left bracket automatically insert the right matching bracket. This is accomplished by *Emacs*'s
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
@@ -3936,14 +3937,13 @@ When on, typing any left bracket automatically insert the right matching bracket
 At the moment I have disabled it, because I would like to try [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]] alternative to the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 Actually, I always had some problems with the  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-handling.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; electric-pair-mode: automatically insert matching bracket.
 ;;
 (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
 (electric-pair-mode 1)
 #+END_SRC
-
 
 **** Insert brackets by pair
 
@@ -5079,39 +5079,7 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 - [[http://pragmaticemacs.com/][Pragmatic Emacs]]
 - [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
 
-*** Test only :noexport:
-
-blahhhh
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(setq some-test t)
-#+END_SRC
-
-*** CANCELED Test 1
-
-asfaskfjjsd
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(setq canceled-test-1 t)
-#+END_SRC
-
-**** Test 11
-
-dfgkjsdkgfj
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(setq canceled-test-11 t)
-#+END_SRC
-
-*** Test 2
-asdfaskj.ldfghjlöjkasfdfgkjsdkgfj
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(setq canceled-test-2 t)
-#+END_SRC
-
-
-*** DISABLED Temporarily workaround Org-Mode problem :noexport:
+*** Temporarily workaround Org-Mode problem :noexport:
 
 *Psimacs* relies on features provided by the [[https://orgmode.org/worg/org-contrib/][Org-mode Contributed Packages]].
 At the time of working on this setup, I encountered a problem in the =org-plus-contrib-20200907= package.
@@ -5121,7 +5089,7 @@ Hopefully, I can get rid of this hack in the near future.
 
 Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
 ;;
 ;; Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
 ;;
@@ -5142,7 +5110,7 @@ Check on [[https://orgmode.org/elpa/][OrgElpa]] and on [[https://code.orgmode.or
 Hopefully, this will be fixed upstream in the near future. In that case the following statement is
 to be removed and the =:ensure org-plus-contrib= is to be activated.
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
 ;;
 ;; Add local path to org-plus-contrib to search path
 ;;
@@ -5151,7 +5119,7 @@ to be removed and the =:ensure org-plus-contrib= is to be activated.
 
 *** The main Org-Mode configuration
 
-If the temporary hack workaround is in use, the =:require org-plus-contrib= statement needs to be commented!
+If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be commented!
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
 ;;
@@ -5643,12 +5611,12 @@ Presenting with [[https://orgmode.org][org-mode]]:
 (use-package epresent :straight t :after org)
 #+END_SRC
 
-*** DISABLED Keybinding for Org-Mode
+*** Keybinding for Org-Mode                                        :noexport:
 
 Some personal org-mode Key-bindings. This is only a suggestion from [[http://doc.norang.ca/org-mode.html][Organize Your Life In Plain Text!]].
 Therefore it is currently diasabled and should be activated after getting familiar with [[https://orgmode.org][org-mode]].
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
 ;;
 ;; Custom Org-Mode key bindings
 ;;
