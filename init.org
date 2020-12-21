@@ -4,7 +4,8 @@
 #+TAGS: Emacs
 #+CATEGORIES: editing
 #+STARTUP: showeverything
-#+OPTIONS: toc:4 h:4
+#+OPTIONS: toc:4 h:4 tags:nil
+#+EXPORT_EXCLUDE_TAGS: noexport
 # #+SETUPFILE: site-lisp/org-html-themes/org/theme-readtheorg.setup
 # #+SETUPFILE: site-lisp/org-html-themes/org/theme-bigblow.setup
 # #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
@@ -662,20 +663,84 @@ The code generation process is not performed with the [[http://orgmode.org/worg/
 should be pretty fast and not rely on loading [[https://orgmode.org][org-mode]] only for this task. Additionally, the tangling function
 does do some special stuff that is not supported by the  [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]] framework.
 
-Sections that are marked as =Canceled= or =Disabled= should be filtered.
+Sections and its subsections that are prefixed with =Canceled= or =Disabled= tokens get filtered out. The
+same happens if a section is attributed by the tag =:noexport:=.
+
+Sections that are tagged by =:noexport:= are not exported to html.
 
 #+BEGIN_SRC emacs-lisp :tangle early-init.el
+(defun psimacs/config/tangle-canceled-p (token)
+    "Return t if token is matching the 'canceled' criteria."
+    (when (or (string-prefix-p "CANCELED" token t)
+              (string-prefix-p "DISABLED" token t)
+              (string-match-p "^.*:NOEXPORT:.*$" (upcase token))
+          )
+        t
+    )
+)
+
 (defun psimacs/config/tangle-section-canceled ()
-  "Return t if the current section header was 'CANCELED' or 'DISABLED', else nil.
+  "Return t if the current section header is 'CANCELED' or 'DISABLED', else nil.
 
 Section headers starts with '*', '**', etc, e.g.:
 
-'** CANCELED Some section header text'"
-  (save-excursion (if (re-search-backward "^\\*+\\s-+\\(.*?\\)?\\s-*$" nil t)
-                      (or (string-prefix-p "CANCELED" (match-string 1) t)
-                          (string-prefix-p "DISABLED" (match-string 1) t)) nil)))
-#+END_SRC
+'** CANCELED Some section header text'
 
+This function searches the header tree up to the root. The current header is
+regarded 'canceled' if he or any of its parent headers is regarded 'canceled'.
+"
+    ;;(save-excursion (if (re-search-backward "^\\*+\\s-+\\(.*?\\)?\\s-*$" nil t)
+    ;;                   (or (string-prefix-p "CANCELED" (match-string 1) t)
+    ;;                       (string-prefix-p "DISABLED" (match-string 1) t)
+    ;;                       (string-match-p "^.*:NOEXPORT:.*$" (match-string 1))
+    ;;                   ) nil))
+    ;;(message "---------------------------------------------------------------------------------------------")
+    (save-excursion
+        (let ( (result nil) (loop t) (n 0) (i 0) )
+            (while (and (not result) loop)
+                (if (re-search-backward "^\\(\\*+\\)\\s-+\\(.*?\\)?\\s-*$" nil t)
+                    (progn
+                        ;;(message "%s" (match-string 0))
+                        (setq i (length (match-string 1)))
+                        (if (= n 0)
+                            (progn
+                                (setq n i)
+                                (when (psimacs/config/tangle-canceled-p (match-string 2))
+                                    (setq result t)
+                                    (setq loop nil)
+                                    ;;(message "=> early canceled -> result t %s" (match-string 0))
+                                )
+                            )
+                            ;; else n > 0
+                            (when (not result)
+                                (if (< i n)
+                                    (progn
+                                        (when (psimacs/config/tangle-canceled-p (match-string 2))
+                                            (setq result t)
+                                            ;;(message "=> canceled!!! %s" (match-string 0))
+                                        )
+
+                                        (when (<= i 1)
+                                            (setq loop nil)
+                                            ;;(message "=> stopped!!! %s" (match-string 0))
+                                        )
+
+                                        (setq n i)
+                                    )
+                                  ;;(message "=> discarded i = %s, n = %s" i n)
+                                )
+                            )
+                        )
+                    )
+                  (setq loop nil)
+                )
+            )
+            ;;(message "=> final result %s" result)
+            result
+        )
+    )
+)
+#+END_SRC
 
 The main tangling function.
 
@@ -3346,7 +3411,7 @@ Show an empty scratch buffer on startup.
 (setq initial-scratch-message "")
 #+END_SRC
 
-*** CANCELED Undo in commands
+*** DISABLED Undo in commands
 
 Fix undo in commands affecting the mark.
 
@@ -3399,7 +3464,7 @@ mark onto this ring. One of the uses of the mark ring is to remember spots that 
 If you set =set-mark-command-repeat-pop= to non-nil, then immediately after you type =C-u C-SPC=, you can type =C-SPC=
 instead of =C-u C-SPC= to cycle through the mark ring.
 
-#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 ;;
 ;; Handy way of getting back to previous places.
 ;;
@@ -3863,6 +3928,8 @@ Library [[https://www.emacswiki.org/emacs/InfoPlus][Info Plus]] extends the stan
 
 *** Parenthesis
 
+**** DISABLED Automatically insert matching bracket
+
 When on, typing any left bracket automatically insert the right matching bracket. This is accomplished by *Emacs*'s
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 
@@ -3870,9 +3937,15 @@ At the moment I have disabled it, because I would like to try [[http://ergoemacs
 Actually, I always had some problems with the  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 
 #+BEGIN_SRC emacs-lisp :tangle no config/init-basic-handling.el
+;;
+;; electric-pair-mode: automatically insert matching bracket.
+;;
 (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
 (electric-pair-mode 1)
 #+END_SRC
+
+
+**** Insert brackets by pair
 
 The following code [[http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html][Emacs: Insert Brackets by Pair]] is taken from [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]]. It tries to solve some of the
 problems that arise with [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
@@ -4637,7 +4710,6 @@ This support package is used by [[https://orgmode.org][org-mode]] to produce col
 (use-package htmlize)
 #+END_SRC
 
-
 * Utility Lisp functions
 
 All functions defined in *Psimacs* are prefixed by =psimacs/category=. For example
@@ -5007,7 +5079,39 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 - [[http://pragmaticemacs.com/][Pragmatic Emacs]]
 - [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
 
-*** Temporarily workaround Org-Mode problem
+*** Test only :noexport:
+
+blahhhh
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq some-test t)
+#+END_SRC
+
+*** CANCELED Test 1
+
+asfaskfjjsd
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq canceled-test-1 t)
+#+END_SRC
+
+**** Test 11
+
+dfgkjsdkgfj
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq canceled-test-11 t)
+#+END_SRC
+
+*** Test 2
+asdfaskj.ldfghjlöjkasfdfgkjsdkgfj
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq canceled-test-2 t)
+#+END_SRC
+
+
+*** DISABLED Temporarily workaround Org-Mode problem :noexport:
 
 *Psimacs* relies on features provided by the [[https://orgmode.org/worg/org-contrib/][Org-mode Contributed Packages]].
 At the time of working on this setup, I encountered a problem in the =org-plus-contrib-20200907= package.
@@ -5068,7 +5172,7 @@ If the temporary hack workaround is in use, the =:require org-plus-contrib= stat
             org-todo-keywords '(
                 (sequence "TODO(t/!)" "WORK(w/!)" "WAIT(a/!)" "HOLD(h@/!)" "|" "DONE(d/!)" "STOP(s@/!)")
                 (sequence "REPORT(r/!)" "BUG(b/!)" "FEEDBACK(f@/!)" "WAITING(i@/!)" "VERIFY(v@/!)" "KNOWNCAUSE(k@/!)" "|" "FIXED(x/!)")
-                (sequence "|" "CANCELLED(c@/!)" "DELEGATED(e@/!)")
+                (sequence "|" "CANCELED(c@/!)" "DELEGATED(e@/!)")
             )
         )
 
@@ -5089,7 +5193,7 @@ If the temporary hack workaround is in use, the =:require org-plus-contrib= stat
         ;        ("KNOWNCAUSE"   . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
         ;        ("FIXED"        . (org-done))
 
-        ;        ("CANCELLED"    . (org-done))
+        ;        ("CANCELED"     . (org-done))
         ;        ("DELEGATED"    . (org-done))
         ;    )
         ;)
@@ -5153,7 +5257,7 @@ If the temporary hack workaround is in use, the =:require org-plus-contrib= stat
                 ("KNOWNCAUSE"   . ?K)
                 ("FIXED"        . ?X)
 
-                ("CANCELLED"    . ?C)
+                ("CANCELED"     . ?C)
                 ("DELEGATED"    . ?E)
                 (:endgroup)
 
@@ -5193,23 +5297,23 @@ If the temporary hack workaround is in use, the =:require org-plus-contrib= stat
 
         (setq org-todo-state-tags-triggers
             (quote (
-                ("TODO"                 ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("TODO"       . t))
-                ("WORK"        ("TODO")          ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("WORK"       . t))
-                ("WAIT"        ("TODO") ("WORK")          ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("WAIT"       . t))
-                ("HOLD"        ("TODO") ("WORK") ("WAIT")          ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("HOLD"       . t))
-                ("DONE"        ("TODO") ("WORK") ("WAIT") ("HOLD")          ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("DONE"       . t))
-                ("STOP"        ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE")          ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("DONE"       . t))
+                ("TODO"                 ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("TODO"       . t))
+                ("WORK"        ("TODO")          ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("WORK"       . t))
+                ("WAIT"        ("TODO") ("WORK")          ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("WAIT"       . t))
+                ("HOLD"        ("TODO") ("WORK") ("WAIT")          ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("HOLD"       . t))
+                ("DONE"        ("TODO") ("WORK") ("WAIT") ("HOLD")          ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("DONE"       . t))
+                ("STOP"        ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE")          ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("DONE"       . t))
 
-                ("REPORT"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP")            ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("REPORT"     . t))
-                ("BUG"         ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT")         ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("BUG"        . t))
-                ("FEEDBACK"    ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG")              ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("FEEDBACK"   . t))
-                ("WAITING"     ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK")             ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("WAITING"    . t))
-                ("VERIFY"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING")            ("KNOWNCAUSE") ("FIXED") ("CANCELLED") ("DELEGATED") ("VERIFY"     . t))
-                ("KNOWNCAUSE"  ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY")                ("FIXED") ("CANCELLED") ("DELEGATED") ("KNOWNCAUSE" . t))
-                ("FIXED"       ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE")           ("CANCELLED") ("DELEGATED") ("FIXED"      . t))
+                ("REPORT"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP")            ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("REPORT"     . t))
+                ("BUG"         ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT")         ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("BUG"        . t))
+                ("FEEDBACK"    ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG")              ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("FEEDBACK"   . t))
+                ("WAITING"     ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK")             ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("WAITING"    . t))
+                ("VERIFY"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING")            ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("VERIFY"     . t))
+                ("KNOWNCAUSE"  ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY")                ("FIXED") ("CANCELED") ("DELEGATED") ("KNOWNCAUSE" . t))
+                ("FIXED"       ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE")           ("CANCELED") ("DELEGATED") ("FIXED"      . t))
 
-                ("CANCELLED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED")               ("DELEGATED") ("CANCELLED"  . t))
-                ("DELEGATED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELLED")               ("DELEGATED"  . t))
+                ("CANCELLED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED")              ("DELEGATED") ("CANCELED"   . t))
+                ("DELEGATED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED")               ("DELEGATED"  . t))
             ))
         )
 
@@ -5400,6 +5504,7 @@ code to whatever theme I'm using's background."
             )
         )
 
+
         (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
 
         ;; Org babel language support
@@ -5414,35 +5519,21 @@ code to whatever theme I'm using's background."
 
         (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
 
+
+        (defun psimacs/internal/export-filter-section-canceled (text backend info)
+          "Do not export the content of sections marked as canceled."
+          (message "TEXT: %s" text)
+          ""
+          )
+
+        (require 'ox)
+        (add-to-list 'org-export-filter-headline-functions 'psimacs/internal/export-filter-section-canceled)
+
     :bind (
         ("C-c a" . org-agenda)
     )
     :bind* (
         ("C-c c" . org-capture)
-    )
-)
-#+END_SRC
-
-*** Org-babel configuration
-
-Maybe in the future...
-
-#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-org-mode.el
-;;
-;; Org babel language support
-;;
-(with-eval-after-load 'org
-    (progn
-        (org-babel-do-load-languages 'org-babel-load-languages '(
-            (C . t)
-            (python . t)
-            (plantuml . t)
-            (dot . t)
-            (emacs-lisp . t)
-            (latex . t)
-        ))
-
-        (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
     )
 )
 #+END_SRC
@@ -5518,7 +5609,6 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 )
 #+END_SRC
 
-
 *** Auto completion for Org-Mode
 
 [[https://github.com/aki2o/org-ac][Org-ac]] is an extension of *Emacs* that provide auto-complete sources for [[https://orgmode.org][org-mode]].
@@ -5553,7 +5643,7 @@ Presenting with [[https://orgmode.org][org-mode]]:
 (use-package epresent :straight t :after org)
 #+END_SRC
 
-*** Keybinding for Org-Mode
+*** DISABLED Keybinding for Org-Mode
 
 Some personal org-mode Key-bindings. This is only a suggestion from [[http://doc.norang.ca/org-mode.html][Organize Your Life In Plain Text!]].
 Therefore it is currently diasabled and should be activated after getting familiar with [[https://orgmode.org][org-mode]].
