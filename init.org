@@ -1,4 +1,4 @@
-# -*- mode: org; coding: utf-8; -*-
+psimacs/config/default-frame-placement-counter# -*- mode: org; coding: utf-8; -*-
 #+TITLE: Psimacs Emacs configuration
 #+DESCRIPTION: Loading Emacs configuration using org-babel
 #+TAGS: Emacs
@@ -1397,8 +1397,54 @@ Supported strategies are:
                     )
                   )
                 )
-            )
   )
+
+  (add-hook 'after-delete-frame-functions
+            #'(lambda (frame)
+                (when (equal psimacs/config/default-frame-creation-strategy "layout")
+                  (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+                  (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+                  (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+                  (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+
+                  (setq psimacs/config/default-frame-placement-counter (- psimacs/config/default-frame-placement-counter 1))
+
+                  (when (< psimacs/config/default-frame-placement-counter 1)
+                    (setq psimacs/config/default-frame-placement-counter 1)
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 1)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-1-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-1-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 2)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-2-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-2-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 3)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-3-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-3-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
+                    )
+
+                  (when (= psimacs/config/default-frame-placement-counter 4)
+                    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-4-pos-x))
+                    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-4-pos-y))
+                    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
+                    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
+                    )
+                  )
+                )
+  )
+
+)
 #+END_SRC
 
 ** System constants flags
@@ -3394,7 +3440,7 @@ See the following references for fringes:
 ;;
 ;; Usually, fringes defaults to 8 pixel width
 ;;
-(set-fringe-mode 16)
+(set-fringe-mode 8)
 ;;(defun my-tone-down-fringes ()
 ;;  (set-face-attribute 'fringe nil
 ;;                      :foreground (face-foreground 'default)
