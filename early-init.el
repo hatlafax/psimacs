@@ -65,28 +65,28 @@ allows sharing of a single configuration on multiple machines.")
 ;;
 ;; Primary Psimacs file and directory constants use for tangling and synchronization
 ;;
-(defconst psimacs/config/main-org-file "init.org"
+(defconst psimacs/config/main-org-file-name "init.org"
   "The psimacs initialization file.")
 
-(defconst psimacs/config/main-html-file "init.html"
+(defconst psimacs/config/main-html-file-name "init.html"
   "The psimacs htmlized initialization file.")
 
-(defconst psimacs/config/icon-file "psi.ico"
+(defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
 
-(defconst psimacs/config/license-file "LICENSE"
+(defconst psimacs/config/license-file-name "LICENSE"
   "The psimacs license file.")
 
-(defconst psimacs/config/custom-file "custom.el"
+(defconst psimacs/config/custom-file-name "custom.el"
   "The psimacs custom elips file.")
 
-(defconst psimacs/config/agenda-dir "agenda"
+(defconst psimacs/config/agenda-folder "agenda"
   "The psimacs agenda directory.")
 
-(defconst psimacs/config/latex-dir "latex"
+(defconst psimacs/config/latex-folder "latex"
   "The psimacs latex directory.")
 
-(defconst psimacs/config/assets-dir "assets"
+(defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
 
 (defconst psimacs/config/copyright/year       "2020-2021")
@@ -597,31 +597,31 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
              (sync-files-alist ())
              (sync-dirs-alist  ()))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/main-org-file)
-                                             (concat db-dir psimacs/config/main-org-file)))
+                                                     psimacs/config/main-org-file-name)
+                                             (concat db-dir psimacs/config/main-org-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/main-html-file)
-                                             (concat db-dir psimacs/config/main-html-file)))
-        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file)
-                                             (concat db-dir psimacs/config/icon-file)))
+                                                     psimacs/config/main-html-file-name)
+                                             (concat db-dir psimacs/config/main-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
+                                             (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/license-file)
-                                             (concat db-dir psimacs/config/license-file)))
+                                                     psimacs/config/license-file-name)
+                                             (concat db-dir psimacs/config/license-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/custom-file)
-                                             (concat db-dir psimacs/config/custom-file)))
+                                                     psimacs/config/custom-file-name)
+                                             (concat db-dir psimacs/config/custom-file-name)))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/agenda-dir))
+                                                                             psimacs/config/agenda-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/agenda-dir))))
+                                                                             psimacs/config/agenda-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/latex-dir))
+                                                                             psimacs/config/latex-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/latex-dir))))
+                                                                             psimacs/config/latex-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/assets-dir))
+                                                                             psimacs/config/assets-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/assets-dir))))
+                                                                             psimacs/config/assets-folder))))
 
         ;;
         ;; Create missing dropbox emacs directory
@@ -664,5 +664,5 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
 ;; emacs.
 ;;
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
-                                                                  psimacs/config/main-org-file)))
+                                                                  psimacs/config/main-org-file-name)))
 

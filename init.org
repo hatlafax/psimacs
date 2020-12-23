@@ -6,17 +6,15 @@
 #+STARTUP: showeverything
 #+OPTIONS: toc:4 h:4 tags:nil
 #+EXPORT_EXCLUDE_TAGS: noexport
-# #+SETUPFILE: site-lisp/org-html-themes/org/theme-readtheorg.setup
-# #+SETUPFILE: site-lisp/org-html-themes/org/theme-bigblow.setup
-# #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
-#+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
-
 #+HTML_HEAD: <style type="text/css">
-;#+HTML_HEAD: .styledtable { width: 400px;}
 #+HTML_HEAD: .styledtable col:nth-of-type(1) { width: 15% }
 #+HTML_HEAD: .styledtable col:nth-of-type(2) { width: 30% }
 #+HTML_HEAD: .styledtable col:nth-of-type(3) { width: 55% }
 #+HTML_HEAD: </style>
+# #+SETUPFILE: site-lisp/org-html-themes/org/theme-readtheorg.setup
+# #+SETUPFILE: site-lisp/org-html-themes/org/theme-bigblow.setup
+# #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+#+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
 
 * Introduction
 This is *Psimacs*, a /modern/ *Emacs* configuration build from the ground up using a [[https://de.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
@@ -377,28 +375,28 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 ;;
 ;; Primary Psimacs file and directory constants use for tangling and synchronization
 ;;
-(defconst psimacs/config/main-org-file "init.org"
+(defconst psimacs/config/main-org-file-name "init.org"
   "The psimacs initialization file.")
 
-(defconst psimacs/config/main-html-file "init.html"
+(defconst psimacs/config/main-html-file-name "init.html"
   "The psimacs htmlized initialization file.")
 
-(defconst psimacs/config/icon-file "psi.ico"
+(defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
 
-(defconst psimacs/config/license-file "LICENSE"
+(defconst psimacs/config/license-file-name "LICENSE"
   "The psimacs license file.")
 
-(defconst psimacs/config/custom-file "custom.el"
+(defconst psimacs/config/custom-file-name "custom.el"
   "The psimacs custom elips file.")
 
-(defconst psimacs/config/agenda-dir "agenda"
+(defconst psimacs/config/agenda-folder "agenda"
   "The psimacs agenda directory.")
 
-(defconst psimacs/config/latex-dir "latex"
+(defconst psimacs/config/latex-folder "latex"
   "The psimacs latex directory.")
 
-(defconst psimacs/config/assets-dir "assets"
+(defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
  #+END_SRC
 
@@ -1089,31 +1087,31 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
              (sync-files-alist ())
              (sync-dirs-alist  ()))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/main-org-file)
-                                             (concat db-dir psimacs/config/main-org-file)))
+                                                     psimacs/config/main-org-file-name)
+                                             (concat db-dir psimacs/config/main-org-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/main-html-file)
-                                             (concat db-dir psimacs/config/main-html-file)))
-        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file)
-                                             (concat db-dir psimacs/config/icon-file)))
+                                                     psimacs/config/main-html-file-name)
+                                             (concat db-dir psimacs/config/main-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
+                                             (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/license-file)
-                                             (concat db-dir psimacs/config/license-file)))
+                                                     psimacs/config/license-file-name)
+                                             (concat db-dir psimacs/config/license-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
-                                                     psimacs/config/custom-file)
-                                             (concat db-dir psimacs/config/custom-file)))
+                                                     psimacs/config/custom-file-name)
+                                             (concat db-dir psimacs/config/custom-file-name)))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/agenda-dir))
+                                                                             psimacs/config/agenda-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/agenda-dir))))
+                                                                             psimacs/config/agenda-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/latex-dir))
+                                                                             psimacs/config/latex-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/latex-dir))))
+                                                                             psimacs/config/latex-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/assets-dir))
+                                                                             psimacs/config/assets-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/assets-dir))))
+                                                                             psimacs/config/assets-folder))))
 
         ;;
         ;; Create missing dropbox emacs directory
@@ -1168,7 +1166,7 @@ This starts the processing of this org file (=init.org=), resulting in tbe final
 ;; emacs.
 ;;
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
-                                                                  psimacs/config/main-org-file)))
+                                                                  psimacs/config/main-org-file-name)))
 #+END_SRC
 
 * Preamble to the /init.el/ file
@@ -1536,6 +1534,11 @@ programs are installed.
 (defconst psimacs/config/session-dir
   (psimacs/file-system/concat-directory user-emacs-directory "session")
   "The psimacs session directory used for storing various session information.")
+
+(defconst psimacs/config/assets-dir
+  (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/assets-folder)
+  "The psimacs assets directory.")
+
 #+END_SRC
 
 ** Private directory
@@ -1716,8 +1719,8 @@ your calendar.
 ;;
 ;; Org-Agenda directory
 ;;
-(defconst psimacs/config/org-agenda-dir
-    (psimacs/file-system/prefer-dropbox-directory "agenda")
+(defconst psimacs/config/agenda-dir
+    (psimacs/file-system/prefer-dropbox-directory psimacs/config/agenda-folder)
     "The psimacs org agenda  directory.")
 
 ;;
@@ -1782,7 +1785,7 @@ repository.
 ;; The custom.el file. This file gets not be synchronized
 ;;
 (defconst psimacs/config/custom-file
-    (psimacs/file-system/concat-file user-emacs-directory ".custom.el")
+    (psimacs/file-system/concat-file user-emacs-directory psimacs/config/custom-file-name)
     "The psimacs customization file.")
 #+END_SRC
 
@@ -1794,8 +1797,8 @@ LaTeX bibliography should be shared.
 ;;
 ;; LaTeX file sharing
 ;;
-(defconst psimacs/config/latex-share-dir
-  (psimacs/file-system/prefer-dropbox-directory "latex")
+(defconst psimacs/config/latex-dir
+  (psimacs/file-system/prefer-dropbox-directory psimacs/config/latex-folder)
   "The psimacs shared latex directory.")
 
 (defconst psimacs/config/tex-runtime-dir
@@ -1930,13 +1933,6 @@ Basically two spell checkers are usable with *Emacs*. Either [[https://github.co
 ;;
 ;; Spell checking with hunspell
 ;;
-(defvar psimacs/internal/spell-checker-use-aspell t
-  "Default spell checker is aspell.
-Use the aspell spell checker if true, otherwise use the hunspell spell checker.
-
-See function 'psimacs/config/toogle-spell-checker' to switch between
-aspell and hunspell at runtime.")
-
 (defconst psimacs/config/spell-checker-hunspell-runtime
   (psimacs/file-system/concat-file psimacs/config/mingw-runtime-dir "hunspell.exe")
   "The hunspell executable to use.")
@@ -1945,40 +1941,96 @@ aspell and hunspell at runtime.")
   (psimacs/file-system/concat-file psimacs/config/mingw-runtime-dir "aspell.exe")
   "The aspell executable to use.")
 
-(defconst psimacs/config/spell-checker-hunspell-default-dir
-  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "share/hunspell")
-  "The hunspell dictionary directory provided by the MSYS2 package.")
+(defconst psimacs/config/spell-checker-hunspell-extra-args '("-i" "utf-8")       "Extra hunspell arguments.")
+(defconst psimacs/config/spell-checker-aspell-extra-args   '("--sug-mode=ultra") "Extra aspell arguments.")
+
+(defconst psimacs/config/spell-checker-hunspell-list-command "-l"     "Command list option for hunspell.")
+(defconst psimacs/config/spell-checker-aspell-list-command   "--list" "Command list option for aspell.")
 
 (defconst psimacs/config/spell-checker-hunspell-personal-dir
-  (psimacs/file-system/concat-directory psimacs/config/private-dir "hunspell")
+  (psimacs/file-system/concat-directory psimacs/config/assets-dir "hunspell")
   "The hunspell dictionary directory provided by the MSYS2 package.")
 
-(defconst psimacs/config/spell-checker-aspell-default-dir
-  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "lib/aspell-0.60")
-  "The aspell dictionary directory provided by the MSYS2 package.")
-
 (defconst psimacs/config/spell-checker-hunspell-dir
-  (if (file-directory-p psimacs/config/spell-checker-hunspell-personal-dir)
-      psimacs/config/spell-checker-hunspell-personal-dir
-    psimacs/config/spell-checker-hunspell-default-dir)
-    "The psimacs spell checker dictionary directory for hunspell.")
+  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "share/hunspell")
+  "The psimacs spell checker dictionary directory for hunspell.")
 
 (defconst psimacs/config/spell-checker-aspell-dir
-  psimacs/config/spell-checker-aspell-default-dir
+  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "lib/aspell-0.60")
   "The psimacs spell checker dictionary directory for aspell.")
 
-(defconst psimacs/config/spell-checker-hunspell-personal-dictionary-file
-  (psimacs/file-system/concat-file psimacs/config/session-dir ".hunspell_personal")
+(defconst psimacs/config/spell-checker-hunspell-german-dict "de_DE"
+  "The hunspell german dictionary to use.")
+
+(defconst psimacs/config/spell-checker-hunspell-english-dict "en_US"
+  "The hunspell english dictionary to use.")
+
+(defconst psimacs/config/spell-checker-aspell-german-dict "deutsch8"
+  "The aspell german dictionary to use.")
+
+(defconst psimacs/config/spell-checker-aspell-english-dict "american"
+  "The aspell english dictionary to use.")
+
+(defconst psimacs/config/spell-checker-hunspell-personal-dict-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".hunspell_")
   "The psimacs personal hunspell dictionary file.")
 
-(defconst psimacs/config/spell-checker-aspell-personal-dictionary-file
-  (psimacs/file-system/concat-file psimacs/config/session-dir ".aspell_personal")
+(defconst psimacs/config/spell-checker-aspell-personal-dict-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".aspell_")
   "The psimacs personal aspell dictionary file.")
 
 (defconst psimacs/config/spell-checker-complete-word-dictionary-file
   (psimacs/file-system/concat-file psimacs/config/assets-dir "plain-word-list.txt")
-  "A plain english word list."
-)
+  "A plain english word list.")
+
+;;
+;; Some derived constants to simplify setup
+;;
+(defconst psimacs/internal/spell-checker-use-aspell nil
+  "Default spell checker is aspell.
+Use the aspell spell checker if true, otherwise use the hunspell spell checker.")
+
+(defconst psimacs/config/spell-checker-runtime
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-runtime
+    psimacs/config/spell-checker-hunspell-runtime)
+  "The spell checker executable to use.")
+
+(defconst psimacs/config/spell-checker-extra-args
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-extra-args
+    psimacs/config/spell-checker-hunspell-extra-args)
+  "Extra spell checker arguments.")
+
+(defconst psimacs/config/spell-checker-list-command
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-list-command
+    psimacs/config/spell-checker-hunspell-list-command)
+  "Command list option for spell checker.")
+
+(defconst psimacs/config/spell-checker-dir
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-dir
+    psimacs/config/spell-checker-hunspell-dir)
+  "The psimacs spell checker dictionary directory.")
+
+(defconst psimacs/config/spell-checker-german-dict
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-german-dict
+    psimacs/config/spell-checker-hunspell-german-dict)
+  "The german dictionary to use.")
+
+(defconst psimacs/config/spell-checker-english-dict
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-english-dict
+    psimacs/config/spell-checker-hunspell-english-dict)
+  "The english dictionary to use.")
+
+(defconst psimacs/config/spell-checker-personal-dict-file
+  (if psimacs/internal/spell-checker-use-aspell
+      psimacs/config/spell-checker-aspell-personal-dict-file
+    psimacs/config/spell-checker-hunspell-personal-dict-file)
+  "The psimacs personal dictionary file.")
 #+END_SRC
 
 ** Multilingual grammar and style checker
@@ -3128,7 +3180,7 @@ See also:
 |             | =M-x describe-coding-system=            | Information about coding system.                                                                                                                                                                                 |
 |             | =M-x list-coding-systems=               |                                                                                                                                                                                                                  |
 |             | =M-x find-file-literally=               | Open file without any conversion.                                                                                                                                                                                |
-| =C-x RET c= | =M-x universal-coding-system-argument== | Takes as an argument the coding system you want to use, and a command to execute it with. That makes it possible to open files, shells or run Emacs commands as though you were using a different coding system. |
+| =C-x RET c= | =M-x universal-coding-system-argument== | Ttakes as an argument the coding system you want to use, and a command to execute it with. That makes it possible to open files, shells or run Emacs commands as though you were using a different coding system. |
 |-------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 See also content of variable =buffer-file-coding-system= by use of =C-h v=.
@@ -4858,6 +4910,11 @@ This support package is used by [[https://orgmode.org][org-mode]] to produce col
 [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][Flyspell]] enables on-the-fly spell checking in Emacs by the means of a minor mode. [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][Flyspell]] highlights incorrect words
 as soon as they are completed or as soon as the cursor hits a new word.
 
+Basically two spell checker programs are usable. At first there is [[http://aspell.net/][Aspell]] and secondly there is [[https://github.com/hunspell/hunspell][hunspell]]. *Psimacs*
+supports both backends. You can configure which one to use with the flag variable =psimacs/internal/spell-checker-use-aspell=.
+If this is set to =t= the [[http://aspell.net/][Aspell]] program will be used.
+
+The following key bindings are defined for the spell checking mode.
 #+ATTR_HTML: :class styledtable
 | Key binding | Command                                        | Description                                                                                                                                                                                                                                                                                      |
 |-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -4879,10 +4936,20 @@ as soon as they are completed or as soon as the cursor hits a new word.
 |             | =M-x flyspell-correct-word=                    | Pop up a menu of possible corrections for a misspelled word. The word checked is the word at the mouse position.                                                                                                                                                                                 |
 |             | =M-x flyspell-correct-word-before-point=       | Pop up a menu of possible corrections for misspelled word before point.                                                                                                                                                                                                                          |
 |-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-f d= | =M-x psimac/spell/add-word-to-dict=            | Add the word at the current location to the private dictionary without question.                                                                                                                                                                                                                 |
+|-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f g= | =M-x psimac/spell/switch-to-german=            | Change to german language dictionary.                                                                                                                                                                                                                                                            |
 | =H-m C-f e= | =M-x psimac/spell/switch-to-english=           | Change to english language dictionary.                                                                                                                                                                                                                                                           |
 | =H-m C-f t= | =M-x psimac/spell/toggle-language=             | Toggle german and english language dictionaries.                                                                                                                                                                                                                                                 |
 |-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+Some more information about spell checking can be found in the following references:
+- [[http://aspell.net/][Aspell]]
+- [[https://github.com/hunspell/hunspell][hunspell]]
+- [[https://www.emacswiki.org/emacs/InteractiveSpell][EmacsWiki: Interactive Spell]]
+- [[https://addons.mozilla.org/en-US/thunderbird/language-tools/][Mozlla Dictionaries & Language Packs]]
+- [[https://extensions.openoffice.org/][OpenOffice Spell Checker Extensions]]
+- [[http://wikemacs.org/wiki/Flyspell-mode][flyspell]]
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-spell-checking.el :var file-description="Basic spell checking setup"
 ;;
@@ -4891,80 +4958,170 @@ as soon as they are completed or as soon as the cursor hits a new word.
 (use-package flyspell
   :diminish flyspell-mode
   :config
-      (setq flyspell-issue-welcome-flag nil
-            flyspell-issue-message-flag nil
-            flyspell-default-dictionary "deutsch8"
-            flyspell-sort-corrections nil
-            flyspell-doublon-as-error-flag t
-            flyspell-highlight-flag t
-            flyspell-mark-duplications-flag t
-            flyspell-persistent-highlight t
-            flyspell-highlight-properties t
-            flyspell-use-meta-tab nil)
+    (setq flyspell-issue-welcome-flag nil
+          flyspell-issue-message-flag nil
+          flyspell-default-dictionary psimacs/config/spell-checker-german-dict
+          flyspell-sort-corrections nil
+          flyspell-doublon-as-error-flag t
+          flyspell-highlight-flag t
+          flyspell-mark-duplications-flag t
+          flyspell-persistent-highlight t
+          flyspell-highlight-properties t
+          flyspell-use-meta-tab nil)
 
-      (setq-default ispell-program-name        psimacs/config/spell-checker-aspell-runtime
-                    ispell-really-aspell       t
-                    ispell-check-comments      t
-                    ispell-extra-args          '("--sug-mode=ultra")
-                    ispell-dictionary          "deutsch8"
-                    ispell-local-dictionary    "deutsch8"
-                    ispell-silently-savep      t
-                    ispell-list-command        "--list"    ;; flyspell with aspell instead of ispell; indicate ispell to return a list of missspelled words.
-                    ispell-personal-dictionary psimacs/config/spell-checker-aspell-personal-dictionary-file)
+    (unless psimacs/internal/spell-checker-use-aspell ;; i.e. is hunspell
+      (setq-default
+                ispell-local-dictionary-alist
+                  '(
+                    ("en_US"     "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US"         ) nil utf-8)
+                    ("en_GB"     "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB"         ) nil utf-8)
+                    ("de_DE"     "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "de_DE_frami"   ) nil utf-8)
+                    ("de_DE_old" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "de_DE_OLDSPELL") nil utf-8)
+                   )
+                ispell-hunspell-dictionary-alist ispell-local-dictionary-alist))
+
+  (setq-default ispell-program-name      psimacs/config/spell-checker-runtime
+                ispell-extra-args        psimacs/config/spell-checker-extra-args
+                ispell-list-command      psimacs/config/spell-checker-list-command
+                ispell-really-aspell     psimacs/internal/spell-checker-use-aspell
+                ispell-really-hunspell   (not psimacs/internal/spell-checker-use-aspell)
+                ispell-check-comments    t
+                ispell-silently-savep    t
+                ispell-dictionary        flyspell-default-dictionary
+                ispell-local-dictionary  flyspell-default-dictionary
+                ispell-library-directory psimacs/config/spell-checker-dir
+                )
 
   (add-hook 'tex-mode-hook (function (lambda () (setq ispell-parser 'tex))))
 
-  :init
-  (unless (file-exists-p psimacs/config/spell-checker-aspell-personal-dictionary-file)
-    (write-region "" nil psimacs/config/spell-checker-aspell-personal-dictionary-file nil 0))
+  ;;
+  ;; Run flyspell-buffer automatically after emacs loads a file
+  ;;
+  ;; flyspell-mode-hook: executed after flyspell minor-mode is loaded, however before
+  ;; local variables have been processed, hence the flyspell-local-vars trick.
+  ;;
+  (add-hook 'flyspell-mode-hook #'psimacs/spell/internal/flyspell-local-vars)
+  (defun psimacs/spell/internal/flyspell-local-vars ()
+    ;; Emacs calls this hook immediately after it finishes applying
+    ;; file-local variables stored in file-local-variables-alist.
+    (add-hook 'hack-local-variables-hook #'flyspell-buffer))
 
-  (when (file-exists-p psimacs/config/spell-checker-aspell-personal-dictionary-file)
-    (setq ispell-complete-word-dict psimacs/config/spell-checker-aspell-personal-dictionary-file))
+  (defun psimacs/spell/setup-german-dic()
+    "Setup german personal dictionary."
+    (let ((de_dict (concat psimacs/config/spell-checker-personal-dict-file "de_DE")))
+      (unless (file-exists-p de_dict)
+        (if psimacs/internal/spell-checker-use-aspell
+            (write-region "personal_ws-1.1 de 0" nil de_dict nil 0)
+          (write-region "" nil de_dict nil 0)))
+
+      (when (file-exists-p de_dict)
+        (setq-default ispell-personal-dictionary de_dict)
+        (setq         ispell-complete-word-dict  de_dict))
+      ))
+
+  (defun psimacs/spell/setup-english-dic()
+    "Setup english personal dictionary."
+    (let ((en_dict (concat psimacs/config/spell-checker-personal-dict-file "en_US")))
+      (unless (file-exists-p en_dict)
+        (if psimacs/internal/spell-checker-use-aspell
+            (write-region "personal_ws-1.1 en 0" nil en_dict nil 0)
+          (write-region "" nil en_dict nil 0)))
+
+      (when (file-exists-p en_dict)
+        (setq-default ispell-personal-dictionary en_dict)
+        (setq         ispell-complete-word-dict  en_dict))
+      ))
 
   (defun psimac/spell/switch-to-german ()
     "switch ispell language to german."
     (interactive)
-    (ispell-change-dictionary "deutsch8"))
+    (psimacs/spell/setup-german-dic)
+    (ispell-change-dictionary psimacs/config/spell-checker-german-dict)
+    (message "Dictionary switched to german"))
 
   (defun psimac/spell/switch-to-english ()
     "switch ispell language to english"
-    (interactive)
-    (ispell-change-dictionary "american"))
+    (interactive )
+    (psimacs/spell/setup-english-dic)
+    (ispell-change-dictionary psimacs/config/spell-checker-english-dict)
+    (message "Dictionary switched to english"))
 
   (defun psimac/spell/toggle-language ()
     "Toggle ispell-language between english and deutsch8"
     (interactive)
-    (let* ((dic ispell-current-dictionary)
-    	   (change (if (string= dic "deutsch8") "english" "deutsch8")))
-      (ispell-change-dictionary change)
-      (message "Dictionary switched from %s to %s" dic change)))
+    (let ((dic ispell-current-dictionary))
+       (if (string= dic psimacs/config/spell-checker-german-dict)
+           (psimac/spell/switch-to-english)
+         (psimac/spell/switch-to-german))))
+
+  (defun psimac/spell/add-word-to-dict ()
+    "Add the word at the current location to the private dictionary without question."
+    (interactive)
+    ;; use the correct dictionary
+    (flyspell-accept-buffer-local-defs)
+    (setq opoint (point-marker))
+    (let ((cursor-location (point))
+          (word (flyspell-get-word nil)))
+      (if (consp word)
+          (let ((start (car (cdr word)))
+                (end (car (cdr (cdr word))))
+                (word (car word)))
+            ;; The word is incorrect, we have to propose a replacement.
+            (flyspell-do-correct 'save nil word cursor-location start end opoint)))
+      (ispell-pdict-save t)))
+
+
+    (defun psimacs/spell/check-next-highlighted-word ()
+        "Custom function to spell check next highlighted word"
+        (interactive)
+        (flyspell-goto-next-error)
+        (ispell-word)
+    )
+
+  ;;
+  ;; MSYS2 hunspell does not contain german dictionaries at the time of setting this up.
+  ;; Therefore I copy asset provided german dictionaries into the appropriate hunspell folder
+  ;; if MSYS2.
+  ;;
+  (unless psimacs/internal/spell-checker-use-aspell
+    (when (and (file-directory-p psimacs/config/spell-checker-hunspell-personal-dir)
+               (file-directory-p psimacs/config/spell-checker-hunspell-dir))
+      (dolist (f (directory-files psimacs/config/spell-checker-hunspell-personal-dir nil "^.*\\.\\(aff\\|dic\\)$"))
+        (let ((src-file (concat psimacs/config/spell-checker-hunspell-personal-dir f))
+              (dst-file (concat psimacs/config/spell-checker-hunspell-dir f)))
+          (when (not (file-exists-p dst-file))
+            (copy-file src-file dst-file t t))))))
+
+  (psimacs/spell/setup-german-dic)
 
   :hook (
          ((text-mode message-mode markdown-mode org-mode TeX-mode LaTeX-mode) . flyspell-mode)
          (prog--mode . flyspell-prog-mode)
          (ispell-change-dictionary . flyspell-buffer)
-         )
+        )
 
   :bind (
          :map psimacs/config/global-key-map/special
-         ("C-f m" . flyspell-mode)
-         ("C-f b" . flyspell-buffer)
-         ("C-f r" . flyspell-region)
-         ("C-f w" . flyspell-word)
-
-         ("C-f c" . flyspell-check-previous-highlighted-word)
-         ("C-f g" . psimac/spell/switch-to-german)
-         ("C-f e" . psimac/spell/switch-to-english)
-         ("C-f t" . psimac/spell/toggle-language)
+              ("C-f m" . flyspell-mode)
 
          :map flyspell-mode-map
-         ("C-:" . flyspell-auto-correct-previous-word)
-         ("\M-\t" . nil)
-         ([down-mouse-2] . nil)
-         ([mouse-2]      . nil)
-         ([down-mouse-3] . nil)
-         ([mouse-3]      . nil)
-         )
+              ("C-:" . flyspell-auto-correct-previous-word)
+              ("\M-\t" . nil)
+              ([down-mouse-2] . nil)
+              ([mouse-2]      . nil)
+              ([down-mouse-3] . nil)
+              ([mouse-3]      . nil)
+              ("H-m C-f b" . flyspell-buffer)
+              ("H-m C-f r" . flyspell-region)
+              ("H-m C-f w" . flyspell-word)
+
+              ("H-m C-f c" . flyspell-check-previous-highlighted-word)
+              ("H-m C-f d" . psimac/spell/add-word-to-dict)
+              ("H-m C-f g" . psimac/spell/switch-to-german)
+              ("H-m C-f e" . psimac/spell/switch-to-english)
+              ("H-m C-f t" . psimac/spell/toggle-language)
+
+        )
   )
 #+END_SRC
 
@@ -4991,10 +5148,10 @@ Correcting misspelled words with flyspell using favourite interface. That is wha
   :after flyspell
   :bind (
          :map flyspell-mode-map
-              ("C-;"   . flyspell-correct-wrapper)
-              ("C-f a" . flyspell-correct-at-point)
-              ("C-f p" . flyspell-correct-previous)
-              ("C-f n" . flyspell-correct-next)
+              ("C-;"       . flyspell-correct-wrapper)
+              ("H-m C-f a" . flyspell-correct-at-point)
+              ("H-m C-f p" . flyspell-correct-previous)
+              ("H-m C-f n" . flyspell-correct-next)
         )
 )
 
@@ -5098,6 +5255,24 @@ A test function =psimacs/ui/test/select-from-item-list= for function =psimacs/ui
     )
 )
 
+#+END_SRC
+
+** Encoding
+
+Sometimes you need to recode parts of a buffer. The following function allows to partially recode a region.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el
+;;
+;; Sometimes you need to recode parts of a buffer.
+;;
+(defun psimacs/encoding/recode-region (start end &optional coding-system)
+  "Replace the region with a recoded text."
+  (interactive "r\n\zCoding System (utf-8): ")
+  (setq coding-system (or coding-system 'utf-8))
+  (let ((buffer-read-only nil)
+	(text (buffer-substring start end)))
+    (delete-region start end)
+    (insert (decode-coding-string (string-make-unibyte text) coding-system))))
 #+END_SRC
 
 * Advanced Setup
@@ -5725,7 +5900,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 
         (org-indent-mode t)
 
-        (setq org-agenda-files (list psimacs/config/org-agenda-dir))
+        (setq org-agenda-files (list psimacs/config/agenda-dir))
 
         (setq org-highest-priority ?A)
         (setq org-lowest-priority  ?C)
@@ -5739,8 +5914,8 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 
         (setq org-agenda-window-setup 'current-window)
 
-        (unless (file-directory-p psimacs/config/org-agenda-dir)
-            (mkdir psimacs/config/org-agenda-dir t)
+        (unless (file-directory-p psimacs/config/agenda-dir)
+            (mkdir psimacs/config/agenda-dir t)
         )
 
         (defun psimacs/internal/org-capture-file-link ()
@@ -5803,10 +5978,10 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                     (journal-template   "** %^{Heading}\nEntered: %U\n%i\n%a")
                     (log-time-template  "** %U - %^{Activity} :Time:")
 
-                    (code-diary-file (concat psimacs/config/org-agenda-dir psimacs/config/org-capture-coding-diary-file))
-                    (diary-file      (concat psimacs/config/org-agenda-dir "Diary.org"))
-                    (journal-file    (concat psimacs/config/org-agenda-dir "Journal.org"))
-                    (time-log-file   (concat psimacs/config/org-agenda-dir "TimeLog.org"))
+                    (code-diary-file (concat psimacs/config/agenda-dir psimacs/config/org-capture-coding-diary-file))
+                    (diary-file      (concat psimacs/config/agenda-dir "Diary.org"))
+                    (journal-file    (concat psimacs/config/agenda-dir "Journal.org"))
+                    (time-log-file   (concat psimacs/config/agenda-dir "TimeLog.org"))
                 )
 
                 (setq org-capture-templates
@@ -5993,7 +6168,7 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 )
 #+END_SRC
 
-*** Auto completion for Org-Mode
+*** Auto completion for Org-Mode :noexport:
 
 [[https://github.com/aki2o/org-ac][Org-ac]] is an extension of *Emacs* that provide auto-complete sources for [[https://orgmode.org][org-mode]].
 You'll be able to use auto-complete as substitute for pcomplete which is bound
