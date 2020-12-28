@@ -1764,6 +1764,7 @@ Configuration constants for saving the history.
 #+END_SRC
 
 ** Save-Places
+
 Save place allows store the current cursor position for the next session.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
@@ -1773,6 +1774,19 @@ Save place allows store the current cursor position for the next session.
 (defconst psimacs/config/save-places-file
     (psimacs/file-system/concat-file psimacs/config/session-dir ".save-places")
     "The psimacs save places file.")
+#+END_SRC
+
+** StackExchange utilization
+
+Cache directory of the package [[https://github.com/vermiculus/sx.el][sx]] that utilizes working with the StackExchange service.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Cache directory of the package sx.
+;;
+(defconst psimacs/config/sx-cache-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir ".sx")
+  "The psimacs sx cache directory.")
 #+END_SRC
 
 ** The custom.el file.
@@ -1805,7 +1819,25 @@ LaTeX bibliography should be shared.
   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "MiKTeX/miktex/bin/x64")
   ;;(psimacs/file-system/concat-directory psimacs/config/system-utils-dir "texlive/bin/win32")
   "The psimacs tex runtime directory.")
+#+END_SRC
 
+** PDF viewer
+
+The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; PDF file viewing
+;;
+(defconst psimacs/config/pdf-viewer-name "SumatraPDF" "The psimacs pdf viewer name.")
+
+(defconst psimacs/config/pdf-viewer-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "SumatraPDF")
+  "The psimacs pdf viewer directory.")
+
+(defconst psimacs/config/pdf-viewer-runtime
+  (psimacs/file-system/concat-file psimacs/config/pdf-viewer-dir "SumatraPDF-3.2-64.exe")
+  "The psimacs pdf viewer executable.")
 #+END_SRC
 
 ** The Amx file
@@ -1835,8 +1867,14 @@ the following commands:
 *** Packages
 - =pacman -Syu=
 - =pacman -Su=
-- =pacman -S mingw64-w64-x86_64-cmake=
-- =pacman -S mingw64-w64-x86_64-qt5=
+- =pacman -S base-devel=
+- =pacman -S mingw-w64-x86_64-toolchain=
+- =pacman -S mingw-w64-x86_64-zlib=
+- =pacman -S mingw-w64-x86_64-libpng=
+- =pacman -S mingw-w64-x86_64-poppler=
+- =pacman -S mingw-w64-x86_64-imagemagick=
+- =pacman -S mingw-w64-x86_64-cmake=
+- =pacman -S mingw-w64-x86_64-qt5=
 - =pacman -S mingw-w64-x86_64-toolchain=
 - =pacman -S mingw-w64-x86_64-ninja=
 - =pacman -S mingw-w64-x86_64-clang=
@@ -3620,7 +3658,7 @@ the echo area and keyboard input.
 
 Handy way of getting back to previous places.
 
-Immediately after you type =C-u C-<SPC>=, you can type =C-<SPC>= instead of =C-u C-<SPC>= to
+Immediately after you type =C-u C-SPC=, you can type =C-SPC= instead of =C-u C-SPC= to
 cycle through the mark ring.
 
 From the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Mark-Ring.html][Emacs Manual: The Mark Ring]]:
@@ -3653,7 +3691,7 @@ instead of =C-u C-SPC= to cycle through the mark ring.
 
 *** Indentation and Tab stops
 
-[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Indent-Convenience.html][Electric Indent mode]] is a global minor mode that automatically indents the line after every =<RET>= you type.
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Indent-Convenience.html][Electric Indent mode]] is a global minor mode that automatically indents the line after every =RET= you type.
 This mode is enabled by default, which we turn off.
 
 Use instead:
@@ -3664,7 +3702,7 @@ Use instead:
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 ;;
-;; Matter of taste, do not automatically indent on <RET>
+;; Matter of taste, do not automatically indent on RET
 ;;
 (setq electric-indent-mode nil)
 #+END_SRC
@@ -4341,8 +4379,8 @@ methods:
 - or disable [[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]] by pressing =<f12>= or =H-m c=.
 
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]] provides enhanced rectangle support with visible rectangle highlighting.
-Use =C-<RET>= to start a rectangle, extend it using the movement commands, and cut or copy
-it using =C-x= or =C-c=. =<RET>= moves the cursor to the next (clockwise) corner of the rectangle,
+Use =C-RET= to start a rectangle, extend it using the movement commands, and cut or copy
+it using =C-x= or =C-c=. =RET= moves the cursor to the next (clockwise) corner of the rectangle,
 so you can easily expand it in any direction. Normal text you type is inserted to the left
 or right of each line in the rectangle (on the same side as the cursor).
 
@@ -4351,7 +4389,7 @@ one-digit numeric prefix to the kill, copy, and yank commands, e.g., =C-1 C-c= c
 region into register 1, and =C-2 C-v= yanks the contents of register 2.
 
 CUA mode also has a global mark feature which allows easy moving and copying of text
-between buffers. Use =C-S-<SPC>= to toggle the global mark on and off. When the global
+between buffers. Use =C-S-SPC= to toggle the global mark on and off. When the global
 mark is on, all text that you kill or copy is automatically inserted at the global
 mark, and text you type is inserted at the global mark rather than at the current
 position.
@@ -4373,7 +4411,7 @@ See also:
 | =C-z=       |                              | Undo command if CUA-mode is active.          |
 | =C-S-z=     |                              | Redo command if CUA-mode is active.          |
 |-------------+------------------------------+----------------------------------------------|
-| =C-<RET>=   | =M-x cua-set-rectangle-mark= | Start a rectangle.                           |
+| =C-RET=     | =M-x cua-set-rectangle-mark= | Start a rectangle.                           |
 | =<Ret>=     | =M-x cua-rotate-rectangle=   | Move to next corner.                         |
 | =C-1 C-c=   |                              | Copy rectangle to register 1                 |
 | =...=       |                              | ...                                          |
@@ -5286,7 +5324,6 @@ by calling function =psimacs/spell/google-tanslate/toggle-output-destination=.
 )
 #+END_SRC
 
-
 ** Web searching
 
 Tools that are useful for searching the Web.
@@ -5296,25 +5333,25 @@ Tools that are useful for searching the Web.
 The package [[https://github.com/Malabarba/emacs-google-this][google-this]] provides a set of functions and keybindings for launching google searches from within *Emacs*.
 
 #+ATTR_HTML: :class styledtable
-| Key binding       | Command                                     | Description                                                                                                                                                                                                                         |
-|-------------------+---------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x G <RET>= | =M-x google-this-search=                    | Write and do a google search. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                      |
-| =H-m C-x G t=     | =M-x google-this=                           | Decide what the user wants to google (always something under point). Quote argument with PREFIX =C-u=. Unlike =google-this-search= (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited. |
-| =H-m C-x G n=     | =M-x google-this-noconfirm=                 | Decide what the user wants to google and go without confirmation. Quote argument with PREFIX =C-u=. Exactly like =google-this= or =google-this-search=, but don’t ask for confirmation.                                                                               |
-| =H-m C-x G g=     | =M-x google-this-lucky-search=              | Exactly like =google-this-search=, but use the "I’m feeling lucky" option. Quote argument with PREFIX =C-u=.                                                                                                                               |
-| =H-m C-x G SPC=   | =M-x google-this-region=                    | Google the current region. Quote argument with PREFIX =C-u=.                                                                                                                                                                               |
-| =H-m C-x G a=     | =M-x google-this-ray=                       | Google text between the point and end of the line. If there is a selected region, googles the region.                                                                                                                               |
-| =H-m C-x G l=     | =M-x google-this-line=                      | Google the current line. Quote argument with PREFIX =C-u=.                                                                                                                                                                                 |
-| =H-m C-x G s=     | =M-x google-this-symbol=                    | Google the current symbol. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                         |
-| =H-m C-x G w=     | =M-x google-this-word=                      | Google the current word. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                           |
-|-------------------+---------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x G i=     | =M-x google-this-lucky-and-insert-url=      | Fetch the url that would be visited by ‘google-this-lucky’.                                                                                                                                                                         |
-| =H-m C-x G r=     | =M-x google-this-cpp-reference=             | Visit the most probable cppreference.com page for this word.                                                                                                                                                                        |
-| =H-m C-x G f=     | =M-x google-this-forecast=                  | Search google for "weather". With PREFIX =C-u=, ask for location.                                                                                                                                                                     |
-| =H-m C-x G e=     | =M-x google-this-error=                     | Google the current error in the compilation buffer. Quote argument with PREFIX =C-u=.                                                                                                                                 |
-|-------------------+---------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x G c=     | =M-x google-this-translate-query-or-region= | If region is active =google-translate-at-point=, otherwise =google-translate-query-translate=.                                                                                                                                      |
-|-------------------+---------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                                     | Description                                                                                                                                                                                                                                                           |
+|-----------------+---------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x G RET= | =M-x google-this-search=                    | Write and do a google search. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                       |
+| =H-m C-x G t=   | =M-x google-this=                           | Decide what the user wants to google (always something under point). Quote argument with PREFIX =C-u=. Unlike =google-this-search= (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited. |
+| =H-m C-x G n=   | =M-x google-this-noconfirm=                 | Decide what the user wants to google and go without confirmation. Quote argument with PREFIX =C-u=. Exactly like =google-this= or =google-this-search=, but don’t ask for confirmation.                                                                               |
+| =H-m C-x G g=   | =M-x google-this-lucky-search=              | Exactly like =google-this-search=, but use the "I’m feeling lucky" option. Quote argument with PREFIX =C-u=.                                                                                                                                                          |
+| =H-m C-x G SPC= | =M-x google-this-region=                    | Google the current region. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                          |
+| =H-m C-x G a=   | =M-x google-this-ray=                       | Google text between the point and end of the line. If there is a selected region, googles the region.                                                                                                                                                                 |
+| =H-m C-x G l=   | =M-x google-this-line=                      | Google the current line. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                            |
+| =H-m C-x G s=   | =M-x google-this-symbol=                    | Google the current symbol. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                          |
+| =H-m C-x G w=   | =M-x google-this-word=                      | Google the current word. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                            |
+|-----------------+---------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x G i=   | =M-x google-this-lucky-and-insert-url=      | Fetch the url that would be visited by ‘google-this-lucky’.                                                                                                                                                                                                           |
+| =H-m C-x G r=   | =M-x google-this-cpp-reference=             | Visit the most probable cppreference.com page for this word.                                                                                                                                                                                                          |
+| =H-m C-x G f=   | =M-x google-this-forecast=                  | Search google for "weather". With PREFIX =C-u=, ask for location.                                                                                                                                                                                                     |
+| =H-m C-x G e=   | =M-x google-this-error=                     | Google the current error in the compilation buffer. Quote argument with PREFIX =C-u=.                                                                                                                                                                                 |
+|-----------------+---------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x G c=   | =M-x google-this-translate-query-or-region= | If region is active =google-translate-at-point=, otherwise =google-translate-query-translate=.                                                                                                                                                                        |
+|-----------------+---------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-web-searching.el :var file-description="Basic Web searching setup"
 ;;
@@ -5327,6 +5364,135 @@ The package [[https://github.com/Malabarba/emacs-google-this][google-this]] prov
     :config
         (google-this-mode 1)
 )
+#+END_SRC
+
+*** Counsel-Web
+
+The package [[https://github.com/mnewt/counsel-web][counsel-web]] is an alternative to [[https://github.com/Malabarba/emacs-google-this][google-this]] for searching the Web.
+
+#+BEGIN_QUOTE
+Search the web with dynamic suggestions and browse the results – all from the comfort of Emacs and ivy.
+
+The main idea in [[https://github.com/mnewt/counsel-web][counsel-web]] is to not have to browse search results in a browser–instead go directly
+to the page you were searching for.
+#+END_QUOTE
+
+#+ATTR_HTML: :class styledtable
+| Key binding     | Command                                | Description                                                                                                     |
+|-----------------+----------------------------------------+-----------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C RET= | =M-x counsel-search=                   | Shows search suggestions as you type and visit page in your default browser on =RET=.                           |
+| =H-m C-x C s=   | =M-x counsel-web-suggest=              | Shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=. |
+| =H-m C-x C w=   | =M-x counsel-web-search=               | Searches and presents the results in the ivy minibuffer.                                                        |
+| =H-m C-x C p=   | =M-x counsel-web-thing-at-point=       | Interactively search the web for the THING at point.                                                            |
+| =H-m C-x C t=   | =M-x psimacs/web/toogle-search-engine= | Toogle the search engine of [[https://github.com/abo-abo/swiper][counsel]] and  [[https://github.com/mnewt/counsel-web][counsel-web]] between 'duckduckgo' and 'goole'.                          |
+|-----------------+----------------------------------------+-----------------------------------------------------------------------------------------------------------------|
+
+| counsel-web-search key bindings | Description                              |
+|---------------------------------+------------------------------------------|
+| =RET=                           | Browse to the selected result.           |
+| =C-j=                           | Update the search.                       |
+| =C-M-j=                         | Choose a secondary action.               |
+| =M-o=                           | Choose from a menu of alternate actions. |
+|---------------------------------+------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-web-searching.el
+;;
+;; Alternative Web searching facility
+;;
+(use-package counsel-web
+    :config
+         (setq counsel-web-engine 'google)
+         (setq counsel-search-engine 'google)
+;        (setq counsel-web-search-action #'browse-url-default-browser)
+;        (setq counsel-web-search-alternate-action #'eww)
+;        (setq counsel-web-search-dynamic-update nil)
+
+         (defun psimacs/web/toogle-search-engine ()
+           "Toogle the search engine of 'counsel-search' and 'counsel-web' between duckduckgo and google."
+           (interactive)
+           (if (eq counsel-search-engine 'google)
+               (progn
+                 (setq counsel-search-engine 'ddg)
+                 (setq counsel-web-engine 'duckduckgo)
+                 (message "Switched search engines to 'duckduckgo'")
+               )
+             (progn
+               (setq counsel-search-engine 'google)
+               (setq counsel-web-engine 'google)
+               (message "Switched search engines to 'google'")
+               )
+             )
+           )
+
+
+    :bind (
+           :map psimacs/config/global-key-map/special
+                ("C-x C <return>" . counsel-search)
+                ("C-x C s"        . counsel-web-suggest)
+                ("C-x C w"        . counsel-web-search)
+                ("C-x C p"        . counsel-web-thing-at-point)
+                ("C-x C t"        . psimacs/web/toogle-search-engine)
+          )
+)
+#+END_SRC
+
+*** Stack Exchange
+
+The package [[https://github.com/vermiculus/sx.el][sx]] provides a full-featured Stack Exchange mode for *Emacs*.
+
+#+BEGIN_QUOTE
+If you are going to be doing any asking/answering/commenting/upvoting/downvoting/ etc., you must use
+sx-authenticate to provide SX with an authentication token to act on your behalf.
+#+END_QUOTE
+
+References:
+- [[https://stackexchange.com/][StackExchange]]
+- [[https://stackexchange.com/sites#][StackExchange Sites]]
+
+*Psimacs* currently only provides minimal key bindings for [[https://github.com/vermiculus/sx.el][sx]], since its author does not actively participate
+in the StackExchange community.
+
+#+ATTR_HTML: :class styledtable
+| Key binding     | Command                        | Description                                                  |
+|-----------------+--------------------------------+--------------------------------------------------------------|
+| =H-m C-x S RET= | =M-x sx-tab-all-questions=     | Display a list of All-Questions questions for SITE.          |
+| =H-m C-x S s=   | =M-x sx-search=                | Display search on SITE for question titles containing QUERY. |
+| =H-m C-x S r=   | =M-x sx-question-list-refresh= | Update the list of questions.                                |
+|-----------------+--------------------------------+--------------------------------------------------------------|
+
+The following table shows only the key bindings important for the author. The [[https://github.com/vermiculus/sx.el][sx]] site provides many more
+bindings and commands that comes into play when you actively participate in the StackExchange world.
+
+| Key bindings | Description                                                                 |
+|--------------+-----------------------------------------------------------------------------|
+| =RET=        | Open question buffer.                                                       |
+| =p=          | Navigate to previous entry in list.                                         |
+| =n=          | Navigate to next entry in list.                                             |
+| =j=          | Navigate to previous entry while viewing the question in a separate buffer. |
+| =k=          | Navigate to next entry while viewing the question in a separate buffer.     |
+| =s s=        | Switch site.                                                                |
+| =v=          | Visit the thing-at-point in your browser.                                   |
+| =w=          | Copy the thing-at-point (usually a link).                                   |
+|--------------+-----------------------------------------------------------------------------|
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-web-searching.el
+;;
+;; Get access to the StackExchange sites
+;;
+(use-package sx
+    :config
+        (setq sx-cache-directory  psimacs/config/sx-cache-dir)
+        (bind-keys :prefix "H-m C-x S"
+                   :prefix-map psimacs/web/sx-map
+                   :prefix-docstring "Global keymap for SX."
+                   ("<return>" . sx-tab-all-questions)
+;                   ("i" . sx-inbox)
+;                   ("o" . sx-open-link)
+;                   ("u" . sx-tab-unanswered-my-tags)
+;                   ("a" . sx-ask)
+                   ("r" . sx-question-list-refresh)
+                   ("s" . sx-search)))
 #+END_SRC
 
 * Utility Lisp functions
@@ -5748,7 +5914,8 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 #+END_SRC
 
 *** Counsel
-To keep concerns separated, Ivy doesn't have a lot of other functionality. That's where Counsel comes in.
+
+To keep concerns separated, Ivy doesn't have a lot of other functionality. That's where  [[https://github.com/abo-abo/swiper][Counsel]] comes in.
 
 [[https://github.com/abo-abo/swiper][Ivy mode]] ensures that any Emacs command using =completing-read-function=
 uses [[https://github.com/abo-abo/swiper][ivy]] for completion.
@@ -5819,6 +5986,7 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 )
 #+END_SRC
 
+* Major Modes
 ** Org-Mode
 
 Package [[https://orgmode.org][org-mode]] is for keeping notes, maintaining TODO lists,
@@ -5849,9 +6017,9 @@ Hopefully, I can get rid of this hack in the near future.
 
 Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
-;; Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
+;; Remove the built-in version of org-mode from the load-path.
 ;;
 (require 'cl-seq)
 (setq load-path
@@ -5870,7 +6038,7 @@ Check on [[https://orgmode.org/elpa/][OrgElpa]] and on [[https://code.orgmode.or
 Hopefully, this will be fixed upstream in the near future. In that case the following statement is
 to be removed and the =:ensure org-plus-contrib= is to be activated.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Add local path to org-plus-contrib to search path
 ;;
@@ -5881,7 +6049,7 @@ to be removed and the =:ensure org-plus-contrib= is to be activated.
 
 If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be commented!
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el :var file-description="Advanced org-mode setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
 ;; The main org-mode configuration
 ;;
@@ -6272,7 +6440,7 @@ Prettify headings and plain lists in Org mode. Package [[https://github.com/inte
 [[https://github.com/sabof/org-bullets][org-bullets]], with most of the code base completely rewritten.
 
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Prettify headings and plain lists in Org mode
 ;;
@@ -6326,7 +6494,7 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 | =C-x p i=  | =M-x org-cliplink= | Insert [[https://orgmode.org][org-mode]] links from the clipboard. |
 |------------+--------------------+-------------------------------------------|
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Insert links from the clipboard
 ;;
@@ -6343,7 +6511,7 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 You'll be able to use auto-complete as substitute for pcomplete which is bound
 to =M-<TAB>=.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Provide auto-complete sources for org-mode
 ;;
@@ -6363,7 +6531,7 @@ Presenting with [[https://orgmode.org][org-mode]]:
 - [[http://orgmode.org/worg/org-tutorials/non-beamer-presentations.html][Writing Non-Beamer presentations in org-mode]]
 - [[http://sachachua.com/blog/2013/04/how-to-present-using-org-mode-in-emacs/][How to present using Org-mode in Emacs]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Presentations with org-mode
 ;;
@@ -6376,7 +6544,7 @@ Presenting with [[https://orgmode.org][org-mode]]:
 Some personal org-mode Key-bindings. This is only a suggestion from [[http://doc.norang.ca/org-mode.html][Organize Your Life In Plain Text!]].
 Therefore it is currently diasabled and should be activated after getting familiar with [[https://orgmode.org][org-mode]].
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-org-mode.el
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Custom Org-Mode key bindings
 ;;
@@ -6442,6 +6610,227 @@ Therefore it is currently diasabled and should be activated after getting famili
 (defun bh/switch-to-scratch ()
     (interactive)
     (switch-to-buffer "*scratch*"))
+#+END_SRC
+
+** LaTeX
+
+Support for writing text with [[https://www.latex-project.org/][LaTeX.]] *Psimacs* uses the [[https://www.gnu.org/software/auctex/][AUCTeX]] package for assisting the [[https://www.latex-project.org/][LaTeX]] text editing.
+On default, *Psimacs* generates [[https://en.wikipedia.org/wiki/PDF][PDF-files]] and configures the free [[https://www.sumatrapdfreader.org/free-pdf-reader.html][SumatraPDF]] application for viewing these
+files.
+
+| Key binding | Command                  | Description                               |
+|-------------+--------------------------+-------------------------------------------|
+| =C-c C-c=   | =M-x TeX-command-master= | You get a list of actions to choose from. |
+|-------------+--------------------------+-------------------------------------------|
+
+Following an unsorted list if references:
+- [[https://www.gnu.org/software/auctex/][AUCTeX]]
+- [[https://www.gnu.org/software/auctex/reftex.html][RefTeX]]
+- [[https://www.emacswiki.org/emacs/LaTeX][EmacsWiki: LaTeX]]
+- [[https://www.emacswiki.org/emacs/AUCTeX][EmacsWiki: AUCTeX]]
+- [[https://www.emacswiki.org/emacs/RefTeX][EmacsWiki: RefTeX]]
+- [[https://github.com/cdominik/cdlatex][CDLaTex]]
+- [[http://latex.tugraz.at/programme/emacs][LaTeX]]
+- [[https://www.latex-project.org/][The LaTeX Project]]
+- [[https://en.wikibooks.org/wiki/LaTeX][WikiBooks: LaTeX]]
+- [[https://en.wikibooks.org/wiki/LaTeX/Mathematics][WikiBooks: LaTeX Mathematics]]
+- [[http://tug.ctan.org/info/lshort/english/lshort.pdf][The Not So Short Introduction to LaTeX2e]]
+- [[https://www.youtube.com/playlist?list=PL1D4EAB31D3EBC449][LaTeX tutorial on YouTube]]
+- [[https://www.dante.de/][Dante e.V.]]
+- [[https://www.tug.org/texlive/][TeX Live]]
+- [[https://miktex.org/][MiKTeX]]
+- [[https://www.ctan.org/?lang=en][CTAN]]
+- [[https://www.golatex.de/wiki/KOMA-Script][KOMA-Script]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-latex-mode.el :var file-description="Major Modes - latex-mode setup"
+;;
+;; RefTex configuration
+;;
+(use-package reftex
+    :config
+        (setq reftex-cite-prompt-optional-args t) ; Prompt for empty optional arguments in cite
+)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-latex-mode.el
+;;
+;; Latex configuration
+;;
+(use-package tex-site
+    :straight auctex
+    :mode ("\\.tex\\'" . latex-mode)
+    :config
+        (setq TeX-auto-save t)
+        (setq TeX-parse-self t)
+        (setq-default TeX-master nil)
+
+        (defcustom LaTeX-indent-level-item-continuation 10
+          "*Indentation of continuation lines for items in itemize-like environments."
+          :group 'LaTeX-indentation
+          :type 'integer)
+
+        (defun LaTeX-indent-item ()
+          "Provide proper indentation for LaTeX \"itemize\",\"enumerate\", and \"description\" environments.
+
+\"\\item\" is indented `LaTeX-indent-level' spaces relative to
+the the beginning of the environment.
+
+Continuation lines are indented either twice
+`LaTeX-indent-level', or `LaTeX-indent-level-item-continuation'
+if the latter is bound."
+
+          (save-match-data
+            (let* ((offset LaTeX-indent-level)
+                   (contin (or (and (boundp 'LaTeX-indent-level-item-continuation)
+                                    LaTeX-indent-level-item-continuation)
+                               (* 2 LaTeX-indent-level)))
+                   (re-beg "\\\\begin{")
+                   (re-end "\\\\end{")
+                   (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+                   (indent (save-excursion
+                             (when (looking-at (concat re-beg re-env "}"))
+                               (end-of-line))
+                             (LaTeX-find-matching-begin)
+                             (current-column))))
+              (cond ((looking-at (concat re-beg re-env "}"))
+                     (or (save-excursion
+                           (beginning-of-line)
+                           (ignore-errors
+                             (LaTeX-find-matching-begin)
+                             (+ (current-column)
+                                (if (looking-at (concat re-beg re-env "}"))
+                                    contin
+                                  offset))))
+                         indent))
+                    ((looking-at (concat re-end re-env "}"))
+                     indent)
+                    ((looking-at "\\\\item")
+                     (+ offset indent))
+                    (t
+                     (+ contin indent))))))
+
+        (add-hook 'LaTeX-mode-hook
+            (lambda ()
+                ;(rainbow-delimiters-mode)
+                ;(company-mode)
+                ;(smartparens-mode)
+
+                (setq LaTeX-indent-level 4)
+                (setq LaTeX-item-indent  0)
+                (setq TeX-brace-indent-level 4)
+                (setq TeX-newline-function 'reindent-then-newline-and-indent)
+                (setq LaTeX-indent-environment-list
+                        (nconc '(("itemize" LaTeX-indent-item)
+                                 ("enumerate" LaTeX-indent-item)
+                                 ("description" LaTeX-indent-item))
+                        LaTeX-indent-environment-list))
+
+                ;(add-to-list 'LaTeX-verbatim-environments "pycode")
+                ;(add-to-list 'LaTeX-indent-environment-list '("pycode" current-indentation))
+
+                (visual-line-mode)      ; word-wrapped document
+                (flyspell-mode)
+                (LaTeX-math-mode)       ; (C-c ~) minor mode rebinding the key LaTeX-math-abbrev-prefix to allow easy typing of mathematical symbols
+                                        ; ` will read a character from the keyboard, and insert the symbol as specified in LaTeX-math-default and LaTeX-math-list.
+                                        ; You can use another prefix key (instead of `) by setting the variable LaTeX-math-abbrev-prefix.
+                (turn-on-reftex)
+                (setq reftex-plug-into-AUCTeX t)
+                (reftex-isearch-minor-mode)
+
+                ;(setq TeX-engine 'xetex)
+                ;(setq TeX-engine 'luatex)
+
+                (setq TeX-PDF-mode t)
+                ;(setq TeX-PDF-from-DVI "Dvips")
+                ;(setq TeX-PDF-from-DVI "Dvipdfmx")
+                (setq TeX-save-query nil)       ; C-c C-a will silently save the file before firing LaTeX
+
+                (setq preview-image-type 'pnm)
+
+                (setq TeX-source-correlate-mode t)
+                (setq TeX-source-correlate-method 'synctex)
+                (setq TeX-source-correlate-start-server t)
+
+
+                ;;
+                ;; Use emacs internal pdf viewer
+                ;;
+                ;; Update PDF buffers after successful LaTeX runs
+                (add-hook 'TeX-after-TeX-LaTeX-command-finished-hook #'TeX-revert-document-buffer)
+
+                ;;
+                ;; Using external Sumatra PDF viewer
+                ;;
+                (setq TeX-view-program-list
+                  `(
+                    ;; SumatraPDF viewer
+                    (,psimacs/config/pdf-viewer-name (
+                                                      ,(concat psimacs/config/pdf-viewer-runtime " -reuse-instance")
+                                                      (mode-io-correlate " -forward-search \"%b\" %n ") " %o"
+                                                     ))
+                   ))
+
+                (setq TeX-view-program-selection `(
+                                                   (output-pdf ,psimacs/config/pdf-viewer-name)
+                                                   (output-dvi "Yap")
+                                                   ((output-dvi style-pstricks) "dvips and start")
+                                                   (output-html "start")
+                                                  ))
+
+                ;;
+                ;; Using internal pdf-tools PDF viewer: This does currently not work for me!!!
+                ;;
+                ;;(add-hook 'LaTeX-mode-hook 'pdf-tools-instal)
+                ;;
+                ;;(setq TeX-view-program-list
+                ;;      '(
+                ;;        ("pdf-tools" "TeX-pdf-tools-sync-view")
+                ;;       ))
+                ;;
+                ;;(setq TeX-view-program-selection '(
+                ;;                                   (output-pdf "pdf-tools")
+                ;;                                  )
+                ;;      TeX-source-correlate-start-server t
+                ;;      )
+    ))
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-latex-mode.el
+(use-package ivy-bibtex
+    :bind ("C-c i b" . ivy-bibtex)
+    :config
+        (setq bibtex-completion-bibliography '(concat psimacs/config/latex-share-dir "references-zot.bib"))
+        (setq bibtex-completion-library-path
+            '(concat psimacs/config/latex-share-dir "references-pdf")
+             (concat psimacs/config/latex-share-dir "references-etc"))
+
+        ;; using bibtex path reference to pdf file
+        (setq bibtex-completion-pdf-field "File")
+
+        ;;open pdf with external viwer foxit
+        (setq bibtex-completion-pdf-open-function
+            (lambda (fpath)
+                (call-process (concat psimacs/config/pdf-viewer-runtime " -reuse-instance") nil 0 nil fpath)))
+
+        (setq ivy-bibtex-default-action 'bibtex-completion-insert-citation)
+)
+#+END_SRC
+
+*** pdf-tools :noexport:
+
+Package [[https://github.com/politza/pdf-tools][pdf-tools]] provids an internal [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer. Unfortunately, I could not get this one to work
+on my Windows OS setup.
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-major-modes-latex-mode.el
+(use-package pdf-tools
+    :mode ("\\.pdf\\'" . pdf-tools-install)
+    :bind ("C-c i g" . pdf-sync-forward-search)
+    :config
+        (setq mouse-wheel-follow-mouse t)
+        (setq pdf-view-resize-factor 1.10)
+)
 #+END_SRC
 
 * Overview of Psimacs key bindings
@@ -6583,6 +6972,12 @@ by the various packages nor by *Emacs* itself.
 |-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-w C-r=     | =M-x golden-ratio-mode=                                       | Toggle automatic window resizing with golden ratio.                                                                                                                                                                                                                                              |
 |-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C RET=   | =M-x counsel-search=                                          | Shows search suggestions as you type and visit page in your default browser on =RET=.                                                                                                                                                                                                            |
+| =H-m C-x C s=     | =M-x counsel-web-suggest=                                     | Shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.                                                                                                                                                                                  |
+| =H-m C-x C w=     | =M-x counsel-web-search=                                      | Searches and presents the results in the ivy minibuffer.                                                                                                                                                                                                                                         |
+| =H-m C-x C p=     | =M-x counsel-web-thing-at-point=                              | Interactively search the web for the THING at point.                                                                                                                                                                                                                                             |
+| =H-m C-x C t=     | =M-x psimacs/web/toogle-search-engine=                        | Toogle the search engine of [[https://github.com/abo-abo/swiper][counsel]] and  [[https://github.com/mnewt/counsel-web][counsel-web]] between 'duckduckgo' and 'goole'.                                                                                                                                                                                                           |
+|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x G SPC=   | =M-x google-this-region=                                      | Google the current region. PREFIX determines quoting.                                                                                                                                                                                                                                            |
 | =H-m C-x G a=     | =M-x google-this-ray=                                         | Google text between the point and end of the line. If there is a selected region, googles the region.                                                                                                                                                                                            |
 | =H-m C-x G c=     | =M-x google-this-translate-query-or-region=                   | If region is active =google-translate-at-point=, otherwise =google-translate-query-translate=.                                                                                                                                                                                                   |
@@ -6597,7 +6992,11 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-x G s=     | =M-x google-this-symbol=                                      | Google the current symbol.                                                                                                                                                                                                                                                                       |
 | =H-m C-x G t=     | =M-x google-this=                                             | Decide what the user wants to google (always something under point). Unlike =google-this-search= (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited.                                                              |
 | =H-m C-x G w=     | =M-x google-this-word=                                        | Google the current word.                                                                                                                                                                                                                                                                         |
-| =H-m C-x G <RET>= | =M-x google-this-search=                                      | Write and do a google search.                                                                                                                                                                                                                                                                    |
+| =H-m C-x G RET=   | =M-x google-this-search=                                      | Write and do a google search.                                                                                                                                                                                                                                                                    |
+|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x S RET=   | =M-x sx-tab-all-questions=                                    | Display a list of All-Questions questions for SITE.                                                                                                                                                                                                                                              |
+| =H-m C-x S s=     | =M-x sx-search=                                               | Display search on SITE for question titles containing QUERY.                                                                                                                                                                                                                                     |
+| =H-m C-x S r=     | =M-x sx-question-list-refresh=                                | Update the list of questions.                                                                                                                                                                                                                                                                    |
 |-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C-a=     | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
 |-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
