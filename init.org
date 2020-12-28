@@ -2347,6 +2347,10 @@ Some usefule references for C++:
   psimacs/config/mingw-runtime-dir
   "The psimacs clang directory.")
 
+(defconst psimacs/config/clang-c-compiler-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang.exe")
+  "The psimacs clang executable.")
+
 (defconst psimacs/config/clang-c++-compiler-runtime-exe
   (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang++.exe")
   "The psimacs clang++ executable.")
@@ -2382,6 +2386,23 @@ Some usefule references for C++:
 (defconst psimacs/config/clang-refactor-exe
   (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-refactor.exe")
   "The psimacs clang-refactor executable.")
+#+END_SRC
+
+** Projectile
+
+[[https://github.com/bbatsov/projectile][Projectile]] is used for project management.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; CMake tool configuration constants
+;;
+(defconst psimacs/config/projectile-dir
+  psimacs/config/session-dir
+  "The psimacs projectile directory.")
+
+(defconst psimacs/config/projectile-known-projects-file
+  (psimacs/file-system/concat-file psimacs/config/projectile-dir ".projectile-bookmarks")
+  "The psimacs projectile bookmark file.")
 #+END_SRC
 
 * Environment
@@ -3957,6 +3978,22 @@ The package [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired
 ;(all-the-icons-insert-icons-for 'faicon 1 0.5)
 #+END_SRC
 
+*** Color Identifier Mode
+
+[[https://github.com/ankurdave/color-identifiers-mode][Color Identifier]] is a minor mode for Emacs that highlights each source code
+identifier uniquely based on its name.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Highlights each source code identifier uniquely based on its name.
+;;
+(use-package color-identifiers-mode
+    :demand t
+    :diminish
+    :hook (after-init . global-color-identifiers-mode)
+)
+#+END_SRC
+
 ** Themes
 
 Generally, there are light and dark colored themes. Some functionality
@@ -3980,13 +4017,11 @@ sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn
 (defvar psimacs/config/theme-is-light-colored t
     "Should be set to true if current theme is light")
 
-(defvar after-load-theme-hook nil
-    "Hook run after a color theme is loaded using `load-theme'.")
-
+(defvar psimacs/config/after-load-theme-hook nil
+  "Hook run after a color theme is loaded using `load-theme'.")
 (defadvice load-theme (after run-after-load-theme-hook activate)
-    "Run `after-load-theme-hook'."
-    (run-hooks 'after-load-theme-hook)
-)
+  "Run `psimacs/config/after-load-theme-hook'."
+  (run-hooks 'psimacs/config/after-load-theme-hook))
 #+END_SRC
 
 A couple of good looking themes are assembled in the configuration. Currently the
@@ -4834,6 +4869,156 @@ See also: [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][About prettify-
                     )
                 )
         )
+)
+#+END_SRC
+
+*** Emojis in Buffers
+
+[[https://github.com/iqbalansari/emacs-emojify][Emojify]] is an Emacs extension to display emojis.
+It can display github style emojis like =:smile:= or plain ascii ones like =:)=. It tries to be
+as efficient as possible, while also providing a lot of flexibility.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-prettify.el
+(use-package emojify
+    :hook (after-init . global-emojify-mode)
+)
+#+END_SRC
+
+*** Rainbow delimiters
+
+The package [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] highlights delimiters such as parentheses, brackets or braces according to their depth.
+Each successive level is highlighted in a different color. This makes it easy to spot
+matching delimiters, orient yourself in the code, and tell which statements are at a given depth.
+
+See also:
+- [[https://www.emacswiki.org/emacs/RainbowDelimiters][EmacsWiki: Rainbow Delimiters]]
+- [[http://ergoemacs.org/misc/emacs_rainbow-delimiters-mode.html][Color Nested Brackets]]
+
+#+ATTR_HTML: :class styledtable
+| Key binding         | Command                                                  | Description                                                                |
+|---------------------+----------------------------------------------------------+----------------------------------------------------------------------------|
+| =H-m C-p C-r C-p=   | =M-x psimacs/pair/rainbow-toogle-sized-delimiters=       | Toogle the size of the rainbow-delimiters.                                 |
+| =H-m C-p C-r M-C-p= | =M-x psimacs/pair/rainbow-sized-delimiters=              | All rainbow delimiters have various heights.                               |
+| =H-m C-p C-r S-C-p= | =M-x psimacs/pair/rainbow-non-sized-delimiters=          | All rainbow delimiters have the same height. This is the default.          |
+|                     | =M-x psimacs/pair/rainbow-toogle-theme-is-light-colored= | Toggle the rainbow delimiters colors with respect to light or dark themes. |
+|---------------------+----------------------------------------------------------+----------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-rainbow-delimiters.el :var file-description="Basic rainbow delimiters setup"
+(defvar psimacs/config/rainbow-toogle-sized-delimiters-flag nil
+    "The current rainbow sized delimiters toogle state")
+
+(defun psimacs/pair/rainbow-non-sized-delimiters ()
+    "All rainbow delimiters have the same height."
+    (interactive "")
+
+    ;;(message "from psimacs/pair/rainbow-non-sized-delimiters")
+
+    (if psimacs/config/theme-is-light-colored
+        (progn
+            ;(message "theme-is-light-colored")
+            (custom-set-faces
+                '(rainbow-delimiters-depth-1-face   ((t (:foreground "red"        :height 1.0))))
+                '(rainbow-delimiters-depth-2-face   ((t (:foreground "orange"     :height 1.0))))
+                '(rainbow-delimiters-depth-3-face   ((t (:foreground "darkblue"   :height 1.0))))
+                '(rainbow-delimiters-depth-4-face   ((t (:foreground "green"      :height 1.0))))
+                '(rainbow-delimiters-depth-5-face   ((t (:foreground "blue"       :height 1.0))))
+                '(rainbow-delimiters-depth-6-face   ((t (:foreground "violet"     :height 1.0))))
+                '(rainbow-delimiters-depth-7-face   ((t (:foreground "purple"     :height 1.0))))
+                '(rainbow-delimiters-depth-8-face   ((t (:foreground "black"      :height 1.0))))
+                '(rainbow-delimiters-unmatched-face ((t (:background "cyan"       :height 1.0)))))
+        )
+        (progn
+            ;(message "theme-is-dark-colored")
+            (custom-set-faces
+                '(rainbow-delimiters-depth-1-face   ((t (:foreground "red"        :height 1.0))))
+                '(rainbow-delimiters-depth-2-face   ((t (:foreground "orange"     :height 1.0))))
+                '(rainbow-delimiters-depth-3-face   ((t (:foreground "yellow"     :height 1.0))))
+                '(rainbow-delimiters-depth-4-face   ((t (:foreground "green"      :height 1.0))))
+                '(rainbow-delimiters-depth-5-face   ((t (:foreground "lightblue"  :height 1.0))))
+                '(rainbow-delimiters-depth-6-face   ((t (:foreground "violet"     :height 1.0))))
+                '(rainbow-delimiters-depth-7-face   ((t (:foreground "purple"     :height 1.0))))
+                '(rainbow-delimiters-depth-8-face   ((t (:foreground "white"      :height 1.0))))
+                '(rainbow-delimiters-unmatched-face ((t (:background "cyan"       :height 1.0)))))
+        )
+    )
+
+    (setq psimacs/config/rainbow-toogle-sized-delimiters-flag t)
+)
+
+(defun psimacs/pair/rainbow-sized-delimiters ()
+    "All rainbow delimiters have various heights."
+    (interactive "")
+    (if psimacs/config/theme-is-light-colored
+        (custom-set-faces
+            '(rainbow-delimiters-depth-1-face   ((t (:foreground "red"        :height 2.0))))
+            '(rainbow-delimiters-depth-2-face   ((t (:foreground "orange"     :height 1.8))))
+            '(rainbow-delimiters-depth-3-face   ((t (:foreground "darkblue"   :height 1.6))))
+            '(rainbow-delimiters-depth-4-face   ((t (:foreground "green"      :height 1.4))))
+            '(rainbow-delimiters-depth-5-face   ((t (:foreground "blue"       :height 1.2))))
+            '(rainbow-delimiters-depth-6-face   ((t (:foreground "violet"     :height 1.1))))
+            '(rainbow-delimiters-depth-7-face   ((t (:foreground "purple"     :height 1.0))))
+            '(rainbow-delimiters-depth-8-face   ((t (:foreground "black"      :height 0.9))))
+            '(rainbow-delimiters-unmatched-face ((t (:background "cyan"       :height 0.8)))))
+        (custom-set-faces
+            '(rainbow-delimiters-depth-1-face   ((t (:foreground "red"        :height 2.0))))
+            '(rainbow-delimiters-depth-2-face   ((t (:foreground "orange"     :height 1.8))))
+            '(rainbow-delimiters-depth-3-face   ((t (:foreground "yellow"     :height 1.6))))
+            '(rainbow-delimiters-depth-4-face   ((t (:foreground "green"      :height 1.4))))
+            '(rainbow-delimiters-depth-5-face   ((t (:foreground "lightblue"  :height 1.2))))
+            '(rainbow-delimiters-depth-6-face   ((t (:foreground "violet"     :height 1.1))))
+            '(rainbow-delimiters-depth-7-face   ((t (:foreground "purple"     :height 1.0))))
+            '(rainbow-delimiters-depth-8-face   ((t (:foreground "white"      :height 0.9))))
+            '(rainbow-delimiters-unmatched-face ((t (:background "cyan"       :height 0.8)))))
+    )
+
+    (setq psimacs/config/rainbow-toogle-sized-delimiters-flag nil)
+)
+
+(defun psimacs/pair/rainbow-toogle-sized-delimiters ()
+    "Toogle the size of the rainbow-delimiters"
+    (interactive "")
+    (if psimacs/config/rainbow-toogle-sized-delimiters-flag
+        (psimacs/pair/rainbow-sized-delimiters)
+      (psimacs/pair/rainbow-non-sized-delimiters)
+    )
+)
+
+(defun psimacs/pair/rainbow-refresh-delimiters-colors ()
+    "Refresh the rainbow-delimiters settings."
+    (let ((flag psimacs/config/rainbow-toogle-sized-delimiters-flag))
+        (if flag
+            (psimacs/pair/rainbow-sized-delimiters)
+           (psimacs/pair/rainbow-non-sized-delimiters)
+        )
+        (setq psimacs/config/rainbow-toogle-sized-delimiters-flag flag)
+    )
+)
+
+(defun psimacs/pair/rainbow-toogle-theme-is-light-colored ()
+    "Toggle the rainbow delimiters colors with respect to light or dark themes."
+    (interactive "")
+    (setq psimacs/config/theme-is-light-colored (not psimacs/config/theme-is-light-colored))
+    (psimacs/pair/rainbow-refresh-delimiters-colors)
+)
+
+;;
+;; The actual package
+;;
+(use-package rainbow-delimiters
+    :diminish
+    :demand t
+    :hook (
+           (prog-mode . rainbow-delimiters-mode)
+           (psimacs/config/after-load-theme . psimacs/pair/rainbow-non-sized-delimiters)
+           )
+    :config
+          (psimacs/pair/rainbow-non-sized-delimiters)
+    :bind (
+            :map psimacs/config/global-key-map/special
+                ("C-p C-r   C-p" . psimacs/pair/rainbow-toogle-sized-delimiters)
+                ("C-p C-r M-C-p" . psimacs/pair/rainbow-sized-delimiters)
+                ("C-p C-r S-C-p" . psimacs/pair/rainbow-non-sized-delimiters)
+          )
 )
 #+END_SRC
 
@@ -5848,6 +6033,37 @@ Associate certain binary files to hexl-mode.
 )
 #+END_SRC
 
+*** Centaur tabs
+
+Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesthetic, functional and efficient tabs for Emacs.
+
+| Key binding | Command                     | Description                        |
+|-------------+-----------------------------+------------------------------------|
+| =s-p=       | =M-x centaur-tabs-backward= | Select the previous available tab. |
+| =s-n=       | =M-x centaur-tabs-forward=  | Select the next available tab.     |
+|-------------+-----------------------------+------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(use-package centaur-tabs
+    :demand
+    :config
+        (centaur-tabs-mode t)
+    :custom
+        (centaur-tabs-gray-out-icons 'buffer)
+        (centaur-tabs-style "rounded")
+        ;(centaur-tabs-height 36)
+        (centaur-tabs-set-icons t)
+        (centaur-tabs-set-modified-marker t)
+        (centaur-tabs-modified-marker "●")
+        (centaur-tabs-buffer-groups-function #'centaur-tabs-projectile-buffer-groups)
+  :bind
+    (
+        ("s-p" . #'centaur-tabs-backward)
+        ("s-n" . #'centaur-tabs-forward)
+    )
+)
+#+END_SRC
+
 ** Windows and frame layout
 
 *** Frame size and position
@@ -6772,7 +6988,7 @@ References of string functionality:
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el :var file-description="Basic elisp functions"
 ;;
-;; Deprecated helper functions for string processing
+;; String processing functions
 ;;
 (defun psimacs/string/starts-with (s begins)
     "Return non-nil if string S starts with BEGINS."
@@ -6855,7 +7071,7 @@ Sometimes you need to recode parts of a buffer. The following function allows to
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el
 ;;
-;; Sometimes you need to recode parts of a buffer.
+;; Encoding functions
 ;;
 (defun psimacs/encoding/recode-region (start end &optional coding-system)
   "Replace the region with a recoded text."
@@ -6865,6 +7081,61 @@ Sometimes you need to recode parts of a buffer. The following function allows to
 	(text (buffer-substring start end)))
     (delete-region start end)
     (insert (decode-coding-string (string-make-unibyte text) coding-system))))
+#+END_SRC
+
+** File system
+
+Some useful file system functions.
+
+*** Choose directory
+
+Select a directory with ivy.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el
+;;
+;; File-system functions
+;;
+(defun psimacs/file-system/choose-directory (directory-to-start-in)
+    "Return a directory chosen by the user.
+The user will be prompted to choose a directory starting with 'directory-to-start-in'"
+    (let* ((ivy-read-prompt "Choose directory: ")
+         (counsel--find-file-predicate #'file-directory-p)
+         (default-directory directory-to-start-in)
+         (selected-directory
+            (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
+          ))
+        selected-directory)
+)
+#+END_SRC
+
+** Directory local settings
+
+Functionality related to directory local settings.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el
+;;
+;; dir-locals functions
+;;
+(defun psimacs/dir-locals/reload-for-current-buffer ()
+    "Reload dir locals for the current buffer."
+    (interactive)
+    (let ((enable-local-variables :all))
+        (hack-dir-local-variables-non-file-buffer)
+    )
+)
+
+(defun psimacs/dir-locals/reload-for-all-buffer-in-this-directory ()
+    "For every buffer with the same `default-directory` as the current buffer's, reload dir-locals."
+    (interactive)
+    (let ((dir default-directory))
+        (dolist (buffer (buffer-list))
+            (with-current-buffer buffer
+                (when (equal default-directory dir))
+                    (psimacs/dir-locals/reload-for-current-buffer)
+            )
+        )
+    )
+)
 #+END_SRC
 
 * Advanced Setup
@@ -7282,6 +7553,223 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
         )
     :config
         (setq counsel-find-file-at-point t)
+)
+#+END_SRC
+
+** Project Management
+
+Project management is important in order to be able to  work with projects that consist of many files and that
+have special project related rules.
+
+*** Projectile
+
+One of the most important thing to install at first is [[https://github.com/bbatsov/projectile][projectile]],
+for manage projects in *Emacs*.
+
+[[https://github.com/bbatsov/projectile][Projectile]] is a project interaction library for Emacs.
+Its goal is to provide a nice set of features operating on a project level without introducing
+external dependencies. This library provides easy project management and navigation.
+
+The concept of a project is pretty basic - just a folder containing special file.
+
+See also:
+- [[https://github.com/bbatsov/projectile][Projectile]]
+- [[https://docs.projectile.mx/projectile][Docs]]
+
+Only the basic commands:
+| Key binding | Command                         | Description                                   |
+|-------------+---------------------------------+-----------------------------------------------|
+| =C-c p f=   | =M-x projectile-find-file=      | Find file in current project                  |
+| =C-c p p=   | =M-x projectile-switch-project= | Switch project                                |
+| =C-c p s g= | =M-x projectile-grep=           | Grep in project                               |
+| =C-c p r=   | =M-x projectile-replace=        | Replace in project                            |
+| =C-c p m=   | =M-x projectile-commander=      | Invoke a command via the Projectile Commander |
+|-------------+---------------------------------+-----------------------------------------------|
+|             |                                 |                                               |
+
+All bound commands:
+| Key binding     | Command                                                   | Description                                                                                                                    |
+|-----------------+-----------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p f=       | =M-x projectile-find-file=                                | Display a list of all files in the project. With a prefix argument it will clear the cache first.Find file in current project. |
+| =C-c p F=       | =M-x projectile-find-file-in-known-projects=              | Display a list of all files in all known projects.                                                                             |
+| =C-c p g=       | =M-x projectile-find-file-dwim=                           | Display a list of all files at point in the project. With a prefix argument it will clear the cache first.                     |
+| =C-c p 4 f=     | =M-x projectile-find-file-other-window=                   | Jump to a project's file using completion and show it in another window.                                                       |
+| =C-c p 4 g=     | =M-x projectile-find-file-dwim-other-window=              | Jump to a project's file based on context at point and show it in another window.                                              |
+| =C-c p 5 f=     | =M-x projectile-find-file-other-frame=                    | Jump to a project's file using completion and show it in another frame.                                                        |
+| =C-c p 5 g=     | =M-x projectile-find-file-dwim-other-frame=               | Jump to a project's file based on context at point and show it in another frame.                                               |
+| =C-c p a=       | =M-x projectile-find-other-file=                          | Switch between files with the same name but different extensions.                                                              |
+| =C-c p 4 a=     | =M-x projectile-find-other-file-other-window=             | Switch between files with the same name but different extensions in other window.                                              |
+| =C-c p 5 a=     | =M-x projectile-find-other-file-other-frame=              | Switch between files with the same name but different extensions in other frame.                                               |
+| =C-c p l=       | =M-x projectile-find-file-in-directory=                   | Display a list of all files in a directory (that's not necessarily a project).                                                 |
+| =C-c p e=       | =M-x projectile-recentf=                                  | Shows a list of recently visited project files.                                                                                |
+| =C-c p d=       | =M-x projectile-find-dir=                                 | Display a list of all directories in the project. With a prefix argument it will clear the cache first.                        |
+| =C-c p 4 d=     | =M-x projectile-find-dir-other-window=                    | Switch to a project directory and show it in another window.                                                                   |
+| =C-c p 5 d=     | =M-x projectile-find-dir-other-frame=                     | Switch to a project directory and show it in another frame.                                                                    |
+| =C-c p D=       | =M-x projectile-dired=                                    | Opens the root of the project in dired.                                                                                        |
+| =C-c p 4 D=     | =M-x projectile-dired-other-window=                       | Opens the root of the project in dired in another window.                                                                      |
+| =C-c p 5 D=     | =M-x projectile-dired-other-frame=                        | Opens the root of the project in dired in another frame.                                                                       |
+| =C-c p j=       | =M-x projectile-find-tag=                                 | Find tag in project.                                                                                                           |
+| =C-c p T=       | =M-x projectile-find-test-file=                           | Display a list of all test files(specs, features, etc) in the project.                                                         |
+| =C-c p s g=     | =M-x projectile-grep=                                     | Run grep on the files in the project.                                                                                          |
+| =M-- C-c p s g= |                                                           | Run grep on projectile-grep-default-files in the project.                                                                      |
+| =C-c p v=       | =M-x projectile-vc=                                       | Run vc-dir on the root directory of the project.                                                                               |
+| =C-c p V=       | =M-x projectile-browse-dirty-projects=                    | Browse dirty version controlled projects.                                                                                      |
+| =C-c p I=       | =M-x projectile-ibuffer=                                  | Open an IBuffer window showing all buffers in the current project.                                                             |
+| =C-c p b=       | =M-x projectile-switch-to-buffer=                         | Display a list of all project buffers currently open.                                                                          |
+| =C-c p 4 b=     | =M-x projectile-switch-to-buffer-other-window=            | Switch to a project buffer and show it in another window.                                                                      |
+| =C-c p 5 b=     | =M-x projectile-switch-to-buffer-other-frame=             | Switch to a project buffer and show it in another frame.                                                                       |
+| =C-c p 4 C-o=   | =M-x projectile-display-buffer=                           | Display a project buffer in another window without selecting it.                                                               |
+| =C-c p k=       | =M-x projectile-kill-buffer=                              | Kills all project buffers.                                                                                                     |
+| =C-c p o=       | =M-x projectile-multi-occur=                              | Runs multi-occur on all project buffers currently open.                                                                        |
+| =C-c p r=       | =M-x projectile-replace=                                  | Runs interactive query-replace on all files in the projects.                                                                   |
+| =C-c p R=       | =M-x projectile-regenerate-tags=                          | Regenerate the project's tags.                                                                                                 |
+| =C-c p s r=     | =M-x projectile-ripgrep=                                  | Run a Ripgrep search with 'SEARCH-TERM' at current root.                                                                       |
+| =C-c p i=       | =M-x projectile-invalidate-cache=                         | Invalidates the project cache (if existing).                                                                                   |
+| =C-c p p=       | =M-x projectile-switch-project=                           | Display a list of known projects you can switch to.                                                                            |
+| =C-c p S=       | =M-x projectile-save-project-buffers=                     | Save all project buffers.                                                                                                      |
+| =C-c p <left>=  | =M-x projectile-previous-project-buffer=                  | Switch to the previous project buffer.                                                                                         |
+| =C-c p <right>= | =M-x projectile-next-project-buffer=                      | Switch to the next project buffer.                                                                                             |
+| =C-c p q=       | =M-x projectile-switch-open-project=                      | Switch to a project we have currently opened.                                                                                  |
+| =C-c p ESC=     | =M-x projectile-project-buffers-other-buffer=             | Switch to the most recently selected Projectile buffer.                                                                        |
+| =C-c p E=       | =M-x projectile-edit-dir-locals=                          | Opens the root dir-locals-file of the project.                                                                                 |
+| =C-c p s s=     | =M-x projectile-ag=                                       | Runs ag on the project, performing a literal search.                                                                           |
+| =C-c p !=       | =M-x projectile-run-shell-command-in-root=                | Runs shell-command in the root directory of the project.                                                                       |
+| =C-c p x s=     | =M-x projectile-run-shell=                                | Invoke 'shell' in the project's root.                                                                                          |
+| =C-c p x v=     | =M-x projectile-run-vterm=                                | Invoke 'vterm' in the project's root.                                                                                          |
+| =C-c p x e=     | =M-x projectile-run-eshell=                               | Invoke 'eshell' in the project's root.                                                                                         |
+| =C-c p u=       | =M-x projectile-run-project=                              | Run project run command.                                                                                                       |
+| =C-c p P=       | =M-x projectile-test-project=                             | Run project test command.                                                                                                      |
+| =C-c p x g=     | =M-x projectile-run-gdb=                                  | Invoke 'gdb' in the project root.                                                                                              |
+| =C-c p &=       | =M-x projectile-run-async-shell-command-in-root=          | Runs async-shell-command in the root directory of the project.                                                                 |
+| =C-c p C=       | =M-x projectile-configure-project=                        | Runs a standard configure command for your type of project.                                                                    |
+| =C-c p c=       | =M-x projectile-compile-project=                          | Runs a standard compilation command for your type of project.                                                                  |
+| =C-c p L=       | =M-x projectile-install-project=                          | Run project install command.                                                                                                   |
+| =C-c p K=       | =M-x projectile-package-project=                          | Run project package command.                                                                                                   |
+| =C-c p t=       | =M-x projectile-toogle-between-implementation-and-test=   | Toggle between an implementation file and its test file.                                                                       |
+| =C-c p 4 t=     | =M-x projectile-find-implementation-or-test-other-window= | Jump to implementation or test file in other window.                                                                           |
+| =C-c p 5 t=     | =M-x projectile-find-implementation-or-test-other-frame=  | Jump to implementation or test file in other frame.                                                                            |
+| =C-c p z=       | =M-x projectile-cache-current-file=                       | Adds the currently visited file to the cache.                                                                                  |
+| =C-c p m=       | =M-x projectile-commander=                                | Execute a Projectile command with a single letter.                                                                             |
+|-----------------+-----------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+
+Special global command
+| Key binding | Command                                               | Description                                             |
+|-------------+-------------------------------------------------------+---------------------------------------------------------|
+| =C-c p C-n= | =M-x psimacs/projectile/create-empty-projectile-file= | Choose diretory and create an empty '.projectile' file. |
+|-------------+-------------------------------------------------------+---------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-projectile.el :var file-description="Advanced projectile setup"
+;;
+;; Create a marker file that is recognized by projectile
+;;
+(defun psimacs/projectile/create-empty-projectile-file ()
+    "Choose diretory and create an empty '.projectile' file.
+The file is only created if it does not already exist."
+    (interactive)
+    (let* ((file (concat (psimacs/file-system/choose-directory default-directory) ".projectile")))
+        (unless (file-exists-p file)
+            (with-temp-buffer (write-file file))
+        )
+    )
+)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-projectile.el
+;;
+;; Configure the projectile package
+;;
+(use-package projectile
+    ;:diminish projectile-mode
+    :hook ((text-mode cmake-mode prog-mode) . projectile-mode)
+    :bind (
+            :map projectile-mode-map
+                ("C-c p"     . projectile-command-map)
+                ("C-c p C-n" . psimacs/projectile/create-empty-projectile-file)
+          )
+    :init
+        (setq projectile-mode-line-prefix " ℘")
+        ;(setq projectile-require-project-root nil)
+        (setq projectile-indexing-method 'native)
+        ;(setq projectile-indexing-method 'alien) ; Warning: The contents of .projectile are ignored when using the alien project indexing method.
+
+        ;(setq projectile-sort-order 'default)
+        ;(setq projectile-sort-order 'recentf)
+        ;(setq projectile-sort-order 'recently-active)
+        ;(setq projectile-sort-order 'modification-time)
+
+        (setq projectile-known-projects-file psimacs/config/projectile-known-projects-file)
+
+    :config
+        (setq projectile-project-search-path psimacs/config/project-search-path)
+        (setq projectile-globally-ignored-files '(
+                "TAGS" "\#*\#" "*~" "*.la" "*.o" "*.pyc" "*.elc" "*.exe"
+                "*.zip" "*.tar.*" "*.rar" "*.7z"
+                "*.aux" "*.log" "*.out" "*.pdf"
+            )
+        )
+
+        ;(projectile-mode 1)
+)
+#+END_SRC
+
+**** projectile-cmake
+
+The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] gives fine grained support of [[https://cmake.org/][CMake]] with Emacs projectile.
+
+| Key binding     | Command                                                        | Description                                                                 |
+|-----------------+----------------------------------------------------------------+-----------------------------------------------------------------------------|
+| =C-c C-p s d=   | =M-x projectile-cmake-select-build-dir=                        | Select the current project build dir.                                       |
+| =C-c C-p s t=   | =M-x projectile-cmake-select-build-type=                       | Select the current project build type.                                      |
+| =C-c C-p s g=   | =M-x projectile-cmake-select-generator=                        | Select the current project configuration generator.                         |
+| =C-c C-p s a=   | =M-x projectile-cmake-select-architecture=                     | Select the current project configuration architecture.                      |
+| =C-c C-p s s=   | =M-x projectile-cmake-select-toolset=                          | Select the current project configuration toolset.                           |
+| =C-c C-p s c=   | =M-x projectile-cmake-select-toolchain=                        | Select the current project configuration toolchain.                         |
+| =C-c C-p s r g= | =M-x projectile-cmake-select-run-file=                         | Select the file that should be run for the project.                         |
+| =C-c C-p s r d= | =M-x projectile-cmake-select-run-file-debug=                   | Select the file that should be run for the debug project.                   |
+| =C-c C-p s r r= | =M-x projectile-cmake-select-run-file-release=                 | Select the file that should be run for the release project.                 |
+| =C-c C-p s r i= | =M-x projectile-cmake-select-run-file-release-with-debug-info= | Select the file that should be run for the release with debug info project. |
+| =C-c C-p s r m= | =M-x projectile-cmake-select-run-file-minimal-size-release=    | Select the file that should be run for the minimal size release project.    |
+| =C-c C-p t d=   | =M-x projectile-cmake-toggle-run-in-build-dir=                 | Toggle the run in build directory flag variable.                            |
+|-----------------+----------------------------------------------------------------+-----------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-projectile.el
+;;
+;; Configure the projectile-cmake package
+;;
+(use-package projectile-cmake
+    :diminish projectile-cmake-mode
+    :straight (projectile-cmake :host github :repo "hatlafax/projectile-cmake")
+    ;:straight nil
+    :bind (
+            :map projectile-cmake-mode-map
+                ("C-c C-p" . projectile-cmake-command-map)
+                ("C-c C-p h" . hydra-projectile-cmake/body)
+          )
+    :hook (projectile-mode . projectile-cmake-global-mode)
+    :init
+        (setq projectile-cmake-executable           psimacs/config/cmake-runtime-exe)
+        (setq projectile-cmake-clang-c-executable   psimacs/config/clang-c-compiler-runtime-exe)
+        (setq projectile-cmake-clang-c++-executable psimacs/config/clang-c++-compiler-runtime-exe)
+)
+#+END_SRC
+
+**** Counsel-projectile
+
+Projectile has native support for using ivy as its completion system.
+[[https://github.com/ericdanan/counsel-projectile][Counsel-projectile]] provides further ivy integration into projectile by
+taking advantage of ivy's support for selecting from a list of actions
+and applying an action without leaving the completion session.
+Concretely, counsel-projectile defines replacements for existing
+projectile commands as well as new commands that have no projectile counterparts.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-projectile.el
+;;
+;; counsel support for projectile
+;;
+(use-package counsel-projectile
+    :after (projectile)
+    :config (counsel-projectile-mode)
 )
 #+END_SRC
 
@@ -8146,169 +8634,176 @@ by the various packages nor by *Emacs* itself.
 |--------------------------------------+---------------------------|
 
 #+ATTR_HTML: :class styledtable
-| Key binding       | Command                                                       | Description                                                                                                                                                                                                                                                                                      |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-<f4>=          | =M-x psimacs/config/delete-frame=                             | Delete current frame.                                                                                                                                                                                                                                                                            |
-| =C-x p=           | =M-x pop-to-mark-command=                                     | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                                                               |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =<f2>=            | =M-x bm-next=                                                 | Jump to the next bookmark.                                                                                                                                                                                                                                                                       |
-| =S-<f2>=          | =M-x bm-previous=                                             | Jump to the previous bookmark.                                                                                                                                                                                                                                                                   |
-| =C-<f2>=          | =M-x bm-toggle=                                               | Set or unset bookmark.                                                                                                                                                                                                                                                                           |
-| =C-S-<f2>=        | =M-x bm-remove-all-current-buffer=                            | Remove all bookmarks of the current buffer.                                                                                                                                                                                                                                                      |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-s=             | =M-x swiper-iseach=                                           | A =swiper= that’s not line-based. Incrementally search with an overview.                                                                                                                                                                                                                         |
-| =C-r=             | =M-x swiper=                                                  | Incrementally search with an overview.                                                                                                                                                                                                                                                           |
-| =C-c v=           | =M-x ivy-push-view=                                           | Push the current window tree on =ivy-views=                                                                                                                                                                                                                                                      |
-| =C-c V=           | =M-x ivy-pop-view=                                            | Delete a view to delete from =ivy-views=.                                                                                                                                                                                                                                                        |
-| =C-x b=           | =M-x ivy-switch-buffer=                                       | Switch to another buffer.                                                                                                                                                                                                                                                                        |
-| =C-c C-S-r=       | =M-x ivy-resume=                                              | Resumes the last Ivy-based completion.                                                                                                                                                                                                                                                           |
-| =M-y=             | =M-x ivy-next-line=                                           | In minibuffer, Move cursor vertically down.                                                                                                                                                                                                                                                      |
-| =C-'=             | =M-x ivy-avy=                                                 | Uses avy to select one of the candidates on the current candidate page.                                                                                                                                                                                                                          |
-| =M-x=             | =M-x counsel-M-x=                                             | Ivy version of =execute-extended-command=.                                                                                                                                                                                                                                                       |
-| =C-M-i=           | =M-x counsel-imenu=                                           | Jump to a buffer position indexed by =imenu=.                                                                                                                                                                                                                                                    |
-| =C-x C-f=         | =M-x counsel-find-file=                                       | Counsel, forward to =find-file=.                                                                                                                                                                                                                                                                 |
-| =C-c b=           | =M-x counsel-bookmark=                                        | Forward to =bookmark-jump= or =bookmark-set= if bookmark does not exist.                                                                                                                                                                                                                         |
-| =C-c c=           | =M-x counsel-compile=                                         | Call =compile= completing with smart suggestions, optionally for DIR.                                                                                                                                                                                                                            |
-| =C-c d=           | =M-x counsel-dired-jump=                                      | Jump to a directory below the current directory.                                                                                                                                                                                                                                                 |
-| =C-c F=           | =M-x counsel-org-file=                                        | Browse all attachments for current Org file.                                                                                                                                                                                                                                                     |
-| =C-c g=           | =M-x counsel-git=                                             | Find file in the current git repository.                                                                                                                                                                                                                                                         |
-| =C-c j=           | =M-x counsel-git-grep=                                        | Grep for a string in the current Git repository.                                                                                                                                                                                                                                                 |
-| =C-c L=           | =M-x counsel-git-log=                                         | Call the =git log --grep= shell command.                                                                                                                                                                                                                                                         |
-| =C-c J=           | =M-x counsel-file-jump=                                       | Jump to a file below the current directory..                                                                                                                                                                                                                                                     |
-| =C-c k=           | =M-x counsel-ag=                                              | Grep for a string in a root directory using =ag=.                                                                                                                                                                                                                                                |
-| =C-c l=           | =M-x counsel-locate=                                          | Call a "locate" style shell command.                                                                                                                                                                                                                                                             |
-| =M-y=             | =M-x counsel-yank-pop=                                        | Ivy replacement for =yank-pop=.                                                                                                                                                                                                                                                                  |
-| =C-h f=           | =M-x counsel-describe-function=                               | Forward to =describe-function=.                                                                                                                                                                                                                                                                  |
-| =C-h i=           | =M-x counsel-info-lookup-symbol=                              | Forward SYMBOL to =info-lookup-symbol= with ivy completion.                                                                                                                                                                                                                                      |
-| =C-h j=           | =M-x counsel-set-variable=                                    | Set a variable SYM with completion.                                                                                                                                                                                                                                                              |
-| =C-h l=           | =M-x counsel-find-library=                                    | Find Emacs Lisp source. Forward to =find-library=.                                                                                                                                                                                                                                               |
-| =C-h u=           | =M-x counsel-unicode-char=                                    | Insert COUNT copies of a unicode char at point.                                                                                                                                                                                                                                                  |
-| =C-h v=           | =M-x counsel-describe-variable=                               | Forward to =describe-function=.                                                                                                                                                                                                                                                                  |
-| =C-r=             | =M-x counsel-minibuffer-history=                              | Browse minibuffer history.                                                                                                                                                                                                                                                                       |
-| =C-r=             | =M-x counsel-expression-history=                              | In =read-expression-map=                                                                                                                                                                                                                                                                         |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x p i=         | =M-x org-cliplink=                                            | Insert [[https://orgmode.org][org-mode]] links from the clipboard.                                                                                                                                                                                                                                                        |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-c C-e=         | =M-x edit-indirect-region=                                    | Edit region in separate buffer *edit-indirect buffer*                                                                                                                                                                                                                                            |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m (=           | =M-x psimacs/pair/insert-paren=                               | Insert paranthesis =(▮)=.                                                                                                                                                                                                                                                                        |
-| =H-m [=           | =M-x psimacs/pair/insert-bracket=                             | Insert brackets =[▮]=.                                                                                                                                                                                                                                                                           |
-| =H-m {=           | =M-x psimacs/pair/insert-brace=                               | Insert braces ={▮}=.                                                                                                                                                                                                                                                                             |
-| =H-m "=           | =M-x psimacs/pair/insert-ascii-double-quote=                  | Insert ascii double quotes ="▮"=.                                                                                                                                                                                                                                                                |
-| =H-m '=           | =M-x psimacs/pair/insert-ascii-single-quote=                  | Insert ascii single quotes ='▮'=.                                                                                                                                                                                                                                                                |
-| =H-m e=           | =M-x psimacs/pair/insert-emacs-quote=                         | Insert emacs quotes =`▮'=.                                                                                                                                                                                                                                                                       |
-| =H-m ==           | =M-x psimacs/pair/insert-equal=                               | Insert equality signs ==▮==.                                                                                                                                                                                                                                                                     |
-| =H-m *=           | =M-x psimacs/pair/insert-star=                                | Insert stars =*▮*=.                                                                                                                                                                                                                                                                              |
-| =H-m /=           | =M-x psimacs/pair/insert-slash=                               | Insert slashes =/▮/=.                                                                                                                                                                                                                                                                            |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =<f12>=           | =M-x cua-mode=                                                | Toggle CUA mode.                                                                                                                                                                                                                                                                                 |
-| =H-m c=           | =M-x cua-mode=                                                | Toggle CUA mode.                                                                                                                                                                                                                                                                                 |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-c C-h=     | (find-file-read-only history-file)                            | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-f m=       | =M-x flyspell-mode=                                           | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-f r=       | =M-x flyspell-region=                                         | Checks all words inside a region.                                                                                                                                                                                                                                                                |
-| =H-m C-f b=       | =M-x flyspell-buffer=                                         | Checks the whole buffer.                                                                                                                                                                                                                                                                         |
-| =H-m C-f w=       | =M-x flyspell-word=                                           | Spell check a word.                                                                                                                                                                                                                                                                              |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-,=             | =M-x flyspell-goto-next-error=                                | Go to the next detected error.                                                                                                                                                                                                                                                                   |
-| =C-.=             | =M-x flyspell-auto-correct-word=                              | Automatically Correct the current word. This command proposes various successive corrections for the current word.                                                                                                                                                                               |
-| =C-:=             | =M-x flyspell-auto-correct-previous-word=                     | Auto correct the first mispelled word that occurs before point.                                                                                                                                                                                                                                  |
-| =C-;=             | =M-x flyspell-correct-wrapper=                                | By default jumps to the first misspelled word before the point and prompts for correction and gets you back. Calling it with =C-u= gives ability to correct multiple misspelled words in one run. =C-u C-u= changes direction. =C-u C-u C-u= changes direction and enables multiple corrections. |
-| =H-m C-f a=       | =M-x flyspell-correct-at-point=                               | To correct word at point.                                                                                                                                                                                                                                                                        |
-| =H-m C-f p=       | =M-x flyspell-correct-previous=                               | To correct any visible word before the point.                                                                                                                                                                                                                                                    |
-| =H-m C-f n=       | =M-x flyspell-correct-next=                                   | To correct any visible word after the point.                                                                                                                                                                                                                                                     |
-| =H-m C-f c=       | =M-x flyspell-check-previous-highlighted-word=                | Correct the closer misspelled word.                                                                                                                                                                                                                                                              |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-f d=       | =M-x psimac/spell/add-word-to-dict=                           | Add the word at the current location to the private dictionary without question.                                                                                                                                                                                                                 |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-f g=       | =M-x psimac/spell/switch-to-german=                           | Change to german language dictionary.                                                                                                                                                                                                                                                            |
-| =H-m C-f e=       | =M-x psimac/spell/switch-to-english=                          | Change to english language dictionary.                                                                                                                                                                                                                                                           |
-| =H-m C-f t=       | =M-x psimac/spell/toggle-language=                            | Toggle german and english language dictionaries.                                                                                                                                                                                                                                                 |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-l b=       | =M-x langtool-check-buffer=                                   | To check current buffer and show warnings. With prefix =C-u= check with different language.                                                                                                                                                                                                      |
-| =H-m C-l p=       | =M-x langtool-goto-previous-error=                            | Goto previous error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                   |
-| =H-m C-l n=       | =M-x langtool-goto-next-error=                                | Goto next error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                       |
-| =H-m C-l ;=       | =M-x langtool-correct-buffer=                                 | Execute interactive correction after =langtool-check-buffer=. To correct marker follow LanguageTool suggestions.                                                                                                                                                                                 |
-| =H-m C-l t=       | =M-x langtool-switch-default-language=                        | Switch ‘langtool-default-language’ to LANG                                                                                                                                                                                                                                                       |
-| =H-m C-l m=       | =M-x langtool-show-brief-message-at-point=                    | Show error brief message at point.                                                                                                                                                                                                                                                               |
-| =H-m C-l M=       | =M-x langtool-show-message-at-point=                          | Show error details at point..                                                                                                                                                                                                                                                                    |
-| =H-m C-l B=       | =M-x langtool-check-done=                                     | Finish LanguageTool process and cleanup existing colorized texts.                                                                                                                                                                                                                                |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-p C-p b=   | =M-x print-buffer=                                            | B/W print hardcopy of buffer on default printer                                                                                                                                                                                                                                                  |
-| =H-m C-p C-p r=   | =M-x print-region=                                            | B/W print hardcopy of region on default printer                                                                                                                                                                                                                                                  |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-p C-q p=   | =M-x ps-print-buffer=                                         | B/W print buffer via Ghostscript                                                                                                                                                                                                                                                                 |
-| =H-m C-p C-q r=   | =M-x ps-print-region=                                         | B/W print region via Ghostscript                                                                                                                                                                                                                                                                 |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-p C-f p=   | =M-x ps-print-buffer-with-faces=                              | Color print buffer via Ghostscript                                                                                                                                                                                                                                                               |
-| =H-m C-p C-f r=   | =M-x ps-print-region-with-faces=                              | Color print region via Ghosts                                                                                                                                                                                                                                                                    |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-s C-a c=   | =M-x avy-goto-char=                                           | Input one char, jump to it with a tree.                                                                                                                                                                                                                                                          |
-| =H-m C-s C-a C=   | =M-x avy-goto-char-2=                                         | Input two consecutive chars, jump to the first one with a tree.                                                                                                                                                                                                                                  |
-| =H-m C-s C-a t=   | =M-x avy-goto-char-timer=                                     | Input an arbitrary amount of consecutive chars, jump to the first one with a tree.                                                                                                                                                                                                               |
-| =H-m C-s C-a T=   | =M-x avy-org-goto-heading-timer=                              | Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy.                                                                                                                                                            |
-| =H-m C-s C-a l=   | =M-x avy-goto-line=                                           | Input zero chars, jump to a line start with a tree.                                                                                                                                                                                                                                              |
-| =H-m C-s C-a w=   | =M-x avy-goto-word-1=                                         | Input one char at word start, jump to a word start with a tree.                                                                                                                                                                                                                                  |
-| =H-m C-s C-a W=   | =M-x avy-goto-word-0=                                         | Input zero chars, jump to a word start with a tree.                                                                                                                                                                                                                                              |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-s a=       | =M-x swiper-all=                                              | Incrementally search in all open buffers.                                                                                                                                                                                                                                                        |
-| =H-m C-s s=       | =M-x isearch-forward=                                         | Incrementally search forward.                                                                                                                                                                                                                                                                    |
-| =H-m C-s r=       | =M-x isearch-backward=                                        | Incrementally search backward.                                                                                                                                                                                                                                                                   |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-t ;=       | =M-x google-translate-smooth-translate=                       | Translate a text using translation directions. Make a prompt in minibuffer for a text to translate. Default text is word at point.                                                                                                                                                               |
-| =H-m C-t o=       | =M-x psimacs/spell/google-tanslate/toggle-output-destination= | Toggle output desination between 'current buffer' and 'translation buffer'.                                                                                                                                                                                                                      |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-u C-w t=   | =M-x psimacs/which-key/toogle-sort-order=                     | Toggle the which-key-mode sort order.                                                                                                                                                                                                                                                            |
-| =H-m C-u C-w c=   | =M-x psimacs/which-key/cycle-sort-order=                      | Cycle through the which-key-mode sort orders.                                                                                                                                                                                                                                                    |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-w C-x 5 l= | =M-x psimacs/window/set-frame-creation-strategy-layout=       | Place and size new frames left and right to the main frame. This is the default strategy.                                                                                                                                                                                                        |
-| =H-m C-w C-x 5 m= | =M-x psimacs/window/set-frame-creation-strategy-main=         | Always use the same placement and size as the initial main frame.                                                                                                                                                                                                                                |
-| =H-m C-w C-x 5 s= | =M-x psimacs/window/set-frame-creation-strategy-system=       | Let Emacs and the operating system decide.                                                                                                                                                                                                                                                       |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-w C-s s=   | =M-x smooth-scrolling-mode=                                   | Enable or disable the smooth scrolling mode.                                                                                                                                                                                                                                                     |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-w C-r=     | =M-x golden-ratio-mode=                                       | Toggle automatic window resizing with golden ratio.                                                                                                                                                                                                                                              |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x C RET=   | =M-x counsel-search=                                          | Shows search suggestions as you type and visit page in your default browser on =RET=.                                                                                                                                                                                                            |
-| =H-m C-x C s=     | =M-x counsel-web-suggest=                                     | Shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.                                                                                                                                                                                  |
-| =H-m C-x C w=     | =M-x counsel-web-search=                                      | Searches and presents the results in the ivy minibuffer.                                                                                                                                                                                                                                         |
-| =H-m C-x C p=     | =M-x counsel-web-thing-at-point=                              | Interactively search the web for the THING at point.                                                                                                                                                                                                                                             |
-| =H-m C-x C t=     | =M-x psimacs/web/toogle-search-engine=                        | Toogle the search engine of [[https://github.com/abo-abo/swiper][counsel]] and  [[https://github.com/mnewt/counsel-web][counsel-web]] between 'duckduckgo' and 'goole'.                                                                                                                                                                                                           |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x G SPC=   | =M-x google-this-region=                                      | Google the current region. PREFIX determines quoting.                                                                                                                                                                                                                                            |
-| =H-m C-x G a=     | =M-x google-this-ray=                                         | Google text between the point and end of the line. If there is a selected region, googles the region.                                                                                                                                                                                            |
-| =H-m C-x G c=     | =M-x google-this-translate-query-or-region=                   | If region is active =google-translate-at-point=, otherwise =google-translate-query-translate=.                                                                                                                                                                                                   |
-| =H-m C-x G e=     | =M-x google-this-error=                                       | Google the current error in the compilation buffer. PREFIX determines quoting.                                                                                                                                                                                                                   |
-| =H-m C-x G f=     | =M-x google-this-forecast=                                    | Search google for "weather". With PREFIX, ask for location.                                                                                                                                                                                                                                      |
-| =H-m C-x G g=     | =M-x google-this-lucky-search=                                | Exactly like =google-this-search=, but use the "I’m feeling lucky" option. PREFIX determines quoting.                                                                                                                                                                                            |
-| =H-m C-x G i=     | =M-x google-this-lucky-and-insert-url=                        | Fetch the url that would be visited by ‘google-this-lucky’.                                                                                                                                                                                                                                      |
-| =H-m C-x G l=     | =M-x google-this-line=                                        | Google the current line. PREFIX determines quoting.                                                                                                                                                                                                                                              |
-| =H-m C-x G m=     | =M-x google-maps=                                             |                                                                                                                                                                                                                                                                                                  |
-| =H-m C-x G n=     | =M-x google-this-noconfirm=                                   | Decide what the user wants to google and go without confirmation. Exactly like =google-this= or =google-this-search=, but don’t ask for confirmation.                                                                                                                                            |
-| =H-m C-x G r=     | =M-x google-this-cpp-reference=                               | Visit the most probable cppreference.com page for this word.                                                                                                                                                                                                                                     |
-| =H-m C-x G s=     | =M-x google-this-symbol=                                      | Google the current symbol.                                                                                                                                                                                                                                                                       |
-| =H-m C-x G t=     | =M-x google-this=                                             | Decide what the user wants to google (always something under point). Unlike =google-this-search= (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited.                                                              |
-| =H-m C-x G w=     | =M-x google-this-word=                                        | Google the current word.                                                                                                                                                                                                                                                                         |
-| =H-m C-x G RET=   | =M-x google-this-search=                                      | Write and do a google search.                                                                                                                                                                                                                                                                    |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x S RET=   | =M-x sx-tab-all-questions=                                    | Display a list of All-Questions questions for SITE.                                                                                                                                                                                                                                              |
-| =H-m C-x S s=     | =M-x sx-search=                                               | Display search on SITE for question titles containing QUERY.                                                                                                                                                                                                                                     |
-| =H-m C-x S r=     | =M-x sx-question-list-refresh=                                | Update the list of questions.                                                                                                                                                                                                                                                                    |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x C-a=     | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x r=           | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
-| =H-x C-r=         | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x f=           | =M-x counsel-recentf=                                         | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
-| =H-x C-f=         | =M-x counsel-buffer-or-recentf=                               | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m H-h C-m=     | =M-x discover-my-major=                                       | Create a listing of all major-mode keys with their description.                                                                                                                                                                                                                                  |
-| =H-m H-h M-m=     | =M-x discover-my-mode=                                        | Create a listing of all MODE keys with their description.                                                                                                                                                                                                                                        |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m H-h b=       | =M-x helm-descbinds=                                          | Create a listing of all key bindings of current major mode.                                                                                                                                                                                                                                      |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m H-h m=       | =M-x helm-describe-modes=                                     | Create a listing of all modes of current major mode.                                                                                                                                                                                                                                             |
-|-------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding         | Command                                                       | Description                                                                                                                                                                                                                                                                                      |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-<f4>=            | =M-x psimacs/config/delete-frame=                             | Delete current frame.                                                                                                                                                                                                                                                                            |
+| =C-x p=             | =M-x pop-to-mark-command=                                     | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                                                               |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =<f2>=              | =M-x bm-next=                                                 | Jump to the next bookmark.                                                                                                                                                                                                                                                                       |
+| =S-<f2>=            | =M-x bm-previous=                                             | Jump to the previous bookmark.                                                                                                                                                                                                                                                                   |
+| =C-<f2>=            | =M-x bm-toggle=                                               | Set or unset bookmark.                                                                                                                                                                                                                                                                           |
+| =C-S-<f2>=          | =M-x bm-remove-all-current-buffer=                            | Remove all bookmarks of the current buffer.                                                                                                                                                                                                                                                      |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-s=               | =M-x swiper-iseach=                                           | A =swiper= that’s not line-based. Incrementally search with an overview.                                                                                                                                                                                                                         |
+| =C-r=               | =M-x swiper=                                                  | Incrementally search with an overview.                                                                                                                                                                                                                                                           |
+| =C-c v=             | =M-x ivy-push-view=                                           | Push the current window tree on =ivy-views=                                                                                                                                                                                                                                                      |
+| =C-c V=             | =M-x ivy-pop-view=                                            | Delete a view to delete from =ivy-views=.                                                                                                                                                                                                                                                        |
+| =C-x b=             | =M-x ivy-switch-buffer=                                       | Switch to another buffer.                                                                                                                                                                                                                                                                        |
+| =C-c C-S-r=         | =M-x ivy-resume=                                              | Resumes the last Ivy-based completion.                                                                                                                                                                                                                                                           |
+| =M-y=               | =M-x ivy-next-line=                                           | In minibuffer, Move cursor vertically down.                                                                                                                                                                                                                                                      |
+| =C-'=               | =M-x ivy-avy=                                                 | Uses avy to select one of the candidates on the current candidate page.                                                                                                                                                                                                                          |
+| =M-x=               | =M-x counsel-M-x=                                             | Ivy version of =execute-extended-command=.                                                                                                                                                                                                                                                       |
+| =C-M-i=             | =M-x counsel-imenu=                                           | Jump to a buffer position indexed by =imenu=.                                                                                                                                                                                                                                                    |
+| =C-x C-f=           | =M-x counsel-find-file=                                       | Counsel, forward to =find-file=.                                                                                                                                                                                                                                                                 |
+| =C-c b=             | =M-x counsel-bookmark=                                        | Forward to =bookmark-jump= or =bookmark-set= if bookmark does not exist.                                                                                                                                                                                                                         |
+| =C-c c=             | =M-x counsel-compile=                                         | Call =compile= completing with smart suggestions, optionally for DIR.                                                                                                                                                                                                                            |
+| =C-c d=             | =M-x counsel-dired-jump=                                      | Jump to a directory below the current directory.                                                                                                                                                                                                                                                 |
+| =C-c F=             | =M-x counsel-org-file=                                        | Browse all attachments for current Org file.                                                                                                                                                                                                                                                     |
+| =C-c g=             | =M-x counsel-git=                                             | Find file in the current git repository.                                                                                                                                                                                                                                                         |
+| =C-c j=             | =M-x counsel-git-grep=                                        | Grep for a string in the current Git repository.                                                                                                                                                                                                                                                 |
+| =C-c L=             | =M-x counsel-git-log=                                         | Call the =git log --grep= shell command.                                                                                                                                                                                                                                                         |
+| =C-c J=             | =M-x counsel-file-jump=                                       | Jump to a file below the current directory..                                                                                                                                                                                                                                                     |
+| =C-c k=             | =M-x counsel-ag=                                              | Grep for a string in a root directory using =ag=.                                                                                                                                                                                                                                                |
+| =C-c l=             | =M-x counsel-locate=                                          | Call a "locate" style shell command.                                                                                                                                                                                                                                                             |
+| =M-y=               | =M-x counsel-yank-pop=                                        | Ivy replacement for =yank-pop=.                                                                                                                                                                                                                                                                  |
+| =C-h f=             | =M-x counsel-describe-function=                               | Forward to =describe-function=.                                                                                                                                                                                                                                                                  |
+| =C-h i=             | =M-x counsel-info-lookup-symbol=                              | Forward SYMBOL to =info-lookup-symbol= with ivy completion.                                                                                                                                                                                                                                      |
+| =C-h j=             | =M-x counsel-set-variable=                                    | Set a variable SYM with completion.                                                                                                                                                                                                                                                              |
+| =C-h l=             | =M-x counsel-find-library=                                    | Find Emacs Lisp source. Forward to =find-library=.                                                                                                                                                                                                                                               |
+| =C-h u=             | =M-x counsel-unicode-char=                                    | Insert COUNT copies of a unicode char at point.                                                                                                                                                                                                                                                  |
+| =C-h v=             | =M-x counsel-describe-variable=                               | Forward to =describe-function=.                                                                                                                                                                                                                                                                  |
+| =C-r=               | =M-x counsel-minibuffer-history=                              | Browse minibuffer history.                                                                                                                                                                                                                                                                       |
+| =C-r=               | =M-x counsel-expression-history=                              | In =read-expression-map=                                                                                                                                                                                                                                                                         |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x p i=           | =M-x org-cliplink=                                            | Insert [[https://orgmode.org][org-mode]] links from the clipboard.                                                                                                                                                                                                                                                        |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =s-p=               | =M-x centaur-tabs-backward=                                   | Select the previous available tab.                                                                                                                                                                                                                                                               |
+| =s-n=               | =M-x centaur-tabs-forward=                                    | Select the next available tab.                                                                                                                                                                                                                                                                   |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-c C-e=           | =M-x edit-indirect-region=                                    | Edit region in separate buffer *edit-indirect buffer*                                                                                                                                                                                                                                            |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m (=             | =M-x psimacs/pair/insert-paren=                               | Insert paranthesis =(▮)=.                                                                                                                                                                                                                                                                        |
+| =H-m [=             | =M-x psimacs/pair/insert-bracket=                             | Insert brackets =[▮]=.                                                                                                                                                                                                                                                                           |
+| =H-m {=             | =M-x psimacs/pair/insert-brace=                               | Insert braces ={▮}=.                                                                                                                                                                                                                                                                             |
+| =H-m "=             | =M-x psimacs/pair/insert-ascii-double-quote=                  | Insert ascii double quotes ="▮"=.                                                                                                                                                                                                                                                                |
+| =H-m '=             | =M-x psimacs/pair/insert-ascii-single-quote=                  | Insert ascii single quotes ='▮'=.                                                                                                                                                                                                                                                                |
+| =H-m e=             | =M-x psimacs/pair/insert-emacs-quote=                         | Insert emacs quotes =`▮'=.                                                                                                                                                                                                                                                                       |
+| =H-m ==             | =M-x psimacs/pair/insert-equal=                               | Insert equality signs ==▮==.                                                                                                                                                                                                                                                                     |
+| =H-m *=             | =M-x psimacs/pair/insert-star=                                | Insert stars =*▮*=.                                                                                                                                                                                                                                                                              |
+| =H-m /=             | =M-x psimacs/pair/insert-slash=                               | Insert slashes =/▮/=.                                                                                                                                                                                                                                                                            |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =<f12>=             | =M-x cua-mode=                                                | Toggle CUA mode.                                                                                                                                                                                                                                                                                 |
+| =H-m c=             | =M-x cua-mode=                                                | Toggle CUA mode.                                                                                                                                                                                                                                                                                 |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-c C-h=       | (find-file-read-only history-file)                            | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-f m=         | =M-x flyspell-mode=                                           | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-f r=         | =M-x flyspell-region=                                         | Checks all words inside a region.                                                                                                                                                                                                                                                                |
+| =H-m C-f b=         | =M-x flyspell-buffer=                                         | Checks the whole buffer.                                                                                                                                                                                                                                                                         |
+| =H-m C-f w=         | =M-x flyspell-word=                                           | Spell check a word.                                                                                                                                                                                                                                                                              |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-,=               | =M-x flyspell-goto-next-error=                                | Go to the next detected error.                                                                                                                                                                                                                                                                   |
+| =C-.=               | =M-x flyspell-auto-correct-word=                              | Automatically Correct the current word. This command proposes various successive corrections for the current word.                                                                                                                                                                               |
+| =C-:=               | =M-x flyspell-auto-correct-previous-word=                     | Auto correct the first mispelled word that occurs before point.                                                                                                                                                                                                                                  |
+| =C-;=               | =M-x flyspell-correct-wrapper=                                | By default jumps to the first misspelled word before the point and prompts for correction and gets you back. Calling it with =C-u= gives ability to correct multiple misspelled words in one run. =C-u C-u= changes direction. =C-u C-u C-u= changes direction and enables multiple corrections. |
+| =H-m C-f a=         | =M-x flyspell-correct-at-point=                               | To correct word at point.                                                                                                                                                                                                                                                                        |
+| =H-m C-f p=         | =M-x flyspell-correct-previous=                               | To correct any visible word before the point.                                                                                                                                                                                                                                                    |
+| =H-m C-f n=         | =M-x flyspell-correct-next=                                   | To correct any visible word after the point.                                                                                                                                                                                                                                                     |
+| =H-m C-f c=         | =M-x flyspell-check-previous-highlighted-word=                | Correct the closer misspelled word.                                                                                                                                                                                                                                                              |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-f d=         | =M-x psimac/spell/add-word-to-dict=                           | Add the word at the current location to the private dictionary without question.                                                                                                                                                                                                                 |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-f g=         | =M-x psimac/spell/switch-to-german=                           | Change to german language dictionary.                                                                                                                                                                                                                                                            |
+| =H-m C-f e=         | =M-x psimac/spell/switch-to-english=                          | Change to english language dictionary.                                                                                                                                                                                                                                                           |
+| =H-m C-f t=         | =M-x psimac/spell/toggle-language=                            | Toggle german and english language dictionaries.                                                                                                                                                                                                                                                 |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-l b=         | =M-x langtool-check-buffer=                                   | To check current buffer and show warnings. With prefix =C-u= check with different language.                                                                                                                                                                                                      |
+| =H-m C-l p=         | =M-x langtool-goto-previous-error=                            | Goto previous error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                   |
+| =H-m C-l n=         | =M-x langtool-goto-next-error=                                | Goto next error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                       |
+| =H-m C-l ;=         | =M-x langtool-correct-buffer=                                 | Execute interactive correction after =langtool-check-buffer=. To correct marker follow LanguageTool suggestions.                                                                                                                                                                                 |
+| =H-m C-l t=         | =M-x langtool-switch-default-language=                        | Switch ‘langtool-default-language’ to LANG                                                                                                                                                                                                                                                       |
+| =H-m C-l m=         | =M-x langtool-show-brief-message-at-point=                    | Show error brief message at point.                                                                                                                                                                                                                                                               |
+| =H-m C-l M=         | =M-x langtool-show-message-at-point=                          | Show error details at point..                                                                                                                                                                                                                                                                    |
+| =H-m C-l B=         | =M-x langtool-check-done=                                     | Finish LanguageTool process and cleanup existing colorized texts.                                                                                                                                                                                                                                |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-f p=     | =M-x ps-print-buffer-with-faces=                              | Color print buffer via Ghostscript                                                                                                                                                                                                                                                               |
+| =H-m C-p C-f r=     | =M-x ps-print-region-with-faces=                              | Color print region via Ghosts                                                                                                                                                                                                                                                                    |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-p b=     | =M-x print-buffer=                                            | B/W print hardcopy of buffer on default printer                                                                                                                                                                                                                                                  |
+| =H-m C-p C-p r=     | =M-x print-region=                                            | B/W print hardcopy of region on default printer                                                                                                                                                                                                                                                  |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-q p=     | =M-x ps-print-buffer=                                         | B/W print buffer via Ghostscript                                                                                                                                                                                                                                                                 |
+| =H-m C-p C-q r=     | =M-x ps-print-region=                                         | B/W print region via Ghostscript                                                                                                                                                                                                                                                                 |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-r C-p=   | =M-x psimacs/pair/rainbow-toogle-sized-delimiters=            | Toogle the size of the rainbow-delimiters.                                                                                                                                                                                                                                                       |
+| =H-m C-p C-r M-C-p= | =M-x psimacs/pair/rainbow-sized-delimiters=                   | All rainbow delimiters have various heights.                                                                                                                                                                                                                                                     |
+| =H-m C-p C-r S-C-p= | =M-x psimacs/pair/rainbow-non-sized-delimiters=               | All rainbow delimiters have the same height. This is the default.                                                                                                                                                                                                                                |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s C-a c=     | =M-x avy-goto-char=                                           | Input one char, jump to it with a tree.                                                                                                                                                                                                                                                          |
+| =H-m C-s C-a C=     | =M-x avy-goto-char-2=                                         | Input two consecutive chars, jump to the first one with a tree.                                                                                                                                                                                                                                  |
+| =H-m C-s C-a t=     | =M-x avy-goto-char-timer=                                     | Input an arbitrary amount of consecutive chars, jump to the first one with a tree.                                                                                                                                                                                                               |
+| =H-m C-s C-a T=     | =M-x avy-org-goto-heading-timer=                              | Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy.                                                                                                                                                            |
+| =H-m C-s C-a l=     | =M-x avy-goto-line=                                           | Input zero chars, jump to a line start with a tree.                                                                                                                                                                                                                                              |
+| =H-m C-s C-a w=     | =M-x avy-goto-word-1=                                         | Input one char at word start, jump to a word start with a tree.                                                                                                                                                                                                                                  |
+| =H-m C-s C-a W=     | =M-x avy-goto-word-0=                                         | Input zero chars, jump to a word start with a tree.                                                                                                                                                                                                                                              |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s a=         | =M-x swiper-all=                                              | Incrementally search in all open buffers.                                                                                                                                                                                                                                                        |
+| =H-m C-s s=         | =M-x isearch-forward=                                         | Incrementally search forward.                                                                                                                                                                                                                                                                    |
+| =H-m C-s r=         | =M-x isearch-backward=                                        | Incrementally search backward.                                                                                                                                                                                                                                                                   |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-t ;=         | =M-x google-translate-smooth-translate=                       | Translate a text using translation directions. Make a prompt in minibuffer for a text to translate. Default text is word at point.                                                                                                                                                               |
+| =H-m C-t o=         | =M-x psimacs/spell/google-tanslate/toggle-output-destination= | Toggle output desination between 'current buffer' and 'translation buffer'.                                                                                                                                                                                                                      |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-u C-w t=     | =M-x psimacs/which-key/toogle-sort-order=                     | Toggle the which-key-mode sort order.                                                                                                                                                                                                                                                            |
+| =H-m C-u C-w c=     | =M-x psimacs/which-key/cycle-sort-order=                      | Cycle through the which-key-mode sort orders.                                                                                                                                                                                                                                                    |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-x 5 l=   | =M-x psimacs/window/set-frame-creation-strategy-layout=       | Place and size new frames left and right to the main frame. This is the default strategy.                                                                                                                                                                                                        |
+| =H-m C-w C-x 5 m=   | =M-x psimacs/window/set-frame-creation-strategy-main=         | Always use the same placement and size as the initial main frame.                                                                                                                                                                                                                                |
+| =H-m C-w C-x 5 s=   | =M-x psimacs/window/set-frame-creation-strategy-system=       | Let Emacs and the operating system decide.                                                                                                                                                                                                                                                       |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-s s=     | =M-x smooth-scrolling-mode=                                   | Enable or disable the smooth scrolling mode.                                                                                                                                                                                                                                                     |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w C-r=       | =M-x golden-ratio-mode=                                       | Toggle automatic window resizing with golden ratio.                                                                                                                                                                                                                                              |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C RET=     | =M-x counsel-search=                                          | Shows search suggestions as you type and visit page in your default browser on =RET=.                                                                                                                                                                                                            |
+| =H-m C-x C s=       | =M-x counsel-web-suggest=                                     | Shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.                                                                                                                                                                                  |
+| =H-m C-x C w=       | =M-x counsel-web-search=                                      | Searches and presents the results in the ivy minibuffer.                                                                                                                                                                                                                                         |
+| =H-m C-x C p=       | =M-x counsel-web-thing-at-point=                              | Interactively search the web for the THING at point.                                                                                                                                                                                                                                             |
+| =H-m C-x C t=       | =M-x psimacs/web/toogle-search-engine=                        | Toogle the search engine of [[https://github.com/abo-abo/swiper][counsel]] and  [[https://github.com/mnewt/counsel-web][counsel-web]] between 'duckduckgo' and 'goole'.                                                                                                                                                                                                           |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x G SPC=     | =M-x google-this-region=                                      | Google the current region. PREFIX determines quoting.                                                                                                                                                                                                                                            |
+| =H-m C-x G a=       | =M-x google-this-ray=                                         | Google text between the point and end of the line. If there is a selected region, googles the region.                                                                                                                                                                                            |
+| =H-m C-x G c=       | =M-x google-this-translate-query-or-region=                   | If region is active =google-translate-at-point=, otherwise =google-translate-query-translate=.                                                                                                                                                                                                   |
+| =H-m C-x G e=       | =M-x google-this-error=                                       | Google the current error in the compilation buffer. PREFIX determines quoting.                                                                                                                                                                                                                   |
+| =H-m C-x G f=       | =M-x google-this-forecast=                                    | Search google for "weather". With PREFIX, ask for location.                                                                                                                                                                                                                                      |
+| =H-m C-x G g=       | =M-x google-this-lucky-search=                                | Exactly like =google-this-search=, but use the "I’m feeling lucky" option. PREFIX determines quoting.                                                                                                                                                                                            |
+| =H-m C-x G i=       | =M-x google-this-lucky-and-insert-url=                        | Fetch the url that would be visited by ‘google-this-lucky’.                                                                                                                                                                                                                                      |
+| =H-m C-x G l=       | =M-x google-this-line=                                        | Google the current line. PREFIX determines quoting.                                                                                                                                                                                                                                              |
+| =H-m C-x G m=       | =M-x google-maps=                                             |                                                                                                                                                                                                                                                                                                  |
+| =H-m C-x G n=       | =M-x google-this-noconfirm=                                   | Decide what the user wants to google and go without confirmation. Exactly like =google-this= or =google-this-search=, but don’t ask for confirmation.                                                                                                                                            |
+| =H-m C-x G r=       | =M-x google-this-cpp-reference=                               | Visit the most probable cppreference.com page for this word.                                                                                                                                                                                                                                     |
+| =H-m C-x G s=       | =M-x google-this-symbol=                                      | Google the current symbol.                                                                                                                                                                                                                                                                       |
+| =H-m C-x G t=       | =M-x google-this=                                             | Decide what the user wants to google (always something under point). Unlike =google-this-search= (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited.                                                              |
+| =H-m C-x G w=       | =M-x google-this-word=                                        | Google the current word.                                                                                                                                                                                                                                                                         |
+| =H-m C-x G RET=     | =M-x google-this-search=                                      | Write and do a google search.                                                                                                                                                                                                                                                                    |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x S RET=     | =M-x sx-tab-all-questions=                                    | Display a list of All-Questions questions for SITE.                                                                                                                                                                                                                                              |
+| =H-m C-x S s=       | =M-x sx-search=                                               | Display search on SITE for question titles containing QUERY.                                                                                                                                                                                                                                     |
+| =H-m C-x S r=       | =M-x sx-question-list-refresh=                                | Update the list of questions.                                                                                                                                                                                                                                                                    |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C-a=       | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
+| =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x f=             | =M-x counsel-recentf=                                         | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
+| =H-x C-f=           | =M-x counsel-buffer-or-recentf=                               | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m H-h C-m=       | =M-x discover-my-major=                                       | Create a listing of all major-mode keys with their description.                                                                                                                                                                                                                                  |
+| =H-m H-h M-m=       | =M-x discover-my-mode=                                        | Create a listing of all MODE keys with their description.                                                                                                                                                                                                                                        |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m H-h b=         | =M-x helm-descbinds=                                          | Create a listing of all key bindings of current major mode.                                                                                                                                                                                                                                      |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m H-h m=         | =M-x helm-describe-modes=                                     | Create a listing of all modes of current major mode.                                                                                                                                                                                                                                             |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
