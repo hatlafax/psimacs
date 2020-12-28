@@ -520,10 +520,8 @@ is because it breaks some old (badly written) code.
 ;;
 ;; Change color to avoid screen flickering
 ;;
-(when (display-graphic-p)
-  (set-face-background 'default "#4f4f4f" nil)
-  (set-face-foreground 'default "#f0dfaf" nil)
-)
+(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
+(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
 #+END_SRC
 
 - Avoid garbage collection at startup
@@ -835,7 +833,7 @@ Source code blocks that tangle to early-init.el are handled differently. In this
                                                       relative-dir))
                                           (add-to-list 'body-list line)
                                           (map-put found-load-dir-alist dst-dir t)
-                                        )
+                                          )
 
                                         (let ((description " "))
                                           (when (string-match
@@ -849,9 +847,9 @@ Source code blocks that tangle to early-init.el are handled differently. In this
                                             (if (equal description " ")
                                                 (setq line (format "(require '%s)\n\n" package-name))
                                               (progn
-                                               (setq line (format "(require '%s)" package-name))
-                                               (setq line (concat line (make-string (- 42 (length line)) ?\s) (format ";;%s\n\n" description)))
-                                               ))
+                                                (setq line (format "(require '%s)" package-name))
+                                                (setq line (concat line (make-string (- 42 (length line)) ?\s) (format ";;%s\n\n" description)))
+                                                ))
                                             (add-to-list 'body-list line))
 
                                           (with-temp-buffer (insert (psimacs/config/generate-preamble
@@ -860,9 +858,9 @@ Source code blocks that tangle to early-init.el are handled differently. In this
                                                                      description))
                                                             (write-region (point-min)
                                                                           (point-max) dst-file t))
-                                        )
+                                          )
                                         (map-put found-files-alist dst-file t)
-                                      )
+                                        )
                                       (with-temp-buffer (insert body)
                                                         (insert "\n")
                                                         (write-region (point-min)
@@ -1402,7 +1400,7 @@ Supported strategies are:
                     )
                   )
                 )
-  )
+            )
 
   (add-hook 'after-delete-frame-functions
             #'(lambda (frame)
@@ -1447,9 +1445,9 @@ Supported strategies are:
                     )
                   )
                 )
-  )
+            )
 
-)
+  )
 #+END_SRC
 
 ** System constants flags
@@ -1477,12 +1475,12 @@ Some functions to ease the code.
 (defun psimacs/file-system/concat-directory (dir subdir)
   "Assemble directory and subdirectory to a new directory."
   (expand-file-name (file-name-as-directory (concat (file-name-as-directory dir) subdir)))
-)
+  )
 
 (defun psimacs/file-system/concat-file (dir file)
   "Assemble directory and file."
   (expand-file-name (concat (file-name-as-directory dir) file))
-)
+  )
 
 (defun psimacs/file-system/prefer-dropbox-directory (dir)
   "Evaluates either to the local or to the dropbox pendant directory.
@@ -1553,12 +1551,12 @@ the following directory.
 (defconst psimacs/config/private-dir
   (psimacs/file-system/concat-directory user-emacs-directory "private")
   "A directory that contains non public, i.e.  private data."
-)
+  )
 
 (defconst psimacs/config/private-file
   (psimacs/file-system/concat-file psimacs/config/private-dir "init-private.el")
   "A directory that contains non public, i.e.  private data."
-)
+  )
 #+END_SRC
 
 ** Tools directory
@@ -3807,6 +3805,1038 @@ References:
 (setq calendar-week-start-day t)
 #+END_SRC
 
+*** Unicode fonts
+
+The package [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] provides font mappings in the Unicode 8.0 standard.
+
+#+BEGIN_QUOTE
+Emacs maintains font mappings on a per-glyph basis, meaning that multiple fonts are used at the
+same time (transparently) to display any character for which you have a font. Furthermore, Emacs
+does this out of the box.
+
+However, font mappings via fontsets are a bit difficult to configure. In addition, the default
+setup does not always pick the most legible fonts. As the manual warns, the choice of font actually
+displayed for a non-ASCII character is "somewhat random".
+
+The Unicode standard provides a way to organize font mappings: it divides character ranges into
+logical groups called "blocks". This library configures Emacs in a Unicode-friendly way by providing mappings from
+each Unicode block to a font with good coverage and makes the settings available via the customization
+interface.
+
+This library provides font mappings for 233 of the 255 blocks in the Unicode 8.0 standard which are
+public and have displayable characters. It assumes that 6 Latin blocks are covered by the default font.
+16/255 blocks are not mapped to any known font.
+#+END_QUOTE
+
+- [[https://dejavu-fonts.github.io/Download.html][DejaVu Sans and DejaVu Sans Mono]]
+- [[http://www.quivira-font.com/downloads.php][Quivira]]
+- [[https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/][Symbola]]
+- [[http://www.google.com/get/noto/][Google Noto Sans and Noto Sans Symbols]]
+- [[https://sourcefoundry.org/hack/][Hack Font]]
+
+Testing:
+
+| Key binding | Command                                                               | Description                           |
+|-------------+-----------------------------------------------------------------------+---------------------------------------|
+| =C-h h=     | =M-x view-hello-file=                                                 |                                       |
+|             | =M-x list-charset-chars RET unicode-bmp RET=                          | search for eg 210x                    |
+|             | =M-x list-charset-chars RET unicode-smp RET=                          | if your backend supports astral chars |
+|             | =M-x unicode-fonts-debug-insert-block RET Mathematical_Operators RET= |                                       |
+|-------------+-----------------------------------------------------------------------+---------------------------------------|
+
+About font setting in *Emacs*:
+- [[http://ergoemacs.org/emacs/emacs_list_and_set_font.html][Emacs: Font Setup]]
+
+About Unicode:
+- [[https://home.unicode.org/][Unicode home]]
+- [[http://www.unicode.org/charts/][Unicode Code Charts]]
+- [[https://site.icu-project.org/home][ICU - International Components for Unicode]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Setup the unicode font system
+;;
+(use-package unicode-fonts
+    :init
+       (unicode-fonts-setup)
+
+       (when (member "DejaVu Sans Mono" (font-family-list))
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-8.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-9.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-10.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-11.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-12.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-14.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-16.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-18.0")
+         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-20.0")
+         )
+
+       (when (member "Hack" (font-family-list))
+         (set-face-attribute 'default nil :font "Hack-10.0")
+         )
+
+       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono" nil 'append)
+       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Oblique" nil 'append)
+       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold" nil 'append)
+       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold Oblique" nil 'append)
+       ;;(set-fontset-font "fontset-default" 'unicode "Consolas" nil)
+       ;;(set-fontset-font "fontset-default" 'unicode "Symbola" nil 'append)
+)
+#+END_SRC
+
+In order to circumvent performance problems with movement in unicode buffers, the following setting is used.
+Inhibiting compacting font caches comes at the expense of more memory usage.
+
+References:
+- [[https://github.com/purcell/emacs.d/issues/273][moving around between cjk characters is very slow #273]]
+- [[https://emacs.stackexchange.com/questions/33510/unicode-txt-slowness][unicode.txt slowness]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Performance optimization
+;;
+(setq inhibit-compacting-font-caches t)
+#+END_SRC
+
+*** Fontification
+
+The build-in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][font-lock]] minor mode allows major modes to fontify their buffers.
+
+Font Lock mode is enabled by default in major modes that support it.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Build-in font-lock mode. Enabled by default in major modes that support it.
+;;
+(use-package font-lock
+    :straight nil
+)
+#+END_SRC
+
+**** Font-lock+ :noexport:
+
+[[https://github.com/emacsmirror/font-lock-plus/blob/master/font-lock%2B.el][font-lock+]] provides enhancements to standard library [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][font-lock]] minor mode.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+(use-package font-lock+)
+#+END_SRC
+
+*** All the icons
+
+The package [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] is a utility for using and formatting various Icon fonts within Emacs. Icon Fonts allow
+you to propertize and format icons the same way you would normal text. This enables things such as better scaling
+of and anti-aliasing of the icons.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Formatting various Icon fonts within Emacs
+;;
+(use-package all-the-icons)
+#+END_SRC
+
+The package [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] adds dired support to [[https://github.com/domtronn/all-the-icons.el][all-the-icons]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Add dired support to all-the-icons
+;;
+(use-package all-the-icons-dired
+    :after all-the-icons
+    :hook (dired-mode . all-the-icons-dired-mode)
+)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-basic-ui.el
+;;
+;; Testing of all the icons
+;;
+;(all-the-icons-insert-icons-for 'alltheicon)
+;(all-the-icons-insert-icons-for 'octicon 10)
+;(all-the-icons-insert-icons-for 'faicon 1 0.5)
+#+END_SRC
+
+** Themes
+
+Generally, there are light and dark colored themes. Some functionality
+like the Rainbow paranthesis colors must be adapted to these themes
+accordingly. Currently, I do not know of a method to automatically determine
+the kind of loaded theme. Therefore I keep it simple and just define a
+variable for that information.
+
+=M-x counsel-load-theme= does work perfectly well.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el :var file-description="Basic themes configuration"
+(defvar psimacs/config/default-theme "alect-dark"
+    "The theme that should be loaded on default.
+afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
+ample, ample-zen, dracula, flatland, gandalf, github-modern, gruvbox-dark-medium, gruvbox-dark-soft,
+gruvbox-dark-hard, gruvbox-light-medium, gruvbox-light-soft, gruvbox-light-hard, pastelmac, moe-dark,
+moe-light, monokai, monokai-pro, sanityinc-tomorrow-day, sanityinc-tomorrow-night, sanityinc-tomorrow-blue,
+sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn
+")
+
+(defvar psimacs/config/theme-is-light-colored t
+    "Should be set to true if current theme is light")
+
+(defvar after-load-theme-hook nil
+    "Hook run after a color theme is loaded using `load-theme'.")
+
+(defadvice load-theme (after run-after-load-theme-hook activate)
+    "Run `after-load-theme-hook'."
+    (run-hooks 'after-load-theme-hook)
+)
+#+END_SRC
+
+A couple of good looking themes are assembled in the configuration. Currently the
+/alect-dark/ theme is active on start up. The theme can be changed at runtime with
+the commands =load-theme=, =enable-theme= and =disable-theme=.
+
+The following themes are my favorites currently:
+
+| Theme                         |
+|-------------------------------|
+| =alect-dark=                  |
+| =alect-light-alt=             |
+| =sanityinc-tomorrow-eighties= |
+| =moe-dark=                    |
+|-------------------------------|
+
+For the time being, the =alect-dark= is active in my configuration.
+
+See also:
+[[https://emacsthemes.com/][Emacs Themes]], [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Custom-Themes.html][Custom Themes Manual]], [[https://www.emacswiki.org/emacs/CustomThemes][EmacsWiki: Custom Themes]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package afternoon-theme
+    :config
+        (when (equal psimacs/config/default-theme "afternoon")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'afternoon t)
+            (message "loaded theme afternoon")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package alect-themes
+    :config
+        (when (equal psimacs/config/default-theme "alect-light")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'alect-light t)
+            (message "loaded theme alect-light")
+        )
+
+        (when (equal psimacs/config/default-theme "alect-light-alt")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'alect-light-alt t)
+            (message "loaded theme alect-light-alt")
+        )
+
+        (when (equal psimacs/config/default-theme "alect-dark")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'alect-dark t)
+            (message "loaded theme alect-dark")
+        )
+
+        (when (equal psimacs/config/default-theme "alect-dark-alt")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'alect-dark-alt t)
+            (message "loaded theme alect-dark-alt")
+        )
+
+        (when (equal psimacs/config/default-theme "alect-black")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'alect-black t)
+            (message "loaded theme alect-black")
+        )
+
+        (when (equal psimacs/config/default-theme "alect-black-alt")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'alect-black-alt t)
+            (message "loaded theme alect-black-alt")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package ample-theme
+    :config
+        (when (equal psimacs/config/default-theme "ample")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'ample t)
+            (message "loaded theme ample")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package ample-zen-theme
+    :config
+        (when (equal psimacs/config/default-theme "ample-zen")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'ample-zen t)
+            (message "loaded theme ample-zen")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package color-theme-sanityinc-tomorrow
+    :config
+        (when (equal psimacs/config/default-theme "sanityinc-tomorrow-day")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'sanityinc-tomorrow-day t)
+            (message "loaded theme sanityinc-tomorrow-day")
+        )
+        (when (equal psimacs/config/default-theme "sanityinc-tomorrow-night")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'sanityinc-tomorrow-night t)
+            (message "loaded theme sanityinc-tomorrow-night")
+        )
+
+        (when (equal psimacs/config/default-theme "sanityinc-tomorrow-blue")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'sanityinc-tomorrow-blue t)
+            (message "loaded theme sanityinc-tomorrow-blue")
+        )
+
+        (when (equal psimacs/config/default-theme "sanityinc-tomorrow-bright")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'sanityinc-tomorrow-bright t)
+            (message "loaded theme sanityinc-tomorrow-bright")
+        )
+
+        (when (equal psimacs/config/default-theme "sanityinc-tomorrow-eighties")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'sanityinc-tomorrow-eighties t)
+            (message "loaded theme sanityinc-tomorrow-eighties")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package dracula-theme
+    :config
+        (when (equal psimacs/config/default-theme "dracula")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'dracula t)
+            (message "loaded theme dracula")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package flatland-theme
+    :config
+        (when (equal psimacs/config/default-theme "flatland")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'flatland t)
+            (message "loaded theme flatland")
+        )
+
+        (custom-theme-set-faces 'flatland
+            '(show-paren-match    ((t (:background "dark gray" :foreground "black"  :weight bold))))
+            '(show-paren-mismatch ((t (:background "firebrick" :foreground "orange" :weight bold)))))
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package gandalf-theme
+    :config
+        (when (equal psimacs/config/default-theme "gandalf")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'gandalf t)
+            (message "loaded theme gandalf")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package github-modern-theme
+    :config
+        (when (equal psimacs/config/default-theme "github-modern")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'github-modern t)
+            (message "loaded theme github-modern")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package gruvbox-theme
+    :config
+        (when (equal psimacs/config/default-theme "gruvbox-dark-medium")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'gruvbox-dark-medium t)
+            (message "loaded theme gruvbox-dark-medium")
+        )
+
+        (when (equal psimacs/config/default-theme "gruvbox-dark-soft")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'gruvbox-dark-soft t)
+            (message "loaded theme gruvbox-dark-soft")
+        )
+
+        (when (equal psimacs/config/default-theme "gruvbox-dark-hard")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'gruvbox-dark-hard t)
+            (message "loaded theme gruvbox-dark-hard")
+        )
+
+        (when (equal psimacs/config/default-theme "gruvbox-light-medium")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'gruvbox-light-medium t)
+            (message "loaded theme gruvbox-light-medium")
+        )
+
+        (when (equal psimacs/config/default-theme "gruvbox-light-soft")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'gruvbox-light-soft t)
+            (message "loaded theme gruvbox-light-soft")
+        )
+
+        (when (equal psimacs/config/default-theme "gruvbox-light-hard")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'gruvbox-light-hard t)
+            (message "loaded theme gruvbox-light-hard")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package pastelmac-theme
+    :config
+        (when (equal psimacs/config/default-theme "pastelmac")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'pastelmac t)
+            (message "loaded theme pastelmac")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package moe-theme
+    :config
+        (require 'moe-theme)
+
+        (when (equal psimacs/config/default-theme "moe-dark")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (moe-dark)
+            (moe-theme-set-color 'orange)
+            (message "loaded theme moe-dark")
+        )
+
+        (when (equal psimacs/config/default-theme "moe-light")
+            (setq psimacs/config/theme-is-light-colored t)
+            (moe-light)
+            (moe-theme-set-color 'blue)
+            (message "loaded theme moe-light")
+        )
+        ;(powerline-moe-theme)
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package monokai-theme
+    :config
+        (when (equal psimacs/config/default-theme "monokai")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'monokai t)
+            (message "loaded theme monokai")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package monokai-pro-theme
+    :config
+        (when (equal psimacs/config/default-theme "monokai-pro")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'monokai-pro t)
+            (message "loaded theme monokai-pro")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package toxi-theme
+    :config
+        (when (equal psimacs/config/default-theme "toxi")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'toxi t)
+            (message "loaded theme toxi")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package zenburn-theme
+    :config
+        (when (equal psimacs/config/default-theme "zenburn")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'zenburn t)
+            (message "loaded theme zenburn")
+        )
+)
+#+END_SRC
+
+** Prettify
+
+*Emacs* ships with a minor mode called [[https://github.com/emacs-mirror/emacs/blob/master/lisp/progmodes/prog-mode.el][prettify-symbols-mode]]. Its purpose is to replace the standard text
+representation of various identifiers/symbols with a (arguably) more aesthetically pleasing representation
+(often a single unicode character would replace several ascii characters).
+
+A classic example would be lambda from various Lisp dialects that many people prefer to replace with the
+greek letter λ (small lambda).
+
+Another package is [[https://github.com/pretty-mode/pretty-mode][pretty-mode]] which provides basically the same features. This package additionally provides
+category groups for activation of different usage patterns.
+
+Unfortunately problems arise when mixing  [[https://github.com/pretty-mode/pretty-mode][pretty-mode]] with [[https://github.com/emacs-mirror/emacs/blob/master/lisp/progmodes/prog-mode.el][prettify-symbols-mode]] so that it is not possible
+to facilitate the  [[https://github.com/pretty-mode/pretty-mode][pretty-mode]] categories.
+
+Therefore *Psimacs* defines all symbols from scratch with [[https://github.com/emacs-mirror/emacs/blob/master/lisp/progmodes/prog-mode.el][prettify-symbols-mode]].
+
+*** Pretty-Mode :noexport:
+
+[[https://github.com/pretty-mode/pretty-mode][Pretty-mode]] redisplays parts of the Emacs buffer as pretty Unicode symbols.
+
+This section is only added for documentation purpose, but it should not be used.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-prettify.el :var file-description="Basic prettification of Emacs"
+;;
+;; pretty mode is not used by Psimacs. Only to see how it is to be used.
+;;
+(use-package pretty-mode
+    :config
+        ;(global-pretty-mode t)
+        (add-hook 'python-mode-hook 'turn-on-pretty-mode)
+        (add-hook 'inferior-python-mode-hook 'turn-on-pretty-mode)
+
+        (add-hook 'lisp-mode-hook 'turn-on-pretty-mode)
+        (add-hook 'emacs-lisp-mode-hook 'turn-on-pretty-mode)
+        (add-hook 'c-mode-hook 'turn-on-pretty-mode)
+        (add-hook 'c++-mode-hook 'turn-on-pretty-mode)
+        ;(add-hook 'haskell-mode-hook 'turn-on-pretty-mode)
+
+        (pretty-activate-groups
+            '(
+                :greek
+                :logic-nary
+                :sets-operations-nary
+                :arrows-tails
+                :arrows-tails-double
+                :arithmetic-triple
+                :arithmetic-nary
+                :sub-and-superscripts
+                :parentheses
+                :types
+            )
+        )
+)
+#+END_SRC
+
+*** Prettify-Symbols-Mode
+
+When [[https://github.com/emacs-mirror/emacs/blob/master/lisp/progmodes/prog-mode.el][prettify-symbols-mode]] and  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][font-locking]] are enabled, symbols are prettified. *Psimacs* defines list of symbols
+for various programming modes.
+
+Currently the greek characters are supported for all programming modes and additionally some extra symbols are
+defined for the Python programming mode.
+
+See also: [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][About prettify-symbols-mode]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-prettify.el :var file-description="Basic prettification of Emacs"
+;;
+;; Prettify the greek letters in any programming mode and additionaly beautify the Pythons programming mode
+;;
+(use-package prog-mode ; Contains pretty-symbols-mode
+    :straight nil
+    :config
+        (setq prettify-symbols-unprettify-at-point 'right-edge)
+        (global-prettify-symbols-mode t)
+        (add-hook
+            'prog-mode-hook
+                (lambda ()
+                    (mapc (lambda (pair) (push pair prettify-symbols-alist))
+                       '(
+                        ;; Greek Letters
+                            ("ALPHA"  . ?𝜜)
+                            ("Alpha"  . ?𝛢)
+                            ("alpha"  . ?𝜶)
+                            ("ALPHA1" . ?𝜜)
+                            ("ALPHA2" . ?𝞐)
+                            ("ALPHA3" . ?𝚨)
+                            ("ALPHA4" . ?𝝖)
+                            ("Alpha1" . ?𝛢)
+                            ("Alpha2" . ?Α)
+                            ("alpha1" . ?𝜶)
+                            ("alpha2" . ?𝞪)
+                            ("alpha3" . ?𝛂)
+                            ("alpha4" . ?𝝰)
+                            ("alpha5" . ?𝛼)
+                            ("alpha6" . ?α)
+
+                            ("BETA"  . ?𝜝)
+                            ("Beta"  . ?𝛣)
+                            ("beta"  . ?𝜷)
+                            ("BETA1" . ?𝜝)
+                            ("BETA2" . ?𝞑)
+                            ("BETA3" . ?𝚩)
+                            ("BETA4" . ?𝝗)
+                            ("Beta1" . ?𝛣)
+                            ("Beta2" . ?Β)
+                            ("beta1" . ?𝜷)
+                            ("beta2" . ?𝞫)
+                            ("beta3" . ?𝛃)
+                            ("beta4" . ?𝝱)
+                            ("beta5" . ?𝛽)
+                            ("beta6" . ?β)
+
+                            ("GAMMA"  . ?𝜞)
+                            ("Gamma"  . ?𝛤)
+                            ("gamma"  . ?𝜸)
+                            ("GAMMA1" . ?𝜞)
+                            ("GAMMA2" . ?𝞒)
+                            ("GAMMA3" . ?𝚪)
+                            ("GAMMA4" . ?𝝘)
+                            ("Gamma1" . ?𝛤)
+                            ("Gamma2" . ?Γ)
+                            ("gamma1" . ?𝜸)
+                            ("gamma2" . ?𝞬)
+                            ("gamma3" . ?𝛄)
+                            ("gamma4" . ?𝝲)
+                            ("gamma5" . ?𝛾)
+                            ("gamma6" . ?γ)
+
+                            ("DELTA"  . ?𝜟)
+                            ("Delta"  . ?𝛥)
+                            ("delta"  . ?𝜹)
+                            ("DELTA1" . ?𝜟)
+                            ("DELTA2" . ?𝞓)
+                            ("DELTA3" . ?𝚫)
+                            ("DELTA4" . ?𝝙)
+                            ("Delta1" . ?𝛥)
+                            ("Delta2" . ?Δ)
+                            ("delta1" . ?𝜹)
+                            ("delta2" . ?𝞭)
+                            ("delta3" . ?𝛅)
+                            ("delta4" . ?𝝳)
+                            ("delta5" . ?𝛿)
+                            ("delta6" . ?δ)
+
+                            ("EPSILON"  . ?𝜠)
+                            ("Epsilon"  . ?𝛦)
+                            ("epsilon"  . ?𝜺)
+                            ("EPSILON1" . ?𝜠)
+                            ("EPSILON2" . ?𝞔)
+                            ("EPSILON3" . ?𝚬)
+                            ("EPSILON4" . ?𝝚)
+                            ("Epsilon1" . ?𝛦)
+                            ("Epsilon2" . ?Ε)
+                            ("epsilon1" . ?𝜺)
+                            ("epsilon2" . ?𝞮)
+                            ("epsilon3" . ?𝛆)
+                            ("epsilon4" . ?𝝴)
+                            ("epsilon5" . ?𝜀)
+                            ("epsilon6" . ?ε)
+
+                            ("ZETA"  . ?𝜡)
+                            ("Zeta"  . ?𝛧)
+                            ("zeta"  . ?𝜻)
+                            ("ZETA1" . ?𝜡)
+                            ("ZETA2" . ?𝞕)
+                            ("ZETA3" . ?𝚭)
+                            ("ZETA4" . ?𝝛)
+                            ("Zeta1" . ?𝛧)
+                            ("Zeta2" . ?Ζ)
+                            ("zeta1" . ?𝜻)
+                            ("zeta2" . ?𝞯)
+                            ("zeta3" . ?𝛇)
+                            ("zeta4" . ?𝝵)
+                            ("zeta5" . ?𝜁)
+                            ("zeta6" . ?ζ)
+
+                            ("ETA"  . ?𝜢)
+                            ("Eta"  . ?𝛨)
+                            ("eta"  . ?𝜼)
+                            ("ETA1" . ?𝜢)
+                            ("ETA2" . ?𝞖)
+                            ("ETA3" . ?𝚮)
+                            ("ETA4" . ?𝝜)
+                            ("Eta1" . ?𝛨)
+                            ("Eta2" . ?Η)
+                            ("eta1" . ?𝜼)
+                            ("eta2" . ?𝞰)
+                            ("eta3" . ?𝛈)
+                            ("eta4" . ?𝝶)
+                            ("eta5" . ?𝜂)
+                            ("eta6" . ?η)
+
+                            ("THETA"  . ?𝜣)
+                            ("Theta"  . ?𝛩)
+                            ("theta"  . ?𝝑)
+                            ("THETA1" . ?𝜣)
+                            ("THETA2" . ?𝞗)
+                            ("THETA3" . ?𝚯)
+                            ("THETA4" . ?𝝝)
+                            ("Theta1" . ?𝛩)
+                            ("Theta2" . ?Θ)
+                            ("theta1" . ?𝜽)
+                            ("theta2" . ?𝟅)
+                            ("theta3" . ?𝞱)
+                            ("theta4" . ?𝛝)
+                            ("theta5" . ?𝛉)
+                            ("theta6" . ?𝞋)
+                            ("theta7" . ?𝝷)
+                            ("theta8" . ?𝜗)
+                            ("theta9" . ?𝜃)
+                            ("theta0" . ?θ)
+
+                            ("IOTA"  . ?𝜤)
+                            ("Iota"  . ?𝛪)
+                            ("iota"  . ?𝜾)
+                            ("IOTA1" . ?𝜤)
+                            ("IOTA2" . ?𝞘)
+                            ("IOTA3" . ?𝚰)
+                            ("IOTA4" . ?𝝞)
+                            ("Iota1" . ?𝛪)
+                            ("Iota2" . ?Ι)
+                            ("iota1" . ?𝜾)
+                            ("iota2" . ?𝞲)
+                            ("iota3" . ?𝛊)
+                            ("iota4" . ?𝝸)
+                            ("iota5" . ?𝜄)
+                            ("iota6" . ?ι)
+
+                            ("KAPPA"  . ?𝜥)
+                            ("Kappa"  . ?𝛫)
+                            ("kappa"  . ?𝜿)
+                            ("KAPPA1" . ?𝜥)
+                            ("KAPPA2" . ?𝞙)
+                            ("KAPPA3" . ?𝚱)
+                            ("KAPPA4" . ?𝝟)
+                            ("Kappa1" . ?𝛫)
+                            ("Kappa2" . ?Κ)
+                            ("kappa1" . ?𝝒)
+                            ("kappa2" . ?𝞳)
+                            ("kappa3" . ?𝟆)
+                            ("kappa4" . ?𝛋)
+                            ("kappa5" . ?𝛞)
+                            ("kappa6" . ?𝝹)
+                            ("kappa7" . ?𝞌)
+                            ("kappa8" . ?𝜅)
+                            ("kappa9" . ?𝜘)
+                            ("kappa0" . ?κ)
+
+                            ("LAMBDA"  . ?𝜦)
+                            ("Lambda"  . ?𝛬)
+                            ("lambda"  . ?𝝀)
+                            ("LAMBDA1" . ?𝜦)
+                            ("LAMBDA2" . ?𝞚)
+                            ("LAMBDA3" . ?𝚲)
+                            ("LAMBDA4" . ?𝝠)
+                            ("Lambda1" . ?𝛬)
+                            ("Lambda2" . ?Λ)
+                            ("lambda1" . ?𝝀)
+                            ("lambda2" . ?𝞴)
+                            ("lambda3" . ?𝛌)
+                            ("lambda4" . ?𝝺)
+                            ("lambda5" . ?𝜆)
+                            ("lambda6" . ?λ)
+
+                            ("MU"  . ?𝜧)
+                            ("Mu"  . ?𝛭)
+                            ("mu"  . ?𝝁)
+                            ("MU1" . ?𝜧)
+                            ("MU2" . ?𝞛)
+                            ("MU3" . ?𝚳)
+                            ("MU4" . ?𝝡)
+                            ("Mu1" . ?𝛭)
+                            ("Mu2" . ?Μ)
+                            ("mu1" . ?𝝁)
+                            ("mu2" . ?𝞵)
+                            ("mu3" . ?𝛍)
+                            ("mu4" . ?𝝻)
+                            ("mu5" . ?𝜇)
+                            ("mu6" . ?μ)
+
+                            ("NU"  . ?𝜨)
+                            ("Nu"  . ?𝛮)
+                            ("nu"  . ?𝝂)
+                            ("NU1" . ?𝜨)
+                            ("NU2" . ?𝞜)
+                            ("NU3" . ?𝚴)
+                            ("NU4" . ?𝝢)
+                            ("Nu1" . ?𝛮)
+                            ("Nu2" . ?Ν)
+                            ("nu1" . ?𝝂)
+                            ("nu2" . ?𝞶)
+                            ("nu3" . ?𝛎)
+                            ("nu4" . ?𝝼)
+                            ("nu5" . ?𝜈)
+                            ("nu6" . ?ν)
+
+                            ("XI"  . ?𝜩)
+                            ("Xi"  . ?𝛯)
+                            ("xi"  . ?𝝃)
+                            ("XI1" . ?𝜩)
+                            ("XI2" . ?𝞝)
+                            ("XI3" . ?𝚵)
+                            ("XI4" . ?𝝣)
+                            ("Xi1" . ?𝛯)
+                            ("Xi2" . ?Ξ)
+                            ("xi1" . ?𝝃)
+                            ("xi2" . ?𝞷)
+                            ("xi3" . ?𝛏)
+                            ("xi4" . ?𝝽)
+                            ("xi5" . ?𝜉)
+                            ("xi6" . ?ξ)
+
+                            ("OMICRON"  . ?𝜪)
+                            ("Omicron"  . ?𝛰)
+                            ("omicron"  . ?𝝄)
+                            ("OMICRON1" . ?𝜪)
+                            ("OMICRON2" . ?𝞞)
+                            ("OMICRON3" . ?𝚶)
+                            ("OMICRON4" . ?𝝤)
+                            ("Omicron1" . ?𝛰)
+                            ("Omicron2" . ?Ο)
+                            ("omicron1" . ?𝝄)
+                            ("omicron2" . ?𝞸)
+                            ("omicron3" . ?𝛐)
+                            ("omicron4" . ?𝝾)
+                            ("omicron5" . ?𝜊)
+                            ("omicron6" . ?ο)
+
+                            ("PI"  . ?𝜫)
+                            ("Pi"  . ?𝛱)
+                            ("pi"  . ?𝝅)
+                            ("PI1" . ?𝜫)
+                            ("PI2" . ?𝞟)
+                            ("PI3" . ?𝚷)
+                            ("PI4" . ?𝝥)
+                            ("Pi1" . ?𝛱)
+                            ("Pi2" . ?Π)
+                            ("pi1" . ?𝝅)
+                            ("pi2" . ?𝞹)
+                            ("pi3" . ?𝛑)
+                            ("pi4" . ?𝝿)
+                            ("pi5" . ?𝜋)
+                            ("pi6" . ?π)
+
+                            ("RHO"  . ?𝜬)
+                            ("Rho"  . ?𝛲)
+                            ("rho"  . ?𝝔)
+                            ("RHO1" . ?𝜬)
+                            ("RHO2" . ?𝞠)
+                            ("RHO3" . ?𝚸)
+                            ("RHO4" . ?𝝦)
+                            ("Rho1" . ?𝛲)
+                            ("Rho2" . ?Ρ)
+                            ("rho1" . ?𝝆)
+                            ("rho2" . ?𝟈)
+                            ("rho3" . ?𝞺)
+                            ("rho4" . ?𝛠)
+                            ("rho5" . ?𝛒)
+                            ("rho6" . ?𝞎)
+                            ("rho7" . ?𝞀)
+                            ("rho8" . ?𝜚)
+                            ("rho9" . ?𝜌)
+                            ("rho0" . ?ρ)
+
+                            ("SIGMA"  . ?𝜮)
+                            ("Sigma"  . ?𝛴)
+                            ("sigma"  . ?𝝈)
+                            ("SIGMA1" . ?𝜮)
+                            ("SIGMA2" . ?𝞢)
+                            ("SIGMA3" . ?𝚺)
+                            ("SIGMA4" . ?𝝨)
+                            ("Sigma1" . ?𝛴)
+                            ("Sigma2" . ?Σ)
+                            ("sigma1" . ?𝝈)
+                            ("sigma2" . ?𝞼)
+                            ("sigma3" . ?𝛔)
+                            ("sigma4" . ?𝞂)
+                            ("sigma5" . ?𝜎)
+                            ("sigma6" . ?σ)
+
+                            ("TAU"  . ?𝜯)
+                            ("Tau"  . ?𝛵)
+                            ("tau"  . ?𝝉)
+                            ("TAU1" . ?𝜯)
+                            ("TAU2" . ?𝞣)
+                            ("TAU3" . ?𝚻)
+                            ("TAU4" . ?𝝩)
+                            ("Tau1" . ?𝛵)
+                            ("Tau2" . ?Τ)
+                            ("tau1" . ?𝝉)
+                            ("tau2" . ?𝞽)
+                            ("tau3" . ?𝛕)
+                            ("tau4" . ?𝞃)
+                            ("tau5" . ?𝜏)
+                            ("tau6" . ?τ)
+
+                            ("UPSILON"  . ?𝜰)
+                            ("Upsilon"  . ?𝛶)
+                            ("upsilon"  . ?𝝊)
+                            ("UPSILON1" . ?𝜰)
+                            ("UPSILON2" . ?𝞤)
+                            ("UPSILON3" . ?𝚼)
+                            ("UPSILON4" . ?𝝪)
+                            ("Upsilon1" . ?𝛶)
+                            ("Upsilon2" . ?Υ)
+                            ("upsilon1" . ?𝝊)
+                            ("upsilon2" . ?𝞾)
+                            ("upsilon3" . ?𝛖)
+                            ("upsilon4" . ?𝞄)
+                            ("upsilon5" . ?𝜐)
+                            ("upsilon6" . ?υ)
+
+                            ("PHI"  . ?𝜱)
+                            ("Phi"  . ?𝛷)
+                            ("phi"  . ?𝝋)
+                            ("PHI1" . ?𝜱)
+                            ("PHI2" . ?𝞥)
+                            ("PHI3" . ?𝚽)
+                            ("PHI4" . ?𝝫)
+                            ("Phi1" . ?𝛷)
+                            ("Phi2" . ?Φ)
+                            ("phi1" . ?𝝋)
+                            ("phi2" . ?𝞿)
+                            ("phi3" . ?𝛗)
+                            ("phi4" . ?𝞅)
+                            ("phi5" . ?𝜑)
+                            ("phi6" . ?φ)
+
+                            ("CHI"  . ?𝜲)
+                            ("Chi"  . ?𝛸)
+                            ("chi"  . ?𝝌)
+                            ("CHI1" . ?𝜲)
+                            ("CHI2" . ?𝞦)
+                            ("CHI3" . ?𝚾)
+                            ("CHI4" . ?𝝬)
+                            ("Chi1" . ?𝛸)
+                            ("Chi2" . ?Χ)
+                            ("chi1" . ?𝝌)
+                            ("chi2" . ?𝟀)
+                            ("chi3" . ?𝛘)
+                            ("chi4" . ?𝞆)
+                            ("chi5" . ?𝜒)
+                            ("chi6" . ?χ)
+
+                            ("PSI"  . ?𝜳)
+                            ("Psi"  . ?𝛹)
+                            ("psi"  . ?𝝍)
+                            ("PSI1" . ?𝜳)
+                            ("PSI2" . ?𝞧)
+                            ("PSI3" . ?𝚿)
+                            ("PSI4" . ?𝝭)
+                            ("Psi1" . ?𝛹)
+                            ("Psi2" . ?Ψ)
+                            ("psi1" . ?𝝍)
+                            ("psi2" . ?𝟁)
+                            ("psi3" . ?𝛙)
+                            ("psi4" . ?𝞇)
+                            ("psi5" . ?𝜓)
+                            ("psi6" . ?ψ)
+
+                            ("OMEGA"  . ?𝜴)
+                            ("Omega"  . ?𝛺)
+                            ("omega"  . ?𝝎)
+                            ("OMEGA1" . ?𝜴)
+                            ("OMEGA2" . ?𝞨)
+                            ("OMEGA3" . ?𝛀)
+                            ("OMEGA4" . ?𝝮)
+                            ("Omega1" . ?𝛺)
+                            ("Omega2" . ?Ω)
+                            ("omega1" . ?𝝎)
+                            ("omega2" . ?𝟂)
+                            ("omega3" . ?𝛚)
+                            ("omega4" . ?𝞈)
+                            ("omega5" . ?𝜔)
+                            ("omega6" . ?ω)
+
+                            ("NABLA"  . ?𝜵)
+                            ("Nabla"  . ?𝛻)
+                            ("nabla"  . ?𝝏)
+                            ("NABLA1" . ?𝜵)
+                            ("NABLA2" . ?𝞩)
+                            ("NABLA3" . ?𝛁)
+                            ("NABLA4" . ?𝝯)
+                            ("Nabla1" . ?𝛻)
+                            ("nabla1" . ?𝝏)
+                            ("nabla2" . ?𝟃)
+                            ("nabla3" . ?𝛛)
+                            ("nabla4" . ?𝞉)
+                            ("nabla5" . ?𝜕)
+                        )
+                    )
+                )
+        )
+
+        (add-hook
+            'python-mode-hook
+                (lambda ()
+                    (mapc (lambda (pair) (push pair prettify-symbols-alist))
+                       '(       ;; Syntax
+                                ("def" .       ?ƒ)
+                                ("not" .       ?❗)
+                                ("in" .        ?∈)
+                                ("not in" .    ?∉)
+                                ("return" .    ?⮭)
+                                ("yield" .     ?⮩)
+                                ("for" .       ?∀)
+                                ("any" .       ?⍫)
+                                ("all" .       ?⁕)
+                                ;; Base Types
+                                ("int" .       ?ℤ)
+                                ("float" .     ?ℚ)
+                                ("str" .       ?𝕊)
+                                ("dict" .      ?𝔻)
+                                ("list" .      ?𝕃)
+                                ("tuple" .     ?𝕋)
+                                ("set" .       ?𝕤)
+                                ("frozenset" . ?𝔽)
+                                ;; special values
+                                ("True" .      ?𝕥)
+                                ("False" .     ?𝕗)
+                                ("None" .      ?⌀)
+                                ;; Mypy
+                                ("Int" .       ?𝓩)
+                                ("Float" .     ?𝓠)
+                                ("String" .    ?𝓢)
+                                ("Dict" .      ?𝓓)
+                                ("List" .      ?𝓛)
+                                ("Tuple" .     ?𝓣)
+                                ("Set" .       ?𝓈)
+                                ("Frozenset" . ?𝓕)
+                                ("Iterable" .  ?𝔊)
+                                ("Any" .       ?𝓐)
+                                ("Union" .     ?𝓤)
+                                ;;operators
+                                ("and"   . ?∧)
+                                ("or"    . ?∨)
+                                ("="     . ?≝)
+                                ("<="    . ?≤)
+                                (">="    . ?≥)
+                                ("<<"    . ?≪)
+                                (">>"    . ?≫)
+                                ("=="    . ?⩵)
+                                ("!="    . ?≠)
+                                ("sqrt"  . ?√)
+                                ("print" . ?𝓟)
+                                ("pass"  . ?⟗)
+                                ("raise" . ?↯)
+                        )
+                    )
+                )
+        )
+)
+#+END_SRC
+
 ** Backups
 
 *Psimacs* does make backups, uses auto saving and provides minibuffer histories.
@@ -3949,7 +4979,7 @@ auto-save-mode.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
 ;;
-;; And more automatic file saving :-)
+;; And more automatic file saving :-
 ;;
 (use-package super-save
     :diminish super-save-mode
@@ -4650,6 +5680,23 @@ the golden ration.
          :map psimacs/config/global-key-map/special
               ("C-w C-r" . golden-ratio-mode)
         )
+)
+#+END_SRC
+
+*** Dimming of buffers not in use
+
+Visually highlight the selected buffer with the package [[https://github.com/gonewest818/dimmer.el][dimmer]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+;;
+;; Visually highlight the selected buffer.
+;;
+(use-package dimmer
+    :config
+        (setq dimmer-fraction 0.3
+              dimmer-adjustment-mode :foreground ;:background or :both
+             )
+        (dimmer-mode)
 )
 #+END_SRC
 
@@ -5910,6 +6957,48 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 
         (setq magit-completing-read-function 'ivy-completing-read)
         (setq projectile-completion-system 'ivy)
+)
+#+END_SRC
+
+Display icons for all buffers in ivy with the help of package [[https://github.com/seagle0128/all-the-icons-ivy-rich][all-the-icons-ivy-rich]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-swiper-key.el
+;;
+;; ... with ivy rich icons ...
+;;
+(use-package all-the-icons-ivy-rich
+    :after ivy-rich
+    :config
+        (setq all-the-icons-ivy-rich-icon-size 1.0)
+        ;(setq inhibit-compacting-font-caches t)
+
+        (plist-put all-the-icons-ivy-rich-display-transformers-list
+             'counsel-M-x
+             '(:columns
+                 (
+                    (all-the-icons-ivy-rich-function-icon)
+                    (counsel-M-x-transformer (:width 75))
+                  (ivy-rich-counsel-function-docstring (:face font-lock-doc-face)))
+               )
+        )
+
+)
+#+END_SRC
+
+The package [[https://github.com/Yevgnen/ivy-rich][ivy-rich]] provides a more friendly interface for ivy.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-swiper-key.el
+;;
+;; ... for enhancing interface for ivy
+;;
+(use-package ivy-rich
+    :after (ivy counsel)
+    :init
+        (setq ivy-rich-path-style 'abbrev)
+        (setq ivy-virtual-abbreviate 'full)
+    :config
+        (all-the-icons-ivy-rich-mode 1)
+        (ivy-rich-mode 1)
 )
 #+END_SRC
 

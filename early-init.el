@@ -139,10 +139,8 @@ It is the fraction of the current heap size."
 ;;
 ;; Change color to avoid screen flickering
 ;;
-(when (display-graphic-p)
-  (set-face-background 'default "#4f4f4f" nil)
-  (set-face-foreground 'default "#f0dfaf" nil)
-)
+(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
+(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
 
 ;;
 ;; Garbage collection optimization
@@ -396,7 +394,7 @@ Source code blocks that tangle to early-init.el are handled differently. In this
                                                       relative-dir))
                                           (add-to-list 'body-list line)
                                           (map-put found-load-dir-alist dst-dir t)
-                                        )
+                                          )
 
                                         (let ((description " "))
                                           (when (string-match
@@ -410,9 +408,9 @@ Source code blocks that tangle to early-init.el are handled differently. In this
                                             (if (equal description " ")
                                                 (setq line (format "(require '%s)\n\n" package-name))
                                               (progn
-                                               (setq line (format "(require '%s)" package-name))
-                                               (setq line (concat line (make-string (- 42 (length line)) ?\s) (format ";;%s\n\n" description)))
-                                               ))
+                                                (setq line (format "(require '%s)" package-name))
+                                                (setq line (concat line (make-string (- 42 (length line)) ?\s) (format ";;%s\n\n" description)))
+                                                ))
                                             (add-to-list 'body-list line))
 
                                           (with-temp-buffer (insert (psimacs/config/generate-preamble
@@ -421,9 +419,9 @@ Source code blocks that tangle to early-init.el are handled differently. In this
                                                                      description))
                                                             (write-region (point-min)
                                                                           (point-max) dst-file t))
-                                        )
+                                          )
                                         (map-put found-files-alist dst-file t)
-                                      )
+                                        )
                                       (with-temp-buffer (insert body)
                                                         (insert "\n")
                                                         (write-region (point-min)
