@@ -5455,8 +5455,8 @@ through the command =C-x C-r=.
 | =H-x f=     | =M-x counsel-recentf=                                | Find a file on recent file list.                             |
 | =H-x C-f=   | =M-x counsel-buffer-or-recentf=                      | Find a buffer visiting a file or file on recent file list.   |
 |-------------+------------------------------------------------------+--------------------------------------------------------------|
-| =H-x C c    | =M-x recentf-cleanup=                                | Cleanup the recent file list.                                |
-| =H-x C C-c  | =M-x psimacs/config/recentf-cleanup-directory-files= | Remove all files of DIR from recent file list.               |
+| =H-x C c=   | =M-x recentf-cleanup=                                | Cleanup the recent file list.                                |
+| =H-x C C-c= | =M-x psimacs/config/recentf-cleanup-directory-files= | Remove all files of DIR from recent file list.               |
 |-------------+------------------------------------------------------+--------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
@@ -6088,6 +6088,9 @@ Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesth
 |-------------+-----------------------------+------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Provide tabs for Emacs
+;;
 (use-package centaur-tabs
     :demand
     :config
@@ -6107,6 +6110,7 @@ Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesth
     )
 )
 #+END_SRC
+
 
 ** Windows and frame layout
 
@@ -7600,6 +7604,37 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 )
 #+END_SRC
 
+*** Amx
+[[https://github.com/DarwinAwardWinner/amx][Amx]] is an alternative interface for M-x in Emacs.
+It provides several enhancements over the ordinary =execute-extended-command=, such as prioritizing
+your most-used commands in the completion list and showing keyboard shortcuts.
+
+| Key binding | Command                         | Description                                                               |
+|-------------+---------------------------------+---------------------------------------------------------------------------|
+| =H-m M-x=   | =M-x amx-major-mode-commands=   | Runs [[https://github.com/DarwinAwardWinner/amx][Amx]], limited to commands that are relevant to the active major mode. |
+| =H-m H-x m= | =M-x amx-mode=                  | Toggle [[https://github.com/DarwinAwardWinner/amx][amx-mode]].                                                          |
+| =H-m H-x u= | =M-x amx-show-unbound-commands= | Shows frequently used commands that have no key bindings.                 |
+|-------------+---------------------------------+---------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-amx-key.el :var file-description="Advanced amx setup"
+;;
+;; Enhance the M-x i.e. execute-extended-command interface
+;;
+(use-package amx
+    :after ivy
+    :init
+        (setq amx-save-file psimacs/config/amx-file)
+    :config
+        (amx-mode t)
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("M-x"   . amx-major-mode-commands)
+            ("H-x m" . amx-mode)
+            ("H-x u" . amx-show-unbound-commands)
+        )
+)
+#+END_SRC
+
 ** Completion
 
 Text completion is an important tool for efficient editing and programming. *Psimacs* uses the [[http://company-mode.github.io/][company-mode]] instead
@@ -8997,12 +9032,16 @@ by the various packages nor by *Emacs* itself.
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m H-h m=         | =M-x helm-describe-modes=                                     | Create a listing of all modes of current major mode.                                                                                                                                                                                                                                             |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m M-x=           | =M-x amx-major-mode-commands=                                 | Runs [[https://github.com/DarwinAwardWinner/amx][Amx]], limited to commands that are relevant to the active major mode.                                                                                                                                                                                                                        |
+| =H-m H-x m=         | =M-x amx-mode=                                                | Toggle [[https://github.com/DarwinAwardWinner/amx][amx-mode]].                                                                                                                                                                                                                                                                                 |
+| =H-m H-x u=         | =M-x amx-show-unbound-commands=                               | Shows frequently used commands that have no key bindings.                                                                                                                                                                                                                                        |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
 | =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x f=             | =M-x counsel-recentf=                                         | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
 | =H-x C-f=           | =M-x counsel-buffer-or-recentf=                               | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x C c            | =M-x recentf-cleanup=                                         | Cleanup the recent file list.                                                                                                                                                                                                                                                                    |
-| =H-x C C-c          | =M-x psimacs/config/recentf-cleanup-directory-files=          | Remove all files of DIR from recent file list.                                                                                                                                                                                                                                                   |
+| =H-x C c=           | =M-x recentf-cleanup=                                         | Cleanup the recent file list.                                                                                                                                                                                                                                                                    |
+| =H-x C C-c=         | =M-x psimacs/config/recentf-cleanup-directory-files=          | Remove all files of DIR from recent file list.                                                                                                                                                                                                                                                   |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
