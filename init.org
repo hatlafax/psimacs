@@ -5608,7 +5608,7 @@ as a branching tree of changes.
 | =C-x u= | =undo-tree-visualize= | Show buffer showing the undo/redo-tree.
 |-------------+-----------------------------+-----------------------------------------------|
 
-Currently, *Psimacs* uses the [[https://gitlab.com/ideasman42/emacs-undo-fu][undo-fu]] package.
+Currently, *Psimacs* uses the undo_
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
 (use-package undo-tree
@@ -6281,6 +6281,56 @@ Visually highlight the selected buffer with the package [[https://github.com/gon
               dimmer-adjustment-mode :foreground ;:background or :both
              )
         (dimmer-mode)
+)
+#+END_SRC
+
+*** Easy window switching
+
+The package [[https://github.com/abo-abo/ace-window][ace-window]] allows easy window switching.
+
+#+BEGIN_QUOTE
+When there are two windows, [[https://github.com/abo-abo/ace-window][ace-window]] will call
+=other-window=. If there are more, each window will have the first character of its window
+label highlighted at the upper left of the window. Pressing that character will either switch
+to that window or filter to the next character needed to select a specific window.
+Note that, unlike [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]], the position
+of point will not be changed, i.e. the same   behavior as that of =other-window=.
+#+END_QUOTE
+
+#+ATTR_HTML: :class styledtable
+| Key binding     | Command                               | Description                                                                  |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------|
+| =C-x o=         | =M-x ace-window=                      | Either =other-window= or easy switching by first character of window label . |
+| =C-x O=         | =M-x other-frame=                     | Switch to the next frame in ring.                                            |
+| =H-m C-w C-x s= | =M-x psimacs/config/toogle-ace-scope= | Toggle scope of [[https://github.com/abo-abo/ace-window][ace-window]] between 'global' and 'frame' scope.               |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+(use-package ace-window
+    :config
+        (setq aw-scope 'frame)  ; 'gobal
+        (custom-set-faces '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+
+        (defun psimacs/config/toogle-ace-scope ()
+          "Toggle 'ace-window' scope between 'frame' and 'global'."
+          (interactive)
+          (if (eq aw-scope 'frame)
+              (progn
+                (setq aw-scope 'global)
+                (message "Switched acw-window scope to 'global' scope")
+                )
+            (progn
+                (setq aw-scope 'frame)
+                (message "Switched acw-window scope to 'frame' scope")
+                )
+          ))
+
+    :bind (
+            ("C-x o" . ace-window)
+            ("C-x O" . other-frame)
+            :map psimacs/config/global-key-map/special
+                ("C-w C-x s" . psimacs/config/toogle-ace-scope)
+          )
 )
 #+END_SRC
 
@@ -9179,6 +9229,10 @@ by the various packages nor by *Emacs* itself.
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-u C-w t=     | =M-x psimacs/which-key/toogle-sort-order=                     | Toggle the which-key-mode sort order.                                                                                                                                                                                                                                                            |
 | =H-m C-u C-w c=     | =M-x psimacs/which-key/cycle-sort-order=                      | Cycle through the which-key-mode sort orders.                                                                                                                                                                                                                                                    |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x o=             | =M-x ace-window=                                              | Either =other-window= or easy switching by first character of window label .                                                                                                                                                                                                                     |
+| =C-x O=             | =M-x other-frame=                                             | Switch to the next frame in ring.                                                                                                                                                                                                                                                                |
+| =H-m C-w C-x s=     | =M-x psimacs/config/toogle-ace-scope=                         | Toggle scope of [[https://github.com/abo-abo/ace-window][ace-window]] between 'global' and 'frame' scope.                                                                                                                                                                                                                                   |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-w C-x 5 l=   | =M-x psimacs/window/set-frame-creation-strategy-layout=       | Place and size new frames left and right to the main frame. This is the default strategy.                                                                                                                                                                                                        |
 | =H-m C-w C-x 5 m=   | =M-x psimacs/window/set-frame-creation-strategy-main=         | Always use the same placement and size as the initial main frame.                                                                                                                                                                                                                                |
