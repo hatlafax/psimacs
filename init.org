@@ -6327,6 +6327,9 @@ If =ace-window= is active the following key bindings are available:
 |-------------+-----------------------------------+-------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+;;
+;; Ease the work with windows and frames
+;;
 (use-package ace-window
     :config
         (setq aw-scope 'frame)  ; 'gobal
@@ -6352,6 +6355,34 @@ If =ace-window= is active the following key bindings are available:
             :map psimacs/config/global-key-map/special
                 ("C-w C-x s" . psimacs/config/toogle-ace-scope)
           )
+)
+#+END_SRC
+
+*** Winner Mode
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenience.html][winner-mode]] lets you use
+=C-c <left>= and =C-c <right>= to switch between window configurations. This is handy when something has popped
+up a buffer that you want to look at briefly before returning to whatever you were working on.
+When you're done, press =C-c <left>=.
+
+See also:
+- [[https://www.emacswiki.org/emacs/WinnerMode][EmacsWiki: Winner Mode]]
+- [[https://www.youtube.com/watch?v=T_voB16QxW0][Youtube: Emacs Winner-Mode]]
+
+| Key binding   | Command           | Description                                                          |
+|---------------+-------------------+----------------------------------------------------------------------|
+| =C-c <left>=  | =M-x winner-undo= | Switch back to an earlier window configuration saved by Winner mode. |
+| =C-c <right>= | =M-x winner-redo= | Restore a more recent window configuration saved by Winner mode.     |
+|---------------+-------------------+----------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+;;
+;; Undo/Redo for windows configurations
+;;
+(use-package winner
+    :diminish winner-mode
+    :init
+        (winner-mode)
 )
 #+END_SRC
 
@@ -9133,6 +9164,9 @@ by the various packages nor by *Emacs* itself.
 | =C-S-<f2>=          | =M-x bm-remove-all-current-buffer=                            | Remove all bookmarks of the current buffer.                                                                                                                                                                                                                                                      |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-TAB=             | =M-x company-try-hard=                                        | Try hard to find a completion. If none of the current completions look good, call the command again to try the next backend.                                                                                                                                                                     |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c <left>=        | =M-x winner-undo=                                             | Switch back to an earlier window configuration saved by Winner mode.                                                                                                                                                                                                                             |
+| =C-c <right>=       | =M-x winner-redo=                                             | Restore a more recent window configuration saved by Winner mode.                                                                                                                                                                                                                                 |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-r=               | =M-x swiper=                                                  | Incrementally search with an overview.                                                                                                                                                                                                                                                           |
 | =C-c v=             | =M-x ivy-push-view=                                           | Push the current window tree on =ivy-views=                                                                                                                                                                                                                                                      |
