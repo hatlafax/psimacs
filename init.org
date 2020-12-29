@@ -7587,6 +7587,111 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 )
 #+END_SRC
 
+*** Completion
+
+Text completion is an important tool for efficient editing and programming. *Psimacs* uses the [[http://company-mode.github.io/][company-mode]] instead
+of the [[https://github.com/auto-complete/auto-complete][auto-complete]] package.
+
+**** Auto-Complete :noexport:
+
+[[https://github.com/auto-complete/auto-complete][Auto-Complete]] is an intelligent auto-completion
+extension for *Emacs*. It extends the standard *Emacs* completion interface and provides an
+environment that allows users to concentrate more on their own work.
+
+| Key binding | Command           | Description          |
+|-------------+-------------------+----------------------|
+| =C-n=       | =M-x ac-next=     | Next completion.     |
+| =C-p=       | =M-x ac-previous= | Previous completion. |
+| =ESC=       | =M-x ac-stop=     | Abort completion.    |
+|-------------+-------------------+----------------------|
+
+Remark: *Psimacs* uses Company-mode for completion. The following code is used for reference only.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-company.el :var file-description="Advanced company setup"
+(use-package auto-complete
+    :diminish auto-complete-mode
+    :init
+        (progn
+            (ac-config-default)
+            (global-auto-complete-mode t)
+
+            (setq ac-use-menu-map t)
+        )
+
+    :bind (
+        :map ac-use-menu-map
+            ("C-n"      . ac-next)
+            ("C-p"      . ac-previous)
+            ("<escape>" . ac-stop)
+    )
+)
+#+END_SRC
+
+**** Company
+
+[[http://company-mode.github.io/][Company]] is a text completion framework for *Emacs*.
+The name stands for "complete anything". It uses pluggable back-ends and front-ends to
+retrieve and display completion candidates.
+
+It comes with several back-ends such as /Elisp/, /Clang/, /Semantic/, /Eclim/, /Ropemacs/, /Ispell/,
+/CMake/, /BBDB/, /YASnippet/, /dabbrev/, /etags/, /gtags/, /files/, /keywords/ and a few others.
+
+See also:
+- [[http://company-mode.github.io/][company-mode]]
+- [[https://www.emacswiki.org/emacs/CompanyMode][EmacsWiki: Company Mode]]
+- [[https://github.com/company-mode/company-mode/wiki/Third-Party-Packages][Third Party Packages]]
+- [[https://github.com/company-mode/company-mode/issues/68][Company vs. AutoComplete]]
+- [[https://cloudnine.github.io/science/2020-07-27-emacs-company-mode/][Emacs Company Mode]]
+
+| Key binding | Command                       | Description          |
+|-------------+-------------------------------+----------------------|
+| =C-n=       | =M-x company-select-next=     | Next completion.     |
+| =C-p=       | =M-x company-select-previous= | Previous completion. |
+| =ESC=       | =M-x company-abort=           | Abort completion.    |
+|-------------+-------------------------------+----------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-company.el :var file-description="Advanced company setup"
+(use-package company
+    :diminish company-mode
+    :init
+        (setq company-dabbrev-ignore-case      nil)
+        (setq company-dabbrev-code-ignore-case nil)
+        (setq company-dabbrev-downcase         nil)
+        (setq company-begin-commands           '(self-insert-command))
+        (setq company-transformers             '(company-sort-by-occurrence))
+
+        (setq company-idle-delay 0.1)
+        (setq company-minimum-prefix-length 2)
+        (setq company-require-match nil)
+        (setq company-selection-wrap-around t)
+        (setq company-tooltip-flip-when-above t)
+        (setq company-tooltip-align-annotations t)
+    :config
+        (global-company-mode)
+
+        (setq company-backends
+            '(
+                (
+                    company-files               ; files & directory
+                    company-keywords            ; keywords
+                    company-capf                ; completion-at-point-functions
+                    company-yasnippet           ; yasnippet
+                    company-ispell              ; ispell
+                    company-abbrev
+                    company-dabbrev
+                )
+                (company-abbrev company-dabbrev)
+             )
+        )
+    :bind (
+        :map company-active-map
+            ("C-n"      . company-select-next)
+            ("C-p"      . company-select-previous)
+            ("<escape>" . company-abort)
+    )
+)
+#+END_SRC
+
 ** Project Management
 
 Project management is important in order to be able to  work with projects that consist of many files and that
