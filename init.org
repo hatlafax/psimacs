@@ -6298,12 +6298,33 @@ of point will not be changed, i.e. the same   behavior as that of =other-window=
 #+END_QUOTE
 
 #+ATTR_HTML: :class styledtable
-| Key binding     | Command                               | Description                                                                  |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------|
-| =C-x o=         | =M-x ace-window=                      | Either =other-window= or easy switching by first character of window label . |
-| =C-x O=         | =M-x other-frame=                     | Switch to the next frame in ring.                                            |
-| =H-m C-w C-x s= | =M-x psimacs/config/toogle-ace-scope= | Toggle scope of [[https://github.com/abo-abo/ace-window][ace-window]] between 'global' and 'frame' scope.               |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------|
+| Key binding     | Command                               | Description                                                                                                                                                        |
+|-----------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x o=         | =M-x ace-window=                      | Either =other-window= or easy switching by first character of window label. Swap window with prefix =C-u= and delete selected window with double prefix =C-u C-u=. |
+| =C-x O=         | =M-x other-frame=                     | Switch to the next frame in ring.                                                                                                                                  |
+| =H-m C-w C-x s= | =M-x psimacs/config/toogle-ace-scope= | Toggle scope of [[https://github.com/abo-abo/ace-window][ace-window]] between 'global' and 'frame' scope.                                                                                                     |
+|-----------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+If =ace-window= is active the following key bindings are available:
+
+| Key binding | Command                           | Description                   |
+|-------------+-----------------------------------+-------------------------------|
+| =z=         | =aw-make-frame=                   | Create a new frame.           |
+| =x=         | =aw-delete-window=                | Delete Window.                |
+| =m=         | =aw-swap-window=                  | Swap Windows.                 |
+| =M=         | =aw-move-window=                  | Move Window.                  |
+| =c=         | =aw-copy-window=                  | Copy Window.                  |
+| =j=         | =aw-switch-buffer-in-window=      | Select Buffer.                |
+| =n=         | =aw-flip-window=                  | Select the previous window.   |
+| =u=         | =aw-switch-buffer-other-window=   | Switch Buffer Other Window.   |
+| =e=         | =aw-execute-command-other-window= | Execute Command Other Window. |
+| =F=         | =aw-split-window-fair=            | Split Fair Window.            |
+| =v=         | =aw-split-window-vert=            | Split Vert Window.            |
+| =b=         | =aw-split-window-horz=            | Split Horz Window.            |
+| =o=         | =delete-other-windows=            | Delete Other Windows.         |
+| =T=         | =aw-transpose-frame=              | Transpose Frame.              |
+| =?=         | =aw-show-dispatch-help=           | Show this table for help.     |
+|-------------+-----------------------------------+-------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
 (use-package ace-window
@@ -9230,7 +9251,7 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-u C-w t=     | =M-x psimacs/which-key/toogle-sort-order=                     | Toggle the which-key-mode sort order.                                                                                                                                                                                                                                                            |
 | =H-m C-u C-w c=     | =M-x psimacs/which-key/cycle-sort-order=                      | Cycle through the which-key-mode sort orders.                                                                                                                                                                                                                                                    |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x o=             | =M-x ace-window=                                              | Either =other-window= or easy switching by first character of window label .                                                                                                                                                                                                                     |
+| =C-x o=             | =M-x ace-window=                                              | Either =other-window= or easy switching by first character of window label. Swap window with prefix =C-u= and delete selected window with double prefix =C-u C-u=.                                                                                                                               |
 | =C-x O=             | =M-x other-frame=                                             | Switch to the next frame in ring.                                                                                                                                                                                                                                                                |
 | =H-m C-w C-x s=     | =M-x psimacs/config/toogle-ace-scope=                         | Toggle scope of [[https://github.com/abo-abo/ace-window][ace-window]] between 'global' and 'frame' scope.                                                                                                                                                                                                                                   |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
