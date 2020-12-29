@@ -5536,6 +5536,95 @@ through the command =C-x C-r=.
 
 This section provides setting and packages that enhance the user experience with *Emacs* considerably.
 
+*** Undo-Redo
+
+The package [[https://gitlab.com/ideasman42/emacs-undo-fu][undo-fu]] provides a simple, stable linear undo with redo for *Emacs*.
+
+#+BEGIN_QUOTE
+This is a light weight wrapper for Emacs built-in undo system,
+adding convenient undo/redo without losing access to the full undo history,
+allowing you to visit all previous states of the document if you need.
+The changes compared Emacs undo are as follows:
+- Redo will not pass the initial undo action.
+- Redo will not undo (unlike Emacs redo which traverses previous undo/redo steps).
+- These constraints can be temporarily disabled by pressing =C-g= before undo or redo.
+
+Note that this doesn't interfere with Emacs internal undo data, which can be error prone.
+#+END_QUOTE
+
+
+#+BEGIN_QUOTE
+The default Emacs undo has two limitations this package aims to resolve,
+- Two actions are required to initiate redo.
+- It's easy to accidentally redo past the point where undo started
+  making it inconvenient to restore the document to the point when undo began.
+#+END_QUOTE
+
+| Key binding | Command                     | Description                                   |
+|-------------+-----------------------------+-----------------------------------------------|
+| =C-z=       | =M-x undo-fu-only-undo=     | Undo the last action.                         |
+| =C-S-z=     | =M-x undo-fu-only-redo=     | Redo an action until the initial undo action. |
+| =H-m C-z=   | =M-x undo-fu-only-redo-all= | Redo all actions until the initial undo step. |
+|-------------+-----------------------------+-----------------------------------------------|
+
+References to undo/redo packages:
+
+| Package         | Remark                                                                                                                            |
+|-----------------+-----------------------------------------------------------------------------------------------------------------------------------|
+| [[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]]        | Provides undo/redo binding. Disabled for **Psimacs*.                                                                              |
+| [[https://github.com/emacsmirror/undo-tree][undo-tree]]       | Instead of treating undo/redo as a linear sequence of changes, undo-tree-mode treats undo history as a branching tree of changes. |
+| [[https://gitlab.com/ideasman42/emacs-undo-fu-session][undo-fu-session]] | Save & recover undo steps between Emacs sessions.                                                                                 |
+|-----------------+-----------------------------------------------------------------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
+;;
+;; Better undo/redo support
+;;
+(use-package undo-fu
+  ;:init
+  ;    (global-unset-key (kbd "C-z"))
+  :bind (
+         ("C-z"   . undo-fu-only-undo)
+         ("C-S-z" . undo-fu-only-redo)
+         :map psimacs/config/global-key-map/special
+            ("C-z" . undo-fu-only-redo-all)
+        )
+)
+#+END_SRC
+
+*** Undo-Tree :noexport:
+
+Instead of treating undo/redo as a linear sequence of changes, [[https://github.com/emacsmirror/undo-tree][undo-tree-mode]] treats undo history
+as a branching tree of changes.
+
+- [[https://github.com/emacsmirror/undo-tree][undo-tree]]
+- [[https://www.emacswiki.org/emacs/UndoTree][EmacsWiki: Undo Tree]]
+- [[http://ergoemacs.org/emacs/emacs_best_redo_mode.html][Best Undo/Redo Mode]]
+
+| Key binding | Command                     | Description                                   |
+|-------------+-----------------------------+-----------------------------------------------|
+| =C-z=   | =undo-tree-undo=      | Undo the last action.
+| =C-S z= | =undo-tree-redo=      | Redo an action until the initial undo action.
+| =C-x u= | =undo-tree-visualize= | Show buffer showing the undo/redo-tree.
+|-------------+-----------------------------+-----------------------------------------------|
+
+Currently, *Psimacs* uses the [[https://gitlab.com/ideasman42/emacs-undo-fu][undo-fu]] package.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
+(use-package undo-tree
+    :diminish undo-tree-mode                            ;; Don't show an icon in the modeline
+    :config
+        (global-undo-tree-mode)                         ;; Always have it on
+        (setq undo-tree-visualizer-timestamps t)        ;; Each node in the undo tree should have a timestamp.
+        (setq undo-tree-visualizer-diff t)              ;; Show a diff window displaying changes between undo nodes.
+    :bind* (
+        ("C-z"   . undo-tree-undo)
+        ("C-S-z" . undo-tree-redo)
+        ("C-c C-z" . undo-tree-visualize)
+    )
+)
+#+END_SRC
+
 *** Edit region indirectly in another buffer
 
 The package [[https://github.com/Fanael/edit-indirect][edit-indirect]] is a useful enhancement for editing. It provides a command =edit-indirect-region= that
@@ -5900,8 +5989,6 @@ See also:
 | =C-x=       |                              | Windows conform cut if CUA-mode is active.   |
 | =C-c=       |                              | Windows conform copy if CUA-mode is active.  |
 | =C-v=       |                              | Windows conform paste if CUA-mode is active. |
-| =C-z=       |                              | Undo command if CUA-mode is active.          |
-| =C-S-z=     |                              | Redo command if CUA-mode is active.          |
 |-------------+------------------------------+----------------------------------------------|
 | =C-RET=     | =M-x cua-set-rectangle-mark= | Start a rectangle.                           |
 | =<Ret>=     | =M-x cua-rotate-rectangle=   | Move to next corner.                         |
@@ -5920,12 +6007,13 @@ See also:
 ;;
 ;; CUA-Mode: Enabled on default
 ;;
-(cua-mode t)
 (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
 (setq cua-keep-region-after-copy t)   ;; Standard Windows behaviour
 (setq cua-delete-selection t)
+(setq cua-remap-control-z nil)        ;; We use undo-fu instead
 (global-set-key (kbd "<f12>") 'cua-mode)
 (define-key psimacs/config/global-key-map/special (kbd "c") 'cua-mode)
+(cua-mode t)
 #+END_SRC
 
 *** Perspective
@@ -9006,6 +9094,10 @@ by the various packages nor by *Emacs* itself.
 | =C-r=               | =M-x counsel-expression-history=                              | In =read-expression-map=                                                                                                                                                                                                                                                                         |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-x p i=           | =M-x org-cliplink=                                            | Insert [[https://orgmode.org][org-mode]] links from the clipboard.                                                                                                                                                                                                                                                        |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-z=               | =M-x undo-fu-only-undo=                                       | Undo the last action.                                                                                                                                                                                                                                                                            |
+| =C-S-z=             | =M-x undo-fu-only-redo=                                       | Redo an action until the initial undo action.                                                                                                                                                                                                                                                    |
+| =H-m C-z=           | =M-x undo-fu-only-redo-all=                                   | Redo all actions until the initial undo step.                                                                                                                                                                                                                                                    |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =s-p=               | =M-x centaur-tabs-backward=                                   | Select the previous available tab.                                                                                                                                                                                                                                                               |
 | =s-n=               | =M-x centaur-tabs-forward=                                    | Select the next available tab.                                                                                                                                                                                                                                                                   |
