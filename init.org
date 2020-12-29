@@ -398,6 +398,9 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 
 (defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
+
+(defconst psimacs/config/site-lisp-folder "site-lisp"
+  "The psimacs site-lisp directory.")
  #+END_SRC
 
 *** Copyright and author information
@@ -1110,6 +1113,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/assets-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/assets-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/site-lisp-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/site-lisp-folder))))
 
         ;;
         ;; Create missing dropbox emacs directory
@@ -1526,7 +1533,7 @@ programs are installed.
 ;; Directory constants used by Psimacs
 ;;
 (defconst psimacs/config/site-lisp-dir
-  (psimacs/file-system/concat-directory user-emacs-directory "site-lisp")
+  (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/site-lisp-folder)
   "The psimacs personal site-lisp directory.")
 
 (defconst psimacs/config/session-dir
@@ -3051,7 +3058,10 @@ common prefix - a /hydra/.
 conveniently accessible through bindings =H-h= or =s-h=. All *Psimacs* hydras commands start with string
 =psimacs/hydra/=.
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Early load the hydra package.
+;;
 (use-package hydra)
 #+END_SRC
 
@@ -7817,6 +7827,59 @@ the command again to try the next backend.
             :map company-active-map
                 ("C-<tab>" . company-try-hard)
         )
+)
+#+END_SRC
+
+*** Snippets
+
+The package [[https://github.com/joaotavora/yasnippet][Yasnippet]] provides a template
+system for *Emacs*. It allows you to type an abbreviation and automatically expand it
+into function templates.
+
+Bundled language templates include:
+- [[https://en.wikipedia.org/wiki/C_(programming_language)][C]]
+- [[https://en.wikipedia.org/wiki/C%2B%2B][C++]]
+- [[https://en.wikipedia.org/wiki/C_Sharp_(programming_language)][C#]]
+- [[https://en.wikipedia.org/wiki/Perl][Perl]]
+- [[https://en.wikipedia.org/wiki/Python_(programming_language)#Usage][Python]]
+- [[https://en.wikipedia.org/wiki/Ruby_(programming_language)][Ruby]]
+- [[https://en.wikipedia.org/wiki/SQL][SQL]]
+- [[https://en.wikipedia.org/wiki/LaTeX][LaTeX]]
+- [[https://en.wikipedia.org/wiki/HTML][HTML]]
+- [[https://en.wikipedia.org/wiki/CSS][CSS]]
+
+See also:
+- [[https://www.emacswiki.org/emacs/Yasnippet][EmacsWiki: Yasnippet]]
+- [[http://ergoemacs.org/emacs/emacs_templates.html][Using Templates with YASnippet]]
+- [[https://www.youtube.com/watch?v=-4O-ZYjQxks][Youtube: Emacs Tutorial: Yasnippet]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-yasnippet.el :var file-description="Advanced yasnippet setup"
+;;
+;; yasnipped is a template system for Emacs
+;;
+(use-package yasnippet
+    :diminish yas-minor-mode
+    :config
+        (unless (file-directory-p psimacs/config/snippets-dir)
+          (make-directory psimacs/config/snippets-dir t))
+
+        (setq yas-snippet-dirs '(psimacs/config/snippets-dir))
+
+        (yas-global-mode t)
+        (yas-reload-all)
+
+        (defun psimacs/config/internal/force-yasnippet-off ()
+          (setq-local yas-dont-activate t)
+          (yas-minor-mode -1)
+          )
+
+    :hook ((term-mode shell-mode) . #'psimacs/config/internal/force-yasnippet-off)
+)
+
+(use-package yasnippet-snippets
+    :after yasnippet
+    :config
+        (yasnippet-snippets-initialize)
 )
 #+END_SRC
 

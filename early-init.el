@@ -89,6 +89,9 @@ allows sharing of a single configuration on multiple machines.")
 (defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
 
+(defconst psimacs/config/site-lisp-folder "site-lisp"
+  "The psimacs site-lisp directory.")
+
 (defconst psimacs/config/copyright/year       "2020-2021")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
@@ -620,6 +623,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/assets-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/assets-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/site-lisp-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/site-lisp-folder))))
 
         ;;
         ;; Create missing dropbox emacs directory

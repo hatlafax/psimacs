@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: plantUml OpenSG object diagram org babel block
+# key: ob-uml-opensg-block
+# --
+#+NAME: fig:${1:name}_fig
+#+BEGIN_SRC plantuml :file ${2:sub-dir}/$1.png :exports results
+@startuml
+    !include %localDir%/macros/class_macros.iuml
+    !include %localDir%/macros/opensg_macros.iuml
+
+    $0
+@enduml
+#+END_SRC
+#+CAPTION: $1
+#+ATTR_LATEX: :float nil :width 0.8\textwidth :height 0.33\textheight :placement [!h] :options keepaspectratio=true
+#+RESULTS: fig:$1_fig
+[[file:$2/$1.png]]
+
