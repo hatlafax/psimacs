@@ -1656,6 +1656,19 @@ Auto saving is performed by *Psimacs* a lot.
   "The psimacs abbreviation file.")
 #+END_SRC
 
+** Completion
+
+Some *Psimacs* constants related to the completion system.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for abbreviations
+;;
+(defconst psimacs/config/company-statistics-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".company-statistics")
+  "The psimacs company statistics file.")
+#+END_SRC
+
 ** Emacs client/server
 
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Emacs-Server.html][Client/Server]] support for *Psimacs*. We use the default /server/ directory. Since we allow multiple
@@ -7707,6 +7720,22 @@ Differences with the built-in front-end:
 (use-package company-box
     :diminish company-box-mode
     :hook (company-mode . company-box-mode)
+)
+#+END_SRC
+
+**** Company-Statistics
+
+[[https://github.com/company-mode/company-statistics][Company-statistics]] is a global minor mode
+built on top of the in-buffer completion system company-mode. The idea is to keep a log of a
+certain number of completions you choose, along with some context information, and use that to
+rank candidates the next time you have to choose — hopefully showing you likelier candidates at
+the top of the list.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-company.el
+(use-package company-statistics
+    :config
+        (setq company-statistics-file psimacs/config/company-statistics-file)
+    :hook (after-init . company-statistics-mode)
 )
 #+END_SRC
 
