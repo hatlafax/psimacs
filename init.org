@@ -6222,6 +6222,29 @@ Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesth
 )
 #+END_SRC
 
+*** Expand-Region
+
+The package [[https://github.com/magnars/expand-region.el][expand-region]] allows you to
+expand a selected region by /semantic units/.
+Just keep pressing the key until it selects what you want.
+
+See also:
+- [[http://emacsrocks.com/e09.html][EmacsRocks: expand-region]]
+
+| Key binding | Command                | Description                  |
+|-------------+------------------------+------------------------------|
+| =H-x e=     | =M-x er/expand-region= | Expand region intelligently. |
+|-------------+------------------------+------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(use-package expand-region
+    :bind (
+         :map psimacs/config/global-key-map/execute
+              ("e" . er/expand-region)
+        )
+)
+#+END_SRC
+
 ** Windows and frame layout
 
 *** Frame size and position
@@ -9338,6 +9361,8 @@ by the various packages nor by *Emacs* itself.
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
 | =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x e=             | =M-x er/expand-region=                                        | Expand region intelligently.                                                                                                                                                                                                                                                                     |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x f=             | =M-x counsel-recentf=                                         | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
 | =H-x C-f=           | =M-x counsel-buffer-or-recentf=                               | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
