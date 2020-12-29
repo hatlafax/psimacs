@@ -7587,12 +7587,12 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 )
 #+END_SRC
 
-*** Completion
+** Completion
 
 Text completion is an important tool for efficient editing and programming. *Psimacs* uses the [[http://company-mode.github.io/][company-mode]] instead
 of the [[https://github.com/auto-complete/auto-complete][auto-complete]] package.
 
-**** Auto-Complete :noexport:
+*** Auto-Complete :noexport:
 
 [[https://github.com/auto-complete/auto-complete][Auto-Complete]] is an intelligent auto-completion
 extension for *Emacs*. It extends the standard *Emacs* completion interface and provides an
@@ -7627,7 +7627,7 @@ Remark: *Psimacs* uses Company-mode for completion. The following code is used f
 )
 #+END_SRC
 
-**** Company
+*** Company
 
 [[http://company-mode.github.io/][Company]] is a text completion framework for *Emacs*.
 The name stands for "complete anything". It uses pluggable back-ends and front-ends to
@@ -7689,6 +7689,24 @@ See also:
             ("C-p"      . company-select-previous)
             ("<escape>" . company-abort)
     )
+)
+#+END_SRC
+
+**** Company-box
+
+[[https://github.com/sebastiencs/company-box/][company-box]] provides a
+[[http://company-mode.github.io/][company]] front-end with icons.
+
+Differences with the built-in front-end:
+- Differents colors for differents backends.
+- Icons associated to functions/variables/.. and their backends
+- Display candidate's documentation (support quickhelp-string)
+- Not limited by the current window size, buffer's text properties
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-company.el
+(use-package company-box
+    :diminish company-box-mode
+    :hook (company-mode . company-box-mode)
 )
 #+END_SRC
 
