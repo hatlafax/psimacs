@@ -1537,6 +1537,9 @@ programs are installed.
   (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/assets-folder)
   "The psimacs assets directory.")
 
+(defconst psimacs/config/straight-dir
+  (psimacs/file-system/concat-directory user-emacs-directory "straight")
+  "The psimacs straight directory.")
 #+END_SRC
 
 ** Private directory
@@ -5431,15 +5434,17 @@ Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][sa
 across sessions on exiting *Emacs* - you can then access this list
 through the command =C-x C-r=.
 
-| Key binding | Command                         | Description                                                  |
-|-------------+---------------------------------+--------------------------------------------------------------|
-| =H-x r=     | =M-x recentf-open-files=        | Show a dialog to open a recent file.                         |
-| =H-x C-r=   | =M-x recentf-open-more-files=   | Show a dialog to open a recent file that is not in the menu. |
-|             | =M-x recentf-cleanup=           | Cleanup the recent file list.                                |
-|-------------+---------------------------------+--------------------------------------------------------------|
-| =H-x f=     | =M-x counsel-recentf=           | Find a file on recent file list.                             |
-| =H-x C-f=   | =M-x counsel-buffer-or-recentf= | Find a buffer visiting a file or file on recent file list.   |
-|-------------+---------------------------------+--------------------------------------------------------------|
+| Key binding | Command                                              | Description                                                  |
+|-------------+------------------------------------------------------+--------------------------------------------------------------|
+| =H-x r=     | =M-x recentf-open-files=                             | Show a dialog to open a recent file.                         |
+| =H-x C-r=   | =M-x recentf-open-more-files=                        | Show a dialog to open a recent file that is not in the menu. |
+|-------------+------------------------------------------------------+--------------------------------------------------------------|
+| =H-x f=     | =M-x counsel-recentf=                                | Find a file on recent file list.                             |
+| =H-x C-f=   | =M-x counsel-buffer-or-recentf=                      | Find a buffer visiting a file or file on recent file list.   |
+|-------------+------------------------------------------------------+--------------------------------------------------------------|
+| =H-x C c    | =M-x recentf-cleanup=                                | Cleanup the recent file list.                                |
+| =H-x C C-c  | =M-x psimacs/config/recentf-cleanup-directory-files= | Remove all files of DIR from recent file list.               |
+|-------------+------------------------------------------------------+--------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-auto-save.el
 ;;
@@ -5447,21 +5452,47 @@ through the command =C-x C-r=.
 ;;
 (use-package recentf
     :diminish recentf-mode
-    :bind (
-           :map psimacs/config/global-key-map/execute
-              ("r"   . recentf-open-files)
-              ("C-r" . recentf-open-more-files)
-              ("f"   . counsel-recentf)
-              ("C-f" . counsel-buffer-or-recentf)
-        )
-
     :init
-        (setq recentf-max-menu-items 20)
-        (setq recentf-save-file psimacs/config/recent-file)
+        (setq recentf-max-menu-items   20
+              recentf-max-saved-items 500
+              recentf-save-file       psimacs/config/recent-file
+              recentf-exclude
+                  `(
+                    ,(concat "^" (regexp-quote (expand-file-name psimacs/config/session-dir)) ".*$")
+                    ,(concat "^" (regexp-quote (expand-file-name psimacs/config/straight-dir)) ".*$")
+                    ,(regexp-quote (expand-file-name psimacs/config/custom-file))
+                    "^.*/\\.dir-locals.el$"
+                    "^.*/\\.projectile$"
+                    "^.*\\.elc$"
+                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "CodingDiary.org")))
+                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "Diary.org")))
+                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "Diary.Template")))
+                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "Journal.org")))
+                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "TimeLog.org")))
+                    ,(concat "^" (regexp-quote (expand-file-name (concat invocation-directory "../"))) ".*$")
+                   )
+              )
 
         (recentf-mode t)
 
         (run-at-time nil (* 5 60) 'recentf-save-list)
+
+    :config
+        (defun psimacs/config/recentf-cleanup-directory-files (dir)
+          "Remove from recentf all files that belong to DIR directory."
+          (interactive (list (read-directory-name "Exclude all paths")))
+          (let ( recentf-exclude )
+            (setq recentf-exclude (list (concat "^" (regexp-quote (expand-file-name dir)))))
+            (recentf-cleanup) ))
+    :bind (
+           :map psimacs/config/global-key-map/execute
+              ("r"     . recentf-open-files)
+              ("C-r"   . recentf-open-more-files)
+              ("f"     . counsel-recentf)
+              ("C-f"   . counsel-buffer-or-recentf)
+              ("C c"   . recentf-cleanup)
+              ("C C-c" . psimacs/config/recentf-cleanup-directory-files)
+        )
 )
 #+END_SRC
 
@@ -7717,6 +7748,7 @@ The file is only created if it does not already exist."
 
 The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] gives fine grained support of [[https://cmake.org/][CMake]] with Emacs projectile.
 
+#+ATTR_HTML: :class styledtable
 | Key binding     | Command                                                        | Description                                                                 |
 |-----------------+----------------------------------------------------------------+-----------------------------------------------------------------------------|
 | =C-c C-p s d=   | =M-x projectile-cmake-select-build-dir=                        | Select the current project build dir.                                       |
@@ -8151,6 +8183,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-agenda-sorting-strategy
             (quote
                 (
+
                     (agenda deadline-up priority-down)
                     (todo priority-down category-keep)
                     (tags priority-down category-keep)
@@ -8794,16 +8827,19 @@ by the various packages nor by *Emacs* itself.
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C-a=       | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
-| =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
-|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x f=             | =M-x counsel-recentf=                                         | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
-| =H-x C-f=           | =M-x counsel-buffer-or-recentf=                               | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
-|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m H-h C-m=       | =M-x discover-my-major=                                       | Create a listing of all major-mode keys with their description.                                                                                                                                                                                                                                  |
 | =H-m H-h M-m=       | =M-x discover-my-mode=                                        | Create a listing of all MODE keys with their description.                                                                                                                                                                                                                                        |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m H-h b=         | =M-x helm-descbinds=                                          | Create a listing of all key bindings of current major mode.                                                                                                                                                                                                                                      |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m H-h m=         | =M-x helm-describe-modes=                                     | Create a listing of all modes of current major mode.                                                                                                                                                                                                                                             |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
+| =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x f=             | =M-x counsel-recentf=                                         | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
+| =H-x C-f=           | =M-x counsel-buffer-or-recentf=                               | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x C c            | =M-x recentf-cleanup=                                         | Cleanup the recent file list.                                                                                                                                                                                                                                                                    |
+| =H-x C C-c          | =M-x psimacs/config/recentf-cleanup-directory-files=          | Remove all files of DIR from recent file list.                                                                                                                                                                                                                                                   |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
