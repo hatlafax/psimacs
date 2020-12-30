@@ -7426,6 +7426,58 @@ Functionality related to directory local settings.
 Now that the basic setup is finished we can take credit of the enormous amount of useful *Emacs* packages out
 there. It is one of *Psimacs* goals to be a /modern/ editor. Let's see...
 
+** Helm
+
+*Psimacs* uses the [[https://github.com/emacs-helm/helm][Helm]] as well as the [[https://oremacs.com/swiper/][Ivy]] / [[https://oremacs.com/swiper/][Counsel]] framework. It is more focused towards the [[https://oremacs.com/swiper/][Ivy]] / [[https://oremacs.com/swiper/][Counsel]]
+tools none the less.
+
+#+BEGIN_QUOTE
+[[https://github.com/emacs-helm/helm][Helm]] is an *Emacs* framework for incremental completions and narrowing selections. It provides an easy-to-use
+API for developers wishing to build their own Helm applications in Emacs, powerful search tools and dozens of
+already built-in commands providing completion to almost everything. It is a must-have for anyone using *Emacs*
+as a main work environment.
+#+END_QUOTE
+
+References:
+- [[https://emacs-helm.github.io/helm/][Helm Documentation]]
+
+The following [[https://github.com/emacs-helm/helm][Helm]] configuration is taken from [[https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el][init-helm.el]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-helm.el :var file-description="Advanced helm setup"
+;;
+;; Plain configuration of helm taken from https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el
+;;
+(use-package helm
+  :config
+      (require 'helm-config)
+      (setq helm-input-idle-delay                     0.01
+            helm-reuse-last-window-split-state        t
+            helm-always-two-windows                   t
+            helm-split-window-inside-p                nil
+            helm-commands-using-frame                 '(
+                                                        ;;completion-at-point
+                                                        helm-apropos
+                                                        helm-eshell-prompts helm-imenu
+                                                        helm-imenu-in-all-buffers
+                                                       )
+            helm-actions-inherit-frame-settings       t
+            helm-use-frame-when-more-than-two-windows t
+            helm-use-frame-when-dedicated-window      t
+            ;;helm-frame-background-color               "DarkSlateGray"
+            helm-show-action-window-other-window      'left
+            helm-allow-mouse                          t
+            ;;helm-move-to-line-cycle-in-source         t
+            helm-autoresize-max-height                80 ; it is %.
+            helm-autoresize-min-height                20 ; it is %.
+            helm-debug-root-directory                 psimacs/config/session-dir
+            helm-follow-mode-persistent               t
+            helm-candidate-number-limit               500)
+
+      ;;(add-to-list 'helm-sources-using-default-as-input 'helm-source-info-bash)
+      ;;(helm-define-key-with-subkeys global-map (kbd "C-c n") ?n 'helm-cycle-resume)
+)
+#+END_SRC
+
 ** Discoverability
 
 *Emacs* is quite a complicated beast that is not easy to get acquainted with. Fortunately, few packages are available
@@ -7457,7 +7509,7 @@ major and minor modes.
 
 *** Helm-Descbinds
 
-The package [[https://github.com/emacs-helm/helm-descbinds][helm-descbinds]] provides an interface to *Emacs's* =describe-bindings= making the currently active key
+*The package [[https://github.com/emacs-helm/helm-descbinds][helm-descbinds]] provides an interface to *Emacs's* =describe-bindings= making the currently active key
 bindings interactively searchable with helm.
 
 | Key binding | Command              | Description                                                 |
