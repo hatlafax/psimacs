@@ -8509,6 +8509,26 @@ projectile commands as well as new commands that have no projectile counterparts
 )
 #+END_SRC
 
+**** Treemacs-projectile
+
+The package [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra/treemacs-projectile.el][treemacs-projectile]] is a small package that contains some utility functions that simplify adding your
+[[https://github.com/bbatsov/projectile][projectile]] projects to [[https://github.com/Alexander-Miller/treemacs][treemacs]].
+
+| Key binding   | Command                   | Description                                                       |
+|---------------+---------------------------+-------------------------------------------------------------------|
+| =H-m C-x t p= | =M-x treemacs-projectile= | Add one of =projectile-known-projects= to the [[https://github.com/Alexander-Miller/treemacs][treemacs]] workspace. |
+|---------------+---------------------------+-------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-projectile.el
+(use-package treemacs-projectile
+    :after treemacs projectile
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-x t p"   . treemacs-projectile)
+        )
+)
+#+END_SRC
+
 * Major Modes
 ** Org-Mode
 
@@ -9547,6 +9567,9 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-x t B=       | =M-x treemacs-bookmark=                                       | Find a bookmark in [[https://github.com/Alexander-Miller/treemacs][treemacs]].                                                                                                                                                                                                                                                                     |
 | =H-m C-x t C-t=     | =M-x treemacs-find-file=                                      | Find and focus the current file in the current [[https://github.com/Alexander-Miller/treemacs][treemacs]] window.                                                                                                                                                                                                                                  |
 | =H-m C-x t M-t=     | =M-x treemacs-find-tag=                                       | Find and move the point to the tag at point in the [[https://github.com/Alexander-Miller/treemacs][treemacs]] view.                                                                                                                                                                                                                                |
+| =H-m C-x t p=       | =M-x treemacs-projectile=                                     | Add one of =projectile-known-projects= to the [[https://github.com/Alexander-Miller/treemacs][treemacs]] workspace.                                                                                                                                                                                                                                |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C-n=       | =M-x neotree-toggle=                                          | Open [[https://github.com/jaypei/emacs-neotree][Neotree]].                                                                                                                                                                                                                                                                                    |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C-a=       | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
