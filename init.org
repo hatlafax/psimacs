@@ -6237,12 +6237,48 @@ See also:
 |-------------+------------------------+------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Expand a region intelligently
+;;
 (use-package expand-region
     :bind (
          :map psimacs/config/global-key-map/execute
               ("e" . er/expand-region)
         )
 )
+#+END_SRC
+
+*** Large File Support
+
+[[https://github.com/m00natic/vlfi][VLF]] is a *Emacs* minor mode that allows viewing, editing, searching and comparing large files
+in batches, trading memory for processor time. Batch size can be adjusted on the fly
+and bounds the memory that is to be used for operations on the file. This way multiple
+large files (like terabytes or whatever) can be instantly and simultaneously accessed
+without swapping and degraded performance.
+
+See also:
+- [[https://github.com/m00natic/vlfi][View Large Files]],
+- [[https://www.reddit.com/r/emacs/comments/8t36dw/handling_large_files_with_emacs/][Handling large files with emacs]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Configure Emacs for large file support.
+;;
+(use-package vlf
+    :demand t
+    :config
+        (require 'vlf-setup)
+        (setq vlf-application 'dont-ask)
+)
+#+END_SRC
+
+Do not warn for large files.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Do not warn for large files
+;;
+(setq large-file-warning-threshold nil)
 #+END_SRC
 
 ** Windows and frame layout
