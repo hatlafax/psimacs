@@ -8247,6 +8247,50 @@ See also:
 )
 #+END_SRC
 
+** Neotree
+
+Package [[https://github.com/jaypei/emacs-neotree][Neotree]] provides a file tree browser for *Emacs*.
+File tree browser.
+
+Bindings in the [[https://github.com/jaypei/emacs-neotree][Neotree]] buffer:
+
+| Key bindings | Description                                                                       |
+|--------------+-----------------------------------------------------------------------------------|
+| =n=          | Next item.                                                                        |
+| =p=          | Previous item.                                                                    |
+| =SPC=        | Open current item if it is a file. Fold/Unfold current item if it is a directory. |
+| =RET=        | Same as =SPC=.                                                                    |
+| =TAB=        | Same as =SPC= and =RET=.                                                          |
+| =O=          | Recursively open a directory.                                                     |
+| =U=          | Up diretory.                                                                      |
+| =g=          | Refresh.                                                                          |
+| =A=          | Maximize/Minimize [[https://github.com/jaypei/emacs-neotree][Neotree]] window.                                                 |
+| =H=          | Toggle display of hidden files.                                                   |
+| =C-c C-n=    | Create a file or create a directory if filename ends with a '/'.                  |
+| =C-c C-d=    | Delete a file or directory.                                                       |
+| =C-c C-r=    | Rename a file or directory.                                                       |
+| =C-c C-c=    | Change the root directory.                                                        |
+| =C-c C-p=    | Copy a file or directory.                                                         |
+|--------------+-----------------------------------------------------------------------------------|
+
+Global bindings:
+
+| Key binding   | Command              | Description   |
+|---------------+----------------------+---------------|
+| =H-m C-x C-n= | =M-x neotree-toggle= | Open [[https://github.com/jaypei/emacs-neotree][Neotree]]. |
+|---------------+----------------------+---------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-neotree.el :var file-description="Advanced neotree setup"
+(use-package neotree
+    :config
+        (setq neo-theme 'icons neo-smart-open t)
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-x C-n" . neotree-toggle)
+        )
+)
+#+END_SRC
+
 ** Project Management
 
 Project management is important in order to be able to  work with projects that consist of many files and that
