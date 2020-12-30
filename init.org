@@ -6016,6 +6016,89 @@ See also:
 (cua-mode t)
 #+END_SRC
 
+*** Dired+
+
+Package [[https://www.emacswiki.org/emacs/DiredPlus][Dired+]] extends functionalities provided by standard *Emacs* library [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]]. The standard functions are all
+available, plus many more.
+
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired, the Directory Editor]]
+- [[https://www.emacswiki.org/emacs/DiredPlus][Dired+]]
+- [[http://ergoemacs.org/emacs/emacs_diredplus_mode.html][Dired Plus Mode = dired with Extra Features]]
+
+Important bindings in a [[https://www.emacswiki.org/emacs/DiredPlus][Dired+]] buffer:
+
+| Key bindings | Description                                                      |
+|--------------+------------------------------------------------------------------|
+| =(=          | Hide/show details.                                               |
+| =q=          | Quit [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]].                                                      |
+| =g=          | Refresh and synch all.                                           |
+| =m=          | Mark this file or directory.                                     |
+| =u=          | Unmark this file or directory.                                   |
+| =U=          | Unmark all marked files and directories.                         |
+| =* . <ext>=  | Mark/unmark all files with given extension.                      |
+| =RET=        | Open file.                                                       |
+| =b=          | Byte compile.                                                    |
+| =B=          | Byte compile marked files or directories.                        |
+| =z=          | Compress/uncompress file or directory.                           |
+| =Z=          | Compress/uncompress marked file or directory.                    |
+| =C-k=        | Delete with confirmation.                                        |
+| =r=          | Rename file or directory.                                        |
+| =M-c==       | Capitalize name.                                                 |
+| =M-u=        | Upper case name.                                                 |
+| =M-l=        | Lower case name.                                                 |
+| ===          | Ediff.                                                           |
+| =C-S-b=      | Bookmark.                                                        |
+| =M-b=        | Bookmark marked files and directories.                           |
+| =F=          | Visit marked files.                                              |
+| =C=          | Copy marked files and directories.                               |
+| =R=          | Rename of move marked files and directories.                     |
+| =C-M-S-t=    | Touch marked files and directories.                              |
+| =M=          | Change mode of marked files or directories.                      |
+| =C-M-g=      | Run =grep= on marked files.                                      |
+| =L=          | Load *Emacs* lisp of marked files.                               |
+| =&=          | Run shell command asynchronously on marked files or directories. |
+| =!=          | Run shell command synchronously on marked files or directories.  |
+|--------------+------------------------------------------------------------------|
+
+Some usefule key bindings and commands:
+
+| Key binding | Command                                      | Description                                                                              |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+|             | =M-x diredp-dired-plus-help=                 | Describe [[https://www.emacswiki.org/emacs/DiredPlus][dired+]].                                                                         |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+| =C-x d=     | =M-x dired=                                  | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in current window.                                                            |
+| =C-x 4 d=   | =M-x dired-other-window=                     | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another window.                                                            |
+| =C-x 5 d=   | =M-x dired-other-frame=                      | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another frame.                                                             |
+| =C-x t d=   | =M-x dired-other-tab=                        | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] on an new tab.                                                                |
+| =C-c p D=   | =M-x projectile-dired=                       | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in current window at the root of the project.                                 |
+| =C-c p 4 D= | =M-x projectile-dired-other-window=          | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another window at the root of the project.                                 |
+| =C-c p 5 D= | =M-x projectile-dired-other-frame=           | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another frame at the root of the project.                                  |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+| =C-x C-j=   | =M-x dired-jump=                             | Jump to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in current window corresponding to the current buffer.                     |
+| =C-x 4 C-j= | =M-x dired-jump-other-window=                | Jump to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another window corresponding to the current buffer.                     |
+| =C-c d=     | =M-x counsel-dired-jump=                     | Jump to directory below of current directory.                                            |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+| =C-x D r=   | =M-x diredp-dired-recent-dirs=               | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in current window showing recently visited directories.                       |
+| =C-x 4 D r= | =M-x diredp-dired-recent-dirs-other-window=  | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another window showing recently visited directories.                       |
+| =C-x D R=   | =M-x diredp-dired-recent-files=              | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in current window showing recently visited files and directories.             |
+| =C-x 4 D R= | =M-x diredp-dired-recent-files-other-window= | Open [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] in another window showing recently visited files and directories.             |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+| =C-x D F=   | =M-x diredp-dired-for-files=                 | [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] in current window the file names that you entered in a [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] buffer that you name. |
+| =C-x 4 D F= | =M-x diredp-dired-for-files-other-window=    | [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] in another window the file names that you entered in a [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] buffer that you name. |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Enhance dired a little
+;;
+(use-package dired+
+    :bind (
+           ("C-x D h" . diredp-dired-plus-help)
+           )
+)
+#+END_SRC
+
 *** Perspective
 
 The [[https://github.com/nex3/perspective-el][perspective]] package provides multiple named workspaces
@@ -8268,6 +8351,9 @@ See also:
 |-----------------+-------------------------------------+------------------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-treemacs.el :var file-description="Advanced treemacs setup"
+;;
+;; Treemacs provided project centric tree browsing
+;;
 (use-package treemacs
     :config
         (setq treemacs-space-between-root-nodes nil)
@@ -8317,6 +8403,9 @@ Global bindings:
 |---------------+----------------------+---------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-neotree.el :var file-description="Advanced neotree setup"
+;;
+;; Neotree provides classis file and directory browsing
+;;
 (use-package neotree
     :config
         (setq neo-theme 'icons neo-smart-open t)
