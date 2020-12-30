@@ -7429,7 +7429,7 @@ there. It is one of *Psimacs* goals to be a /modern/ editor. Let's see...
 ** Helm
 
 *Psimacs* uses the [[https://github.com/emacs-helm/helm][Helm]] as well as the [[https://oremacs.com/swiper/][Ivy]] / [[https://oremacs.com/swiper/][Counsel]] framework. It is more focused towards the [[https://oremacs.com/swiper/][Ivy]] / [[https://oremacs.com/swiper/][Counsel]]
-tools none the less.
+tools none the less. They both can be used side by side. In *Psimacs*, however [[https://oremacs.com/swiper/][Ivy]] / [[https://oremacs.com/swiper/][Counsel]] takes preference.
 
 #+BEGIN_QUOTE
 [[https://github.com/emacs-helm/helm][Helm]] is an *Emacs* framework for incremental completions and narrowing selections. It provides an easy-to-use
@@ -7440,6 +7440,55 @@ as a main work environment.
 
 References:
 - [[https://emacs-helm.github.io/helm/][Helm Documentation]]
+
+Key bindings that related to [[https://github.com/emacs-helm/helm][Helm]]:
+
+| Key binding     | Command                               | Description                                                                  |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------|
+| =C-x c=         | =M-x helm-command-prefix=             | Prefix key for  [[https://github.com/emacs-helm/helm][Helm]] commands.                                               |
+| =C-x c /=       | =M-x helm-find=                       | Helm for =find= shell command.                                               |
+| =C-x c 8=       | =M-x helm-ucs=                        | Helm for 'usc-names'.                                                        |
+| =C-x c @=       | =M-x helm-list-elisp-packages=        | Helm for listing and handling packages.                                      |
+| =C-x c F=       | =M-x helm-select-xfont=               | Helm to select Xfont.                                                        |
+| =C-x c I=       | =M-x helm-imenu-in-all-buffers=       | Helm for fetching imenu entries in all buffers with similar mode as current. |
+| =C-x c a=       | =M-x helm-apropos=                    | Helm to describe commands, functions, variables and faces.                   |
+| =C-x c b=       | =M-x helm-resume=                     | Resume a previous Helm session.                                              |
+| =C-x c c=       | =M-x helm-colors=                     | Helm for colors.                                                             |
+| =C-x c e=       | =M-x helm-etags-select=               | Helm for etags.                                                              |
+| =C-x c f=       | =M-x helm-multi-files=                | Like =helm-for-files= but running =locate= only on demand.                   |
+| =C-x c i=       | =M-x helm-imenu=                      | Helm for =imenu=.                                                            |
+| =C-x c l=       | =M-x helm-locate=                     | Helm for 'Locate'.                                                           |
+| =C-x c m=       | =M-x helm-man-woman=                  | Helm for Man and Woman pages.                                                |
+| =C-x c p=       | =M-x helm-list-emacs-process=         | Helm for *Emacs* process.                                                    |
+| =C-x c r=       | =M-x helm-regexp=                     | Helm for building regexps.                                                   |
+| =C-x c s=       | =M-x helm-surfraw=                    | Helm to search PATTERN with search ENGINE.                                   |
+| =C-x c t=       | =M-x helm-top=                        | Helm for =top= command.                                                      |
+| =C-x c C-,=     | =M-x helm-calcul-expression=          | Helm for =helm-source-calculation-result=.                                   |
+| =C-x c C-:=     | =M-x helm-eval-expression-with-eldoc= | Helm for =helm-source-evaluation-result= with 'eldoc' support.               |
+| =C-x c <tab>=   | =M-x helm-lisp-completion-at-point=   | Helm for Lisp symbol completion at point.                                    |
+| =C-x c h g=     | =M-x helm-info-gnus=                  | Helm for gnus info.                                                          |
+| =C-x c h h=     | =M-x helm-documentation=              | Helm  for [[https://github.com/emacs-helm/helm][Helm]] documentation.                                                |
+| =C-x c h i=     | =M-x helm-info-at-point=              | Helm for searching info at point.                                            |
+| =C-x c h r=     | =M-x helm-info-emacs=                 | Helm for *Emacs* info.                                                       |
+| =C-x c C-c C-x= | =M-x helm-run-external-command=       | Helm to run external program asynchronously from *Emacs*.                    |
+| =C-x c C-c SPC= | =M-x helm-all-mark-rings=             | Helm for =helm-source-global-mark-ring= and =helm-source-mark-ring=.         |
+| =C-x c C-c f=   | =M-x helm-recentf=                    | Helm for recently used files.                                                |
+| =C-x c M-x=     | =M-x helm-M-x=                        | Helm for *Emacs* commands                                                    |
+| =C-x c C-c g=   | =M-x helm-google-suggest=             | Helm for Google search with Google suggest.                                  |
+| =C-x c M-y=     | =M-x helm-show-kill-ring=             | Helm for =kill-ring=.                                                        |
+| =C-x c M-s o=   | =M-x helm-occur=                      | Helm for searching lines matching pattern in 'current-buffer'.               |
+| =C-x c M-g a=   | =M-x helm-do-grep-ag=                 | Helm for grepping with AG in default directory.                              |
+| =C-x c M-g i=   | =M-x helm-gid=                        | Helm for =gid= command line of =ID-Utils=.                                   |
+| =C-x c C-x C-b= | =M-x helm-buffers-list=               | Helm to list buffers.                                                        |
+| =C-x c C-x C-f= | =M-x helm-find-files=                 | Helm implementatio of =find-file=.                                           |
+| =C-x c C-x r b= | =M-x helm-filtered-bookmarks=         | Helm for bookmarks filtered by category.                                     |
+| =C-x c C-x r i= | =M-x helm-register=                   | Helm for *Emacs* registers.                                                  |
+| =H-m H-h b=     | =M-x helm-descbinds=                  | Helm for =describe-bindings=.                                                |
+| =H-m H-h m=     | =M-x helm-describe-modes=             | Helm for =describe-mode=.                                                    |
+|                 | =M-x helm-help=                       | Generate Helm's help                                                         |
+|                 | =M-x helm-info=                       | Helm for searching Info files.                                               |
+|                 | =M-x helm-mode=                       | Toggle generic helm completion.                                              |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------|
 
 The following [[https://github.com/emacs-helm/helm][Helm]] configuration is taken from [[https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el][init-helm.el]].
 
