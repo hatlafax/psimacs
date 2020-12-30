@@ -7441,6 +7441,12 @@ as a main work environment.
 References:
 - [[https://emacs-helm.github.io/helm/][Helm Documentation]]
 
+See also:
+- [[https://www.reddit.com/r/emacs/comments/7vcrwo/helm_vs_ivy_what_are_the_differences_what_are_the/][Helm vs Ivy: What are the differences, what are the advantages?]]
+- [[https://www.reddit.com/r/emacs/comments/axzpu2/why_do_you_use_helm_over_ivy/][Why do you use Helm over Ivy?]]
+- [[https://www.reddit.com/r/emacs/comments/c0gt96/ido_vs_helm_vs_ivy_which_is_ones_are_the_best/][Ido vs helm vs ivy? Which is ones are the best?]]
+- [[https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/][From helm, to ivy]]
+
 Key bindings that related to [[https://github.com/emacs-helm/helm][Helm]]:
 
 | Key binding     | Command                               | Description                                                                  |
@@ -8194,6 +8200,50 @@ See also:
     :after yasnippet
     :config
         (yasnippet-snippets-initialize)
+)
+#+END_SRC
+
+** Treemacs
+
+[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a tree layout file explorer for *Emacs*.
+
+| Key bindings | Description                  |
+|--------------+------------------------------|
+| =?=          | Summon the helpful hydra.    |
+| =n=          | Next item.                   |
+| =p=          | Previous item.               |
+| =M-n=        | Next item on same level.     |
+| =M-p=        | Previous item on same level. |
+| =u=          | Parent item.                 |
+| =C-n=        | Next project.                |
+| =C-p=        | Previous project.            |
+| =o=          | Open...                      |
+| =q=          | Quit [[https://github.com/Alexander-Miller/treemacs][treemacs]].               |
+|--------------+------------------------------|
+
+| Key binding     | Command                             | Description                                                            |
+|-----------------+-------------------------------------+------------------------------------------------------------------------|
+| =H-m C-x C-t=   | =M-x treemacs=                      | Open [[https://github.com/Alexander-Miller/treemacs][treemacs]].                                                         |
+| =H-m C-x t t=   | =M-x treemacs-select-window=        | Select the [[https://github.com/Alexander-Miller/treemacs][treemacs]] window.                                            |
+| =H-m C-x t 1=   | =M-x treemacs-delete-other-windows= | Same as =delete-other-window= but does not delete the [[https://github.com/Alexander-Miller/treemacs][treemacs]] window. |
+| =H-m C-x t B=   | =M-x treemacs-bookmark=             | Find a bookmark in [[https://github.com/Alexander-Miller/treemacs][treemacs]].                                           |
+| =H-m C-x t C-t= | =M-x treemacs-find-file=            | Find and focus the current file in the current [[https://github.com/Alexander-Miller/treemacs][treemacs]] window.        |
+| =H-m C-x t M-t= | =M-x treemacs-find-tag=             | Find and move the point to the tag at point in the [[https://github.com/Alexander-Miller/treemacs][treemacs]] view.      |
+|-----------------+-------------------------------------+------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-treemacs.el :var file-description="Advanced treemacs setup"
+(use-package treemacs
+    :config
+        (setq treemacs-space-between-root-nodes nil)
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-x C-t"   . treemacs)
+            ("C-x t t"   . treemacs-select-window)
+            ("C-x t 1"   . treemacs-delete-other-windows)
+            ("C-x t B"   . treemacs-bookmark)
+            ("C-x t C-t" . treemacs-find-file)
+            ("C-x t M-t" . treemacs-find-tag)
+        )
 )
 #+END_SRC
 
@@ -9446,6 +9496,13 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-x S RET=     | =M-x sx-tab-all-questions=                                    | Display a list of All-Questions questions for SITE.                                                                                                                                                                                                                                              |
 | =H-m C-x S s=       | =M-x sx-search=                                               | Display search on SITE for question titles containing QUERY.                                                                                                                                                                                                                                     |
 | =H-m C-x S r=       | =M-x sx-question-list-refresh=                                | Update the list of questions.                                                                                                                                                                                                                                                                    |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C-t=       | =M-x treemacs=                                                | Open [[https://github.com/Alexander-Miller/treemacs][treemacs]].                                                                                                                                                                                                                                                                                   |
+| =H-m C-x t t=       | =M-x treemacs-select-window=                                  | Select the [[https://github.com/Alexander-Miller/treemacs][treemacs]] window.                                                                                                                                                                                                                                                                      |
+| =H-m C-x t 1=       | =M-x treemacs-delete-other-windows=                           | Same as =delete-other-window= but does not delete the [[https://github.com/Alexander-Miller/treemacs][treemacs]] window.                                                                                                                                                                                                                           |
+| =H-m C-x t B=       | =M-x treemacs-bookmark=                                       | Find a bookmark in [[https://github.com/Alexander-Miller/treemacs][treemacs]].                                                                                                                                                                                                                                                                     |
+| =H-m C-x t C-t=     | =M-x treemacs-find-file=                                      | Find and focus the current file in the current [[https://github.com/Alexander-Miller/treemacs][treemacs]] window.                                                                                                                                                                                                                                  |
+| =H-m C-x t M-t=     | =M-x treemacs-find-tag=                                       | Find and move the point to the tag at point in the [[https://github.com/Alexander-Miller/treemacs][treemacs]] view.                                                                                                                                                                                                                                |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C-a=       | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
