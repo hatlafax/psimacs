@@ -5734,6 +5734,9 @@ When on, typing any left bracket automatically insert the right matching bracket
 At the moment I have disabled it, because I would like to try [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]] alternative to the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 Actually, I always had some problems with the  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
 
+See also:
+- [[https://github.com/Fuco1/smartparens][smartparens]]
+
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; electric-pair-mode: automatically insert matching bracket.
@@ -5746,6 +5749,9 @@ Actually, I always had some problems with the  [[https://www.gnu.org/software/em
 
 The following code [[http://ergoemacs.org/emacs/elisp_insert_brackets_by_pair.html][Emacs: Insert Brackets by Pair]] is taken from [[http://ergoemacs.org/emacs/emacs.html][Xah Lee]]. It tries to solve some of the
 problems that arise with [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html][electric-pair-mode]].
+
+See also:
+- [[https://github.com/Fuco1/smartparens][smartparens]]
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
@@ -5904,10 +5910,14 @@ Define key bindings for the most important =psimacs/pair/insert-*= commands only
 (define-key psimacs/config/global-key-map/special (kbd "/")  'psimacs/pair/insert-slash)
 #+END_SRC
 
+**** Highlighting of pairs
+
 See matching pairs of parenthesis and other characters. When point is on one of the
 paired characters, the other is highlighted.
 
-See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]]
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]]
+- [[https://github.com/Fuco1/smartparens][smartparens]]
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 ;;
@@ -5924,6 +5934,147 @@ See also: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.h
 
         (setq show-paren-when-point-inside-paren t)
         (setq show-paren-when-point-in-periphery t)
+)
+#+END_SRC
+
+**** Smart parenthesis
+
+The package [[https://github.com/Fuco1/smartparens][smartparens]] is minor mode for *Emacs* that deals with /parens pairs/ and tries to be smart about them.
+
+*Psimacs* does have the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]] active on default. With the command =M-x psimacs/activate/toggle-smartparens-paren-mode=
+which is bound to =H-m C-p C-s t= you can easily toggle between global [[https://github.com/Fuco1/smartparens][smartparens-mode]] and [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]].
+
+Documentation: [[https://smartparens.readthedocs.io/en/latest/][Welcome to Smartparens’s documentation!]]
+
+See also:
+- [[https://ebzzry.io/en/emacs-pairs/][Emacs and Pairs]]
+- [[https://github.com/Fuco1/smartparens/wiki][Smartparens wiki]]
+- [[https://www.youtube.com/watch?v=ykjRUr7FgoI&list=PLP6Xwp2WTft7rAMgVPOTI2OE_PQlKGPy7&feature=plpp_play_all][Smartparens 1 - smart editing of paired expressions in Emacs - part 1 of 2]]
+- [[https://www.youtube.com/watch?v=efSvfqf3Ykw&list=PLP6Xwp2WTft7rAMgVPOTI2OE_PQlKGPy7&index=2][Smartparens 1 - smart editing of paired expressions in Emacs - part 2 of 2]]
+- [[https://www.youtube.com/watch?v=5pRxm0zXgas&list=PLP6Xwp2WTft7rAMgVPOTI2OE_PQlKGPy7&index=3][Smartparens 2 - On the navigation functions]]
+
+*Psimacs* provides the following key bindings for active [[https://github.com/Fuco1/smartparens][smartparens-mode]]:
+
+| Key binding     | Command                                              | Description                                                                    |
+|-----------------+------------------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m C-p C-s t= | =M-x psimacs/activate/toggle-smartparens-paren-mode= | Toggle between  [[https://github.com/Fuco1/smartparens][smartparens-mode]] and [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]].                          |
+|-----------------+------------------------------------------------------+--------------------------------------------------------------------------------|
+| =H-p C-f=       | =M-x sp-forward-sexp=                                | Move forward across one balanced expression.                                   |
+| =H-p C-b=       | =M-x sp-backward-sexp=                               | Move backward across one balanced expression.                                  |
+| =H-p M-F=       | =M-x sp-forward-symbol=                              | Move point to the next position that is the end of a symbol.                   |
+| =H-p M-B=       | =M-x sp-backward-symbol=                             | Move point to the next position that is the beginning of a symbol.             |
+| =H-p C-n=       | =M-x sp-next-sexp=                                   | Move forward to the beginning of next balanced expression.                     |
+| =H-p C-p=       | =M-x sp-previous-sexp=                               | Move backward to the end of previous balanced expression.                      |
+| =H-p M-n=       | =M-x sp-forward-hybrid-sexp=                         | Move forward across one hybrid expression.                                     |
+| =H-p M-p=       | =M-x sp-backward-hybrid-sexp=                        | Move backward across one hybrid expression.                                    |
+| =H-p C-u=       | =M-x sp-up-sexp=                                     | Move forward out of one level of parentheses.                                  |
+| =H-p C-d=       | =M-x sp-down-sexp=                                   | Move forward down one level of sexp.                                           |
+| =H-p M-u=       | =M-x sp-backward-up-sexp=                            | Move backward out of one level of parentheses.                                 |
+| =H-p M-d=       | =M-x sp-backward-down-sexp=                          | Move backward down one level of sexp.                                          |
+| =H-p C-a=       | =M-x sp-beginning-of-sexp=                           | Jump to beginning of the sexp the point is in.                                 |
+| =H-p C-e=       | =M-x sp-end-of-sexp=                                 | Jump to end of the sexp the point is in.                                       |
+| =H-p C-t=       | =M-x sp-transpose-sexp=                              | Transpose the expressions around point.                                        |
+| =H-p M-t=       | =M-x sp-transpose-hybrid-sexp=                       | Transpose the hybrid sexps around point.                                       |
+| =H-p C-k=       | =M-x sp-kill-sexp=                                   | Kill the balanced expression following point.                                  |
+| =H-p M-w=       | =M-x sp-copy-sexp=                                   | Copy the following ARG expressions to the kill-ring.                           |
+| =H-p M-DEL=     | =M-x sp-unwrap-sexp=                                 | Unwrap the following expression.                                               |
+| =H-p M-BCK=     | =M-x sp-backward-unwrap-sexp=                        | Unwrap the previous expression.                                                |
+| =H-p C-<right>= | =M-x sp-forward-slurp-sexp=                          | Add sexp following the current list in it by moving the closing delimiter.     |
+| =H-p C-<left>=  | =M-x sp-backward-slurp-sexp=                         | Add the sexp preceding the current list in it by moving the opening delimiter  |
+| =H-p M-<right>= | =M-x sp-forward-barf-sexp=                           | Remove the last sexp in the current list by moving the closing delimiter.      |
+| =H-p M-<left>=  | =M-x sp-backward-barf-sexp=                          | This is exactly like calling ‘sp-forward-barf-sexp’ with minus ARG.            |
+| =H-p M-D=       | =M-x sp-splice-sexp=                                 | Unwrap the current list.                                                       |
+| =H-p C-M-DEL=   | =M-x sp-splice-sexp-killing-forward=                 | Unwrap the current list and kill all the expressions between.                  |
+| =H-p C-M-BCK=   | =M-x sp-splice-sexp-killing-backward=                | Unwrap the current list and kill all the expressions.                          |
+| =H-p C-S-BCK=   | =M-x sp-splice-sexp-killing-around=                  | Unwrap the current list and kill everything inside except next expression.     |
+| =H-p C-s N=     | =M-x sp-select-next-thing-exchange=                  | Just like =sp-select-next-thing= but run =exchange-point-and-mark= afterwards. |
+| =H-p C-s n=     | =M-x sp-select-next-thing=                           | Set active region over next thing as recognized by 'sp-get-thing'.             |
+| =H-p C-s p=     | =M-x sp-select-previous-thing=                       | Set active region over ARG previous things as recognized by 'sp-get-thing'.    |
+| =H-p C-c i=     | =M-x sp-change-inner=                                | Change the inside of the next expression.                                      |
+| =H-p M-c e=     | =M-x sp-change-enclosing=                            | Change the inside of the enclosing expression.                                 |
+|-----------------+------------------------------------------------------+--------------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Smart parenthesis handling inclusive pair highlighting
+;;
+(use-package smartparens
+    :diminish smartparens-global-mode
+    :config
+        (require 'smartparens-config)
+
+
+        (defun psimacs/activate/toggle-smartparens-paren-mode ()
+          "Toggle between 'smartparens' and show-paren' modes.
+Either global 'smartparens-mode' and 'show-smartparens-mode' are active or the build-in 'show-paren-mode'.
+"
+          (interactive)
+          (if show-smartparens-mode
+              (progn
+                (turn-off-smartparens-mode)
+                (turn-off-show-smartparens-mode)
+                (setq paren-showing t)
+                (message "Disabled smartparens-mode")
+                )
+            ;; else
+            (progn
+              (setq paren-showing nil)
+              (turn-on-smartparens-mode)
+              (turn-on-show-smartparens-mode)
+              (message "Enabled smartparens-mode")
+              )))
+        :bind (
+                :map psimacs/config/global-key-map/special
+                    ("C-p C-s t" . psimacs/activate/toggle-smartparens-paren-mode)
+                :map smartparens-mode-map
+                    ("H-p C-f"             . sp-forward-sexp)
+                    ("H-p C-b"             . sp-backward-sexp)
+
+                    ("H-p M-F"             . sp-forward-symbol)
+                    ("H-p M-B"             . sp-backward-symbol)
+
+                    ("H-p C-n"             . sp-next-sexp)
+                    ("H-p C-p"             . sp-previous-sexp)
+
+                    ("H-p M-n"             . sp-forward-hybrid-sexp)
+                    ("H-p M-p"             . sp-backward-hybrid-sexp)
+
+                    ("H-p C-u"             . sp-up-sexp)
+                    ("H-p C-d"             . sp-down-sexp)
+
+                    ("H-p M-u"             . sp-backward-up-sexp)
+                    ("H-p M-d"             . sp-backward-down-sexp)
+
+                    ("H-p C-a"             . sp-beginning-of-sexp)
+                    ("H-p C-e"             . sp-end-of-sexp)
+
+                    ("H-p C-t"             . sp-transpose-sexp)
+                    ("H-p M-t"             . sp-transpose-hybrid-sexp)
+
+                    ("H-p C-k"             . sp-kill-sexp)
+                    ("H-p M-w"             . sp-copy-sexp)
+
+                    ("H-p M-<delete>"      . sp-unwrap-sexp)
+                    ("H-p M-<backspace>"   . sp-backward-unwrap-sexp)
+
+                    ("H-p C-<right>"       . sp-forward-slurp-sexp)
+                    ("H-p C-<left>"        . sp-backward-slurp-sexp)
+
+                    ("H-p M-<right>"       . sp-forward-barf-sexp)
+                    ("H-p M-<left>"        . sp-backward-barf-sexp)
+
+                    ("H-p M-D"             . sp-splice-sexp)
+                    ("H-p C-M-<delete>"    . sp-splice-sexp-killing-forward)
+                    ("H-p C-M-<backspace>" . sp-splice-sexp-killing-backward)
+                    ("H-p C-S-<backspace>" . sp-splice-sexp-killing-around)
+
+                    ("H-p C-s N"           . sp-select-next-thing-exchange)
+                    ("H-p C-s p"           . sp-select-previous-thing)
+                    ("H-p C-s n"           . sp-select-next-thing)
+
+                    ("H-p C-c i"           . sp-change-inner)
+                    ("H-p M-c e"           . sp-change-enclosing)
+              )
 )
 #+END_SRC
 
@@ -9709,6 +9860,43 @@ by the various packages nor by *Emacs* itself.
 | =H-m H-x m=         | =M-x amx-mode=                                                | Toggle [[https://github.com/DarwinAwardWinner/amx][amx-mode]].                                                                                                                                                                                                                                                                                 |
 | =H-m H-x u=         | =M-x amx-show-unbound-commands=                               | Shows frequently used commands that have no key bindings.                                                                                                                                                                                                                                        |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-s t=     | =M-x psimacs/activate/toggle-smartparens-paren-mode=          | Toggle between  [[https://github.com/Fuco1/smartparens][smartparens-mode]] and [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]].                                                                                                                                                                                                                                            |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-p C-f=           | =M-x sp-forward-sexp=                                         | Move forward across one balanced expression.                                                                                                                                                                                                                                                     |
+| =H-p C-b=           | =M-x sp-backward-sexp=                                        | Move backward across one balanced expression.                                                                                                                                                                                                                                                    |
+| =H-p M-F=           | =M-x sp-forward-symbol=                                       | Move point to the next position that is the end of a symbol.                                                                                                                                                                                                                                     |
+| =H-p M-B=           | =M-x sp-backward-symbol=                                      | Move point to the next position that is the beginning of a symbol.                                                                                                                                                                                                                               |
+| =H-p C-n=           | =M-x sp-next-sexp=                                            | Move forward to the beginning of next balanced expression.                                                                                                                                                                                                                                       |
+| =H-p C-p=           | =M-x sp-previous-sexp=                                        | Move backward to the end of previous balanced expression.                                                                                                                                                                                                                                        |
+| =H-p M-n=           | =M-x sp-forward-hybrid-sexp=                                  | Move forward across one hybrid expression.                                                                                                                                                                                                                                                       |
+| =H-p M-p=           | =M-x sp-backward-hybrid-sexp=                                 | Move backward across one hybrid expression.                                                                                                                                                                                                                                                      |
+| =H-p C-u=           | =M-x sp-up-sexp=                                              | Move forward out of one level of parentheses.                                                                                                                                                                                                                                                    |
+| =H-p C-d=           | =M-x sp-down-sexp=                                            | Move forward down one level of sexp.                                                                                                                                                                                                                                                             |
+| =H-p M-u=           | =M-x sp-backward-up-sexp=                                     | Move backward out of one level of parentheses.                                                                                                                                                                                                                                                   |
+| =H-p M-d=           | =M-x sp-backward-down-sexp=                                   | Move backward down one level of sexp.                                                                                                                                                                                                                                                            |
+| =H-p C-a=           | =M-x sp-beginning-of-sexp=                                    | Jump to beginning of the sexp the point is in.                                                                                                                                                                                                                                                   |
+| =H-p C-e=           | =M-x sp-end-of-sexp=                                          | Jump to end of the sexp the point is in.                                                                                                                                                                                                                                                         |
+| =H-p C-t=           | =M-x sp-transpose-sexp=                                       | Transpose the expressions around point.                                                                                                                                                                                                                                                          |
+| =H-p M-t=           | =M-x sp-transpose-hybrid-sexp=                                | Transpose the hybrid sexps around point.                                                                                                                                                                                                                                                         |
+| =H-p C-k=           | =M-x sp-kill-sexp=                                            | Kill the balanced expression following point.                                                                                                                                                                                                                                                    |
+| =H-p M-w=           | =M-x sp-copy-sexp=                                            | Copy the following ARG expressions to the kill-ring.                                                                                                                                                                                                                                             |
+| =H-p M-DEL=         | =M-x sp-unwrap-sexp=                                          | Unwrap the following expression.                                                                                                                                                                                                                                                                 |
+| =H-p M-BCK=         | =M-x sp-backward-unwrap-sexp=                                 | Unwrap the previous expression.                                                                                                                                                                                                                                                                  |
+| =H-p C-<right>=     | =M-x sp-forward-slurp-sexp=                                   | Add sexp following the current list in it by moving the closing delimiter.                                                                                                                                                                                                                       |
+| =H-p C-<left>=      | =M-x sp-backward-slurp-sexp=                                  | Add the sexp preceding the current list in it by moving the opening delimiter                                                                                                                                                                                                                    |
+| =H-p M-<right>=     | =M-x sp-forward-barf-sexp=                                    | Remove the last sexp in the current list by moving the closing delimiter.                                                                                                                                                                                                                        |
+| =H-p M-<left>=      | =M-x sp-backward-barf-sexp=                                   | This is exactly like calling ‘sp-forward-barf-sexp’ with minus ARG.                                                                                                                                                                                                                              |
+| =H-p M-D=           | =M-x sp-splice-sexp=                                          | Unwrap the current list.                                                                                                                                                                                                                                                                         |
+| =H-p C-M-DEL=       | =M-x sp-splice-sexp-killing-forward=                          | Unwrap the current list and kill all the expressions between.                                                                                                                                                                                                                                    |
+| =H-p C-M-BCK=       | =M-x sp-splice-sexp-killing-backward=                         | Unwrap the current list and kill all the expressions.                                                                                                                                                                                                                                            |
+| =H-p C-S-BCK=       | =M-x sp-splice-sexp-killing-around=                           | Unwrap the current list and kill everything inside except next expression.                                                                                                                                                                                                                       |
+| =H-p C-s N=         | =M-x sp-select-next-thing-exchange=                           | Just like =sp-select-next-thing= but run =exchange-point-and-mark= afterwards.                                                                                                                                                                                                                   |
+| =H-p C-s n=         | =M-x sp-select-next-thing=                                    | Set active region over next thing as recognized by 'sp-get-thing'.                                                                                                                                                                                                                               |
+| =H-p C-s p=         | =M-x sp-select-previous-thing=                                | Set active region over ARG previous things as recognized by 'sp-get-thing'.                                                                                                                                                                                                                      |
+| =H-p C-c i=         | =M-x sp-change-inner=                                         | Change the inside of the next expression.                                                                                                                                                                                                                                                        |
+| =H-p M-c e=         | =M-x sp-change-enclosing=                                     | Change the inside of the enclosing expression.                                                                                                                                                                                                                                                   |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
 | =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
 | =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
