@@ -8805,6 +8805,60 @@ The package [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra
 )
 #+END_SRC
 
+** Magit
+
+[[https://magit.vc/][Magit]] is an interface to the version control system  [[https://git-scm.com/][Git]] , implemented
+as an *Emacs* package.
+
+#+BEGIN_QUOTE
+Magit is a complete text-based user interface to Git. It fills the glaring gap between the Git
+command-line interface and various GUIs, letting you perform trivial as well as elaborate version
+control tasks with just a couple of mnemonic key presses. Magit looks like a prettified version of
+what you get after running a few Git commands but in Magit every bit of visible information is also
+actionable to an extent that goes far beyond what any Git GUI provides and it takes care of
+automatically refreshing this output when it becomes outdated. In the background Magit just runs
+Git commands and if you wish you can see what exactly is being run, making it possible for you to
+learn the git command-line by using Magit.
+
+Using Magit for a while will make you a more effective version control user.
+Magit supports and streamlines the use of Git features that most users and developers of other
+Git clients apparently thought could not be reasonably mapped to a non-command-line interface.
+Magit is both faster and more intuitive than either the command line or any GUI and these holds
+for both Git beginners and experts alike.
+#+END_QUOTE
+
+See also:
+- [[https://magit.vc/][Magit - A Git Porcelain inside Emacs]]
+- [[https://magit.vc/manual/magit/#Top][Manual]]
+- [[https://magit.vc/manual/magit-refcard.pdf][Reference Card]]
+- [[https://git-scm.com/][Git]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
+;;
+;; User interface for Git
+;;
+(use-package magit
+    :bind (
+         :map psimacs/config/global-key-map/special
+             ("C-c g s" . magit-status)
+         )
+    :config
+        (add-hook 'git-commit-setup-hook 'flyspell-mode)
+
+)
+#+END_SRC
+
+*** Git timemachine
+
+The following utility allows us to =M-x git-timemachine= on a file and use =p=/=n=/=g=/=q= to look
+at previous, next, goto arbitrary historic versions, or quit.
+
+See also: [[https://github.com/emacsmirror/git-timemachine][git-timemachine]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-magit.el
+(use-package git-timemachine)
+#+END_SRC
+
 * Major Modes
 ** Org-Mode
 
