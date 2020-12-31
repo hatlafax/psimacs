@@ -1874,6 +1874,23 @@ The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
   "The psimacs amx file.")
 #+END_SRC
 
+** The Treemacs constants
+
+[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a tree layout file explorer for *Emacs*.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Treemacs package support files
+;;
+(defconst psimacs/config/treemacs-persist-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".treemacs-persist")
+  "The psimacs treemacs persist file.")
+
+(defconst psimacs/config/treemacs-last-error-persist-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".treemacs-last-error-persist")
+  "The psimacs treemacs last error persist file.")
+#+END_SRC
+
 ** MSYS2
 
 *Psimacs* uses a lot of external programs provided by the [[https://www.msys2.org/][MSYS2]] framework.  [[https://www.msys2.org/][MSYS2]] is a collection of tools and
@@ -7657,6 +7674,49 @@ See also:
 )
 #+END_SRC
 
+** Edit multiple regions
+
+The package [[https://github.com/victorhge/iedit][iedit]] provides two *Emacs* minor modes
+=iedit-mode= and =iedit-rectangle-mode= and allows you to edit one occurrence of some text
+in a buffer (possibly narrowed) or region, and simultaneously have other occurrences edited
+in the same way, with visual feedback as you type.
+
+See also:
+- [[https://github.com/victorhge/iedit][Iedit - Edit multiple regions in the same way simultaneously]]
+- [[https://www.emacswiki.org/emacs/DuplicateStartOfLineOrRegion][WikiEmacs: Duplicate Start Of Line Or Region]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Multiple places text editing
+;;
+(use-package iedit)
+#+END_SRC
+
+** Easy duplicate
+
+The package [[https://github.com/ongaeshi/duplicate-thing][duplicate-thing]] provides functionality
+that allows you to /duplicate whatever's marked/, i.e. easy duplication of line or region, with comment out.
+
+Duplicate line or region N times.
+- If it has active mark, it will expand the selection and duplicate it.
+- If it doesn't have active mark, it will select current line and duplicate it.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Provide region duplication functionality
+;;
+(use-package duplicate-thing
+    :init
+        (defun psimacs/string/duplicate-thing ()
+            "Duplicate thing at point without changing the mark."
+            (interactive)
+            (save-mark-and-excursion (duplicate-thing 1)))
+    :bind (
+            ("M-c"     . psimacs/string/duplicate-thing)
+        )
+)
+#+END_SRC
+
 * Utility Lisp functions
 
 All functions defined in *Psimacs* are prefixed by =psimacs/category=. For example
@@ -8643,7 +8703,10 @@ See also:
 ;;
 (use-package treemacs
     :config
-        (setq treemacs-space-between-root-nodes nil)
+        (setq treemacs-space-between-root-nodes nil
+              treemacs-persist-file             psimacs/config/treemacs-persist-file
+              treemacs-last-error-persist-file  psimacs/config/treemacs-last-error-persist-file)
+
     :bind (
         :map psimacs/config/global-key-map/special
             ("C-x C-t"   . treemacs)
