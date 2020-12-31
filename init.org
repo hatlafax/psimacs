@@ -6969,6 +6969,58 @@ This support package is used by [[https://orgmode.org][org-mode]] to produce col
 (use-package htmlize)
 #+END_SRC
 
+*** Multiple Cursors
+
+[[https://github.com/magnars/multiple-cursors.el][Multiple-cursors]] is a very nice package that lets you create several cursors that all
+do the same thing as you type.
+
+See also:
+- [[http://emacsrocks.com/e13.html][Emacs Rocks: Multiple cursors]]
+- [[http://pragmaticemacs.com/emacs/multiple-cursors/][Multiple cursors]],
+
+#+ATTR_HTML: :class styledtable
+| Key binding     | Command                                      | Description                                                                        |
+|-----------------+----------------------------------------------+------------------------------------------------------------------------------------|
+| =H-m H-c e l=   | =M-x mc/edit-lines=                          | Add one cursor to each line of the active region.                                  |
+| =H-m H-c e C-a= | =M-x mc/edit-beginnings-of-lines=            | Add one cursor to the beginning of each line in the active region.                 |
+| =H-m H-c e C-e= | =M-x mc/edit-ends-of-lines=                  | Add one cursor to the end of each line in the active region.                       |
+| =H-m H-c i n=   | =M-x mc/insert-numbers=                      | Insert increasing numbers for each cursor, starting at 0.                          |
+| =H-m H-c m n=   | =M-x mc/mark-next-like-this=                 | Find and mark the next part of the buffer matching the currently active region     |
+| =H-m H-c m p=   | =M-x mc/mark-previous-like-this=             | Find and mark the prev part of the buffer matching the currently active region |
+| =H-m H-c m a=   | =M-x mc/mark-all-like-this=                  | Find and mark all the parts of the buffer matching the currently active region     |
+| =H-m H-c m d=   | =M-x mc/mark-all-symbols-like-this-in-defun= | Mark all symbols like this in defun.                                               |
+| =H-m H-c u n=   | =M-x mc/unmark-next-like-this=               | Deselect next part of the buffer matching the currently active region.             |
+| =H-m H-c u p=   | =M-x mc/unmark-previous-like-this=           | Deselect prev part of the buffer matching the currently active region.                                                                                   |
+| =H-m H-c r r=   | =M-x mc/reverse-regions=                     |                                                                                    |
+| =H-m H-c r s=   | =M-x mc/sort-regions=                        |                                                                                    |
+| =H-m H-c h m=   | =M-x mc-hide-unmatched-lines-mode=           | Minor mode when enabled hides all lines where no cursors is.                       |
+|-----------------+----------------------------------------------+------------------------------------------------------------------------------------|
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Multiple cursors for Emacs
+;;
+(use-package multiple-cursors
+    :bind (
+            :map psimacs/config/global-key-map/special
+                ("H-c e l"   . mc/edit-lines)
+                ("H-c e C-a" . mc/edit-beginnings-of-lines)
+                ("H-c e C-e" . mc/edit-ends-of-lines)
+                ("H-c i n"   . mc/insert-numbers)
+                ("H-c m n"   . mc/mark-next-like-this)
+                ("H-c m p"   . mc/mark-previous-like-this)
+                ("H-c m a"   . mc/mark-all-like-this)
+                ("H-c m d"   . mc/mark-all-symbols-like-this-in-defun)
+                ("H-c u n"   . mc/unmark-next-like-this)
+                ("H-c u p"   . mc/unmark-previous-like-this)
+                ("H-c r r"   . mc/reverse-regions)
+                ("H-c r s"   . mc/sort-regions)
+                ("H-c h m"   . mc-hide-unmatched-lines-mode)
+          )
+)
+#+END_SRC
+
 ** Language support
 
 This section treat some tools for written language spell and grammar checking. Additionally, access is gained
@@ -7519,6 +7571,90 @@ bindings and commands that comes into play when you actively participate in the 
 ;                   ("a" . sx-ask)
                    ("r" . sx-question-list-refresh)
                    ("s" . sx-search)))
+#+END_SRC
+
+** Crux
+The package [[https://github.com/bbatsov/crux][crux]] is a collection of useful extensions for *Emacs*.
+[[https://github.com/bbatsov/crux][Crux]] bundles many useful interactive commands to enhance your
+overall *Emacs* experience.
+
+See also:
+- [[https://github.com/bbatsov/crux][crux]]
+- [[http://emacsredux.com/blog/2016/01/30/crux/][Emacs Redux: Crux]]
+
+#+ATTR_HTML: :class styledtable
+| Key binding       | Command                                                 | Description                                                               |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------|
+| =H-x H-x C-c o=   | =M-x crux-open-with=                                    | Open the currently visited file with an external program.                 |
+| =H-x H-x C-k=     | =M-x crux-smart-kill-line=                              | First kill to end of line, then kill the whole line.                      |
+| =H-x H-x C-S-RET= | =M-x crux-smart-open-line-above=                        | Insert an empty line above the current line and indent it properly.       |
+| =H-x H-x S-RET=   | =M-x crux-smart-open-line=                              | Insert an empty line and indent it properly (as in most IDEs).            |
+| =H-x H-x C-c n=   | =M-x crux-cleanup-buffer-or-region=                     | Fix indentation in buffer and strip whitespace.                           |
+| =H-x H-x C-c f=   | =M-x crux-recentf-find-file=                            | Open recently visited file.                                               |
+| =H-x H-x C-c u=   | =M-x crux-view-url=                                     | Open a new buffer containing the contents of URL.                         |
+| =H-x H-x C-c e=   | =M-x crux-eval-and-replace=                             | Eval a bit of Emacs Lisp code and replace it with its result.             |
+| =H-x H-x C-x 4 t= | =M-x crux-transpose-windows=                            | Transpose the buffers between two windows.                                |
+| =H-x H-x C-c D=   | =M-x crux-delete-file-and-buffer=                       | Delete current file and buffer.                                           |
+| =H-x H-x C-c c=   | =M-x crux-copy-file-preserve-attributes=                | Copy current file with file attributes preserved                          |
+| =H-x H-x C-c d=   | =M-x crux-duplicate-current-line-or-region=             | Duplicate the current line (or region).                                   |
+| =H-x H-x C-c M-d= | =M-x crux-duplicate-and-comment-current-line-or-region= | Duplicate and comment the current line (or region).                       |
+| =H-x H-x C-c r=   | =M-x crux-rename-file-and-buffer=                       | Rename the current buffer and its visiting file if any.                   |
+| =H-x H-x C-c t=   | =M-x crux-visit-term-buffer=                            | Open a terminal emulator (ansi-term).                                     |
+| =H-x H-x C-c k=   | =M-x crux-kill-other-buffers=                           | Kill all open buffers except the one you're currently in.                 |
+| =H-x H-x C-M z=   | =M-x crux-indent-defun=                                 | Indent the definition at point.                                           |
+| =H-x H-x C-c TAB= | =M-x crux-indent-rigidly-and-copy-to-clipboard=         | Indent and copy region to clipboard                                       |
+| =H-x H-x C-c I=   | =M-x crux-find-user-init-file=                          | Open user's init file.                                                    |
+| =H-x H-x C-c ,=   | =M-x crux-find-user-custom-file=                        | Open user's custom file.                                                  |
+| =H-x H-x C-c S=   | =M-x crux-find-shell-init-file=                         | Open shell's init file.                                                   |
+| =H-x H-x C-j=     | =M-x crux-top-join-line=                                | Join lines                                                                |
+| =H-x H-x C-K=     | =M-x crux-kill-whole-line=                              | Kill whole line                                                           |
+| =H-x H-x C-BCK=   | =M-x crux-kill-line-backwards=                          | Kill line backwards                                                       |
+| =H-x H-x C-S-BCK= | =M-x crux-kill-and-join-forward=                        | If at end of line, join with following; otherwise kill line.              |
+| =H-x H-x C-c P=   | =M-x crux-kill-buffer-truename=                         | Kill absolute path of file visited in current buffer.                     |
+| =H-x H-x C-c i=   | =M-x crux-ispell-word-then-abbrev=                      | Fix word using ispell and then save to abbrev.                            |
+| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                                | Upcase-region when transient-mark-mode is on and region is active.        |
+| =H-x H-x C-x C-l= | =M-x crux-downcase-region=                              | Downcase-region when transient-mark-mode is on and region is active.      |
+| =H-x H-x C-x M-c= | =M-x crux-capitalize-region=                            | Capitalize-region when transient-mark-mode is on and region is active.    |
+| =H-x H-x M-o=     | =M-x crux-other-window-or-switch-buffer=                | Select other window, or switch to most recent buffer if only one windows. |
+|-------------------+---------------------------------------------------------+---------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-crux.el :var file-description="Basic crux setup"
+(use-package crux
+    :bind (
+        :map psimacs/config/global-key-map/execute
+            ("H-x C-c o"           . crux-open-with)
+            ("H-x C-k"             . crux-smart-kill-line)
+            ("H-x C-S-<ret>"       . crux-smart-open-line-above)
+            ("H-x S-<ret>"         . crux-smart-open-line)
+            ("H-x C-c n"           . crux-cleanup-buffer-or-region)
+            ("H-x C-c f"           . crux-recentf-find-file)
+            ("H-x C-c u"           . crux-view-url)
+            ("H-x C-c e"           . crux-eval-and-replace)
+            ("H-x C-x 4 t"         . crux-transpose-windows)
+            ("H-x C-c D"           . crux-delete-file-and-buffer)
+            ("H-x C-c c"           . crux-copy-file-preserve-attributes)
+            ("H-x C-c d"           . crux-duplicate-current-line-or-region)
+            ("H-x C-c M-d"         . crux-duplicate-and-comment-current-line-or-region)
+            ("H-x C-c r"           . crux-rename-file-and-buffer)
+            ("H-x C-c t"           . crux-visit-term-buffer)
+            ("H-x C-c k"           . crux-kill-other-buffers)
+            ("H-x C-M z"           . crux-indent-defun)
+            ("H-x C-c <tab>"       . crux-indent-rigidly-and-copy-to-clipboard)
+            ("H-x C-c I"           . crux-find-user-init-file)
+            ("H-x C-c ,"           . crux-find-user-custom-file)
+            ("H-x C-c S"           . crux-find-shell-init-file)
+            ("H-x C-j"             . crux-top-join-line)
+            ("H-x C-K"             . crux-kill-whole-line)
+            ("H-x C-<backspace>"   . crux-kill-line-backwards)
+            ("H-x C-S-<backspace>" . crux-kill-and-join-forward)
+            ("H-x C-c P"           . crux-kill-buffer-truename)
+            ("H-x C-c i"           . crux-ispell-word-then-abbrev)
+            ("H-x C-x C-u"         . crux-upcase-region)
+            ("H-x C-x C-l"         . crux-downcase-region)
+            ("H-x C-x M-c"         . crux-capitalize-region)
+            ("H-x M-o"             . crux-other-window-or-switch-buffer)
+    )
+)
 #+END_SRC
 
 * Utility Lisp functions
@@ -8833,6 +8969,11 @@ See also:
 - [[https://magit.vc/manual/magit-refcard.pdf][Reference Card]]
 - [[https://git-scm.com/][Git]]
 
+| Key binding   | Command            | Description             |
+|---------------+--------------------+-------------------------|
+| =H-m C-c g s= | =M-x magit-status= | Run git status command. |
+|---------------+--------------------+-------------------------|
+
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
 ;;
 ;; User interface for Git
@@ -9790,6 +9931,8 @@ by the various packages nor by *Emacs* itself.
 | =<f12>=             | =M-x cua-mode=                                                | Toggle CUA mode.                                                                                                                                                                                                                                                                                 |
 | =H-m c=             | =M-x cua-mode=                                                | Toggle CUA mode.                                                                                                                                                                                                                                                                                 |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-c g s=       | =M-x magit-status=                                            | Run git status command.                                                                                                                                                                                                                                                                          |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-c C-h=       | (find-file-read-only history-file)                            | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f m=         | =M-x flyspell-mode=                                           | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
@@ -9903,6 +10046,20 @@ by the various packages nor by *Emacs* itself.
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C-a=       | =M-x abbrev-mode=                                             | Enable/Disable abbreviation mode.                                                                                                                                                                                                                                                                |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m H-c e l=       | =M-x mc/edit-lines=                                           | Add one cursor to each line of the active region.                                                                                                                                                                                                                                                |
+| =H-m H-c e C-a=     | =M-x mc/edit-beginnings-of-lines=                             | Add one cursor to the beginning of each line in the active region.                                                                                                                                                                                                                               |
+| =H-m H-c e C-e=     | =M-x mc/edit-ends-of-lines=                                   | Add one cursor to the end of each line in the active region.                                                                                                                                                                                                                                     |
+| =H-m H-c i n=       | =M-x mc/insert-numbers=                                       | Insert increasing numbers for each cursor, starting at 0.                                                                                                                                                                                                                                        |
+| =H-m H-c m n=       | =M-x mc/mark-next-like-this=                                  | Find and mark the next part of the buffer matching the currently active region                                                                                                                                                                                                                   |
+| =H-m H-c m p=       | =M-x mc/mark-previous-like-this=                              | Find and mark the prev part of the buffer matching the currently active region                                                                                                                                                                                                                   |
+| =H-m H-c m a=       | =M-x mc/mark-all-like-this=                                   | Find and mark all the parts of the buffer matching the currently active region                                                                                                                                                                                                                   |
+| =H-m H-c m d=       | =M-x mc/mark-all-symbols-like-this-in-defun=                  | Mark all symbols like this in defun.                                                                                                                                                                                                                                                             |
+| =H-m H-c u n=       | =M-x mc/unmark-next-like-this=                                | Deselect next part of the buffer matching the currently active region.                                                                                                                                                                                                                           |
+| =H-m H-c u p=       | =M-x mc/unmark-previous-like-this=                            | Deselect prev part of the buffer matching the currently active region.                                                                                                                                                                                                                           |
+| =H-m H-c r r=       | =M-x mc/reverse-regions=                                      |                                                                                                                                                                                                                                                                                                  |
+| =H-m H-c r s=       | =M-x mc/sort-regions=                                         |                                                                                                                                                                                                                                                                                                  |
+| =H-m H-c h m=       | =M-x mc-hide-unmatched-lines-mode=                            | Minor mode when enabled hides all lines where no cursors is.                                                                                                                                                                                                                                     |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m H-h C-m=       | =M-x discover-my-major=                                       | Create a listing of all major-mode keys with their description.                                                                                                                                                                                                                                  |
 | =H-m H-h M-m=       | =M-x discover-my-mode=                                        | Create a listing of all MODE keys with their description.                                                                                                                                                                                                                                        |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -9950,7 +10107,6 @@ by the various packages nor by *Emacs* itself.
 | =H-p C-c i=         | =M-x sp-change-inner=                                         | Change the inside of the next expression.                                                                                                                                                                                                                                                        |
 | =H-p M-c e=         | =M-x sp-change-enclosing=                                     | Change the inside of the enclosing expression.                                                                                                                                                                                                                                                   |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-
 | =H-x r=             | =M-x recentf-open-files=                                      | Show a dialog to open a recent file.                                                                                                                                                                                                                                                             |
 | =H-x C-r=           | =M-x recentf-open-more-files=                                 | Show a dialog to open a recent file that is not in the menu.                                                                                                                                                                                                                                     |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -9961,4 +10117,36 @@ by the various packages nor by *Emacs* itself.
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x C c=           | =M-x recentf-cleanup=                                         | Cleanup the recent file list.                                                                                                                                                                                                                                                                    |
 | =H-x C C-c=         | =M-x psimacs/config/recentf-cleanup-directory-files=          | Remove all files of DIR from recent file list.                                                                                                                                                                                                                                                   |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x H-x C-c o=     | =M-x crux-open-with=                                          | Open the currently visited file with an external program.                                                                                                                                                                                                                                        |
+| =H-x H-x C-k=       | =M-x crux-smart-kill-line=                                    | First kill to end of line, then kill the whole line.                                                                                                                                                                                                                                             |
+| =H-x H-x C-S-RET=   | =M-x crux-smart-open-line-above=                              | Insert an empty line above the current line and indent it properly.                                                                                                                                                                                                                              |
+| =H-x H-x S-RET=     | =M-x crux-smart-open-line=                                    | Insert an empty line and indent it properly (as in most IDEs).                                                                                                                                                                                                                                   |
+| =H-x H-x C-c n=     | =M-x crux-cleanup-buffer-or-region=                           | Fix indentation in buffer and strip whitespace.                                                                                                                                                                                                                                                  |
+| =H-x H-x C-c f=     | =M-x crux-recentf-find-file=                                  | Open recently visited file.                                                                                                                                                                                                                                                                      |
+| =H-x H-x C-c u=     | =M-x crux-view-url=                                           | Open a new buffer containing the contents of URL.                                                                                                                                                                                                                                                |
+| =H-x H-x C-c e=     | =M-x crux-eval-and-replace=                                   | Eval a bit of Emacs Lisp code and replace it with its result.                                                                                                                                                                                                                                    |
+| =H-x H-x C-x 4 t=   | =M-x crux-transpose-windows=                                  | Transpose the buffers between two windows.                                                                                                                                                                                                                                                       |
+| =H-x H-x C-c D=     | =M-x crux-delete-file-and-buffer=                             | Delete current file and buffer.                                                                                                                                                                                                                                                                  |
+| =H-x H-x C-c c=     | =M-x crux-copy-file-preserve-attributes=                      | Copy current file with file attributes preserved                                                                                                                                                                                                                                                 |
+| =H-x H-x C-c d=     | =M-x crux-duplicate-current-line-or-region=                   | Duplicate the current line (or region).                                                                                                                                                                                                                                                          |
+| =H-x H-x C-c M-d=   | =M-x crux-duplicate-and-comment-current-line-or-region=       | Duplicate and comment the current line (or region).                                                                                                                                                                                                                                              |
+| =H-x H-x C-c r=     | =M-x crux-rename-file-and-buffer=                             | Rename the current buffer and its visiting file if any.                                                                                                                                                                                                                                          |
+| =H-x H-x C-c t=     | =M-x crux-visit-term-buffer=                                  | Open a terminal emulator (ansi-term).                                                                                                                                                                                                                                                            |
+| =H-x H-x C-c k=     | =M-x crux-kill-other-buffers=                                 | Kill all open buffers except the one you're currently in.                                                                                                                                                                                                                                        |
+| =H-x H-x C-M z=     | =M-x crux-indent-defun=                                       | Indent the definition at point.                                                                                                                                                                                                                                                                  |
+| =H-x H-x C-c TAB=   | =M-x crux-indent-rigidly-and-copy-to-clipboard=               | Indent and copy region to clipboard                                                                                                                                                                                                                                                              |
+| =H-x H-x C-c I=     | =M-x crux-find-user-init-file=                                | Open user's init file.                                                                                                                                                                                                                                                                           |
+| =H-x H-x C-c ,=     | =M-x crux-find-user-custom-file=                              | Open user's custom file.                                                                                                                                                                                                                                                                         |
+| =H-x H-x C-c S=     | =M-x crux-find-shell-init-file=                               | Open shell's init file.                                                                                                                                                                                                                                                                          |
+| =H-x H-x C-j=       | =M-x crux-top-join-line=                                      | Join lines                                                                                                                                                                                                                                                                                       |
+| =H-x H-x C-K=       | =M-x crux-kill-whole-line=                                    | Kill whole line                                                                                                                                                                                                                                                                                  |
+| =H-x H-x C-BCK=     | =M-x crux-kill-line-backwards=                                | Kill line backwards                                                                                                                                                                                                                                                                              |
+| =H-x H-x C-S-BCK=   | =M-x crux-kill-and-join-forward=                              | If at end of line, join with following; otherwise kill line.                                                                                                                                                                                                                                     |
+| =H-x H-x C-c P=     | =M-x crux-kill-buffer-truename=                               | Kill absolute path of file visited in current buffer.                                                                                                                                                                                                                                            |
+| =H-x H-x C-c i=     | =M-x crux-ispell-word-then-abbrev=                            | Fix word using ispell and then save to abbrev.                                                                                                                                                                                                                                                   |
+| =H-x H-x C-x C-u=   | =M-x crux-upcase-region=                                      | Upcase-region when transient-mark-mode is on and region is active.                                                                                                                                                                                                                               |
+| =H-x H-x C-x C-l=   | =M-x crux-downcase-region=                                    | Downcase-region when transient-mark-mode is on and region is active.                                                                                                                                                                                                                             |
+| =H-x H-x C-x M-c=   | =M-x crux-capitalize-region=                                  | Capitalize-region when transient-mark-mode is on and region is active.                                                                                                                                                                                                                           |
+| =H-x H-x M-o=       | =M-x crux-other-window-or-switch-buffer=                      | Select other window, or switch to most recent buffer if only one windows.                                                                                                                                                                                                                        |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
