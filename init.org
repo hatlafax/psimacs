@@ -6532,6 +6532,66 @@ Do not warn for large files.
 (setq large-file-warning-threshold nil)
 #+END_SRC
 
+*** Whitespace Mode
+
+*Emacs's* [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html][whitespace-mode]]
+is a minor mode to visualize blanks, i.e. /TAB, SPACE and NEWLINE/.
+
+See also:
+- [[https://www.emacswiki.org/emacs/WhiteSpace][EmacsWiki: Whitespace Mode]]
+- [[http://ergoemacs.org/emacs/whitespace-mode.html][Make Whitespaces Visible]]
+
+| Key binding     | Command               | Description              |
+|-----------------+-----------------------+--------------------------|
+| =H-m C-m C-v w= | =M-x whitespace-mode= | Toggle  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html][whitespace-mode]]. |
+|-----------------+-----------------------+--------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Visualize whitespace characters
+;;
+(use-package whitespace
+    :diminish whitespace-mode
+    :init
+        (setq whitespace-line-column nil
+            whitespace-display-mappings '(
+                (space-mark   32 [183] [46])
+                (newline-mark 10 [9166 10])
+                (tab-mark      9 [9654 9] [92 9]))
+        )
+;        (add-hook 'prog-mode-hook 'whitespace-mode)
+    :config
+        (set-face-attribute 'whitespace-space       nil :foreground "#666666" :background nil)
+        (set-face-attribute 'whitespace-newline     nil :foreground "#666666" :background nil)
+        (set-face-attribute 'whitespace-indentation nil :foreground "#666666" :background nil)
+
+    :bind (
+         :map psimacs/config/global-key-map/special
+              ("C-m C-v w" . whitespace-mode)
+        )
+)
+#+END_SRC
+
+**** Trailing white spaces
+
+You can make trailing whitespace at the end of a line visible by setting the buffer-local variable
+=show-trailing-whitespace= to =t=.  Then Emacs displays trailing whitespace, using the face
+=trailing-whitespace=. *Psimacs* disables this feature on default.
+
+*Psimacs* deletes any trailing white spaces before saving a buffer.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Do not show trailing white spaces
+;;
+(setq show-trailing-whitespace nil)
+
+;;
+;; Remove trailing white spaces on save
+;;
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
+#+END_SRC
+
 ** Windows and frame layout
 
 *** Frame size and position
@@ -10027,6 +10087,8 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-l m=         | =M-x langtool-show-brief-message-at-point=                    | Show error brief message at point.                                                                                                                                                                                                                                                               |
 | =H-m C-l M=         | =M-x langtool-show-message-at-point=                          | Show error details at point..                                                                                                                                                                                                                                                                    |
 | =H-m C-l B=         | =M-x langtool-check-done=                                     | Finish LanguageTool process and cleanup existing colorized texts.                                                                                                                                                                                                                                |
+|---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-m C-v w=     | =M-x whitespace-mode=                                         | Toggle  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html][whitespace-mode]].                                                                                                                                                                                                                                                                         |
 |---------------------+---------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-p C-f p=     | =M-x ps-print-buffer-with-faces=                              | Color print buffer via Ghostscript                                                                                                                                                                                                                                                               |
 | =H-m C-p C-f r=     | =M-x ps-print-region-with-faces=                              | Color print region via Ghosts                                                                                                                                                                                                                                                                    |
