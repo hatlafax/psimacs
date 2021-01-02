@@ -1504,7 +1504,7 @@ This functions always prefers DIR on dropbox."
 
 ** Helper functions for message printing
 
-Some convenience function for message printing.
+Some convenience functions for message printing.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-config-helper.el
 ;;
@@ -1515,6 +1515,34 @@ Some convenience function for message printing.
   (while list
     (message (car list))
     (setq list (cdr list))))
+#+END_SRC
+
+** Helper functions for Info system
+
+Some convenience functions for configuring the Info system.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-config-helper.el
+;;
+;; Add info file
+;;
+(defun psimacs/config/add-to-info-system (new-info-file new-info-entry info-dir info-file)
+  "Add file to Info directory and put Info entry into Info file.
+NEW-INFO-FILE  : a new Info file to be added
+NEW-INFO-ENTRY : text region to be added to the Info directory file.
+INFO-DIR       : destination a directory if NEW-INFO-FILE.
+INFO-FILE      : the info directory file into which NEW-INFO-ENTRY will be added."
+  (when (and
+         (file-exists-p new-info-file)
+         (file-directory-p info-dir)
+         (file-exists-p info-file))
+    (let ( (new-info-dst-file (concat info-dir (file-name-nondirectory new-info-file))) )
+      (when (or (not (file-exists-p new-info-dst-file)) (file-newer-than-file-p new-info-file new-info-dst-file))
+        (copy-file new-info-file new-info-dst-file t)
+        (with-temp-buffer (set-buffer-file-coding-system 'utf-8-unix)
+                          (insert new-info-entry)
+                          (write-region (point-min)
+                                        (point-max) info-file t))
+       ))))
 #+END_SRC
 
 * Configuration constants
@@ -1532,6 +1560,11 @@ programs are installed.
 ;;
 ;; Directory constants used by Psimacs
 ;;
+(defconst psimacs/config/emacs-dir
+  (psimacs/file-system/concat-directory invocation-directory "..")
+  "The installation directory of Emacs"
+)
+
 (defconst psimacs/config/site-lisp-dir
   (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/site-lisp-folder)
   "The psimacs personal site-lisp directory.")
@@ -1598,6 +1631,24 @@ recipe is provided.
 (defconst psimacs/config/system-utils-dir
   (expand-file-name (file-name-as-directory "c:/utils"))
   "The psimac system resources and utility directory.")
+#+END_SRC
+
+** Emacs Info directory
+
+*Emacs* primary Info directory.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el :var file-description="Configuration constants"
+;;
+;; The primary Info directory
+;;
+(defconst psimacs/config/emacs-info-dir
+  (psimacs/file-system/concat-directory psimacs/config/emacs-dir "share/info")
+  "The primary Info directory of Emacs"
+)
+
+(defconst psimacs/config/emacs-info-file
+    (psimacs/file-system/concat-file psimacs/config/emacs-info-dir "dir")
+    "The psimacs primary Emacs Info file.")
 #+END_SRC
 
 ** Backup constants
@@ -7228,6 +7279,126 @@ See also:
 )
 #+END_SRC
 
+*** Regular Expressions
+
+Packages the make it easier to work with the arcane *Emacs* regexps.
+
+**** PCRE to Elips Regexp converter
+
+The package [[https://github.com/joddie/pcre2el][pcre2el]] converts between
+[[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][PCRE]], Emacs and rx regexp syntaxes.
+
+See also:
+- [[https://en.wikipedia.org/wiki/Regular_expression][Wikipedia: Regular expression]]
+- [[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][Wikipedia: PCRE]]
+- [[https://www.pcre.org/][Official PCRE - Perl Compatible Regular Expressions]]
+- [[https://www.emacswiki.org/emacs/RegularExpression][EmacsWiki: RegularExpression]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html][Emacs Manual: Regular Expressions]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Regexps.html][Emacs Manual: Syntax of Regular Expressions]]
+- [[http://ergoemacs.org/emacs/emacs_regex.html][Xah Lee's Emacs: Regex Tutorial]]
+- [[https://github.com/joddie/pcre2el][pcre2el: convert between PCRE, Emacs and rx regexp syntax]],
+- [[http://emacsfodder.github.io/blog/easy-regexp-generation-with-emacs/][Easy Regexp Generation With Emacs]],
+
+Do-what-I-mean" commands:
+| Key binding | Command                      | Description                                                                      |
+|-------------+------------------------------+----------------------------------------------------------------------------------|
+| =C-c / /=   | =M-x rxt-explain=            | Pop up a buffer with pretty-printed `rx' syntax for the regex at point.          |
+| =C-c / c=   | =M-x rxt-convert-syntax=     | Convert regex at point to other kind of syntax, depending on major mode.         |
+| =C-c / x=   | =M-x rxt-convert-to-rx=      | Convert regex at point to RX syntax. Chooses Emacs or PCRE syntax by major mode. |
+| =C-c / '=   | =M-x rxt-convert-to-strings= | Convert regex at point to RX syntax. Chooses Emacs or PCRE syntax by major mode. |
+|-------------+------------------------------+----------------------------------------------------------------------------------|
+
+Commands that work on a PCRE regexp:
+| Key binding | Command                         | Description                                                             |
+|-------------+---------------------------------+-------------------------------------------------------------------------|
+| =C-c / p e= | =M-x rxt-pcre-to-elisp=         | Translate PCRE, a regexp in Perl-compatible syntax, to Emacs Lisp.      |
+| =C-c / %=   | =M-x pcre-query-replace-regexp= | Perform =query-replace-regexp= using PCRE syntax.                       |
+| =C-c / p x= | =M-x rxt-pcre-to-rx=            | Translate PCRE, a regexp in Perl-compatible syntax, to `rx' syntax.     |
+| =C-c / p '= | =M-x rxt-pcre-to-strings=       | Return a list of all strings matched by PCRE, a Perl-compatible regexp. |
+| =C-c / p /= | =M-x rxt-explain-pcre=          | Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.       |
+|-------------+---------------------------------+-------------------------------------------------------------------------|
+
+Commands that work on an Emacs regexp:
+| Key binding | Command                    | Description                                                                 |
+|-------------+----------------------------+-----------------------------------------------------------------------------|
+| =C-c / e /= | =M-x rxt-explain-elisp=    | Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.           |
+| =C-c / e p= | =M-x rxt-elisp-to-pcre=    | Translate REGEXP, a regexp in Emacs Lisp syntax, to Perl-compatible syntax. |
+| =C-c / e x= | =M-x rxt-elisp-to-rx=      | Translate REGEXP, a regexp in Emacs Lisp syntax, to `rx' syntax.            |
+| =C-c / e '= | =M-x rxt-elisp-to-strings= | Return a list of all strings matched by REGEXP, an Emacs Lisp regexp.       |
+| =C-c / e t= | =M-x rxt-toggle-elisp-rx=  | Toggle the regexp near point between Elisp string and rx syntax.            |
+| =C-c / t=   | =M-x rxt-toggle-elisp-rx=  | Toggle the regexp near point between Elisp string and rx syntax.            |
+|-------------+----------------------------+-----------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+(use-package pcre2el
+    :config
+        ;(pcre-mode) ; try it by hand, do not know side effects
+    :hook (prog-mode . rxt-mode)
+)
+#+END_SRC
+
+**** Visualize Regexp
+
+The package [[https://github.com/benma/visual-regexp.el][visual-regexp]] provides the same functionality
+like *Emacs*'s command =replace-regexp=, but with live visual feedback directly in the buffer
+
+See also:
+- [[https://www.emacswiki.org/emacs/VisualRegexp][EmacsWiki: Visual Regexp]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Regexp-Replace.html][replace-regexp]]
+
+| Key binding | Command                | Description                                       |
+|-------------+------------------------+---------------------------------------------------|
+| =H-c r=     | =M-x vr/replace=       | =replace-reg-exp= with live visual feedback.      |
+| =H-c q=     | =M-x vr/query-replace= | =query-replace-regexp= with live visual feedback. |
+| =H-c m=     | =M-x vr/mc-mark=       | Convert regexp selection to multiple cursors.     |
+|-------------+------------------------+---------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+(use-package visual-regexp
+    :bind (
+           :map psimacs/config/global-key-map/execute
+                ("H-c r" . vr/replace)
+                ("H-c q" . vr/query-replace)
+                ("H-c m" . vr/mc-mark)
+          )
+)
+#+END_SRC
+
+**** Visualize Regexp Steroids
+
+The package [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]]
+is an extension to package [[https://github.com/benma/visual-regexp.el][visual-regexp]]
+which enables the use of modern regexp engines (no more escaped group parentheses, and other goodies!).
+
+In addition to that, you can optionally use the better regexp syntax to power
+=isearch-forward-regexp= and =isearch-backward-regexp=.
+
+For now, [[https://docs.python.org/3/library/re.html][Python]] and [[https://github.com/joddie/pcre2el][pcre2el]]
+are supported out of the box.
+
+See also:
+- [[https://www.emacswiki.org/emacs/VisualRegexp][EmacsWiki: Visual Regexp]]
+- [[https://github.com/benma/visual-regexp-steroids.el][Visual-regexp-steroids]]
+
+| Key binding | Command                   | Description                                                 |
+|-------------+---------------------------+-------------------------------------------------------------|
+| =H-c s=     | =M-x vr/isearch-forward=  | Like =isearch-forward= but with a [[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][PCRE]] regular expression.  |
+| =H-c p=     | =M-x vr/isearch-backward= | Like =isearch-backward= but with a [[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][PCRE]] regular expression. |
+|-------------+---------------------------+-------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-tools.el
+(use-package visual-regexp-steroids
+    :config
+        (setq vr/engine 'pcre2el)
+
+    :bind (
+           :map psimacs/config/global-key-map/execute
+                ("H-c s" . vr/isearch-forward)
+                ("H-c p" . vr/isearch-backward)
+          )
+)
+#+END_SRC
+
 ** Language support
 
 This section treat some tools for written language spell and grammar checking. Additionally, access is gained
@@ -9264,6 +9435,37 @@ See also: [[https://github.com/emacsmirror/git-timemachine][git-timemachine]]
 (use-package git-timemachine)
 #+END_SRC
 
+** Else Mode
+
+Peter Milliken has created a minor mode for *Emacs* called the [[https://github.com/peter-milliken/ELSE][Emacs Language Sensitive Editor (ELSE)]].
+
+#+BEGIN_QUOTE
+[[https://github.com/peter-milliken/ELSE][ELSE]] is a minor mode for *Emacs*, designed to work with any major mode. The aim is to provide a seamless mechanism to
+generate language constructs easily and intuitively with a minimum of keystrokes and interference with the user.
+It's primary application is a minor mode for any programming language (major mode) but it can be used for any editing
+task that involves generation of repetitive text/blocks of text e.g. there is a template file for Texinfo mode.
+#+END_QUOTE
+
+See also:
+- [[https://github.com/peter-milliken/ELSE][ELSE]]
+- [[https://github.com/jschaf/else.el][Emacs Language Sensitive Editor (ELSE)]]
+- [[https://www.emacswiki.org/emacs/ElseMode][EmacsWiki: Else Mode]]
+- [[http://www.winpaw.com/Else/][Additional Emacs Language Sensitive Editor (ELSE) templates]]
+- [[https://github.com/peter-milliken/ELSE/blob/master/else.pdf][Else Documentation]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
+(use-package else-mode
+    :diminish else-mode
+    :straight (else :host github :repo "peter-milliken/ELSE")
+    :init
+        (psimacs/config/add-to-info-system
+                (psimacs/file-system/concat-file psimacs/config/straight-dir "repos/ELSE/else.info")
+                "* ELSE: (else.info).            Emacs Language Sensitive Editor.\n"
+                psimacs/config/emacs-info-dir
+                psimacs/config/emacs-info-file)
+)
+#+END_SRC
+
 * Major Modes
 ** Org-Mode
 
@@ -10141,6 +10343,24 @@ by the various packages nor by *Emacs* itself.
 | =C-c <left>=        | =M-x winner-undo=                                                       | Switch back to an earlier window configuration saved by Winner mode.                                                                                                                                                                                                                             |
 | =C-c <right>=       | =M-x winner-redo=                                                       | Restore a more recent window configuration saved by Winner mode.                                                                                                                                                                                                                                 |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c / /=           | =M-x rxt-explain=                                                       | Pop up a buffer with pretty-printed `rx' syntax for the regex at point.                                                                                                                                                                                                                          |
+| =C-c / c=           | =M-x rxt-convert-syntax=                                                | Convert regex at point to other kind of syntax, depending on major mode.                                                                                                                                                                                                                         |
+| =C-c / x=           | =M-x rxt-convert-to-rx=                                                 | Convert regex at point to RX syntax. Chooses Emacs or PCRE syntax by major mode.                                                                                                                                                                                                                 |
+| =C-c / '=           | =M-x rxt-convert-to-strings=                                            | Convert regex at point to RX syntax. Chooses Emacs or PCRE syntax by major mode.                                                                                                                                                                                                                 |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c / p e=         | =M-x rxt-pcre-to-elisp=                                                 | Translate PCRE, a regexp in Perl-compatible syntax, to Emacs Lisp.                                                                                                                                                                                                                               |
+| =C-c / %=           | =M-x pcre-query-replace-regexp=                                         | Perform =query-replace-regexp= using PCRE syntax.                                                                                                                                                                                                                                                |
+| =C-c / p x=         | =M-x rxt-pcre-to-rx=                                                    | Translate PCRE, a regexp in Perl-compatible syntax, to `rx' syntax.                                                                                                                                                                                                                              |
+| =C-c / p '=         | =M-x rxt-pcre-to-strings=                                               | Return a list of all strings matched by PCRE, a Perl-compatible regexp.                                                                                                                                                                                                                          |
+| =C-c / p /=         | =M-x rxt-explain-pcre=                                                  | Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.                                                                                                                                                                                                                                |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c / e /=         | =M-x rxt-explain-elisp=                                                 | Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.                                                                                                                                                                                                                                |
+| =C-c / e p=         | =M-x rxt-elisp-to-pcre=                                                 | Translate REGEXP, a regexp in Emacs Lisp syntax, to Perl-compatible syntax.                                                                                                                                                                                                                      |
+| =C-c / e x=         | =M-x rxt-elisp-to-rx=                                                   | Translate REGEXP, a regexp in Emacs Lisp syntax, to `rx' syntax.                                                                                                                                                                                                                                 |
+| =C-c / e '=         | =M-x rxt-elisp-to-strings=                                              | Return a list of all strings matched by REGEXP, an Emacs Lisp regexp.                                                                                                                                                                                                                            |
+| =C-c / e t=         | =M-x rxt-toggle-elisp-rx=                                               | Toggle the regexp near point between Elisp string and rx syntax.                                                                                                                                                                                                                                 |
+| =C-c / t=           | =M-x rxt-toggle-elisp-rx=                                               | Toggle the regexp near point between Elisp string and rx syntax.                                                                                                                                                                                                                                 |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-r=               | =M-x swiper=                                                            | Incrementally search with an overview.                                                                                                                                                                                                                                                           |
 | =C-c v=             | =M-x ivy-push-view=                                                     | Push the current window tree on =ivy-views=                                                                                                                                                                                                                                                      |
 | =C-c V=             | =M-x ivy-pop-view=                                                      | Delete a view to delete from =ivy-views=.                                                                                                                                                                                                                                                        |
@@ -10183,6 +10403,12 @@ by the various packages nor by *Emacs* itself.
 | =H-;=               | =M-x iedit-mode=                                                        | Toggle [[https://github.com/victorhge/iedit][iedit-mode]].                                                                                                                                                                                                                                                                               |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-c C-e=           | =M-x edit-indirect-region=                                              | Edit region in separate buffer *edit-indirect buffer*                                                                                                                                                                                                                                            |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-c r=             | =M-x vr/replace=                                                        | =replace-reg-exp= with live visual feedback.                                                                                                                                                                                                                                                     |
+| =H-c q=             | =M-x vr/query-replace=                                                  | =query-replace-regexp= with live visual feedback.                                                                                                                                                                                                                                                |
+| =H-c m=             | =M-x vr/mc-mark=                                                        | Convert regexp selection to multiple cursors.                                                                                                                                                                                                                                                    |
+| =H-c s=             | =M-x vr/isearch-forward=                                                | Like =isearch-forward= but with a [[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][PCRE]] regular expression.                                                                                                                                                                                                                                       |
+| =H-c p=             | =M-x vr/isearch-backward=                                               | Like =isearch-backward= but with a [[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][PCRE]] regular expression.                                                                                                                                                                                                                                      |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-g=               | =M-x keyboard-escape-quit=                                              | Quit or abort.                                                                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
