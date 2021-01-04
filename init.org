@@ -10451,6 +10451,185 @@ on my Windows OS setup.
 )
 #+END_SRC
 
+** PlantUML Mode
+
+The package [[https://github.com/skuro/plantuml-mode][plantuml-mode]] provides access to the nice
+[[https://plantuml.com/en/][PlantUML]] tool that allows the generation of UML type of diagrams with
+a plain text description.
+
+See also:
+- [[https://github.com/skuro/plantuml-mode][plantuml-mode]]
+- [[http://plantuml.com/emacs][Emacs integration of PlantUml]]
+- [[https://plantuml.com/en/][PlantUML in a nutshell]]
+- [[http://plantuml.com/en/guide][PlantUML Language Reference Guide]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-plantuml-mode.el :var file-description="Major Modes - plantuml-mode setup"
+;;
+;; Configuration of the plantUML support in Psimacs.
+;;
+(defun psimacs/config/plantuml-eval-java-args (image-size heap-size)
+    "Set the plantuml-java-args variable a new."
+    (interactive
+"nEnter image limit size:
+nEnter Java heap size: ")
+
+    (if (= heap-size 0)
+        (setq heap-size psimacs/config/plantuml_java_arg_heap-size)
+    )
+
+    (if (= image-size 0)
+        (setq image-size psimacs/config/plantuml_java_arg_limit_size)
+    )
+
+    (setq plantuml-java-args '("-jar"))
+
+    (if (/= heap-size 0)
+        (progn
+            (setq plantuml-java-args (cons (concat "-Xmx" (number-to-string heap-size) "m") plantuml-java-args))
+            (setq plantuml-java-args (cons (concat "-Xms" (number-to-string heap-size) "m") plantuml-java-args))
+        )
+    )
+
+    (if (/= image-size 0)
+        (setq plantuml-java-args (cons (concat "-DPLANTUML_LIMIT_SIZE=" (number-to-string image-size)) plantuml-java-args))
+    )
+
+    (setq plantuml-java-args (cons "-Djava.awt.headless=true" plantuml-java-args))
+)
+
+(defun psimacs/plantuml/execute-file ()
+    "Execute the plantUml.jar with the current buffer file.
+This function first saves the current buffer and then executes
+the plantUml tool on that file, respecting the settings of the
+major plantuml-mode.
+"
+
+    (interactive)
+    (when (equal major-mode 'plantuml-mode)
+        (save-buffer)
+
+        (let (jar-file jar-param)
+            (setq jar-file  (expand-file-name plantuml-jar-path))
+            (setq jar-param (list (plantuml-jar-output-type-opt plantuml-output-type) "-charset" "UTF-8" (buffer-file-name)))
+
+            (apply
+                #'start-process "process/plantuml/execute-file" nil
+                plantuml-java-command `(,@plantuml-java-args ,jar-file ,@jar-param)
+            )
+        )
+    )
+)
+
+;;
+;; The plantuml-mode package
+;;
+(use-package plantuml-mode
+    :init
+        (setenv "GRAPHVIZ_DOT" psimacs/config/graphviz-runtime-dot-exe)
+        (setenv "localDir"     (expand-file-name psimacs/config/plantuml-dir))
+
+        (setq plantuml-default-exec-mode 'jar)
+        (setq plantuml-jar-path     psimacs/config/plantuml-jar-file)
+        (setq plantuml-java-command psimacs/config/java-runtime-exe)
+
+        (setq plantuml-output-type  "png") ; svg is incredible slow on Emacs in contrast to Firefox
+
+        ; Initialize the plantuml-java-args variable
+        (psimacs/config/plantuml-eval-java-args 0 0)
+
+    :config
+        (add-to-list 'auto-mode-alist    '("\\.uml\\'"      . plantuml-mode))
+        (add-to-list 'auto-mode-alist    '("\\.plantuml\\'" . plantuml-mode))
+        ;(add-to-list 'org-src-lang-modes '("plantuml"       . plantuml))
+
+        ;;
+        ;; Replace the function plantuml-update-preview-buffer with function psimacs/config/plantuml-update-preview-buffer
+        ;; The only difference is that the psimacs/config/plantuml-update-preview-buffer adds the line
+        ;; (set-buffer-file-coding-system 'binary). Without that line, I cannot get it working on my Windows platform.
+        ;;
+        (defun psimacs/config/plantuml-update-preview-buffer (prefix buf)
+          "Show the preview in the preview buffer BUF.
+        Window is selected according to PREFIX:
+        - 4  (when prefixing the command with C-u) -> new window
+        - 16 (when prefixing the command with C-u C-u) -> new frame.
+        - else -> new buffer"
+          (let ((imagep (and (display-images-p)
+                             (plantuml-is-image-output-p))))
+            (cond
+             ((= prefix 16) (switch-to-buffer-other-frame buf))
+             ((= prefix 4)  (switch-to-buffer-other-window buf))
+             (t             (display-buffer buf)))
+            (when imagep
+              (with-current-buffer buf
+                (set-buffer-file-coding-system 'binary)
+                (image-mode)
+                (set-buffer-multibyte t)
+                ))))
+
+        (defalias 'plantuml-update-preview-buffer 'psimacs/config/plantuml-update-preview-buffer)
+
+        (require 'ido)
+
+        (defun psimacs/config/plantuml-customize-java_arg_heap-size ()
+            "Customize the Java heap size.
+Allowed values: m0, m1, m2, m4, m8, m16, m32
+    m0  :    0
+    m1  :  256
+    m2  :  512
+    m4  : 1024
+    m8  : 2048
+    m16 : 4096
+    m32 : 8192"
+            (interactive)
+
+            (let (choices choice)
+                (setq choices '("m0" "m1" "m2" "m4" "m8" "m16" "m32"))
+                (setq choice (ido-completing-read "Heap size: " choices))
+
+                ;(message "choice = %s" choice)
+
+                (if (equal choice "m0")  (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size    0))
+                (if (equal choice "m1")  (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size  256))
+                (if (equal choice "m2")  (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size  512))
+                (if (equal choice "m4")  (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size 1024))
+                (if (equal choice "m8")  (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size 2048))
+                (if (equal choice "m16") (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size 4096))
+                (if (equal choice "m32") (customize-set-variable 'psimacs/config/plantuml_java_arg_heap-size 8192))
+
+                ; Reinitialize the plantuml-java-args variable
+                (psimacs/config/plantuml-eval-java-args 0 0)
+            )
+        )
+
+        (defun psimacs/config/plantuml-customize-java_arg_image-size ()
+            "Customize the plantUml image size.
+Allowed values: x0, x1, x2, x4, x8
+    x0 :     0
+    x1 :  4096
+    x2 :  8192
+    x4 : 16384
+    x8 : 32768"
+            (interactive)
+
+            (let (choices choice)
+                (setq choices '("x0" "x1" "x2" "x4" "x8"))
+                (setq choice (ido-completing-read "Image size: " choices))
+
+                ;(message "choice = %s" choice)
+
+                (if (equal choice "x0") (customize-set-variable 'psimacs/config/plantuml_java_arg_limit_size     0))
+                (if (equal choice "x1") (customize-set-variable 'psimacs/config/plantuml_java_arg_limit_size  4096))
+                (if (equal choice "x2") (customize-set-variable 'psimacs/config/plantuml_java_arg_limit_size  8192))
+                (if (equal choice "x4") (customize-set-variable 'psimacs/config/plantuml_java_arg_limit_size 16384))
+                (if (equal choice "x8") (customize-set-variable 'psimacs/config/plantuml_java_arg_limit_size 32768))
+
+                ; Reinitialize the plantuml-java-args variable
+                (psimacs/config/plantuml-eval-java-args 0 0)
+            )
+        )
+)
+#+END_SRC
+
 * Overview of Psimacs key bindings
 
 The following tables summarizes the key bindings added explicitly by *Psimacs*. Neither shown are the bindings provided
