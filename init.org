@@ -1993,6 +1993,7 @@ the following commands:
 *** Packages
 - =pacman -Syu=
 - =pacman -Su=
+- =pacman -S git=
 - =pacman -S base-devel=
 - =pacman -S mingw-w64-x86_64-toolchain=
 - =pacman -S mingw-w64-x86_64-zlib=
@@ -2351,7 +2352,7 @@ Values: 0, 256, 512, 1024, 2048, 4096, 8192
 If this value is 0, then no action is taken.")
 #+END_SRC
 
-** Image Magick
+** ImageMagick
 
 The package [[https://github.com/mhayashi1120/Emacs-imagex][image+.el]] uses [[https://imagemagick.org/index.php][ImageMagick]]. I installed the file  [[https://imagemagick.org/script/download.php#windows][ImageMagick-7.0.10-45-portable-Q16-HDRI-x64.zip]].
 
@@ -3187,6 +3188,11 @@ conveniently accessible through bindings =H-h= or =s-h=. All *Psimacs* hydras co
 ;; Early load the hydra package.
 ;;
 (use-package hydra)
+
+;;
+;; Additinally load package use-package-hydra to get :hydra support in use-package
+;;
+(use-package use-package-hydra)
 #+END_SRC
 
 ** Info system
@@ -9069,6 +9075,33 @@ See also:
           )
 
     :hook ((term-mode shell-mode) . #'psimacs/config/internal/force-yasnippet-off)
+
+    :after hydra
+    :bind (:map psimacs/config/global-key-map/hydra ("y" . psimacs/hydra/yasnippet/body))
+    :hydra (psimacs/hydra/yasnippet (:color pink :hint nil)
+          "
+^^^^^^            YASnippets
+^^^^^^-------------------------------------
+  ^^Modes:     ^^Load/Visit:     ^^Actions:
+
+ _g_: global  _d_: directory    _i_: insert
+ _m_: minor   _f_: file         _t_: tryout
+ _e_: extra   _l_: list         _n_: new
+ ^ ^          _r_: reload all
+_q_: quit
+"
+          ("d" yas-load-directory)
+          ("e" yas-activate-extra-mode)
+          ("i" yas-insert-snippet)
+          ("f" yas-visit-snippet-file :color blue)
+          ("n" yas-new-snippet)
+          ("t" yas-tryout-snippet)
+          ("l" yas-describe-tables)
+          ("g" yas/global-mode)
+          ("m" yas/minor-mode)
+          ("r" yas-reload-all)
+          ("q" nil :color blue)
+        )
 )
 
 (use-package yasnippet-snippets
@@ -9490,16 +9523,19 @@ See also:
 - [[http://www.winpaw.com/Else/][Additional Emacs Language Sensitive Editor (ELSE) templates]]
 - [[https://github.com/peter-milliken/ELSE/blob/master/else.pdf][Else Documentation]]
 
-| Key binding   | Command                            | Description                                                         |
-|---------------+------------------------------------+---------------------------------------------------------------------|
-| =H-m C-c n=   | =M-x else-next=                    | Move 'point' to the 'next' placeholder.                             |
-| =H-m C-c p=   | =M-x else-previous=                | Move `point' to the (nth) previous placeholder.                     |
-| =H-m C-c e=   | =M-x else-expand=                  | Expand the placeholder or any preceeding abbreviation at point.     |
-| =H-m C-c k=   | =M-x else-kill=                    | Kill the placeholder at point.                                      |
-| =H-m C-c K=   | =M-x psimacs/else/kill-always=     | Like =else-kill= but kills required placeholders without prompting. |
-| =H-m C-c C-c= | =M-x else-template-compile-buffer= | Compile the whole current buffer.                                   |
-|---------------+------------------------------------+---------------------------------------------------------------------|
-
+| Key binding   | Command                            | Description                                                            |
+|---------------+------------------------------------+------------------------------------------------------------------------|
+| =H-m C-c n=   | =M-x else-next=                    | Move 'point' to the 'next' placeholder.                                |
+| =H-m C-c p=   | =M-x else-previous=                | Move `point' to the (nth) previous placeholder.                        |
+| =H-m C-c e=   | =M-x else-expand=                  | Expand the placeholder or any preceeding abbreviation at point.        |
+| =H-m C-c k=   | =M-x else-kill=                    | Kill the placeholder at point.                                         |
+| =H-m C-c K=   | =M-x psimacs/else/kill-always=     | Like =else-kill= but kills required placeholders without prompting.    |
+| =H-m C-c C-c= | =M-x else-template-compile-buffer= | Compile the whole current buffer.                                      |
+|               | =M-x else-compile-buffer=          | Compile the language template definitions from 'point' to the end.     |
+|               | =M-x else-extract-placeholder=     | Place the definition of an placeholder into the buffer at point.       |
+|               | =M-x else-extract-all=             | Extract the full language definition at point.                         |
+|               | =M-x else-show-placeholder-names=  | Display info on all Placeholders in the current language template set. |
+|---------------+------------------------------------+-----------------------------------------------------------------------
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
 (use-package else-mode
@@ -9600,6 +9636,42 @@ Returns `else-Alternate-Mode-Names'."
                   ("C-c K" . psimacs/else/kill-always)
                   ("C-c C-c" . else-template-compile-buffer)
          )
+)
+#+END_SRC
+
+** Image+
+
+The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with an ImageMagick installation and allows you the manipulation of images.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-image+-mode.el :var file-description="Advanced image+-mode setup"
+(use-package image+
+    :init
+        (eval-after-load 'image '(require 'image+))
+
+        (setenv "PATH" (concat (getenv "PATH")
+                            ";" psimacs/config/image-magick-dir
+                            ";" psimacs/config/image-magick-dir "modules/coders"
+                            ";" psimacs/config/image-magick-dir "modules/filters"
+                        ))
+
+        (setq imagex-convert-command  (concat psimacs/config/image-magick-dir  "convert.exe"))
+        (setq imagex-identify-command (concat psimacs/config/image-magick-dir "identify.exe"))
+
+    :after hydra
+    :bind (:map psimacs/config/global-key-map/hydra ("C-i" . psimacs/hydra/image+/body))
+    :hydra (psimacs/hydra/image+ (:color pink :hint nil)
+            "Image+
+
+"
+            ("+" imagex-sticky-zoom-in          "zoom in"  :column "Zoom")
+            ("-" imagex-sticky-zoom-out         "zoom out" :column "Zoom")
+            ("M" imagex-sticky-maximize         "maximize" :column "Zoom")
+            ("O" imagex-sticky-restore-original "restore original" :column "Zoom")
+            ("S" imagex-sticky-save-image       "save file" :column "Save")
+            ("r" imagex-sticky-rotate-right     "rotate right" :column "Rotate")
+            ("l" imagex-sticky-rotate-left      "rotate left" :column "Rotate")
+            ("q" nil "quit" :color blue :column "Save")
+        )
 )
 #+END_SRC
 
