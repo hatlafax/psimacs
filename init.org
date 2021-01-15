@@ -153,9 +153,37 @@ which will enter enter the debugger on execution.
 #+END_SRC
 #+END_EXAMPLE
 
-*** Debugging ELisp with EDebug
+** References to Org-Mode markup
+An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic [[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail explanation about
+the markup rules used in [[https://orgmode.org][org-mode]] files.
+
+** References to Org-Mode
+The following links might be useful for diving deeper into [[http://orgmode.org/][Org-Mode]]:
+- [[http://orgmode.org/manual/index.html][Org Mode Manual]]
+- [[http://orgmode.org/worg/][Worg, the Org Mode Community]]
+- [[https://www.emacswiki.org/emacs/OrgMode][EmacsWiki: Org Mode]]
+- [[https://www.suenkler.info/notes/emacs-orgmode/][Aufgabenverwaltung im Emacs Org mode]]
+- [[https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html][Dig Into Org Mode]]
+- [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]]
+- [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]]
+- [[https://org-babel.readthedocs.io/en/latest/][Readthedocs about Org Babel]]
+- [[http://orgmode.org/worg/orgcard.html][Org Mode reference card]]
+- [[http://orgmode.org/orgcard.pdf][Org Mode Ref Card]]
+- [[http://ergoemacs.org/emacs/emacs_org_markup.html][Org Mode Markup Cheatsheet]]
+- [[http://pragmaticemacs.com/][Pragmatic Emacs]]
+- [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
+
+* Working with ELisp
+This section gives some basic help with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] and debugging of [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code.
+
+** Debugging ELisp with EDebug
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]] is a source-level debugger for Emacs Lisp programs that is very useful developing /Lisp/ code. In the following
-you can find a some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+you can find some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+
+- Using  [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+  To debug a Lisp program with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]], you must first instrument the Lisp code that you want to debug.
+  A simple way to do this is to first move point into the definition of a function or macro and then do
+  =C-u C-M-x=.
 
 Embedding a breakpoint into source code: =(edebug)=
 
@@ -208,26 +236,6 @@ Embedding a breakpoint into source code: =(edebug)=
 | =C-c C-d=         | =M-x edebug-delete-eval-item=           | Delete the evaluation list group that point is in.                                                                                                                                           |
 | =C-c C-w=         | =M-x edebug-where=                      | Switch back to the source code buffer at the current stop point.                                                                                                                             |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-** References to Org-Mode markup
-An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic [[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail explanation about
-the markup rules used in [[https://orgmode.org][org-mode]] files.
-
-** References to Org-Mode
-The following links might be useful for diving deeper into [[http://orgmode.org/][Org-Mode]]:
-- [[http://orgmode.org/manual/index.html][Org Mode Manual]]
-- [[http://orgmode.org/worg/][Worg, the Org Mode Community]]
-- [[https://www.emacswiki.org/emacs/OrgMode][EmacsWiki: Org Mode]]
-- [[https://www.suenkler.info/notes/emacs-orgmode/][Aufgabenverwaltung im Emacs Org mode]]
-- [[https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html][Dig Into Org Mode]]
-- [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]]
-- [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]]
-- [[https://org-babel.readthedocs.io/en/latest/][Readthedocs about Org Babel]]
-- [[http://orgmode.org/worg/orgcard.html][Org Mode reference card]]
-- [[http://orgmode.org/orgcard.pdf][Org Mode Ref Card]]
-- [[http://ergoemacs.org/emacs/emacs_org_markup.html][Org Mode Markup Cheatsheet]]
-- [[http://pragmaticemacs.com/][Pragmatic Emacs]]
-- [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
 
 ** References to Emacs Lisp
 The following links might be useful for diving deeper into [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]]:
@@ -1991,38 +1999,43 @@ must be installed with the [[https://www.msys2.org/][MSYS2]] package manager /pa
 the following commands:
 
 *** Packages
-- =pacman -Syu=
-- =pacman -Su=
-- =pacman -S git=
-- =pacman -S base-devel=
-- =pacman -S mingw-w64-x86_64-toolchain=
-- =pacman -S mingw-w64-x86_64-zlib=
-- =pacman -S mingw-w64-x86_64-libpng=
-- =pacman -S mingw-w64-x86_64-poppler=
-- =pacman -S mingw-w64-x86_64-imagemagick=
-- =pacman -S mingw-w64-x86_64-cmake=
-- =pacman -S mingw-w64-x86_64-qt5=
-- =pacman -S mingw-w64-x86_64-toolchain=
-- =pacman -S mingw-w64-x86_64-ninja=
-- =pacman -S mingw-w64-x86_64-clang=
-- =pacman -S mingw-w64-x86_64-clang-analyzer=
-- =pacman -S mingw-w64-x86_64-clang-tools-extra=
-- =pacman -S mingw-w64-x86_64-compiler-rt=
-- =pacman -S mingw-w64-x86_64-libblocksruntime=
-- =pacman -S mingw-w64-x86_64-openblas=
-- =pacman -S mingw-w64-x86_64-boost=
-- =pacman -S mingw-w64-x86_64-eigen3=
-- =pacman -S mingw-w64-x86_64-zeromq=
-- =pacman -S mingw-w64-x86_64-pkg-config=
-- =pacman -S mingw-w64-x86_64-doxygen=
-- =pacman -S mingw-w64-x86_64-graphviz=
-- =pacman -S mingw-w64-x86_64-glm=
-- =pacman -S mingw-w64-x86_64-hunspell=
-- =pacman -S mingw-w64-x86_64-hunspell-en=
-- =pacman -S mingw-w64-x86_64-aspell=
-- =pacman -S mingw-w64-x86_64-aspell-de=
-- =pacman -S mingw-w64-x86_64-aspell-en=
-- =pacman -S mingw-w64-x86_64-gnutls=
+
+#+BEGIN_EXAMPLE
+pacman -Syu
+pacman -Su
+pacman -S git
+pacman -S base-devel
+pacman -S mingw-w64-x86_64-toolchain
+pacman -S mingw-w64-x86_64-zlib
+pacman -S mingw-w64-x86_64-libpng
+pacman -S mingw-w64-x86_64-poppler
+pacman -S mingw-w64-x86_64-imagemagick
+pacman -S mingw-w64-x86_64-cmake
+pacman -S mingw-w64-x86_64-qt5
+pacman -S mingw-w64-x86_64-toolchain
+pacman -S mingw-w64-x86_64-ninja
+pacman -S mingw-w64-x86_64-clang
+pacman -S mingw-w64-x86_64-clang-analyzer
+pacman -S mingw-w64-x86_64-clang-tools-extra
+pacman -S mingw-w64-x86_64-compiler-rt
+pacman -S mingw-w64-x86_64-libblocksruntime
+pacman -S mingw-w64-x86_64-openblas
+pacman -S mingw-w64-x86_64-boost
+pacman -S mingw-w64-x86_64-eigen3
+pacman -S mingw-w64-x86_64-zeromq
+pacman -S mingw-w64-x86_64-pkg-config
+pacman -S mingw-w64-x86_64-doxygen
+pacman -S mingw-w64-x86_64-graphviz
+pacman -S mingw-w64-x86_64-glm
+pacman -S mingw-w64-x86_64-hunspell
+pacman -S mingw-w64-x86_64-hunspell-en
+pacman -S mingw-w64-x86_64-aspell
+pacman -S mingw-w64-x86_64-aspell-de
+pacman -S mingw-w64-x86_64-aspell-en
+pacman -S mingw-w64-x86_64-gnutls
+pacman -S mingw-w64-x86_64-tcl
+pacman -S mingw-w64-x86_64-tk
+#+END_EXAMPLE
 
 Some of the packages are not really required but I use them and I would like to memorize my installation procedure
 here. So, feel free to only install the packages you require.
@@ -2040,6 +2053,7 @@ Most important commands taken from
 | =pacman -Syu=               | Synchronizes the repository databases and updates the system's packages, excluding "local" packages that are not in the configured repositories. |
 |-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | =pacman -S <name>=          | Install package.                                                                                                                                 |
+| =pacman -R <name>=          | Uninstall package.                                                                                                                               |
 |-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | =pacman -Q --help=          | Get help about the suboptions for local package database access.                                                                                 |
 | =pacman -S --help=          | Get help about the suboptions for sync database access.                                                                                          |
@@ -9362,6 +9376,52 @@ The file is only created if it does not already exist."
         )
 
         ;(projectile-mode 1)
+)
+#+END_SRC
+
+**** projectile-envrc
+
+The package [[https://github.com/hatlafax/projectile-envrc][projectile-envrc]] allows setting, modifying and removing of
+process environment variables from simple 'projectile-envrc' description file that resides in the projectile project
+root directory.
+
+The file format for '.projectile-envrc' is quite simple:
+Only lines that begin with '+', '-', '*:' or ':*' are
+considered. Everything else is ignored.
+
+| Specifier | Description |
+|-----------------------------------------------------------|
+| =+=       | Add variable/value to the process environent. |
+| =-=       | Remove variable from the process environent.  |
+| =*:=      | Prepend to the process environment variable.  |
+| =:*=      | Append to the process environment variable.   |
+
+Example:
+
+#+begin_example
+    #
+    # Hi there this is ignored
+    #
+
+    +TIK = Hallo World
+    +TAK = "A small test"
+    *:PATH = c:/utils/testA
+    *:PATH = c:/utils/testB
+    :*PATH = c:/utils/testC
+    :*PATH = c:/utils/testD
+    +TOK   = c:/utils/testE
+    -OSG_LOG_FILE
+    +TOE   = c:/utils/testF
+#+end_example
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package projectile-envrc
+    :straight (projectile-envrc :host github :repo "hatlafax/projectile-envrc")
+    ;:straight nil
+    :after projectile
+    :config
+        (setq projectile-envrc-silenced nil
+              projectile-envrc-verbose  nil)
 )
 #+END_SRC
 
