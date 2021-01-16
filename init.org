@@ -2531,6 +2531,48 @@ Some usefule references for C++:
   "The psimacs clang-refactor executable.")
 #+END_SRC
 
+** Emscripten
+
+[[https://emscripten.org/][Emscripten]] is a [[https://clang.llvm.org/][clang]] based 
+cross compiler that allow to compile from [[https://en.wikipedia.org/wiki/C%2B%2B][Wikipedia: C++]]
+to [[https://webassembly.org/][WebAssembly]]/[[https://en.wikipedia.org/wiki/JavaScript][JavaScript]].
+It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+(defconst psimacs/config/emscripten-dir 
+    (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "emscripten/emsdk") 
+    "The psimacs emscripten directory.")
+
+(defconst psimacs/config/emscripten-emcmake-exe 
+    (psimacs/file-system/concat-file psimacs/config/emscripten-dir "upstream/emscripten/emcmake.bat")
+    "The psimacs emscripten emcmake executable.")
+
+(defconst psimacs/config/emscripten-env 
+    (list
+        (list '*: "PATH"         psimacs/config/emscripten-dir)
+        (list '*: "PATH"         (psimacs/file-system/concat-directory psimacs/config/emscripten-dir "upstream/emscripten"))
+        (list '*: "PATH"         (psimacs/file-system/concat-directory psimacs/config/emscripten-dir "node/12.18.1_64bit/bin"))
+        (list '*: "PATH"         (psimacs/file-system/concat-directory psimacs/config/emscripten-dir "java/8.152_64bit/bin"))
+        (list '+  "EMSDK"        psimacs/config/emscripten-dir)
+        (list '+  "EM_CONFIG"    (psimacs/file-system/concat-file      psimacs/config/emscripten-dir ".emscripten"))
+        (list '+  "EM_CACHE"     (psimacs/file-system/concat-directory psimacs/config/emscripten-dir "upstream/emscripten/cache"))
+        (list '+  "EMSDK_NODE"   (psimacs/file-system/concat-file      psimacs/config/emscripten-dir "node/12.18.1_64bit/bin/node.exe"))
+        (list '+  "EMSDK_PYTHON" (psimacs/file-system/concat-file      psimacs/config/emscripten-dir "python/3.7.4-pywin32_64bit/python.exe"))
+        (list '+  "JAVA_HOME"    (psimacs/file-system/concat-directory psimacs/config/emscripten-dir "java/8.152_64bit"))
+    )
+    "Environment description that in accordance to the '.projectile-envrc' file format.")
+
+(defun psimacs/config/emscripten-env-test ()
+    "Print the psimacs/config/emscripten-env content."
+    (interactive)
+    (dolist (x psimacs/config/emscripten-env)
+        (message (symbol-name (car x)))
+        (message (car (cdr x)))
+        (message (car (cdr (cdr x))))
+    )
+)
+#+END_SRC
+
 ** Projectile
 
 [[https://github.com/bbatsov/projectile][Projectile]] is used for project management.
@@ -9254,69 +9296,72 @@ Only the basic commands:
 |             |                                 |                                               |
 
 All bound commands:
-| Key binding     | Command                                                   | Description                                                                                                                    |
-|-----------------+-----------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
-| =C-c p f=       | =M-x projectile-find-file=                                | Display a list of all files in the project. With a prefix argument it will clear the cache first.Find file in current project. |
-| =C-c p F=       | =M-x projectile-find-file-in-known-projects=              | Display a list of all files in all known projects.                                                                             |
-| =C-c p g=       | =M-x projectile-find-file-dwim=                           | Display a list of all files at point in the project. With a prefix argument it will clear the cache first.                     |
-| =C-c p 4 f=     | =M-x projectile-find-file-other-window=                   | Jump to a project's file using completion and show it in another window.                                                       |
-| =C-c p 4 g=     | =M-x projectile-find-file-dwim-other-window=              | Jump to a project's file based on context at point and show it in another window.                                              |
-| =C-c p 5 f=     | =M-x projectile-find-file-other-frame=                    | Jump to a project's file using completion and show it in another frame.                                                        |
-| =C-c p 5 g=     | =M-x projectile-find-file-dwim-other-frame=               | Jump to a project's file based on context at point and show it in another frame.                                               |
-| =C-c p a=       | =M-x projectile-find-other-file=                          | Switch between files with the same name but different extensions.                                                              |
-| =C-c p 4 a=     | =M-x projectile-find-other-file-other-window=             | Switch between files with the same name but different extensions in other window.                                              |
-| =C-c p 5 a=     | =M-x projectile-find-other-file-other-frame=              | Switch between files with the same name but different extensions in other frame.                                               |
-| =C-c p l=       | =M-x projectile-find-file-in-directory=                   | Display a list of all files in a directory (that's not necessarily a project).                                                 |
-| =C-c p e=       | =M-x projectile-recentf=                                  | Shows a list of recently visited project files.                                                                                |
-| =C-c p d=       | =M-x projectile-find-dir=                                 | Display a list of all directories in the project. With a prefix argument it will clear the cache first.                        |
-| =C-c p 4 d=     | =M-x projectile-find-dir-other-window=                    | Switch to a project directory and show it in another window.                                                                   |
-| =C-c p 5 d=     | =M-x projectile-find-dir-other-frame=                     | Switch to a project directory and show it in another frame.                                                                    |
-| =C-c p D=       | =M-x projectile-dired=                                    | Opens the root of the project in dired.                                                                                        |
-| =C-c p 4 D=     | =M-x projectile-dired-other-window=                       | Opens the root of the project in dired in another window.                                                                      |
-| =C-c p 5 D=     | =M-x projectile-dired-other-frame=                        | Opens the root of the project in dired in another frame.                                                                       |
-| =C-c p j=       | =M-x projectile-find-tag=                                 | Find tag in project.                                                                                                           |
-| =C-c p T=       | =M-x projectile-find-test-file=                           | Display a list of all test files(specs, features, etc) in the project.                                                         |
-| =C-c p s g=     | =M-x projectile-grep=                                     | Run grep on the files in the project.                                                                                          |
-| =M-- C-c p s g= |                                                           | Run grep on projectile-grep-default-files in the project.                                                                      |
-| =C-c p v=       | =M-x projectile-vc=                                       | Run vc-dir on the root directory of the project.                                                                               |
-| =C-c p V=       | =M-x projectile-browse-dirty-projects=                    | Browse dirty version controlled projects.                                                                                      |
-| =C-c p I=       | =M-x projectile-ibuffer=                                  | Open an IBuffer window showing all buffers in the current project.                                                             |
-| =C-c p b=       | =M-x projectile-switch-to-buffer=                         | Display a list of all project buffers currently open.                                                                          |
-| =C-c p 4 b=     | =M-x projectile-switch-to-buffer-other-window=            | Switch to a project buffer and show it in another window.                                                                      |
-| =C-c p 5 b=     | =M-x projectile-switch-to-buffer-other-frame=             | Switch to a project buffer and show it in another frame.                                                                       |
-| =C-c p 4 C-o=   | =M-x projectile-display-buffer=                           | Display a project buffer in another window without selecting it.                                                               |
-| =C-c p k=       | =M-x projectile-kill-buffer=                              | Kills all project buffers.                                                                                                     |
-| =C-c p o=       | =M-x projectile-multi-occur=                              | Runs multi-occur on all project buffers currently open.                                                                        |
-| =C-c p r=       | =M-x projectile-replace=                                  | Runs interactive query-replace on all files in the projects.                                                                   |
-| =C-c p R=       | =M-x projectile-regenerate-tags=                          | Regenerate the project's tags.                                                                                                 |
-| =C-c p s r=     | =M-x projectile-ripgrep=                                  | Run a Ripgrep search with 'SEARCH-TERM' at current root.                                                                       |
-| =C-c p i=       | =M-x projectile-invalidate-cache=                         | Invalidates the project cache (if existing).                                                                                   |
-| =C-c p p=       | =M-x projectile-switch-project=                           | Display a list of known projects you can switch to.                                                                            |
-| =C-c p S=       | =M-x projectile-save-project-buffers=                     | Save all project buffers.                                                                                                      |
-| =C-c p <left>=  | =M-x projectile-previous-project-buffer=                  | Switch to the previous project buffer.                                                                                         |
-| =C-c p <right>= | =M-x projectile-next-project-buffer=                      | Switch to the next project buffer.                                                                                             |
-| =C-c p q=       | =M-x projectile-switch-open-project=                      | Switch to a project we have currently opened.                                                                                  |
-| =C-c p ESC=     | =M-x projectile-project-buffers-other-buffer=             | Switch to the most recently selected Projectile buffer.                                                                        |
-| =C-c p E=       | =M-x projectile-edit-dir-locals=                          | Opens the root dir-locals-file of the project.                                                                                 |
-| =C-c p s s=     | =M-x projectile-ag=                                       | Runs ag on the project, performing a literal search.                                                                           |
-| =C-c p !=       | =M-x projectile-run-shell-command-in-root=                | Runs shell-command in the root directory of the project.                                                                       |
-| =C-c p x s=     | =M-x projectile-run-shell=                                | Invoke 'shell' in the project's root.                                                                                          |
-| =C-c p x v=     | =M-x projectile-run-vterm=                                | Invoke 'vterm' in the project's root.                                                                                          |
-| =C-c p x e=     | =M-x projectile-run-eshell=                               | Invoke 'eshell' in the project's root.                                                                                         |
-| =C-c p u=       | =M-x projectile-run-project=                              | Run project run command.                                                                                                       |
-| =C-c p P=       | =M-x projectile-test-project=                             | Run project test command.                                                                                                      |
-| =C-c p x g=     | =M-x projectile-run-gdb=                                  | Invoke 'gdb' in the project root.                                                                                              |
-| =C-c p &=       | =M-x projectile-run-async-shell-command-in-root=          | Runs async-shell-command in the root directory of the project.                                                                 |
-| =C-c p C=       | =M-x projectile-configure-project=                        | Runs a standard configure command for your type of project.                                                                    |
-| =C-c p c=       | =M-x projectile-compile-project=                          | Runs a standard compilation command for your type of project.                                                                  |
-| =C-c p L=       | =M-x projectile-install-project=                          | Run project install command.                                                                                                   |
-| =C-c p K=       | =M-x projectile-package-project=                          | Run project package command.                                                                                                   |
-| =C-c p t=       | =M-x projectile-toogle-between-implementation-and-test=   | Toggle between an implementation file and its test file.                                                                       |
-| =C-c p 4 t=     | =M-x projectile-find-implementation-or-test-other-window= | Jump to implementation or test file in other window.                                                                           |
-| =C-c p 5 t=     | =M-x projectile-find-implementation-or-test-other-frame=  | Jump to implementation or test file in other frame.                                                                            |
-| =C-c p z=       | =M-x projectile-cache-current-file=                       | Adds the currently visited file to the cache.                                                                                  |
-| =C-c p m=       | =M-x projectile-commander=                                | Execute a Projectile command with a single letter.                                                                             |
-|-----------------+-----------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                                                        | Description                                                                                                                    |
+|-----------------+----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p f=       | =M-x projectile-find-file=                                     | Display a list of all files in the project. With a prefix argument it will clear the cache first.Find file in current project. |
+| =C-c p F=       | =M-x projectile-find-file-in-known-projects=                   | Display a list of all files in all known projects.                                                                             |
+| =C-c p g=       | =M-x projectile-find-file-dwim=                                | Display a list of all files at point in the project. With a prefix argument it will clear the cache first.                     |
+| =C-c p 4 f=     | =M-x projectile-find-file-other-window=                        | Jump to a project's file using completion and show it in another window.                                                       |
+| =C-c p 4 g=     | =M-x projectile-find-file-dwim-other-window=                   | Jump to a project's file based on context at point and show it in another window.                                              |
+| =C-c p 5 f=     | =M-x projectile-find-file-other-frame=                         | Jump to a project's file using completion and show it in another frame.                                                        |
+| =C-c p 5 g=     | =M-x projectile-find-file-dwim-other-frame=                    | Jump to a project's file based on context at point and show it in another frame.                                               |
+| =C-c p a=       | =M-x projectile-find-other-file=                               | Switch between files with the same name but different extensions.                                                              |
+| =C-c p 4 a=     | =M-x projectile-find-other-file-other-window=                  | Switch between files with the same name but different extensions in other window.                                              |
+| =C-c p 5 a=     | =M-x projectile-find-other-file-other-frame=                   | Switch between files with the same name but different extensions in other frame.                                               |
+| =C-c p l=       | =M-x projectile-find-file-in-directory=                        | Display a list of all files in a directory (that's not necessarily a project).                                                 |
+| =C-c p e=       | =M-x projectile-recentf=                                       | Shows a list of recently visited project files.                                                                                |
+| =C-c p d=       | =M-x projectile-find-dir=                                      | Display a list of all directories in the project. With a prefix argument it will clear the cache first.                        |
+| =C-c p 4 d=     | =M-x projectile-find-dir-other-window=                         | Switch to a project directory and show it in another window.                                                                   |
+| =C-c p 5 d=     | =M-x projectile-find-dir-other-frame=                          | Switch to a project directory and show it in another frame.                                                                    |
+| =C-c p D=       | =M-x projectile-dired=                                         | Opens the root of the project in dired.                                                                                        |
+| =C-c p 4 D=     | =M-x projectile-dired-other-window=                            | Opens the root of the project in dired in another window.                                                                      |
+| =C-c p 5 D=     | =M-x projectile-dired-other-frame=                             | Opens the root of the project in dired in another frame.                                                                       |
+| =C-c p j=       | =M-x projectile-find-tag=                                      | Find tag in project.                                                                                                           |
+| =C-c p T=       | =M-x projectile-find-test-file=                                | Display a list of all test files(specs, features, etc) in the project.                                                         |
+| =C-c p s g=     | =M-x projectile-grep=                                          | Run grep on the files in the project.                                                                                          |
+| =M-- C-c p s g= |                                                                | Run grep on projectile-grep-default-files in the project.                                                                      |
+| =C-c p v=       | =M-x projectile-vc=                                            | Run vc-dir on the root directory of the project.                                                                               |
+| =C-c p V=       | =M-x projectile-browse-dirty-projects=                         | Browse dirty version controlled projects.                                                                                      |
+| =C-c p I=       | =M-x projectile-ibuffer=                                       | Open an IBuffer window showing all buffers in the current project.                                                             |
+| =C-c p b=       | =M-x projectile-switch-to-buffer=                              | Display a list of all project buffers currently open.                                                                          |
+| =C-c p 4 b=     | =M-x projectile-switch-to-buffer-other-window=                 | Switch to a project buffer and show it in another window.                                                                      |
+| =C-c p 5 b=     | =M-x projectile-switch-to-buffer-other-frame=                  | Switch to a project buffer and show it in another frame.                                                                       |
+| =C-c p 4 C-o=   | =M-x projectile-display-buffer=                                | Display a project buffer in another window without selecting it.                                                               |
+| =C-c p k=       | =M-x projectile-kill-buffer=                                   | Kills all project buffers.                                                                                                     |
+| =C-c p o=       | =M-x projectile-multi-occur=                                   | Runs multi-occur on all project buffers currently open.                                                                        |
+| =C-c p r=       | =M-x projectile-replace=                                       | Runs interactive query-replace on all files in the projects.                                                                   |
+| =C-c p R=       | =M-x projectile-regenerate-tags=                               | Regenerate the project's tags.                                                                                                 |
+| =C-c p s r=     | =M-x projectile-ripgrep=                                       | Run a Ripgrep search with 'SEARCH-TERM' at current root.                                                                       |
+| =C-c p i=       | =M-x projectile-invalidate-cache=                              | Invalidates the project cache (if existing).                                                                                   |
+| =C-c p p=       | =M-x projectile-switch-project=                                | Display a list of known projects you can switch to.                                                                            |
+| =C-c p S=       | =M-x projectile-save-project-buffers=                          | Save all project buffers.                                                                                                      |
+| =C-c p <left>=  | =M-x projectile-previous-project-buffer=                       | Switch to the previous project buffer.                                                                                         |
+| =C-c p <right>= | =M-x projectile-next-project-buffer=                           | Switch to the next project buffer.                                                                                             |
+| =C-c p q=       | =M-x projectile-switch-open-project=                           | Switch to a project we have currently opened.                                                                                  |
+| =C-c p ESC=     | =M-x projectile-project-buffers-other-buffer=                  | Switch to the most recently selected Projectile buffer.                                                                        |
+| =C-c p E=       | =M-x projectile-edit-dir-locals=                               | Opens the root dir-locals-file of the project.                                                                                 |
+| =C-c p s s=     | =M-x projectile-ag=                                            | Runs ag on the project, performing a literal search.                                                                           |
+| =C-c p !=       | =M-x projectile-run-shell-command-in-root=                     | Runs shell-command in the root directory of the project.                                                                       |
+| =C-c p x s=     | =M-x projectile-run-shell=                                     | Invoke 'shell' in the project's root.                                                                                          |
+| =C-c p x v=     | =M-x projectile-run-vterm=                                     | Invoke 'vterm' in the project's root.                                                                                          |
+| =C-c p x e=     | =M-x projectile-run-eshell=                                    | Invoke 'eshell' in the project's root.                                                                                         |
+| =C-c p u=       | =M-x projectile-run-project=                                   | Run project run command.                                                                                                       |
+| =C-c p P=       | =M-x projectile-test-project=                                  | Run project test command.                                                                                                      |
+| =C-c p x g=     | =M-x projectile-run-gdb=                                       | Invoke 'gdb' in the project root.                                                                                              |
+| =C-c p &=       | =M-x projectile-run-async-shell-command-in-root=               | Runs async-shell-command in the root directory of the project.                                                                 |
+| =C-c p C=       | =M-x projectile-configure-project=                             | Runs a standard configure command for your type of project.                                                                    |
+| =C-c p c=       | =M-x projectile-compile-project=                               | Runs a standard compilation command for your type of project.                                                                  |
+| =C-c p L=       | =M-x projectile-install-project=                               | Run project install command.                                                                                                   |
+| =C-c p K=       | =M-x projectile-package-project=                               | Run project package command.                                                                                                   |
+| =C-c p t=       | =M-x projectile-toogle-between-implementation-and-test=        | Toggle between an implementation file and its test file.                                                                       |
+| =C-c p 4 t=     | =M-x projectile-find-implementation-or-test-other-window=      | Jump to implementation or test file in other window.                                                                           |
+| =C-c p 5 t=     | =M-x projectile-find-implementation-or-test-other-frame=       | Jump to implementation or test file in other frame.                                                                            |
+| =C-c p z=       | =M-x projectile-cache-current-file=                            | Adds the currently visited file to the cache.                                                                                  |
+| =C-c p m=       | =M-x projectile-commander=                                     | Execute a Projectile command with a single letter.                                                                             |
+|-----------------+----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p C-e e c= | =M-x psimacs/projectile/create-projectile-envrc-emscripten=    | Write a .projectile-envrc file in the current projectile project root.                                                         |
+| =C-c p C-e e d= | =M-x psimacs/projectile/destroy-projectile-envrc-emscripten=   | Remove the .projectile-envrc file in the current projectile project root.                                                      |
+|-----------------+----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
 
 Special global command
 | Key binding | Command                                               | Description                                             |
@@ -9352,6 +9397,9 @@ The file is only created if it does not already exist."
             :map projectile-mode-map
                 ("C-c p"     . projectile-command-map)
                 ("C-c p C-n" . psimacs/projectile/create-empty-projectile-file)
+            :map projectile-command-map
+                ("C-e e c"   . psimacs/projectile/create-projectile-envrc-emscripten)
+                ("C-e e d"   . psimacs/projectile/destroy-projectile-envrc-emscripten)
           )
     :init
         (setq projectile-mode-line-prefix " ℘")
@@ -9372,6 +9420,55 @@ The file is only created if it does not already exist."
                 "TAGS" "\#*\#" "*~" "*.la" "*.o" "*.pyc" "*.elc" "*.exe"
                 "*.zip" "*.tar.*" "*.rar" "*.7z"
                 "*.aux" "*.log" "*.out" "*.pdf"
+            )
+        )
+
+        (defun psimacs/projectile/create-projectile-envrc-emscripten ()
+            "Write a .projectile-envrc file in the current projectile project root."
+            (interactive)
+            (when (projectile-project-p)
+                (projectile-with-default-dir
+                    (if (projectile-project-p)
+                        (projectile-project-root) default-directory)
+
+                    (let* ((file (concat (projectile-project-root) ".projectile-envrc")))
+                        (unless (file-exists-p file)
+                            (with-temp-buffer 
+                                (insert "#\n")
+                                (insert "# Emscripten support for this project.\n")
+                                (insert "#\n")
+                                (dolist (x psimacs/config/emscripten-env)
+                                    (let* (
+                                            (action   (symbol-name (car x)))
+                                            (varname  (car (cdr x)))
+                                            (varvalue (car (cdr (cdr x))))
+                                          )
+                                        (insert (format "%s %s = %s\n" action varname varvalue))
+                                    )
+                                )
+                                (write-region (point-min)
+                                    (point-max) file t)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        (defun psimacs/projectile/destroy-projectile-envrc-emscripten ()
+            "Remove the .projectile-envrc file in the current projectile project root."
+            (interactive)
+            (when (projectile-project-p)
+                (projectile-with-default-dir
+                    (if (projectile-project-p)
+                        (projectile-project-root) default-directory)
+
+                    (let* ((file (concat (projectile-project-root) ".projectile-envrc")))
+                        (when (file-exists-p file)
+                            (delete-file file)
+                        )
+                    )
+                )
             )
         )
 
@@ -9457,11 +9554,13 @@ The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] g
     :bind (
             :map projectile-cmake-mode-map
                 ("C-c C-p" . projectile-cmake-command-map)
-                ("C-c C-p h" . hydra-projectile-cmake/body)
+            :map projectile-cmake-command-map
+                ("h"     . hydra-projectile-cmake/body)
           )
     :hook (projectile-mode . projectile-cmake-global-mode)
     :init
         (setq projectile-cmake-executable           psimacs/config/cmake-runtime-exe)
+        (setq projectile-emcmake-executable         psimacs/config/emscripten-emcmake-exe)
         (setq projectile-cmake-clang-c-executable   psimacs/config/clang-c-compiler-runtime-exe)
         (setq projectile-cmake-clang-c++-executable psimacs/config/clang-c++-compiler-runtime-exe)
 )
