@@ -2601,6 +2601,20 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
   "The psimacs projectile bookmark file.")
 #+END_SRC
 
+** LSP-Mode
+
+*Psimacs* uses the following file for storing [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] session information:
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for lsp-mode
+;;
+(defconst psimacs/config/lsp-session-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".lsp-session-v1")
+  "The psimacs lsp-mode session file.")
+#+END_SRC
+
+
 * Environment
 
 Extent the execution search path by the external tools that *Psimacs* supports. Do not rely solely on the
@@ -9863,6 +9877,9 @@ See also:
 - [[https://github.com/flycheck/flycheck-inline][flycheck-inline]]
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-programming.el :var file-description="Advanced programming setup"
+;;
+;; Inline pop-up library for Emacs
+;;
 (use-package quick-peek
     :config
         (set-face-attribute 'quick-peek-border-face nil
@@ -9879,6 +9896,9 @@ See also:
 GNU Emacs, intended as replacement for the older Flymake extension which is part of *Emacs*.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-programming.el :var file-description="Advanced programming setup"
+;;
+;; A modern on-the-fly syntax checking extension for Emacs
+;;
 (use-package flycheck
     :diminish flycheck-mode
     :config
@@ -9910,6 +9930,9 @@ GNU Emacs, intended as replacement for the older Flymake extension which is part
 from Flycheck right below their reporting location, using overlays.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-programming.el
+;;
+;; Show errors right below of their reporting location
+;;
 (use-package flycheck-inline
     :after flycheck
     :config
@@ -9936,7 +9959,69 @@ The package [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] provides an *Ema
 the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protocol]], which is a wire protocol between the client and the Debug server.  It's similar to the
 [[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]] but provides integration with a debug server.
 
+[[https://emacs-lsp.github.io/dap-mode/][Dap-mode]] provides the following commands:
+
+| Key binding | Command                            | Description                                                      |
+|-------------+------------------------------------+------------------------------------------------------------------|
+|             | =M-x dap-breakpoint-toggle=        | Toggle breakpoint at line.                                       |
+|             | =M-x dap-breakpoint-delete=        | Delete breakpoint at line.                                       |
+|             | =M-x dap-breakpoint-add=           | Add breakpoint at line.                                          |
+|             | =M-x dap-breakpoint-condition=     | Set/unset breakpoint condition.                                  |
+|             | =M-x dap-breakpoint-hit-condition= | Set/unset breakpoint hit condition.                              |
+|             | =M-x dap-breakpoint-log-message=   | Set/unset breakpoint log message.                                |
+|             | =M-x dap-eval=                     | Eval string.                                                     |
+|             | =M-x dap-eval-region=              | Eval region string.                                              |
+|             | =M-x dap-eval-thing-at-point=      | Eval symbol at point.                                            |
+|             | =M-x dap-step-in=                  | Debug step in.                                                   |
+|             | =M-x dap-next=                     | Debug next.                                                      |
+|             | =M-x dap-step-out=                 | Debug step out.                                                  |
+|             | =M-x dap-stop-thread=              | Stop thread.                                                     |
+|             | =M-x dap-restart-frame=            | Restart frame.                                                   |
+|             | =M-x dap-continue=                 | Debug continue.                                                  |
+|             | =M-x dap-disconnect=               | Cancel current debug session.                                    |
+|             | =M-x dap-switch-stack-frame=       | Switch active stack frame.                                       |
+|             | =M-x dap-switch-thread=            | Switch active thread.                                            |
+|             | =M-x dap-switch-session=           | Switch active session.                                           |
+|             | =M-x dap-debug-edit-template=      | Generate run command.                                            |
+|             | =M-x dap-debug=                    | Create and run new configuration using the available templates.  |
+|             | =M-x dap-debug-last=               | Debug previous configuration.                                    |
+|             | =M-x dap-debug-recent=             | Select configuration to run from the previously started command. |
+|             | =M-x dap-go-to-output-buffer=      | Go output buffer.                                                |
+|-------------+------------------------------------+------------------------------------------------------------------|
+|             | =M-x dap-ui-sessions=              | Show active/terminated sessions view.                            |
+|             | =M-x dap-ui-locals=                | Show locals view.                                                |
+|             | =M-x dap-ui-expressions=           | Show expressions view.                                           |
+|             | =M-x dap-ui-breakpoints=           | Show breakpoints view.                                           |
+|             | =M-x dap-ui-repl=                  | DAP UI REPL.                                                     |
+|-------------+------------------------------------+------------------------------------------------------------------|
+|             | =M-x dap-tm-loaded-sources=        | Loaded sources can be viewed by invoking this command.           |
+|-------------+------------------------------------+------------------------------------------------------------------|
+
+Breakpoints can be viewed after invoking =dap-ui-breakpoints= with:
+
+| Key binding | Command                                  | Description                     |
+|-------------+------------------------------------------+---------------------------------|
+| =\-RET=     | =M-x dap-ui-breakpoints-goto=            | Go to breakpoint under cursor.  |
+| =d=         | =M-x dap-ui-breakpoints-delete=          | Delete breakpoint under cursor. |
+| =D=         | =M-x dap-ui-breakpoints-delete-selected= | Delete selected breakpoints.    |
+| =m=         | =M-x bui-list-mark=                      | Mark breakpoint under point.    |
+| =u=         | =M-x bui-list-unmark=                    | Unmark breakpoint under point.  |
+| =U=         | =M-x bui-list-unmark-all=                | Unmark breakpoint under point.  |
+|-------------+------------------------------------------+---------------------------------|
+
+[[https://emacs-lsp.github.io/dap-mode/][Dap-mode]] supports =launch.json= files out of the box, and there is nothing that needs to be enabled. All that
+needs to be done is to add a =launch.json= file at the project root and to run =dap-debug=.
+All configurations stored in the =launch.json= will automatically show up in the selection.
+=launch.json= files in [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] are just like in *VSCode* and even support variables.
+
+See also:
+- [[https://code.visualstudio.com/docs/editor/debugging][launch.json]]
+- [[https://code.visualstudio.com/docs/editor/variables-reference][launch.json variables]]
+
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+;;
+;; Support Debug servers
+;;
 (use-package dap-mode
     :after lsp-mode
     :config
@@ -10016,9 +10101,13 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 | =C-c l C-c m=   | =M-x lsp-ui-imenu=                          | Open ui-imenu in side window.                                                                |
 | =C-c l C-c s=   | =M-x lsp-ui-sideline-mode=                  | Minor mode for showing information for current line.                                         |
 | =C-c l C-c d=   | =M-x psimacs/lsp-ui-mode/toggle-lsp-ui-doc= | Minor mode for showing information in child frame.                                           |
+|-----------------+---------------------------------------------+----------------------------------------------------------------------------------------------|
 
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+;;
+;; Support language servers
+;;
 (use-package lsp-mode
     ;:commands lsp
     :commands (lsp lsp-deferred)
@@ -10026,6 +10115,9 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         ;(setq lsp-keymap-prefix "s-l")
         ;(setq lsp-keymap-prefix "H-v")
         (setq lsp-keymap-prefix "C-c l")
+
+        (setq lsp-session-file psimacs/config/lsp-session-file)
+
         ;(setq lsp-pyls-server-command psimacs/config/pyls-runtime-exe)
         (setq lsp-idle-delay 0.1)
 
@@ -10086,6 +10178,9 @@ CodeLens are links in your code:
 
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+;;
+;; UI modules for lsp-mode
+;;
 (use-package lsp-ui
     :commands lsp-ui-mode
     :init
@@ -10143,16 +10238,275 @@ The package [[https://github.com/emacs-lsp/lsp-ivy][lsp-ivy]] provides an intera
 Alternative: [[https://github.com/emacs-lsp/helm-lsp][Helm lsp integration]]
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+;;
+;; Ivy interface for lsp-mode
+;;
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 #+END_SRC
-
 
 **** lsp-treemacs
 
 The package [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] integrates [[https://github.com/Alexander-Miller/treemacs][treemacs]] with [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]].
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+;;
+;; Treemacs integration of lsp-mode
+;;
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+#+END_SRC
+
+** Lisp
+*** Autoformatting
+
+The package [[https://www.emacswiki.org/emacs/elisp-format.el][elisp-format]] format elisp code.
+
+It provides the following commands:
+
+| Key binding | Command                             | Description                                             |
+|-------------+-------------------------------------+---------------------------------------------------------|
+|             | =M-x elisp-format-region=           | Format region or defun.                                 |
+|             | =M-x elisp-format-buffer=           | Format buffer.                                          |
+|             | =M-x elisp-format-file=             | Format file.                                            |
+|             | =M-x elisp-format-file-batch=       | Format file with `batch'.                               |
+|             | =M-x elisp-format-directory=        | Format recursive elisp files in directory.              |
+|             | =M-x elisp-format-directory-batch=  | Format recursive elisp files in directory with `batch'. |
+|             | =M-x elisp-format-dired-mark-files= | Format dired marked files.                              |
+|             | =M-x elisp-format-library=          | Format library.                                         |
+|-------------+-------------------------------------+---------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lisp.el :var file-description="Advanced lisp setup"
+;;
+;; Format elsip code
+;;
+(use-package elisp-format
+;    :straight (elisp-autofmt :host gitlab :repo "ideasman42/emacs-elisp-autofmt")
+)
+#+END_SRC
+
+*** Recompile directory
+
+Convenience function for compiling elips files found in directory.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lisp.el :var file-description="Advanced lisp setup"
+;;
+;; Compiling of elips file in directory
+;;
+(defun psimacs/elisp/recompile-dir ()
+    "Recompile elisp directory"
+    (interactive)
+    (byte-recompile-directory (read-from-minibuffer "Byte Recompile: " default-directory) 1)
+)
+#+END_SRC
+
+** Python
+
+See also:
+- [[https://www.emacswiki.org/emacs/PythonProgrammingInEmacs][EmacsWiki: PythonProgrammingInEmacs]]
+- [[https://wikemacs.org/index.php?title=Python&mobileaction=toggle_view_mobile][WikEmacs: Python]]
+
+*** flycheck-pycheckers
+
+The package [[https://github.com/msherry/flycheck-pycheckers][flycheck-pycheckers]] provides
+multiple syntax checker for Python in *Emacs*, using [[http://www.flycheck.org/][Flycheck]].
+
+This package provides a way to run multiple syntax checkers on Python code, in parallel.
+The list of supported checkers includes:
+- [[https://www.pylint.org/][pylint]]
+- [[http://flake8.pycqa.org/][flake8]]
+- [[https://www.python.org/dev/peps/pep-0008/][pep8]]
+- [[https://github.com/PyCQA/pyflakes][pyflakes]]
+- [[http://mypy-lang.org/][mypy]]
+- [[https://github.com/PyCQA/bandit][bandit]]
+
+This is an alternative way of running multiple Python syntax checkers in
+[[http://www.flycheck.org/][Flycheck]] that doesn't depend on [[http://www.flycheck.org/][Flycheck's]]
+chaining mechanism.
+
+See also: [[http://www.flycheck.org/en/latest/user/quickstart.html][Flycheck Quickstart]]
+
+ToDo: Disabled because it does not work out of the box on windows.
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-python.el :var file-description="Advanced Python setup"
+;;
+;; Multiple Python checkers at once
+;;
+(use-package flycheck-pycheckers
+    :after flycheck
+    :custom
+        ;(flycheck-pycheckers-command (concat user-emacs-directory "straight/repos/flycheck-pycheckers/bin/pycheckers.py"))
+        ;(flycheck-pycheckers-command (concat psimacs/config/site-lisp-dir "pycheckers.bat"))
+
+        (flycheck-pycheckers-checkers '(flake8 pylint mypy3 pyflakes))
+
+    :hook (flycheck-mode . flycheck-pycheckers-setup)
+)
+#+END_SRC
+
+*** elpy
+
+[[https://github.com/jorgenschaefer/elpy][Elpy]] is an extension for the Emacs text editor to
+work with Python projects.
+
+See also:
+- [[https://elpy.readthedocs.io/en/latest/][Documentation: Elpy]],
+- [[https://github.com/jorgenschaefer/elpy][elpy]],
+- [[https://realpython.com/emacs-the-best-python-editor/][Emacs: The Best Python Editor?]],
+- [[https://stackoverflow.com/questions/tagged/elpy][Newest 'elpy' Questions - Stack Overflow]]
+
+Useful key bindings:
+
+#+ATTR_HTML: :class styledtable
+| Key binding     | Command                                                | Description                                                                                                                                                                                                |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-c=       | =M-x elpy-shell-send-region-or-buffer=                 |                                                                                                                                                                                                            |
+| =C-RET=         | =M-x elpy-shell-send-statement-and-step=               |                                                                                                                                                                                                            |
+| =C-c C-z=       | =M-x elpy-shell-switch-to-shell=                       |                                                                                                                                                                                                            |
+| =C-c C-d=       | =M-x elpy-doc=                                         |                                                                                                                                                                                                            |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-f=       | =M-x elpy-find-file=                                   | Find a file in the current project.                                                                                                                                                                        |
+| =C-c C-s=       | =M-x elpy-rgrep-symbol=                                | Search the files in the current project for a string.                                                                                                                                                      |
+|                 | =M-x elpy-set-project-root=                            | Set the current project root directory                                                                                                                                                                     |
+|                 | =M-x elpy-set-project-variable=                        | Set or change the value of a project-wide variable.                                                                                                                                                        |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-TAB=         | =M-x elpy-company-backend=                             | Provide completion suggestions for a completion at point.                                                                                                                                                  |
+| =M-.=           | =M-x xref-find-definitions=                            | Go to the location where the identifier at point is defined.                                                                                                                                               |
+| =C-x 4 M-.=     | =M-x elpy-goto-definition-other-window=                | Same as =elpy-go-to-definition= but goes to the definition of the symbol at point in other window, if defined.                                                                                             |
+| =C-x 4 .=       | =M-x xref-find-definition-other-window=                | Like =M-.= but switch to the other window.                                                                                                                                                                 |
+| =C-x 5 .=       | =M-x xref-find-definition-other-frame=                 | Like =M-.= but switch to the other frame.                                                                                                                                                                  |
+| =M-*=           | =M-x pop-tag-mark=                                     | Go back to the last place where =M-.= was used, effectively turning =M-.= and =M-*= into a forward and backward motion for definition lookups.                                                             |
+| =M-,=           | =M-x xref-pop-marker-stack=                            | Go back to the last place where =M-.= was used, effectively turning =M-.= and =M-*= into a forward and backward motion for definition lookups.                                                             |
+| =C-c C-o=       | =M-x elpy-occur-definitions=                           | Search the buffer for a list of definitions of classes and functions.                                                                                                                                      |
+|                 | =M-x elpy-goto-assignment=                             | Go to the location where the identifier at point is assigned.                                                                                                                                              |
+| =M-?=           | =M-x xref-find-references=                             | Find references for an identifier of the current buffer.                                                                                                                                                   |
+| =C-M-.=         | =M-x xref-find-apropos=                                | Find all meaningful symbols that match a given pattern.                                                                                                                                                    |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-z=       | =M-x elpy-shell-switch-to-shell=                       | Switch to buffer with a Python interpreter running, starting one if necessary.                                                                                                                             |
+|                 | =M-x elpy-shell-toggle-dedicated-shell=                | Attaches a dedicated python shell (not shared with the other python buffers) to the current python buffer.                                                                                                 |
+|                 | =M-x elpy-shell-set-local-shell=                       | Attach the current python buffer to a specific python shell.                                                                                                                                               |
+| =C-c C-k=       | =M-x elpy-shell-kill=                                  | Kill the associated python shell.                                                                                                                                                                          |
+| =C-c C-K=       | =M-x elpy-shell-kill-all=                              | Kill all active python shells.                                                                                                                                                                             |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-y e=     | =M-x elpy-shell-send-statement=                        | Send the current statement to the Python shell and keep point position.                                                                                                                                    |
+| =C-c C-y C-e=   | =M-x elpy-shell-send-statement-and-step=               | Send the current statement to the Python shell and move point to first subsequent statement.                                                                                                               |
+| =C-c C-y E=     | =M-x elpy-shell-send-statement-and-go=                 | Send the current statement to the Python shell, keeping point position, and switch focus to the Python shell buffer.                                                                                       |
+| =C-c C-y C-S-E= | =M-x elpy-shell-send-statement-and-step-and-go=        | Send the current statement to the Python shell, move point to first subsequent statement, and switch focus to the Python shell buffer.                                                                     |
+| =C-c C-y O=     | =M-x elpy-shell-send-group-and-step=                   | Send the current or next group of top-level statements to the Python shell and step.                                                                                                                       |
+| =C-c C-y W=     | =M-x elpy-shell-send-codecell-and-step=                | Send the current code cell to the Python shell and step.                                                                                                                                                   |
+| =C-c C-y r=     | =M-x elpy-shell-send-region-or-buffer=                 | Send the the active region (if any) or the entire buffer (otherwise) to the Python shell and keep point position.                                                                                          |
+| =C-c C-y s=     | =M-x elpy-shell-send-top-statement=                    |                                                                                                                                                                                                            |
+| =C-c C-y S=     | =M-x elpy-shell-send-top-statement-and-go=             |                                                                                                                                                                                                            |
+| =C-c C-y f=     | =M-x elpy-shell-send-defun=                            |                                                                                                                                                                                                            |
+| =C-c C-y F=     | =M-x elpy-shell-send-defun-and-go=                     |                                                                                                                                                                                                            |
+| =C-c C-y c=     | =M-x elpy-shell-send-defclass=                         |                                                                                                                                                                                                            |
+| =C-c C-y C=     | =M-x elpy-shell-send-defclass-and-go=                  |                                                                                                                                                                                                            |
+| =C-c C-y o=     | =M-x elpy-shell-send-group=                            |                                                                                                                                                                                                            |
+| =C-c C-y O=     | =M-x elpy-shell-send-group-and-go=                     |                                                                                                                                                                                                            |
+| =C-c C-y w=     | =M-x elpy-shell-send-codecell=                         |                                                                                                                                                                                                            |
+| =C-c C-y W=     | =M-x elpy-shell-send-codecell-and-go=                  |                                                                                                                                                                                                            |
+| =C-c C-y R=     | =M-x elpy-shell-send-region-or-buffer-and-go=          |                                                                                                                                                                                                            |
+| =C-c C-y b=     | =M-x elpy-shell-send-buffer=                           |                                                                                                                                                                                                            |
+| =C-c C-y B=     | =M-x elpy-shell-send-buffer-and-go=                    |                                                                                                                                                                                                            |
+| =C-c C-y C-s=   | =M-x elpy-shell-send-top-statement-and-step=           |                                                                                                                                                                                                            |
+| =C-c C-y C-S-S= | =M-x elpy-shell-send-top-statement-and-step-and-go=    |                                                                                                                                                                                                            |
+| =C-c C-y C-f=   | =M-x elpy-shell-send-defun-and-step=                   |                                                                                                                                                                                                            |
+| =C-c C-y C-S-F= | =M-x elpy-shell-send-defun-and-step-and-go=            |                                                                                                                                                                                                            |
+| =C-c C-y C-c=   | =M-x elpy-shell-send-defclass-and-step=                |                                                                                                                                                                                                            |
+| =C-c C-y C-S-C= | =M-x elpy-shell-send-defclass-and-step-and-go=         |                                                                                                                                                                                                            |
+| =C-c C-y C-S-O= | =M-x elpy-shell-send-group-and-step-and-go=            |                                                                                                                                                                                                            |
+| =C-c C-y C-W=   | =M-x elpy-shell-send-codecell-and-step-and-go=         |                                                                                                                                                                                                            |
+| =C-c C-y C-r=   | =M-x elpy-shell-send-region-or-buffer-and-step=        |                                                                                                                                                                                                            |
+| =C-c C-y C-S-R= | =M-x elpy-shell-send-region-or-buffer-and-step-and-go= |                                                                                                                                                                                                            |
+| =C-c C-y C-b=   | =M-x elpy-shell-send-buffer-and-step=                  |                                                                                                                                                                                                            |
+| =C-c C-y C-S-B= | =M-x elpy-shell-send-buffer-and-step-and-go=           |                                                                                                                                                                                                            |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-n=       | =M-x elpy-flymake-next-error=                          | Navigate errors.                                                                                                                                                                                           |
+| =C-c C-p=       | =M-x elpy-flymake-previous-error=                      | Navigate errors.                                                                                                                                                                                           |
+| =C-c C-v=       | =M-x elpy-check=                                       | Run a syntax check on the current file where the output is displayed in a new buffer, giving you an overview and allowing you to jump to the errors from there.                                            |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-d=       | =M-x elpy-doc=                                         | When point is on a symbol, Elpy will try and find the documentation for that object, and display that.                                                                                                     |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c @ C-c=     | =M-x elpy-folding-toggle-at-point=                     | Toggle folding for the thing at point, it can be a docstring, a comment or a code block.                                                                                                                   |
+| =C-c @ C-b=     | =M-x elpy-folding-toggle-docstrings=                   | Toggle folding of all python docstrings.                                                                                                                                                                   |
+| =C-c @ C-m=     | =M-x elpy-folding-toggle-comments=                     | Toggle folding of all comments.                                                                                                                                                                            |
+| =C-c @ C-f=     | =M-x elpy-folding-hide-leafs=                          | Hide all code leafs, i.e. code blocks that do not contains any other blocks.                                                                                                                               |
+| =C-c @ C-a=     | =M-x hs-show-all=                                      | Unfold everything.                                                                                                                                                                                         |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-u d=     | =M-x elpy-pdb-debug-buffer=                            | Run pdb on the current buffer.                                                                                                                                                                             |
+| =C-c C-u b=     | =M-x elpy-pdb-toggle-breakpoint-at-point=              | Add (or remove) a breakpoint on the current line.                                                                                                                                                          |
+| =C-c C-u p=     | =M-x elpy-pdb-break-at-point=                          | Run pdb on the current buffer and pause at the cursor position.                                                                                                                                            |
+| =C-c C-u e=     | =M-x elpy-pdb-debug-last-exception=                    | Run post-mortem pdb on the last exception.                                                                                                                                                                 |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-t=       | =M-x elpy-test=                                        | Start a test run.                                                                                                                                                                                          |
+|                 | =M-x elpy-set-test-runner=                             | This changes the current test runner.                                                                                                                                                                      |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-e=       | =M-x elpy-multiedit-python-symbol-at-point=            | Edit all occurrences of the symbol at point at once.                                                                                                                                                       |
+| =C-c C-r f=     | =M-x elpy-format-code=                                 | Format code using the available formatter.                                                                                                                                                                 |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-r r=     | =M-x elpy-refactor-rename=                             | Rename all occurences of the symbol at point (variable, function, class, …). If needed, rename occurences in other files as well.                                                                          |
+| =C-c C-r v=     | =M-x elpy-refactor-extract-variable=                   | Move the selection to a new variable.                                                                                                                                                                      |
+| =C-c C-r f=     | =M-x elpy-refactor-extract-function=                   | Move the selection to a new function.                                                                                                                                                                      |
+| =C-c C-r i=     | =M-x elpy-refactor-inline=                             | Inline the variable at point. i.e. replace it with its defining expression.                                                                                                                                |
+|                 | =M-x elpy-profile-buffer-or-region=                    | Send the current buffer or region to the profiler and display the result with =elpy-profile-visualizer=.                                                                                                   |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-x c=     | =M-x elpy-django-command=                              | Choose what command you’d like to run via =django-admin.py= or =manage.py=.                                                                                                                                |
+| =C-c C-x r=     | =M-x elpy-django-runserver=                            | Start the development server command, runserver. Default arguments are =127.0.0.1= for ip address and =8000= for port. These can be changed via =elpy-django-server-ipaddr= and =elpy-django-server-port=. |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                 | =M-x elpy-rpc-restart=                                 | Close all running RPC processes. Elpy will re-start them on demand with current settings.                                                                                                                  |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                 | =M-x pyvenv-workon=                                    | The main interaction point with virtual envs, mirroring the normal activate and deactivate commands of virtual envs and the workon command of virtualenvwrapper.sh.                                        |
+|                 | =M-x pyvenv-activate=                                  | The main interaction point with virtual envs, mirroring the normal activate and deactivate commands of virtual envs and the workon command of virtualenvwrapper.sh.                                        |
+|                 | =M-x pyvenv-deactivate=                                | The main interaction point with virtual envs, mirroring the normal activate and deactivate commands of virtual envs and the workon command of virtualenvwrapper.sh.                                        |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-M-n=         | =M-x elpy-nav-forward-block=                           | Navigate forward to the next block.                                                                                                                                                                        |
+| =C-M-p=         | =M-x elpy-nav-backward-block=                          | Navigate backward to the previous block.                                                                                                                                                                   |
+|-----------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
+;;
+;; Python programming support
+;;
+(use-package elpy
+    ;:after flycheck
+    :bind
+        (:map elpy-mode-map
+            ("C-M-n" . elpy-nav-forward-block)
+            ("C-M-p" . elpy-nav-backward-block)
+        )
+    :init
+        (advice-add 'python-mode :before 'elpy-enable)
+    :hook
+        (
+            (elpy-mode . flycheck-mode)
+            (elpy-mode . (lambda ()
+                            (set (make-local-variable 'company-backends) '((elpy-company-backend :with company-yasnippet))))
+                         )
+        )
+    :custom
+        (python-indent-offset 4)
+
+        ;(python-shell-interpreter psimacs/config/python-runtime-exe)
+        ;(python-shell-interpreter-args "-i")
+
+        (python-shell-interpreter "ipython")
+        (python-shell-interpreter-args "-i --simple-prompt")
+
+        ;setq python-shell-interpreter "jupyter"
+        ;python-shell-interpreter-args "console --simple-prompt"
+        ;python-shell-prompt-detect-failure-warning nil)
+        ;(add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
+
+        ;setq python-shell-interpreter "jupyter"
+        ;python-shell-interpreter-args "console --simple-prompt --existing")
+
+        ;(python-check-command psimacs/config/flake8-runtime-exe)
+        (elpy-syntax-check-command psimacs/config/flake8-runtime-exe)
+    ;:config
+        ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+        ;(setq elpy-shell-echo-output nil)
+        ;(setq elpy-rpc-python-command "python3")
+        ;(setq elpy-rpc-timeout 2)
+)
 #+END_SRC
 
 * Major Modes
@@ -11197,6 +11551,869 @@ Allowed values: x0, x1, x2, x4, x8
                 (psimacs/config/plantuml-eval-java-args 0 0)
             )
         )
+)
+#+END_SRC
+
+** CMake
+
+[[https://cmake.org/][CMake]] is an open-source, cross-platform family of tools designed to build, test and package software.
+
+*** CMake-Mode
+
+[[https://gitlab.kitware.com/cmake/cmake/blob/master/Auxiliary/cmake-mode.el][Cmake-mode]] provides syntax
+highlighting and indentation for =CMakeLists.txt= and =*.cmake= source files.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-cmake-mode.el :var file-description="Advanced cmake-mode setup"
+;;
+;; Support for CMake
+;;
+(use-package cmake-mode)
+#+END_SRC
+
+*** CMake Font Lock
+
+The package [[https://github.com/Lindydancer/cmake-font-lock][cmake-font-lock]] provides *Emacs* font lock
+rules for CMake.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-cmake-mode.el :var file-description="Advanced cmake-mode setup"
+;;
+;; Font locking of CMake code
+;;
+(use-package cmake-font-lock
+    :config
+        (autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
+        (add-hook 'cmake-mode-hook 'cmake-font-lock-activate)
+)
+#+END_SRC
+
+*** CMake-IDE :noexport:
+
+[[https://github.com/atilaneves/cmake-ide][cmake-ide]] is a package to enable IDE-like features on Emacs
+for CMake projects.
+
+It works by running [[https://cmake.org/][CMake]] in *Emacs* in order to obtain the necessary compiler
+flags to pass to the other tools. Since all the dependencies are specified in the CMake scripts, there
+is no need to maintain a parallel dependency tracking system for Emacs. Just ask CMake.
+
+See also:
+- [[https://www.youtube.com/watch?v=5FQwQ0QWBTU][CppCon 2015 Lightning talk on cmake-ide]]
+
+Remark:
+- *Psimacs* currently does not use this package. The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]]
+  gives fine grained support of [[https://cmake.org/][CMake]] with *Emacs* [[https://github.com/bbatsov/projectile][projectile]].
+
+#+BEGIN_SRC emacs-lisp :tangle no config/init-advanced-cmake-mode.el :var file-description="Advanced cmake-mode setup"
+;;
+;; IDE for CMake
+;;
+(use-package cmake-ide
+    :after cc-mode projectile
+    :hook (c++-mode . psimacs/cmake-ide-mode/cmake-ide-find-project)
+    :preface
+        (defun psimacs/cmake-ide-mode/cmake-ide-find-project ()
+            "Finds the directory of the project for cmake-ide."
+            (with-eval-after-load 'projectile
+                (setq cmake-ide-project-dir (projectile-project-root))
+                (setq cmake-ide-build-dir (concat cmake-ide-project-dir "build"))
+            )
+            (setq cmake-ide-compile-command (concat "cd " cmake-ide-build-dir " && cmake .. && make"))
+            (cmake-ide-load-db)
+        )
+        (defun psimacs/cmake-ide-mode/switch-to-compilation-window ()
+            "Switches to the *compilation* buffer after compilation."
+            (other-window 1)
+        )
+    :bind ([remap comment-region] . cmake-ide-compile)
+    :init
+        (cmake-ide-setup)
+    :config
+        (advice-add 'cmake-ide-compile :after #'psimacs/cmake-ide-mode/switch-to-compilation-window)
+)
+#+END_SRC
+
+** CC-mode
+
+*** Modern C++ Font Lock
+
+The package [[https://github.com/ludwigpacifici/modern-cpp-font-lock][modern-cpp-font-lock]] provides
+syntax highlighting support for /*Modern C++*/ - until /*C++20*/ and Technical Specification.
+This package aims to provide a simple highlight of the C++ language without dependency.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
+;;
+;; Font locking of modern C++ code.
+;;
+(use-package modern-cpp-font-lock
+    :hook
+        (c++-mode . modern-c++-font-lock-mode)
+)
+#+END_SRC
+
+*** C++ Style
+
+The following is an attemp to setup a style that appeals me. Ignore it if you want something
+different.
+
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_mono/ccmode.html][CC-Mode]], [[https://www.emacswiki.org/emacs/IndentingC][Indenting C]], [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Indentation-Commands.html][Indentation commands]], [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Styles.html#Styles][Styles]], [[https://en.wikipedia.org/wiki/Indent_style][Indent style]]
+
+**** Basic offset
+Always default to 4 spaces indent offset.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
+;;
+;; Always default to 4 spaces indent offset.
+;;
+(setq-default c-basic-offset 4)
+#+END_SRC
+
+**** Guess Style
+The following style is gueesed from some /CADdy++/ - source code files.
+
+See also:
+- [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html#Guessing-the-Style][Guessing the Style]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
+;;
+;; A special c++ code styling
+;;
+(c-add-style "psimacs/c++-mode/CADdy++-style"
+             '("gnu"
+                (c-basic-offset . 4)     ; Guessed value
+                (c-offsets-alist
+                (access-label . 0)      ; Guessed value
+                (arglist-cont . 0)      ; Guessed value
+                (arglist-intro . +)     ; Guessed value
+                (block-close . 0)       ; Guessed value
+                (brace-list-close . 0)  ; Guessed value
+                (brace-list-entry . 0)  ; Guessed value
+                (brace-list-intro . +)  ; Guessed value
+                (brace-list-open . 0)   ; Guessed value
+                (case-label . +)        ; Guessed value
+                (class-close . 0)       ; Guessed value
+                (class-open . 0)        ; Guessed value
+                (cpp-define-intro . +)  ; Guessed value
+                (defun-block-intro . +) ; Guessed value
+                (defun-close . 0)       ; Guessed value
+                (defun-open . 0)        ; Guessed value
+                (else-clause . 0)       ; Guessed value
+                (inclass . +)           ; Guessed value
+                (inline-close . 0)      ; Guessed value
+                (label . 0)             ; Guessed value
+                (member-init-cont . -)  ; Guessed value
+                (member-init-intro . 0) ; Guessed value
+                (statement . 0)             ; Guessed value
+                (statement-block-intro . +) ; Guessed value
+                (statement-case-intro . +) ; Guessed value
+                (statement-case-open . 0) ; Guessed value
+                (statement-cont . 0)      ; Guessed value
+                (substatement . +)        ; Guessed value
+                (substatement-open . 0) ; Guessed value
+                (template-args-cont . +) ; Guessed value
+                (topmost-intro . 0)      ; Guessed value
+                (topmost-intro-cont . 0) ; Guessed value
+                (annotation-top-cont . 0)
+                (annotation-var-cont . +)
+                (arglist-close . c-lineup-close-paren)
+                (arglist-cont-nonempty . c-lineup-arglist)
+                (block-open . 0)
+                (brace-entry-open . 0)
+                (c . c-lineup-C-comments)
+                (catch-clause . 0)
+                (comment-intro . c-lineup-comment)
+                (composition-close . 0)
+                (composition-open . 0)
+                (cpp-macro . -1000)
+                (cpp-macro-cont . +)
+                (do-while-closure . 0)
+                (extern-lang-close . 0)
+                (extern-lang-open . 0)
+                (friend . 0)
+                (func-decl-cont . +)
+                (incomposition . +)
+                (inexpr-class . +)
+                (inexpr-statement . +)
+                (inextern-lang . +)
+                (inher-cont . c-lineup-multi-inher)
+                (inher-intro . +)
+                (inlambda . c-lineup-inexpr-block)
+                (inline-open . 0)
+                (inmodule . +)
+                (innamespace . +)
+                (knr-argdecl . 0)
+                (knr-argdecl-intro . 5)
+                (lambda-intro-cont . +)
+                (module-close . 0)
+                (module-open . 0)
+                (namespace-close . 0)
+                (namespace-open . 0)
+                (objc-method-args-cont . c-lineup-ObjC-method-args)
+                (objc-method-call-cont c-lineup-ObjC-method-call-colons c-lineup-ObjC-method-call +)
+                (objc-method-intro . [0])
+                (stream-op . c-lineup-streamop)
+                (string . -1000)
+                (substatement-label . 0))))
+#+END_SRC
+
+Every line is just indented to the same level as the previous one, and =<TAB>=
+adjusts the indentation in steps specified by =c-basic-offset=.
+=<TAB>= simply indents the current line.
+Always default to 4 spaces indent offset.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
+(defun psimacs/c++-mode/c-mode-hook ()
+    (c-set-style "psimacs/c++-mode/CADdy++-style")
+)
+
+;;
+;; CC-Mode
+;;
+(use-package cc-mode
+    :straight nil
+    :config
+        (add-hook 'c-mode-common-hook
+            (lambda ()
+                ;(when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+                ;  (ggtags-mode 1))
+                (setq c-syntactic-indentation nil)
+                (setq c-tab-always-indent t)
+                (setq c-basic-offset 4)
+            )
+        )
+        ;(add-hook   'c-mode-hook 'psimacs/c++-mode/c-mode-hook)
+        ;(add-hook 'c++-mode-hook 'psimacs/c++-mode/c-mode-hook)
+)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
+;;
+;; C++ style settings
+;;
+(use-package psimacs-c-style
+    :straight nil
+    :hook ( (c-mode c++-mode) . psimacs-set-c-style)
+            (c-mode-common    . psimacs-make-newline-indent)
+)
+#+END_SRC
+
+
+* Utility Functions
+
+This section contains some useful elisp functions that I have collected over the time. Not all of them
+are of high quality and some of them are obsolete because better alternatives are available. But I am used
+to them so I will stay with them.
+
+** Convenience
+*** Bind F6 to last command
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Convenience functions
+;;
+(defun psimacs/convenience/bind-f6-to-last-command ()
+    "Bind function key F6 to the last command used."
+    (interactive)
+    (global-set-key (kbd "<f6>") last-command)
+)
+#+END_SRC
+
+** Help
+*** Describe Foo at point
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Help functions
+;;
+(defun psimacs/help/describe-foo-at-point ()
+    "Show the documentation of the Elisp function and variable near point.
+This checks in turn:
+   -- for a function name where point is
+   -- for a variable name where point is
+   -- for a surrounding function call
+"
+    (interactive)
+    (let (sym)
+        (cond (
+            (setq sym (ignore-errors
+                (with-syntax-table emacs-lisp-mode-syntax-table
+                    (save-excursion
+                        (or (not (zerop (skip-syntax-backward "_w")))
+                            (eq (char-syntax (char-after (point))) ?w)
+                            (eq (char-syntax (char-after (point))) ?_)
+                            (forward-sexp -1)
+                        )
+                        (skip-chars-forward "`'")
+                    (let ((obj (read (current-buffer))))
+                            (and (symbolp obj) (fboundp obj) obj))))))
+             (describe-function sym))
+             ((setq sym (variable-at-point)) (describe-variable sym))
+                  ((setq sym (function-at-point)) (describe-function sym))))
+)
+#+END_SRC
+
+*** ASCII Table
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun joemac/help/show-ascii-chart ()
+    "Show ASCII character table in *scratch* buffer.
+
+Displays a character table in the *scratch* buffer for all
+characters (0..255) in the current display mapping. Note that
+the low characters (0..31) are displayed as the control characters
+that they represent regardless of display mapping format."
+
+    (interactive)
+    (let (i j c)
+        (switch-to-buffer "*scratch*")
+        (erase-buffer)
+        (insert "\n")
+        (insert "---   +0   +32   +64   +96  +128  +160  +192  +224\n")
+        (insert "\n")
+        (setq i 0)
+        (while (< i 32)
+            (insert (format "%3d  " i))
+            (setq j 0)
+            (while (< j 8)
+                (setq c (+ i (* j 32)))
+                (if (eq j 0) (insert (format " ^%c" (+ c 64)))
+                    (insert (format " %c " c))
+                )
+                (insert "   ")
+                (setq j (1+ j))
+            )
+            (insert "\n")
+            (setq i (1+ i))
+        )
+        (beginning-of-buffer)
+        ""
+    )
+)
+#+END_SRC
+
+** Buffer
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Buffer functions
+;;
+(defun psimacs/buffer/next-user-buffer ()
+    "Switch to the next user buffer.
+
+user buffer is determined by psimacs/buffer/user-buffer-q."
+
+    (interactive)
+    (next-buffer)
+    (let ((i 0))
+        (while (< i 20)
+            (if (not (psimacs/buffer/user-buffer-q))
+                (progn (next-buffer)
+                    (setq i (1+ i)))
+                    (progn (setq i 100)
+                )
+            )
+        )
+    )
+)
+
+(defun psimacs/buffer/previous-user-buffer ()
+  "Switch to the previous user buffer.
+
+user buffer is determined by psimacs/buffer/user-buffer-q."
+
+    (interactive)
+    (previous-buffer)
+    (let ((i 0))
+        (while (< i 20)
+            (if (not (psimacs/buffer/user-buffer-q))
+            (progn (previous-buffer)
+                (setq i (1+ i))
+            )
+            (progn (setq i 100)))
+        )
+    )
+)
+
+(defun psimacs/buffer/user-buffer-q ()
+    "Return t if current buffer is a user buffer, else nil.
+
+Typically, if buffer name starts with *, it's not considered a user buffer.
+This function is used by buffer switching command and close buffer command, so that next buffer shown is a user buffer.
+You can override this function to get your idea of user buffer."
+
+    (interactive)
+    (if (string-equal "*" (substring (buffer-name) 0 1))
+        nil
+        (if (string-equal major-mode "dired-mode")
+            nil
+            t
+        )
+    )
+)
+
+(defun psimacs/buffer/next-emacs-buffer ()
+    "Switch to the next emacs buffer.
+
+emacs buffer here is buffer whose name starts with *."
+
+    (interactive)
+    (next-buffer)
+    (let ((i 0))
+        (while (and (not (string-equal "*" (substring (buffer-name) 0 1))) (< i 20))
+            (setq i (1+ i)) (next-buffer)
+        )
+    )
+)
+
+(defun psimacs/buffer/previous-emacs-buffer ()
+    "Switch to the previous emacs buffer.
+
+emacs buffer here is buffer whose name starts with *."
+
+    (interactive)
+    (previous-buffer)
+    (let ((i 0))
+        (while (and (not (string-equal "*" (substring (buffer-name) 0 1))) (< i 20))
+            (setq i (1+ i)) (previous-buffer)
+        )
+    )
+)
+#+END_SRC
+
+** Parenthesis
+
+*** bounce sexp
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Parenthesis functions
+;;
+(defun psimacs/pair/bounce-sexp ()
+    "Will bounce between matching parens."
+    (interactive)
+    (let ((prev-char (char-to-string (preceding-char)))
+          (next-char (char-to-string (following-char))))
+    (cond ((string-match "[[{(<]" next-char) (forward-sexp 1))
+          ((string-match "[\]})>]" prev-char) (backward-sexp 1))
+          (t (error "%s" "Not on a paren, brace, or bracket"))))
+)
+#+END_SRC
+
+** Movement
+
+*** Move to top of page
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Movement functions
+;;
+(defun psimacs/movement/top-of-page()
+    "Brings point to the top of the current page.
+
+Cursor is set to line 0 of current window."
+    (interactive)
+    (move-to-window-line 0)
+)
+#+END_SRC
+
+*** Move to bottom of page
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/movement/bottom-of-page ()
+    "Brings point to the bottom of the current page.
+
+Cursor is set to last line of current window."
+    (interactive)
+    (move-to-window-line -1)
+)
+#+END_SRC
+
+*** Move text (internal)
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/internal/move-text-internal (arg)
+    "Move selected region or line up or down.
+
+Move selected region or line if there is no selection up or down"
+    (cond
+        (   (and mark-active transient-mark-mode)
+            (if (> (point) (mark))
+                (exchange-point-and-mark))
+            (let (
+                    (column (current-column))
+                    (text (delete-and-extract-region (point) (mark)))
+                )
+                (forward-line arg)
+                (move-to-column column t)
+                (set-mark (point))
+                (insert text)
+                (exchange-point-and-mark)
+                (setq deactivate-mark nil)
+            )
+        )
+        (t
+            (let ((column (current-column)))
+                (beginning-of-line)
+                (when (or (> arg 0) (not (bobp)))
+                    (forward-line)
+                (when (or (< arg 0) (not (eobp)))
+                    (transpose-lines arg))
+                (forward-line -1))
+                (move-to-column column t))
+        )
+    )
+)
+#+END_SRC
+
+*** Move text down
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/movement/move-text-down (arg)
+    "Move region or line down.
+
+Move region (transient-mark-mode active) or current line
+arg lines down."
+    (interactive "*p")
+    (psimacs/internal/move-text-internal arg)
+)
+#+END_SRC
+
+*** Move text up
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/movement/move-text-up (arg)
+    "Move region or line down.
+
+Move region (transient-mark-mode active) or current line
+  arg lines up."
+    (interactive "*p")
+    (psimacs/internal/move-text-internal (- arg))
+)
+#+END_SRC
+
+*** Find selection forward
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/search/find-selection-forward ()
+    "Find text cut buffer forward"
+    (interactive "")
+    (let (sel len)
+        (setq sel (w32-get-clipboard-data))
+        (setq len (length sel))
+        (search-forward sel)
+        (deactivate-mark)
+        (isearch-highlight (set-marker (make-marker) (- (point) len))
+                           (set-marker (make-marker) (point)))
+    )
+)
+#+END_SRC
+
+** Search
+
+*** Find selection backward
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Search functions
+;;
+(defun psimacs/search/find-selection-backward ()
+    "Find text cut buffer backward"
+    (interactive "")
+    (let (sel len)
+        (setq sel (w32-get-clipboard-data))
+        (setq len (length sel))
+        (search-backward sel)
+        (deactivate-mark)
+        (isearch-highlight (set-marker (make-marker) (point))
+                           (set-marker (make-marker) (+ (point) len)))
+    )
+)
+#+END_SRC
+
+** Indentation
+
+*** Indent or complete
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Indentation functions
+;;
+(defun psimacs/indent/indent-or-complete ()
+    "Complete if point is at end of a word, otherwise indent line."
+    (interactive)
+    (if (looking-at "\\>")
+        (dabbrev-expand nil)
+        (indent-for-tab-command)
+    )
+)
+#+END_SRC
+
+*** Indent Buffer
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/indent/indent-whole_buffer ()
+    "Indent whole buffer."
+    (interactive)
+    (delete-trailing-whitespace)
+    (indent-region (point-min) (point-max) nil)
+    (untabify (point-min) (point-max))
+)
+#+END_SRC
+
+** Kill
+
+*** Kill whitespace to next token
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Kill functions
+;;
+(defun psimacs/kill/kill-ws-to-next-token ()
+    "Deletes all whitespace forward to line end.
+
+Deletes all whitespace (space and tab characters only) from (point)
+forward to the end of the current line or until a non-whitespace
+character is encountered."
+    (interactive)
+    (while (or (looking-at " ") (looking-at "\t"))
+        (delete-char 1 'kill)
+    )
+)
+#+END_SRC
+
+** Copy
+
+*** Duplicate current line
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Copy functions
+;;
+(defun psimacs/copy/duplicate-current-line (&optional where)
+  "Duplicates current line of text.
+
+If the optional argument 'where' is non-nil, it is placed BEFORE the current line,
+otherwise it is placed AFTER the current line."
+    (interactive "P")
+    (save-excursion
+        (let (begl)
+            (beginning-of-line)
+            (setq begl (point))
+            (next-line 1)
+            (insert-buffer-substring (current-buffer) begl (point))
+        )
+    )
+    (if (not (eq where nil))
+        (next-line 1))
+)
+#+END_SRC
+
+*** Duplicate line
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/copy/duplicate-line (&optional commentfirst)
+    "Comment line at point; if COMMENTFIRST is non-nil, comment the original.
+
+Easy way to duplicate a line and, optionally, comment-out the first one."
+    (interactive)
+    (beginning-of-line)
+    (let
+        ((beg (point)))
+        (end-of-line)
+        (let
+            ((str (buffer-substring beg (point))))
+            (when commentfirst
+                (comment-region beg (point)))
+                (insert-string
+                    (concat (if (= 0 (forward-line 1)) "" "\n") str "\n"))
+            (forward-line -1)
+        )
+    )
+)
+#+END_SRC
+
+*** Duplicate region
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/copy/duplicate-region ()
+    "Copy this region after itself."
+    (interactive)
+    (let ((start (dot-marker)))
+        (kill-ring-save (region-beginning) (region-end))
+        (yank)
+        (goto-char start)
+    )
+    (message"region dup'ed")
+)
+#+END_SRC
+
+** Mark
+
+*** Mark line
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Mark functions
+;;
+(defun psimacs/mark/mark-line (&optional arg)
+    "Mark whole line."
+    (interactive "p")
+    (beginning-of-line)
+    (push-mark (point) nil t)
+    (end-of-line)
+)
+#+END_SRC
+
+** Kill and Yank
+
+*** Yank and forward line
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Kill and yank functions
+;;
+(defun psimacs/kill/yank-and-forward-line ()
+    "Yank and forward line."
+    (interactive)
+    (let ((old-col (current-column)))
+        (yank)
+        (forward-line)
+        (while (and (not (eolp)) (> old-col 0))
+        (forward-char)
+        (setq old-col (1- old-col))))
+)
+#+END_SRC
+
+*** Kill current line
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/kill/kill-current-line ()
+    "Kill current line"
+    (interactive)
+    (beginning-of-line)
+    (kill-line)
+)
+#+END_SRC
+
+** Convert
+
+*** dos -> unix
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Convert functions
+;;
+(defun psimacs/newline/dos2unix ()
+    "Convert buffer from Dos to Unix.
+
+Convert buffer from Dos ^M end of lines to unix end of lines.
+"
+    (interactive)
+    (goto-char (point-min))
+    (while (search-forward "\r" nil t) (replace-match ""))
+)
+#+END_SRC
+
+*** unix -> dos
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/newline/unix2dos ()
+    "Convert buffer from Unix to Dos.
+
+Convert buffer from Unix end of lines to Dos end of lines."
+    (interactive)
+    (goto-char (point-min))
+    (while (search-forward "\n" nil t) (replace-match "\r\n"))
+)
+#+END_SRC
+
+*** File system
+
+**** Choose directory
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; File system functions
+;;
+(defun psimacs/file-system/choose-directory (directory-to-start-in)
+    "Return a directory chosen by the user.
+The user will be prompted to choose a directory starting with 'directory-to-start-in'"
+    (let* ((ivy-read-prompt "Choose directory: ")
+         (counsel--find-file-predicate #'file-directory-p)
+         (default-directory directory-to-start-in)
+         (selected-directory
+            (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
+          ))
+        selected-directory)
+)
+#+END_SRC
+
+*** dir-locals
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/dir-locals/reload-for-current-buffer ()
+    "Reload dir locals for the current buffer."
+    (interactive)
+    (let ((enable-local-variables :all))
+        (hack-dir-local-variables-non-file-buffer)
+    )
+)
+
+(defun psimacs/dir-locals/reload-for-all-buffer-in-this-directory ()
+    "For every buffer with the same `default-directory` as the current buffer's, reload dir-locals."
+    (interactive)
+    (let ((dir default-directory))
+        (dolist (buffer (buffer-list))
+            (with-current-buffer buffer
+                (when (equal default-directory dir))
+                    (psimacs/dir-locals/reload-for-current-buffer)
+            )
+        )
+    )
+)
+#+END_SRC
+
+*** Miscellaneous
+
+**** Count words
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Miscellaneous functions
+;;
+(defun psimacs/miscellaneous/count-words (start end)
+    "Count number of words between START and END."
+    (let ((count 0))
+        (save-excursion
+            (save-restriction
+                (narrow-to-region start end)
+                (goto-char (point-min))
+                (while (forward-word 1)
+                    (setq count (1+ count))
+                )
+            )
+        )
+        count
+    )
+)
+#+END_SRC
+
+**** Count in region
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/miscellaneous/count-region (start end)
+    "Count lines, words and characters in region."
+    (interactive "r")
+    (let ((l (count-lines start end))
+          (w (count-words start end))
+          (c (- end start))
+         )
+        (message "Region has %d line%s, %d word%s and %d character%s."
+             l (if (= 1 l) "" "s")
+             w (if (= 1 w) "" "s")
+             c (if (= 1 c) "" "s")
+        )
+    )
 )
 #+END_SRC
 
