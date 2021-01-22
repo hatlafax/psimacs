@@ -1852,6 +1852,11 @@ your calendar.
         "ShadowProject.org"
     )
     "The list of supported diary files for capturing coding points.")
+
+
+(defconst psimacs/config/libre-office-exe "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
+    "The otd to docx converter of the LibreOffice suite.")
+
 #+END_SRC
 
 ** Recent files
@@ -1997,6 +2002,12 @@ Download the [[https://www.msys2.org/#installation][installer]] for the [[https:
 environment. *Psimacs* handles a proper executable path internally. After finishing the base installation some packages
 must be installed with the [[https://www.msys2.org/][MSYS2]] package manager /pacman/. For that, open the =MSYS2 MinGW 64-bit= terminal and execute
 the following commands:
+
+Remarks:
+- In order to get the Windows environment exported to a [[https://www.msys2.org/][MSYS2]] bash shell, you need to change one line in
+  file =msys2-shell.cmd= which resides in the root of the [[https://www.msys2.org/][MSYS2]] installation. You will find a commented lines
+  =rem set MSYS2_PATH_TYPE=inherit=, which should be =set MSYS2_PATH_TYPE=inherit= if you like to see the Windows
+  environment as defined by the Windows =Path= variables.
 
 *** Packages
 
@@ -2533,21 +2544,21 @@ Some usefule references for C++:
 
 ** Emscripten
 
-[[https://emscripten.org/][Emscripten]] is a [[https://clang.llvm.org/][clang]] based 
+[[https://emscripten.org/][Emscripten]] is a [[https://clang.llvm.org/][clang]] based
 cross compiler that allow to compile from [[https://en.wikipedia.org/wiki/C%2B%2B][Wikipedia: C++]]
 to [[https://webassembly.org/][WebAssembly]]/[[https://en.wikipedia.org/wiki/JavaScript][JavaScript]].
 It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
-(defconst psimacs/config/emscripten-dir 
-    (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "emscripten/emsdk") 
+(defconst psimacs/config/emscripten-dir
+    (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "emscripten/emsdk")
     "The psimacs emscripten directory.")
 
-(defconst psimacs/config/emscripten-emcmake-exe 
+(defconst psimacs/config/emscripten-emcmake-exe
     (psimacs/file-system/concat-file psimacs/config/emscripten-dir "upstream/emscripten/emcmake.bat")
     "The psimacs emscripten emcmake executable.")
 
-(defconst psimacs/config/emscripten-env 
+(defconst psimacs/config/emscripten-env
     (list
         (list '*: "PATH"         psimacs/config/emscripten-dir)
         (list '*: "PATH"         (psimacs/file-system/concat-directory psimacs/config/emscripten-dir "upstream/emscripten"))
@@ -9432,7 +9443,7 @@ The file is only created if it does not already exist."
 
                     (let* ((file (concat (projectile-project-root) ".projectile-envrc")))
                         (unless (file-exists-p file)
-                            (with-temp-buffer 
+                            (with-temp-buffer
                                 (insert "#\n")
                                 (insert "# Emscripten support for this project.\n")
                                 (insert "#\n")
@@ -9511,7 +9522,7 @@ Example:
     +TOE   = c:/utils/testF
 #+end_example
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-projectile.el
 (use-package projectile-envrc
     :straight (projectile-envrc :host github :repo "hatlafax/projectile-envrc")
     ;:straight nil
@@ -9834,6 +9845,314 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
             ("q" nil "quit" :color blue :column "Save")
         )
 )
+#+END_SRC
+
+* Programming Support
+
+*Psimacs* provides extended support for programming.
+
+** Quick-Peek
+
+The support package [[https://github.com/cpitclaudel/quick-peek][Quick-peek]] provides an inline pop-up library for Emacs Lisp.
+
+See also:
+- [[https://github.com/cpitclaudel/quick-peek][Quick-peek]]
+- [[https://github.com/alphapapa/org-quick-peek][org-quick-peek]]
+- [[https://github.com/alexmurray/flycheck-posframe][flycheck-posframe]]
+- [[https://github.com/tumashu/posframe][posframe]]
+- [[https://github.com/flycheck/flycheck-inline][flycheck-inline]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-programming.el :var file-description="Advanced programming setup"
+(use-package quick-peek
+    :config
+        (set-face-attribute 'quick-peek-border-face nil
+            :background "#75b79e"
+            :height 0.1)
+        (set-face-attribute 'quick-peek-padding-face nil
+            :height 0.1)
+)
+#+END_SRC
+
+** Flycheck
+
+[[https://www.flycheck.org][Flycheck]] is a modern on-the-fly syntax checking extension for
+GNU Emacs, intended as replacement for the older Flymake extension which is part of *Emacs*.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-programming.el :var file-description="Advanced programming setup"
+(use-package flycheck
+    :diminish flycheck-mode
+    :config
+        (global-flycheck-mode)
+    :custom
+        ;(flycheck-emacs-lisp-initialize-packages nil)  ; ??? maybe necessary because of straight, not sure yet
+        (flycheck-display-errors-delay .3)
+
+        (flycheck-python-flake8-executable      psimacs/config/flake8-runtime-exe)
+        (flycheck-python-pycompile-executable   psimacs/config/python-runtime-exe)
+        (flycheck-python-pylint-executable      psimacs/config/pylint-runtime-exe)
+
+        ;; Disable for emacs-lisp because of error:
+        ;;      Suspicious state from syntax checker emacs-lisp: Flycheck checker emacs-lisp
+        ;;      returned 255, but its output contained no errors: End of file during parsing
+        ;;
+        ;;      Try installing a more recent version of emacs-lisp, and please open a bug report
+        ;;      if the issue persists in the latest release.  Thanks!
+        ;;
+        ;; Test with the next emacs version in the near future. flycheck for emacs-lisp is
+        ;; absolut desirable.
+        (flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc))
+)
+#+END_SRC
+
+*** Flycheck Inline
+
+[[https://github.com/flycheck/flycheck-inline][flycheck-inline]] is an extension package for [[https://www.flycheck.org][Flycheck]]. It implements a minor-mode for displaying errors
+from Flycheck right below their reporting location, using overlays.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-programming.el
+(use-package flycheck-inline
+    :after flycheck
+    :config
+        (add-hook 'flycheck-mode-hook #'flycheck-inline-mode)
+)
+#+END_SRC
+
+** Language Server Protcol LSP
+
+The [[https://github.com/Microsoft/language-server-protocol/][Language Server Protocol (v3.14)]] describes an client/server protocol for programming langugage servers and clients.
+
+See also
+- [[https://github.com/emacs-lsp/lsp-mode][Language Server Protocol Support for Emacs]],
+- [[https://github.com/emacs-lsp][emacs-lsp ]]
+- [[https://emacs-lsp.github.io/lsp-mode/][LSP Mode - LSP support for Emacs]]
+
+Remarks:
+- =cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES=
+- =set(CMAKE_EXPORT_COMPILE_COMMANDS ON)=
+
+*** Dap-Mode
+
+The package [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] provides an *Emacs* client library that allow the communication to a Debug server that supports
+the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protocol]], which is a wire protocol between the client and the Debug server.  It's similar to the
+[[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]] but provides integration with a debug server.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+(use-package dap-mode
+    :after lsp-mode
+    :config
+        (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
+        (dap-mode t)
+        (dap-ui-mode t)
+        (dap-tooltip-mode 1)
+        (tooltip-mode 1)
+        (dap-ui-controls-mode 1)
+)
+#+END_SRC
+
+*** LSP-Mode
+
+[[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]] is a client for [[https://github.com/Microsoft/language-server-protocol/][Language Server Protocol (v3.14)]]. [[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]] aims to provide IDE-like experience by providing
+optional integration with the most popular Emacs packages like [[https://company-mode.github.io/][company]], [[https://www.flycheck.org][Flycheck]] and [[https://github.com/bbatsov/projectile][projectile]].
+
+Currently, *Psimacs* uses [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] for the following language modes:
+- c-mode
+- c++-mode
+- cmake-mode
+
+Python-mode is handled by [[https://github.com/jorgenschaefer/elpy][elpy]] at the moment. That might be changed in the future.
+
+When using [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] most of the features depend on server capabilities.
+
+[[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]] provides default bindings which are dynamically enabled/disabled based on the server functionality.
+All the commands are configured =lsp-command-map= which is bound to =lsp-keymap-prefix=.
+
+*Psimacs* bindes [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] commands to key prefix =C-c l=.
+
+Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] command bindings:
+
+| Key binding     | Command                                     | Description                                                                                  |
+|-----------------+---------------------------------------------+----------------------------------------------------------------------------------------------|
+| =C-c l s s=     | =M-x lsp=                                   | Entry point for the server startup.                                                          |
+| =C-c l s r=     | =M-x lsp-workspace-restart=                 | Restart workspace and language server.                                                       |
+| =C-c l s q=     | =M-x lsp-workspace-shutdown=                | Shutdown workspace and language server.                                                      |
+| =C-c l s d=     | =M-x lsp-describe-session=                  | Describes current session.                                                                   |
+| =C-c l s D=     | =M-x lsp-disconnect=                        | Disconnect the buffer from the language server keeping the server running.                   |
+| =C-c l = ==     | =M-x lsp-format-buffer=                     | Ask the server to format this document.                                                      |
+| =C-c l = r=     | =M-x lsp-format-region=                     | Ask the server to format the region, or if none is selected, the current line.               |
+| =C-c l F a=     | =M-x lsp-workspace-folders-add=             | Add new project root to the list of workspace folders.                                       |
+| =C-c l F r=     | =M-x lsp-workspace-folders-remove=          | Remove project root from the list of workspace folders.                                      |
+| =C-c l F b=     | =M-x lsp-workspace-blacklist-remove=        | Remove project root from the workspace blacklist.                                            |
+| =C-c l T a=     | =M-x lsp-modeline-code-actions-mode=        | Toogle code actions on modeline.                                                             |
+| =C-c l T b=     | =M-x lsp-headerline-breadcrumb-mode=        | Toogle breadcrumb on headerline.                                                             |
+| =C-c l T L=     | =M-x lsp-toggle-trace-io=                   | Toggle client-server protocol logging.                                                       |
+| =C-c l T h=     | =M-x lsp-toogle-symbol-highlight=           | Toggle symbol highlighting.                                                                  |
+| =C-c l T S=     | =M-x lsp-ui-sideline-mode=                  | Toggle minor mode for showing information for current line in sideline.                      |
+| =C-c l T d=     | =M-x lsp-ui-doc-mode=                       | Toggle minor mode for showing hover information in child frame.                              |
+| =C-c l T s=     | =M-x lsp-toggle-signature-auto-activate=    | Toggle signature auto activate.                                                              |
+| =C-c l T f=     | =M-x lsp-toogle-on-type-formatiing=         | Toggle on type formatting.                                                                   |
+| =C-c l T D=     | =M-x lsp-modeline-diagnostics-mode=         | Toogle diagnostics modeline.                                                                 |
+| =C-c l T T=     | =M-x lsp-treemacs-sync-mode=                | Toggle global minor mode for synchronizing lsp-mode workspace folders and treemacs projects. |
+| =C-c l g g=     | =M-x lsp-find-definition=                   | Find definitions of the symbol under point.                                                  |
+| =C-c l g r=     | =M-x lsp-find-references=                   | Find references of the symbol under point.                                                   |
+| =C-c l g e=     | =M-x lsp-treemacs-errors-list=              | Display error list.                                                                          |
+| =C-c l g d=     | =M-x lsp-find-declaration=                  | Find declarations of the symbol under point.                                                 |
+| =C-c l g h=     | =M-x lsp-treemacs-call-hierarchy=           | Show the incoming call hierarchy for the symbol at point.                                    |
+| =C-c l g a=     | =M-x xref-find-apropos=                     | Find all meaningful symbols that match pattern.                                              |
+| =C-c l G s=     | =M-x lsp-ui-peak-find-workspace-symbol=     | Find symbols in the workspace.                                                               |
+| =C-c l h h=     | =M-x lsp-describe-thing-at-point=           | Display the type signature and documentation of the thing at                                 |
+| =C-c l h s=     | =M-x lsp-signature-activate=                | Activate signature help.                                                                     |
+| =C-c l h g=     | =M-x lsp-ui-doc-glance=                     | Trigger display hover information popup and hide it on next typing.                          |
+| =C-c l r r=     | =M-x lsp-rename=                            | Rename the symbol (and all references to it).                                                |
+| =C-c l r o=     | =M-x lsp-organize-imports=                  | Perform the source.organizeImports code action, if available.                                |
+| =C-c l a a=     | =M-x lsp-execute-code-action=               | Execute code action.                                                                         |
+| =C-c l a h=     | =M-x lsp-document-highlight=                | Highlight all relevant references to the symbol at point.                                    |
+| =C-c l G g=     | =M-x lsp-ui-peek-find-definitions=          | Peek definitions to the identifier at point.                                                 |
+| =C-c l G r=     | =M-x lsp-ui-peek-find-references=           | Peek references to the identifier at point.                                                  |
+| =C-c l G s=     | =M-x lsp-ui-peek-workspace-symbol=          | Peek symbols in the workspace.                                                               |
+|-----------------+---------------------------------------------+----------------------------------------------------------------------------------------------|
+| =C-c l C-c C-r= | =M-x lsp-ui-peek-find-references=           | Find references to the identifier at point.                                                  |
+| =C-c l C-c C-j= | =M-x lsp-ui-peek-find-definitions=          | Find definitions to the identifier at point.                                                 |
+| =C-c l C-c i=   | =M-x lsp-ui-peek-find-implementation=       | Find implementation locations of the symbol at point.                                        |
+| =C-c l C-c m=   | =M-x lsp-ui-imenu=                          | Open ui-imenu in side window.                                                                |
+| =C-c l C-c s=   | =M-x lsp-ui-sideline-mode=                  | Minor mode for showing information for current line.                                         |
+| =C-c l C-c d=   | =M-x psimacs/lsp-ui-mode/toggle-lsp-ui-doc= | Minor mode for showing information in child frame.                                           |
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+(use-package lsp-mode
+    ;:commands lsp
+    :commands (lsp lsp-deferred)
+    :init
+        ;(setq lsp-keymap-prefix "s-l")
+        ;(setq lsp-keymap-prefix "H-v")
+        (setq lsp-keymap-prefix "C-c l")
+        ;(setq lsp-pyls-server-command psimacs/config/pyls-runtime-exe)
+        (setq lsp-idle-delay 0.1)
+
+        (setq lsp-auto-guess-root t)
+        (setq lsp-enable-indentation t)
+        (setq lsp-enable-imenu t)
+        (setq lsp-file-watch-threshold 500)
+        (setq lsp-prefer-flymake nil)
+
+        (setq lsp-enable-symbol-highlighting t)
+        (setq lsp-lens-enable t)
+        (setq lsp-headerline-breadcrumb-enable t)
+        (setq lsp-modeline-code-actions-enable t)
+    :config
+        (setq lsp-clients-clangd-executable psimacs/config/clangd-runtime-exe)
+        (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+
+        ;(require 'dap-lldb)
+        (require 'dap-cpptools)
+        ;(require 'dap-python)
+
+    :hook ( ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+            ;(python-mode . lsp-deferred) ; . lsp)
+            (c-mode      . lsp-deferred) ; . lsp)
+            (c++-mode    . lsp-deferred) ; . lsp)
+            (cmake-mode  . lsp-deferred) ; . lsp)
+
+            ;; if you want which-key integration
+            (lsp-mode . lsp-enable-which-key-integration)
+
+            ;(before-save . lsp-format-buffer)
+            ;(before-save . lsp-organize-imports)
+        )
+)
+#+END_SRC
+
+Study commands:
+- =lsp-restart-workspace=
+- =lsp-file-watch-ignored=,
+
+**** lsp-ui
+
+The package [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]] contains all the higher level UI modules of [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]], like [[https://www.flycheck.org][flycheck]] support and code lenses.
+
+Code lenses is a feature originating in the Visual Studio Code galaxy.
+
+#+BEGIN_QUOTE
+CodeLens is a popular feature in Visual Studio Code. The essence of the feature is
+/actionable contextual information interspersed/ in your source code.
+That's quite a mouthful. Let me break it down for you.
+
+CodeLens are links in your code:
+
+    - Actionable - You can click on the link and something happens.
+    - Contextual - The links are close to the code they are representing.
+    - Interspersed - The links located throughout your source code.
+#+END_QUOTE
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+(use-package lsp-ui
+    :commands lsp-ui-mode
+    :init
+        (defun psimacs/lsp-ui-mode/toggle-lsp-ui-doc ()
+            "Minor mode for showing information in child frame."
+            (interactive)
+            (if lsp-ui-doc-mode
+                (progn
+                    (lsp-ui-doc-mode -1)
+                    (lsp-ui-doc--hide-frame))
+                    (lsp-ui-doc-mode 1)))
+    :config
+        (setq lsp-ui-doc-enable nil)
+        (setq lsp-ui-doc-header t)
+        (setq lsp-ui-doc-include-signature nil)
+        (setq lsp-ui-doc-position 'at-point) ;; top, bottom, or at-point
+        (setq lsp-ui-doc-max-width 120)
+        (setq lsp-ui-doc-max-height 30)
+        (setq lsp-ui-doc-use-childframe t)
+        (setq lsp-ui-doc-use-webkit t)
+        (setq lsp-ui-flycheck-enable nil)
+        (setq lsp-ui-sideline-enable nil)
+        (setq lsp-ui-sideline-ignore-duplicate t)
+        (setq lsp-ui-sideline-show-symbol t)
+        (setq lsp-ui-sideline-show-hover t)
+        (setq lsp-ui-sideline-show-diagnostics nil)
+        (setq lsp-ui-sideline-show-code-actions t)
+        (setq lsp-ui-sideline-code-actions-prefix "😳")
+        (setq lsp-ui-imenu-enable t)
+        (setq lsp-ui-imenu-kind-position 'top)
+        (setq lsp-ui-peek-enable t)
+        (setq lsp-ui-peek-peek-height 20)
+        (setq lsp-ui-peek-list-width 50)
+        (setq lsp-ui-peek-fontify 'on-demand)   ;; never, on-demand, or always
+
+        (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide)
+    :bind
+        (:map lsp-command-map
+            ("C-c C-r" . lsp-ui-peek-find-references)
+            ("C-c C-j" . lsp-ui-peek-find-definitions)
+            ("C-c i"   . lsp-ui-peek-find-implementation)
+            ("C-c m"   . lsp-ui-imenu)
+            ("C-c s"   . lsp-ui-sideline-mode)
+            ("C-c d"   . psimacs/lsp-ui-mode/toggle-lsp-ui-doc)
+        )
+    :hook
+        (lsp-mode . lsp-ui-mode)
+)
+#+END_SRC
+
+**** lsp-ivy
+
+The package [[https://github.com/emacs-lsp/lsp-ivy][lsp-ivy]] provides an interactive [[https://github.com/abo-abo/swiper][ivy]] interface to the workspace symbol functionality offered by [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]].
+
+Alternative: [[https://github.com/emacs-lsp/helm-lsp][Helm lsp integration]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+#+END_SRC
+
+
+**** lsp-treemacs
+
+The package [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] integrates [[https://github.com/Alexander-Miller/treemacs][treemacs]] with [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 #+END_SRC
 
 * Major Modes
@@ -10251,7 +10570,6 @@ code to whatever theme I'm using's background."
             )
         )
 
-
         (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
 
         ;; Org babel language support
@@ -10275,6 +10593,25 @@ code to whatever theme I'm using's background."
 
         (require 'ox)
         (add-to-list 'org-export-filter-headline-functions 'psimacs/internal/export-filter-section-canceled)
+
+        (require 'ox-odt)
+        (setq org-odt-preferred-output-format "docx")
+
+        (defun config-org-export-as-docx-via-odt ()
+            (interactive)
+            (message "Hallo Joe 1")
+            (let ((cmd psimacs/config/libre-office-exe))
+                (when (and (eq system-type 'windows-nt) (file-exists-p cmd))
+                    (setq cmd (shell-quote-argument cmd))
+                    ;; org v7
+                    (setq org-export-odt-convert-processes `(("LibreOffice" ,(concat cmd " --headless --convert-to %f%x --outdir %d %i"))))
+
+                    ;; org v8/v9
+                    (setq org-odt-convert-processes `(("LibreOffice" ,(concat cmd " --headless --convert-to %f%x --outdir %d %i")))))
+            ))
+
+        ;; Run the function I just defined to set up org-export-as-docx-via-odt.
+        (config-org-export-as-docx-via-odt)
 
     :bind (
         ("C-c a" . org-agenda)
