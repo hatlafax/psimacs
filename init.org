@@ -1994,8 +1994,16 @@ The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
 
 ** MSYS2
 
-*Psimacs* uses a lot of external programs provided by the [[https://www.msys2.org/][MSYS2]] framework.  [[https://www.msys2.org/][MSYS2]] is a collection of tools and
-libraries providing you with an easy-to-use environment for building, installing and running native Windows software.
+[[https://www.msys2.org/][MSYS2]] is software distribution and a building platform for Windows. 
+It provides a Unix-like environment, a command-line interface and a software repository making 
+it easier to install, use, build and port software on Windows. 
+
+It is an independent rewrite of MSys, based on modern Cygwin (POSIX compatibility layer) and 
+MinGW-w64 with the aim of better interoperability with native Windows software.
+
+*Psimacs* uses a lot of external programs provided by the [[https://www.msys2.org/][MSYS2]] framework.  
+[[https://www.msys2.org/][MSYS2]] is a collection of tools and libraries providing you with an 
+easy-to-use environment for building, installing and running native Windows software.
 
 Download the [[https://www.msys2.org/#installation][installer]] for the [[https://www.msys2.org/][MSYS2]] framework and follow the installation instructions. Install into folder
 =c:/utils/msys64= which is the default for *Psimacs*. The installation does not need to be entered in the system path
@@ -2015,7 +2023,11 @@ Remarks:
 pacman -Syu
 pacman -Su
 pacman -S git
+pacman -S zip
+pacman -S unzip
+pacman -S winpty
 pacman -S base-devel
+pacman -S compression
 pacman -S mingw-w64-x86_64-toolchain
 pacman -S mingw-w64-x86_64-zlib
 pacman -S mingw-w64-x86_64-libpng
@@ -2062,6 +2074,7 @@ Most important commands taken from
 | Command                     | Description                                                                                                                                      |
 |-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | =pacman -Syu=               | Synchronizes the repository databases and updates the system's packages, excluding "local" packages that are not in the configured repositories. |
+| =pacman -Syuu=              | Synchronizes the repository databases and updates packages. Repeat this step until it says there are no packages to update.                      |
 |-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | =pacman -S <name>=          | Install package.                                                                                                                                 |
 | =pacman -R <name>=          | Uninstall package.                                                                                                                               |
@@ -2285,7 +2298,7 @@ are to be installed into the following directory.
 
 Installation of the following packages is recommended: autopep8, black, certifi, cmake-language-server, flake8,
 ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
-pycparser, pydocstyle, pywin32, pywinpty
+pycparser, pydocstyle, pywin32, pywinpty, sphinx
 
 *Psimacs* installation does reference the python tools explicitly. Nevertheless, the Windows OS [[https://www.python.org/][Python]] runtime directory
 as well as the Windows OS [[https://www.python.org/][Python]] scripts directory will be added to the environment search path list prior to [[https://www.msys2.org/][MSYS2]]
@@ -11079,6 +11092,15 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;;
 (use-package ox-beamer :straight nil :after org)
 (use-package epresent :straight t :after org)
+#+END_SRC
+
+*** Exporting to reStructuredText
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; reStructuredText with org-mode
+;;
+(use-package ox-rst :after org)
 #+END_SRC
 
 *** Keybinding for Org-Mode                                        :noexport:
