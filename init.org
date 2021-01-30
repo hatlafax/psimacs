@@ -1994,15 +1994,15 @@ The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
 
 ** MSYS2
 
-[[https://www.msys2.org/][MSYS2]] is software distribution and a building platform for Windows. 
-It provides a Unix-like environment, a command-line interface and a software repository making 
-it easier to install, use, build and port software on Windows. 
+[[https://www.msys2.org/][MSYS2]] is software distribution and a building platform for Windows.
+It provides a Unix-like environment, a command-line interface and a software repository making
+it easier to install, use, build and port software on Windows.
 
-It is an independent rewrite of MSys, based on modern Cygwin (POSIX compatibility layer) and 
+It is an independent rewrite of MSys, based on modern Cygwin (POSIX compatibility layer) and
 MinGW-w64 with the aim of better interoperability with native Windows software.
 
-*Psimacs* uses a lot of external programs provided by the [[https://www.msys2.org/][MSYS2]] framework.  
-[[https://www.msys2.org/][MSYS2]] is a collection of tools and libraries providing you with an 
+*Psimacs* uses a lot of external programs provided by the [[https://www.msys2.org/][MSYS2]] framework.
+[[https://www.msys2.org/][MSYS2]] is a collection of tools and libraries providing you with an
 easy-to-use environment for building, installing and running native Windows software.
 
 Download the [[https://www.msys2.org/#installation][installer]] for the [[https://www.msys2.org/][MSYS2]] framework and follow the installation instructions. Install into folder
@@ -2626,7 +2626,6 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
   (psimacs/file-system/concat-file psimacs/config/session-dir ".lsp-session-v1")
   "The psimacs lsp-mode session file.")
 #+END_SRC
-
 
 * Environment
 
@@ -9168,7 +9167,7 @@ See also:
           (yas-minor-mode -1)
           )
 
-    :hook ((term-mode shell-mode) . #'psimacs/config/internal/force-yasnippet-off)
+    :hook ((term-mode shell-mode) . psimacs/config/internal/force-yasnippet-off)
 
     :after hydra
     :bind (:map psimacs/config/global-key-map/hydra ("y" . psimacs/hydra/yasnippet/body))
@@ -9818,6 +9817,10 @@ Returns `else-Alternate-Mode-Names'."
                 "Elisp"            "Emacs-Lisp"
                 "ELSE-Template"    "Template"
                 "Shell-script"     "Shell"
+                "C++//"            "C++"
+                "C/*"              "C"
+                "LaTeX/MP"         "LaTeX"
+                "LaTeX/MPS"        "LaTeX"
         )
 
         (define-key else-menu-mode-map (kbd "C-n") 'popup-next)
@@ -9825,7 +9828,7 @@ Returns `else-Alternate-Mode-Names'."
 
         (require 'else-template-mode)
 
-    :hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode) . else-mode)
+    :hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
     :bind (
              :map psimacs/config/global-key-map/special
                   ("C-c n" . else-next)
@@ -11819,6 +11822,105 @@ Always default to 4 spaces indent offset.
 )
 #+END_SRC
 
+* Shells
+** Microsoft PowerShell
+
+[[https://github.com/jschaf/powershell.el/tree/87826777bd3ebd53740be99b4546bfc11ccc625d][PowerShell]] is an Emacs major mode for editing and running [[https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.1][Microsoft PowerShell]] files.
+
+References:
+- [[https://docs.microsoft.com/en-us/powershell/][PowerShell Documentation]]
+- [[https://en.wikipedia.org/wiki/PowerShell][Wikipedia about PowerShell]]
+- [[https://docs.microsoft.com/en-us/learn/modules/introduction-to-powershell/][Introduction to PowerShell]]
+- [[https://cdn.comparitech.com/wp-content/uploads/2018/08/Comparitech-Powershell-cheatsheet.pdf][PowerShell Cheat Sheet (PDF)]]
+- [[https://download.microsoft.com/download/2/1/2/2122F0B9-0EE6-4E6D-BFD6-F9DCD27C07F9/WS12_QuickRef_Download_Files/PowerShell_LangRef_v3.pdf][Microsoft PowerShell Cheat Sheet (PDF)]]
+- [[https://gist.github.com/pcgeek86/336e08d1a09e3dd1a8f0a30a9fe61c8a][PowerShell Cheat Sheet / Quick Reference]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced Shell setup"
+;;
+;; PowerShell
+;;
+(use-package powershell)
+#+END_SRC
+
+** Various Shells
+
+The following functions allow you to open various shells inside *Emcas*. Each shell does have its own quirks.
+Perfect is none of them. The two commands for starting the [[https://docs.microsoft.com/en-us/powershell/][PowerShell]] and the [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html][EShell]] are only trivial wrapper
+of the simpler commands.
+
+References:
+- [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering EShell]]
+- [[https://wikemacs.org/wiki/Eshell][Wikimacs EShell]]
+- [[http://www.howardism.org/Technical/Emacs/eshell-fun.html][Eschewing Zshell for Emacs Shell]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced Shell setup"
+;;
+;; Functions that starts various shells
+;;
+(defun psimacs/shell/run-bash ()
+  "Run a bash interactive shell."
+  (interactive)
+  (let ((process-environment (cl-copy-list process-environment))
+        (explicit-shell-file-name psimacs/config/msys-runtime-exe)
+        (explicit-bash.exe-args '("--login" "-i"))
+        (binary-process-input t)
+        (w32-quote-process-args t)
+        )
+    (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+    (shell "*bash*"))
+  )
+
+(defun psimacs/shell/run-cmd ()
+  "Run a DOS command shell."
+  (interactive)
+  (let ((explicit-shell-file-name "cmd.exe"))
+    (shell "*cmd.exe*"))
+  )
+
+(defun psimacs/shell/run-powershell ()
+  "Run a DOS command shell."
+  (interactive)
+  (powershell)
+  )
+
+(defun psimacs/shell/run-eshell ()
+  "Run a Emacs eshell."
+  (interactive)
+  (eshell)
+  )
+
+(defun psimacs/shell/run-ubuntu-bash ()
+  "Run a WSL2 Ubuntu bash shell"
+  (interactive)
+  (let ((process-environment (cl-copy-list process-environment))
+        (explicit-shell-file-name "C:\\Windows\\System32\\bash.exe" )
+        (explicit-bash.exe-args '("--login" "-i"))
+        (binary-process-input t)
+        (w32-quote-process-args t)
+        )
+    (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+    (shell "*ubuntu bash*"))
+  )
+#+END_SRC
+
+** Execute buffer with program
+
+Allow you to run a program with the buffer as input in standard shell.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el
+;;
+;; Execute buffer with given program
+;;
+(defun psimacs/shell/execute-buffer-with-program (prg)
+    "Execute program on current buffer.
+
+This command first saves the current buffer and then executes the
+saved file with the program provided as a shell command."
+    (interactive "P")
+    (save-buffer)
+    (shell-command (concat prg buffer-file-name))
+)
+#+END_SRC
 
 * Utility Functions
 
@@ -12434,6 +12536,74 @@ The user will be prompted to choose a directory starting with 'directory-to-star
              l (if (= 1 l) "" "s")
              w (if (= 1 w) "" "s")
              c (if (= 1 c) "" "s")
+        )
+    )
+)
+#+END_SRC
+
+** Visual Studio
+
+Integration of *Psimacs* with the Microsoft Visual Studio. Provided are two functions. At first their is a
+command =psimacs/shell/open-file-in-visual-studio= that allows you to open the given file in the active
+Visual Studio session. The second command allows you import the given file in the active Visual Studio project.
+
+Both commands relay on two python scripts =Open.py= and =Impot.py=.
+
+*** Open file in Visual Studio
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Open file in Visual Studio
+;;
+(defun psimacs/shell/open-file-in-visual-studio ()
+    "Open the given file argument in the MS Visual Studion session.
+
+This function takes credit from some external programs:
+    - python must be installed and running
+    - The DevEnv python package must be present
+"
+    (interactive)
+    (let (
+        (buf (psimacs/buffer/user-buffer-q))
+        )
+        (if buf
+            (shell-command
+                (concat
+                    psimacs/config/python-runtime-exe
+                    " "
+                    (expand-file-name psimacs/config/python-vc-visual-studio-dir) "Open.py"
+                    " "
+                    buffer-file-name))
+        )
+    )
+)
+#+END_SRC
+
+*** Import file in Visual Studio
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Import file in Visual Studio
+;;
+(defun psimacs/shell/import-file-in-visual-studio ()
+    "Import the given file argument in the MS Visual Studion session.
+
+This function takes credit from some external programs:
+    - python must be installed and running
+    - The DevEnv python package must be present
+"
+    (interactive)
+    (let (
+        (buf (psimacs/buffer/user-buffer-q))
+        )
+        (if buf
+            (shell-command
+                (concat
+                    psimacs/config/python-runtime-exe
+                    " "
+                    (expand-file-name psimacs/config/python-vc-visual-studio-dir) "Import.py"
+                    " "
+                    buffer-file-name))
         )
     )
 )
