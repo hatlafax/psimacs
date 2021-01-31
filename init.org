@@ -1843,13 +1843,20 @@ your calendar.
 ;;
 ;; Diary files
 ;;
-(defcustom psimacs/config/org-capture-coding-diary-file "CodingDiary.org"
+(defcustom psimacs/config/org-capture-coding-diary-file "DiaryCoding.org"
     "The diary file for capturing coding points.")
 
 (defcustom psimacs/config/org-capture-coding-diary-files
     '(
-        "CodingDiary.org"
-        "ShadowProject.org"
+        "DiaryCoding.org"
+        "DiaryCpp.org"
+        "DiaryDataSolid.org"
+        "DiaryEmacs.org"
+        "DiaryLaTeX.org"
+        "DiaryNodejs.org"
+        "DiaryOrg.org"
+        "DiaryPersonal.org"
+        "DiaryPython.org"
     )
     "The list of supported diary files for capturing coding points.")
 
@@ -5741,11 +5748,7 @@ through the command =C-x C-r=.
                     "^.*/\\.dir-locals.el$"
                     "^.*/\\.projectile$"
                     "^.*\\.elc$"
-                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "CodingDiary.org")))
-                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "Diary.org")))
-                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "Diary.Template")))
-                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "Journal.org")))
-                    ,(regexp-quote (expand-file-name (concat psimacs/config/agenda-dir "TimeLog.org")))
+                    ,(concat "^" (regexp-quote (expand-file-name psimacs/config/agenda-dir)) ".*$")
                     ,(concat "^" (regexp-quote (expand-file-name (concat invocation-directory "../"))) ".*$")
                    )
               )
@@ -6744,6 +6747,26 @@ See also:
     :config
         (require 'vlf-setup)
         (setq vlf-application 'dont-ask)
+    :bind (
+            :map psimacs/config/global-key-map/hydra ("C-l" . psimacs/hydra/vlf-large-files/body)
+          )
+    :hydra (psimacs/hydra/vlf-large-files
+        (:color pink :hint nil)
+"
+^^VLF Large File Support
+^^----------------------
+_s_: search forward
+_r_: search backward
+_o_: occur
+_g_: goto line
+_q_: quit
+"
+        ("s" vlf-re-search-forward)
+        ("r" vlf-re-search-backward)
+        ("o" vlf-occur)
+        ("g" vlf-goto-line)
+        ("q" nil :color blue)
+    )
 )
 #+END_SRC
 
@@ -7333,12 +7356,31 @@ a char-based decision tree.
             ("C-s C-a l" . avy-goto-line)
             ("C-s C-a w" . avy-goto-word-1)
             ("C-s C-a W" . avy-goto-word-0)
+        :map psimacs/config/global-key-map/hydra ("t" . psimacs/hydra/avy/body)
         )
     :custom
         (avy-timeout-seconds 0.5)
         (avy-style 'pre)
     :custom-face
         (avy-lead-face ((t (:background "#51afef" :foreground "#870000" :weight bold))))
+    :hydra (psimacs/hydra/avy (:color blue :hint nil)
+"
+^^Avy Text Movement: Input ...
+^^---------------------------------------------------------
+_c_: ... one char, jump ...
+_C_: ... two consecutive chars, jump ...
+_t_: ... an arbitrary amount of consecutive chars, jump ...
+_l_: ... zero chars, jump ...
+_w_: ... one char at word start, jump ...
+_W_: ... zero chars, jump ...
+"
+        ("c" avy-goto-char)
+        ("C" avy-goto-char-2)
+        ("t" avy-goto-char-timer)
+        ("l" avy-goto-line)
+        ("w" avy-goto-word-1)
+        ("W" avy-goto-word-0)
+    )
 )
 #+END_SRC
 
@@ -7411,7 +7453,28 @@ See also:
                 ("H-c r r"   . mc/reverse-regions)
                 ("H-c r s"   . mc/sort-regions)
                 ("H-c h m"   . mc-hide-unmatched-lines-mode)
+            :map psimacs/config/global-key-map/hydra ("C-c" . psimacs/hydra/multiple-cursors/body)
           )
+    :hydra (psimacs/hydra/multiple-cursors
+        (:color pink :hint nil)
+"
+Multiple Cursors:
+   ^^Up           ^^Down    ^^Miscellaneous
+^^^^^^---------------------------------------
+  _p_: next      _n_: next    _l_: edit lines
+  _P_: skip      _N_: skip    _a_: mark all
+_M-p_: unmark  _M-n_: unmark  _q_: quit
+"
+        ("l"   mc/edit-lines :exit t)
+        ("a"   mc/mark-all-like-this :exit t)
+        ("n"   mc/mark-next-like-this)
+        ("N"   mc/skip-to-next-like-this)
+        ("M-n" mc/unmark-next-like-this)
+        ("p"   mc/mark-previous-like-this)
+        ("P"   mc/skip-to-previous-like-this)
+        ("M-p" mc/unmark-previous-like-this)
+        ("q"   nil :color blue)
+    )
 )
 #+END_SRC
 
@@ -9170,7 +9233,9 @@ See also:
     :hook ((term-mode shell-mode) . psimacs/config/internal/force-yasnippet-off)
 
     :after hydra
-    :bind (:map psimacs/config/global-key-map/hydra ("y" . psimacs/hydra/yasnippet/body))
+    :bind (
+            :map psimacs/config/global-key-map/hydra ("y" . psimacs/hydra/yasnippet/body)
+          )
     :hydra (psimacs/hydra/yasnippet (:color pink :hint nil)
           "
 ^^^^^^            YASnippets
@@ -9594,7 +9659,9 @@ The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] g
             :map projectile-cmake-mode-map
                 ("C-c C-p" . projectile-cmake-command-map)
             :map projectile-cmake-command-map
-                ("h"     . hydra-projectile-cmake/body)
+                ("h" . hydra-projectile-cmake/body)
+            :map psimacs/config/global-key-map/hydra
+                ("C-p" . hydra-projectile-cmake/body)
           )
     :hook (projectile-mode . projectile-cmake-global-mode)
     :init
@@ -9860,7 +9927,9 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
         (setq imagex-identify-command (concat psimacs/config/image-magick-dir "identify.exe"))
 
     :after hydra
-    :bind (:map psimacs/config/global-key-map/hydra ("C-i" . psimacs/hydra/image+/body))
+    :bind (
+            :map psimacs/config/global-key-map/hydra ("C-i" . psimacs/hydra/image+/body)
+          )
     :hydra (psimacs/hydra/image+ (:color pink :hint nil)
             "Image+
 
@@ -9937,6 +10006,33 @@ GNU Emacs, intended as replacement for the older Flymake extension which is part
         ;; Test with the next emacs version in the near future. flycheck for emacs-lisp is
         ;; absolut desirable.
         (flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc))
+
+    :bind (
+        :map psimacs/config/global-key-map/hydra ("C-f" . psimacs/hydra/flycheck/body)
+          )
+    :hydra (psimacs/hydra/flycheck
+        (:color pink :hint nil)
+"
+^Flycheck^           ^Errors^           ^Checker^
+^-^------------------^-^----------------^-^----------
+_v_: verify setup    _p_: previous      _?_: describe
+_M_: manual          _n_: next          _d_: disable
+^ ^                  _c_: check         _m_: mode
+_q_: quit            _l_: list          _s_: select
+^ ^                  ^ ^                ^ ^
+"
+        ("p" flycheck-previous-error)
+        ("n" flycheck-next-error)
+        ("?" flycheck-describe-checker)
+        ("M" flycheck-manual)
+        ("d" flycheck-disable-checker)
+        ("c" flycheck-buffer)
+        ("l" flycheck-list-errors)
+        ("m" flycheck-mode)
+        ("s" flycheck-select-checker)
+        ("v" flycheck-verify-setup)
+        ("q" nil :color blue)
+    )
 )
 #+END_SRC
 
@@ -10877,6 +10973,21 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
             )
         )
 
+        (defun psimacs/org/switch-capture-coding-diary-file ()
+            "Switch current coding diary file."
+            (interactive)
+            (let ( (choice (ido-completing-read "Diary: " psimacs/config/org-capture-coding-diary-files )) )
+              ;;(message "choice = %s" choice)
+              (customize-set-variable 'psimacs/config/org-capture-coding-diary-file choice)
+
+              (let ( (diary-file     (concat psimacs/config/org-agenda-dir psimacs/config/org-capture-coding-diary-file))
+                     (diary-template (concat psimacs/config/org-agenda-dir "Diary.Template")) )
+                (if (not (file-exists-p diary-file))
+                  (copy-file diary-template diary-file))
+
+                (psimacs/internal/org-catpure-set-templates)
+              )))
+
         (psimacs/internal/org-catpure-set-templates)
 
         ;
@@ -11658,6 +11769,14 @@ Remark:
 
 ** CC-mode
 
+References for the C++ programming language:
+- [[https://en.wikipedia.org/wiki/C%2B%2B][Wikipedia: C++]]
+- [[https://isocpp.org/][News, Status & Discussion about Standard C++]]
+- [[https://www.cplusplus.com/][Welcome to cplusplus.com]]
+- [[https://en.cppreference.com][C++ Reference]]
+- [[https://justinmeiners.github.io/sgi-stl-docs/][Standard Template Library Programmer's Guide]]
+- [[https://www.boost.org/][Boost C++ Libraries]]
+
 *** Modern C++ Font Lock
 
 The package [[https://github.com/ludwigpacifici/modern-cpp-font-lock][modern-cpp-font-lock]] provides
@@ -11835,7 +11954,7 @@ References:
 - [[https://download.microsoft.com/download/2/1/2/2122F0B9-0EE6-4E6D-BFD6-F9DCD27C07F9/WS12_QuickRef_Download_Files/PowerShell_LangRef_v3.pdf][Microsoft PowerShell Cheat Sheet (PDF)]]
 - [[https://gist.github.com/pcgeek86/336e08d1a09e3dd1a8f0a30a9fe61c8a][PowerShell Cheat Sheet / Quick Reference]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced Shell setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
 ;;
 ;; PowerShell
 ;;
@@ -11853,7 +11972,7 @@ References:
 - [[https://wikemacs.org/wiki/Eshell][Wikimacs EShell]]
 - [[http://www.howardism.org/Technical/Emacs/eshell-fun.html][Eschewing Zshell for Emacs Shell]]
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced Shell setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
 ;;
 ;; Functions that starts various shells
 ;;
@@ -12609,6 +12728,680 @@ This function takes credit from some external programs:
 )
 #+END_SRC
 
+** C++ support
+
+Some convenience functions for the [[https://isocpp.org/][C++]] programmer.
+
+References:
+- [[https://en.wikipedia.org/wiki/C%2B%2B][Wikipedia: C++]]
+- [[https://isocpp.org/][News, Status & Discussion about Standard C++]]
+- [[https://www.cplusplus.com/][Welcome to cplusplus.com]]
+- [[https://en.cppreference.com][C++ Reference]]
+- [[https://justinmeiners.github.io/sgi-stl-docs/][Standard Template Library Programmer's Guide]]
+- [[https://www.boost.org/][Boost C++ Libraries]]
+
+*** Switching between source and header files
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/c++/toggle-source-header()
+    "Switches to the source buffer if currently in the header buffer and vice versa.
+
+Header and source files are expected to reside at the same place.
+"
+    (interactive)
+    (let ((buf (current-buffer))
+        (name (file-name-nondirectory (buffer-file-name)))
+        file offs)
+        (setq offs (string-match c++-header-ext-regexp name))
+        (if offs
+            (let ( (lst c++-source-extension-list)
+                   (ok nil)
+                   ext )
+                (setq file (substring name 0 offs))
+                (while (and lst (not ok))
+                    (setq ext (car lst))
+                    (if (file-exists-p (concat file "." ext))
+                        (setq ok t))
+                    (setq lst (cdr lst))
+                )
+                (if ok
+                  (find-file (concat file "." ext))
+                )
+            )
+            (let ()
+                (setq offs (string-match c++-source-ext-regexp name))
+                (if offs
+                    (let (
+                        (lst c++-header-extension-list)
+                        (ok nil)
+                        ext)
+                        (setq file (substring name 0 offs))
+                        (while (and lst (not ok))
+                            (setq ext (car lst))
+                            (if (file-exists-p (concat file "." ext))
+                                (setq ok t))
+                                (setq lst (cdr lst)
+                            )
+                        )
+                        (if ok
+                            (find-file (concat file "." ext))
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+#+END_SRC
+
+*** Align assignment vertically
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defun psimacs/internal/find-assignment ()
+    "Find different kind of assignments"
+    (if (re-search-forward
+            "[^<>=!]=\\|\\+=\\|-=\\|\\*=\\|/=\\|&=\\||=\\|\\^=\\|<<=\\|>>="
+            (save-excursion (end-of-line) (point)) t
+        )
+        (progn
+            (goto-char (match-beginning 0))
+            (if (looking-at ".==")
+                nil
+                (if (looking-at "\\+=\\|-=\\|\\*=\\|/=\\|&=\\||=\\|\\^=\\|<<=\\|>>=")
+                    (set-mark (match-end 0))
+                    (forward-char 1)
+                    (set-mark (1+ (point)))
+                )
+                (delete-horizontal-space)
+                t
+            )
+        )
+    nil)
+  )
+
+(defun psimacs/c++/align-equals (start end)
+    "Make the first assignment operator on each line line up vertically"
+    (interactive "*r")
+    (save-excursion
+        (let ((indent 0))
+            (narrow-to-region start end)
+            (beginning-of-buffer)
+            (while (not (eobp))
+                (if (psimacs/internal/find-assignment)
+                    (progn
+                        (exchange-point-and-mark)
+                        (setq indent (max indent (current-column)))
+                        (delete-horizontal-space)
+                        (insert " "))
+                )
+                (forward-line 1)
+            )
+            (beginning-of-buffer)
+            (while (not (eobp))
+                (if (psimacs/internal/find-assignment)
+                    (indent-to-column (1+ (- indent  (- (mark) (point)))))
+                )
+                (forward-line 1)
+            )
+        )
+        (widen)
+    )
+)
+#+END_SRC
+
+* Hydras
+
+A colloction of *Psimacs* hydras that not directly belong to a single package.
+
+References:
+- [[https://github.com/abo-abo/hydra][Hydra]]
+- [[https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/][Hydras to Share]]
+
+| Key binding | Command                                   | Description             |
+|-------------+-------------------------------------------+-------------------------|
+| =H-h a=     | =M-x psimacs/hydra/apropos/body=          | Apropos...              |
+| =H-h h=     | =M-x psimacs/hydra/help/body=             | Help...                 |
+| =H-h m=     | =M-x psimacs/hydra/word-modes/body=       | CamelCase...            |
+| =H-h p=     | =M-x psimacs/hydra/projectile/body=       | Projectile...           |
+| =H-h t=     | =M-x psimacs/hydra/avy/body=              | Fast Jumping in Text... |
+| =H-h T=     | =M-x psimacs/hydra/transpose/body=        | Transposing...          |
+| =H-h w=     | =M-x psimacs/hydra/window/body=           | Window...               |
+| =H-h y=     | =M-x psimacs/hydra/yasnippet/body=        | YASnippet...            |
+| =H-h C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...     |
+| =H-h C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...             |
+| =H-h C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                |
+| =H-h C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...          |
+| =H-h C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...             |
+| =H-h C-p=   | =M-x hydra-projectile-cmake/body=         | Projectile CMake...     |
+| =H-h C-r=   | =M-x psimacs/hydra/rectangle/body=        | Rectangle...            |
+
+** CamelCase and aLike
+
+A hydra to give easy access to the various build in word movement modes.
+
+See also:
+- [[http://ergoemacs.org/emacs/emacs_subword-mode_superword-mode.html][subword-mode, superword-mode, camelCase, snake_case]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for various word modes
+;;
+(define-key psimacs/config/global-key-map/hydra (kbd "m")
+    (defhydra psimacs/hydra/word-modes
+        (:color pink :hint nil)
+"
+^^Word Movement Modes:
+^^-----------------------------------------------------
+_b_:   subword Mode  some■Thing some■-thing some■_thing
+_p_: superword Mode  someThing■ some-thing■ some_thing■
+_n_:    normal Mode  someThing■ some■-thing some■_thing
+
+_q_: quit
+
+"
+        ("b" subword-mode   )
+        ("p" superword-mode )
+        ("n" normal-mode    )
+        ("q" nil :color blue)
+    )
+)
+#+END_SRC
+
+** Apropos
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for Apropos
+;;
+(define-key psimacs/config/global-key-map/hydra (kbd "a")
+    (defhydra psimacs/hydra/apropos
+        (:color pink :hint nil)
+"
+^^^^^^Apropos
+^^^^^^------------------------------------------------------
+_a_: apropos           _l_: library           _i_: info
+_c_: command           _o_: option            _t_: tags
+_d_: documentation     _v_: variable          _z_: customize
+_e_: value             _q_: quit
+"
+        ("a" apropos)
+        ("c" apropos-command)
+        ("d" apropos-documentation)
+        ("e" apropos-value)
+        ("l" apropos-library)
+        ("o" apropos-user-option)
+        ("v" apropos-variable)
+        ("i" info-apropos)
+        ("t" tags-apropos)
+        ("z" psimacs/hydra/customize-apropos/body :color blue)
+        ("q" nil :color blue)
+    )
+)
+
+(defhydra psimacs/hydra/customize-apropos
+    (:color pink :hint nil)
+"
+^^^^^^Apropos (customize)
+^^^^^^-------------------------------------------------
+_a_: apropos           _g_: groups            _q_: quit
+_f_: faces             _o_: options
+"
+    ("a" customize-apropos "apropos")
+    ("f" customize-apropos-faces "faces")
+    ("g" customize-apropos-groups "groups")
+    ("o" customize-apropos-options "options")
+    ("q" nil "quit" :color blue)
+)
+#+END_SRC
+
+** Help
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for help
+;;
+(define-key psimacs/config/global-key-map/hydra (kbd "h")
+    (defhydra psimacs/hydra/help
+        (:color blue :hint nil)
+"
+^^Describe           ^^Keys                   ^^Search             ^^Documentation
+^^^^^^^^----------------------------------------------------------------------------
+_f_: function      _k_: keybinding          _a_: apropros          _i_: info
+_p_: package       _w_: where-is            _d_: doc strings
+_m_: mode          _b_: show all bindings   _s_: info by symbol
+_v_: variable      ^ ^
+_e_: view messages _l_: view lossage        _C_: coding-system     _I_: input-method
+_q_: quit
+"
+        ("e" view-echo-area-messages)
+        ("l" view-lossage)
+        ("C" describe-coding-system)
+        ("I" describe-input-method)
+
+
+        ;; Documentation
+        ("i" info nil)
+
+        ;; Keybinds
+        ("b" describe-bindings nil)
+        ("c" describe-key-briefly nil)
+        ("k" describe-key nil)
+        ("w" where-is nil)
+
+        ;; Search
+        ("a" apropos-command nil)
+        ("d" apropos-documentation nil)
+        ("s" info-lookup-symbol nil)
+
+        ;; Describe
+        ("f" describe-function nil)
+        ("p" describe-package nil)
+        ("m" describe-mode nil)
+        ("v" describe-variable nil)
+        ("y" describe-syntax nil)
+
+        ;; quit
+        ("q" help-quit)
+    )
+)
+#+END_SRC
+
+** Buffer Menu
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for buffer menu
+;;
+(defhydra psimacs/hydra/buffer
+    (:color pink :hint nil)
+"
+^Mark^             ^Unmark^           ^Actions^          ^Search
+^^^^^^^^-----------------------------------------------------------------
+_m_: mark          _u_: unmark        _x_: execute       _R_: re-isearch
+_s_: save          _U_: unmark up     _b_: bury          _I_: isearch
+_d_: delete        ^ ^                _g_: refresh       _O_: multi-occur
+_D_: delete up     ^ ^                _T_: files only: % -28`Buffer-menu-files-only
+_~_: modified
+"
+        ("m" Buffer-menu-mark)
+        ("u" Buffer-menu-unmark)
+        ("U" Buffer-menu-backup-unmark)
+        ("d" Buffer-menu-delete)
+        ("D" Buffer-menu-delete-backwards)
+        ("s" Buffer-menu-save)
+        ("~" Buffer-menu-not-modified)
+        ("x" Buffer-menu-execute)
+        ("b" Buffer-menu-bury)
+        ("g" revert-buffer)
+        ("T" Buffer-menu-toggle-files-only)
+        ("O" Buffer-menu-multi-occur :color blue)
+        ("I" Buffer-menu-isearch-buffers :color blue)
+        ("R" Buffer-menu-isearch-buffers-regexp :color blue)
+        ("c" nil "cancel")
+        ("v" Buffer-menu-select "select" :color blue)
+        ("o" Buffer-menu-other-window "other-window" :color blue)
+        ("q" quit-window "quit" :color blue)
+)
+
+(define-key Buffer-menu-mode-map "." 'psimacs/hydra-buffer-menu/body)
+#+END_SRC
+
+** Transpose
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for transposing
+;;
+(define-key psimacs/config/global-key-map/hydra (kbd "T")
+    (defhydra psimacs/hydra/transpose
+        (:color pink :hint nil)
+"
+Transpose^^
+^^^^-------------------------------------
+_c_: characters    _o_: Org mode words
+_w_: words         _e_: Org mode elements
+_l_: lines         _t_: Org mode tables
+_s_: sentences
+_p_: paragraphs    _q_: quit
+"
+        ("c" transpose-chars)
+        ("w" transpose-words)
+        ("o" org-transpose-words)
+        ("l" transpose-lines)
+        ("s" transpose-sentences)
+        ("e" org-transpose-elements)
+        ("p" transpose-paragraphs)
+        ("t" org-table-transpose-table-at-point)
+        ("q" nil :color blue)
+    )
+)
+#+END_SRC
+
+** Org Mode
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for org-mode
+;;
+(define-key psimacs/config/global-key-map/hydra (kbd "C-o")
+    (defhydra psimacs/hydra/org
+        (:color pink :hint nil)
+"
+Navigation^^^^
+^^^^--------------------------------------------
+_j_: next heading                      _g_: goto
+_k_: prev heading                      _q_: quit
+_h_: next heading (same level)
+_l_: prev heading (same level)
+_u_: up   heading
+"
+        ("j" outline-next-visible-heading)
+        ("k" outline-previous-visible-heading)
+        ("h" org-forward-heading-same-level)
+        ("l" org-backward-heading-same-level)
+        ("u" outline-up-heading)
+        ("g" org-goto :exit t)
+        ("q" nil :color blue)
+    )
+)
+#+END_SRC
+
+** Window
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for windowing
+;;
+(defun psimacs/window/move-splitter-left (arg)
+    "Move window splitter left."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'right))
+        (shrink-window-horizontally arg)
+        (enlarge-window-horizontally arg)))
+
+(defun psimacs/window/move-splitter-right (arg)
+    "Move window splitter right."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'right))
+        (enlarge-window-horizontally arg)
+        (shrink-window-horizontally arg)))
+
+(defun psimacs/window/move-splitter-up (arg)
+    "Move window splitter up."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'up))
+        (enlarge-window arg)
+        (shrink-window arg)))
+
+(defun psimacs/window/move-splitter-down (arg)
+    "Move window splitter down."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'up))
+        (shrink-window arg)
+        (enlarge-window arg)))
+
+(define-key psimacs/config/global-key-map/hydra (kbd "w")
+    (defhydra psimacs/hydra/window
+        (:color pink :hint nil)
+"
+  ^^^^Movement^      ^^^Resize^       ^Buffer^              ^Window^            ^Golden Ratio^
+^^^^^^^^^^^^^^------------------------------------------------------------------------------------
+^ _i_ ^:  ▲       ^_I_ ^:  ▲      _f_: find files      _v_: vertical        _g_: toggle on/off
+_j_ _l_: ◄ ►     _J_ _L_: ◄ ►     _F_: follow mode     _h_: horizontal      _G_: toggle widescreen
+^ _k_ ^:  ▼       ^_K_ ^:  ▼      _b_: save            _s_: swap
+^ ^ ^ ^          ^ ^ ^ ^          _p_: ◄ previous      _x_: delete window
+^ _a_ ^:  ▲ scroll up  ^^^^       _n_: ► next          _X_: delete other
+^ _z_ ^:  ▼ scroll down^^^^       _u_: undo            _o_: only this
+^ ^ ^ ^          ^ ^ ^ ^          _r_: redo            _e_: ace 1
+^ _q_ ^: quit    ^ ^ ^ ^          ^ ^                  _I_: maximize
+"
+        ("j" windmove-left )
+        ("l" windmove-right )
+        ("i" windmove-up )
+        ("k" windmove-down )
+
+        ("J" psimacs/window/move-splitter-left)
+        ("L" psimacs/window/move-splitter-right)
+        ("I" psimacs/window/move-splitter-up)
+        ("K" psimacs/window/move-splitter-down)
+
+        ("f" counsel-find-files)
+        ("F" follow-mode)
+        ("e" (lambda ()
+                (interactive)
+                (ace-window 1)
+                (add-hook 'ace-window-end-once-hook
+                          'psimacs/hydra/window/body)))
+        ("v" (lambda ()
+                (interactive)
+                (split-window-right)
+                (windmove-right)))
+        ("h" (lambda ()
+                (interactive)
+                (split-window-below)
+                (windmove-down)))
+        ("s" (lambda ()
+                (interactive)
+                (ace-window 4)
+                (add-hook 'ace-window-end-once-hook
+                          'psimacs/hydra/window/body)))
+        ("b" save-buffer)
+        ("p" previous-buffer)
+        ("n" next-buffer)
+        ("x" delete-window)
+        ("X" (lambda ()
+                (interactive)
+                (ace-window 16)
+                (add-hook 'ace-window-end-once-hook
+                          'psimacs/hydra/window/body)))
+        ("o" delete-other-windows)
+        ("I" maximize-window)
+
+        ("g" golden-ratio-mode)
+        ("G" golden-ratio-toggle-widescreen)
+
+        ("u" (progn
+                (winner-undo)
+                (setq this-command 'winner-undo)))
+        ("r" winner-redo)
+
+        ("a" scroll-down-line)
+        ("z" scroll-up-line)
+
+        ("q" nil :color blue)
+    )
+)
+#+END_SRC
+
+** Rectangle
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for rectangle
+;;
+(require 'rect)
+(define-key psimacs/config/global-key-map/hydra (kbd "C-r")
+    (defhydra psimacs/hydra/rectangle
+        (:body-pre (rectangle-mark-mode 1) :color pink :post (deactivate-mark))
+"
+^^^^^^^^Rectangle
+^^^^^^^^------------------------------------------
+^ _i_ ^:  ▲   _d_: delete rect    _s_: string rect
+_j_ _l_: ◄ ►  ^ ^                 _y_: yank rect
+^ _k_ ^:  ▼   _n_: copy rect      _r_: reset
+^^^^          _e_: exchange       _u_: undo
+^^^^          ^ ^                 _p_: kill rect
+^^^^          ^ ^                 _q_: quit
+"
+        ("j" rectangle-backward-char)
+        ("l" rectangle-forward-char)
+        ("i" rectangle-previous-line)
+        ("k" rectangle-next-line)
+        ("e" hydra-ex-point-mark)
+        ("n" copy-rectangle-as-kill)
+        ("d" delete-rectangle)
+        ("r" (if (region-active-p)
+                (deactivate-mark)
+                (rectangle-mark-mode 1)) nil)
+        ("y" yank-rectangle)
+        ("u" undo)
+        ("s" string-rectangle)
+        ("p" kill-rectangle)
+        ("q" nil :color blue)
+    )
+)
+#+END_SRC
+
+** Projectile
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for projectile
+;;
+(require 'projectile-cmake)
+(define-key psimacs/config/global-key-map/hydra (kbd "p")
+    (defhydra psimacs/hydra/projectile
+        (:color pink :hint nil)
+
+    ; Attention: Unicode symbols must be available in the main font. Otherwise the hydra table formatting
+    ; will not be perfect.
+
+    ; iB ibuffer
+    ; ▻  Switch
+    ; ◬  Display / Find
+    ; ●  With a prefix argument it will clear the cache first
+    ; ▽  Dired / Root
+    ; → W in window
+    ; → F in Frame
+    ; ⊕ prefix action available
+    ; ∅ invaliadte / regenerate
+    ; ∃ execute
+    ; P Project
+    ; Ƥ known / currently opened projects
+
+        ("C"  projectile-configure-project                      "configure"   :column "Action")
+        ("c"  projectile-compile-project                        "compile"     :column "Action")
+        ("u"  projectile-run-project                            "run"         :column "Action")
+        ("L"  projectile-install-project                        "install"     :column "Action")
+        ("K"  projectile-package-project                        "package"     :column "Action")
+        ("P"  projectile-test-project                           "test"        :column "Action")
+        ("xg" projectile-run-gdb                                "gdb"         :column "Action")
+        ("n"  psimacs/projectile/create-empty-projectile-file   "create P"    :column "Action")
+        ("hc" hydra-projectile-cmake/body                       "cmake hydra" :column "Action" :color blue)
+        ("q"  nil                                               "quit"        :column "Action" :color blue)
+
+        ("I"  projectile-ibuffer                         "iB ∀ b ∊ P"        :column "Buffer") ; Open an IBuffer window showing all buffers in the current project.
+        ("bb" projectile-switch-to-buffer                "▻ b ∊ P"           :column "Buffer") ; Display a list of all project buffers currently open.
+        ("b4" projectile-switch-to-buffer-other-window   "▻ b ∊ P → W"       :column "Buffer") ; Switch to a project buffer and show it in another window.
+        ("b5" projectile-switch-to-buffer-other-frame    "▻ b ∊ P → F"       :column "Buffer") ; Switch to a project buffer and show it in another frame.
+       ("ESC" projectile-project-buffers-other-buffer    "▻ to recent b"     :column "Buffer") ; Switch to the most recently selected Projectile buffer.
+    ("<left>" projectile-previous-project-buffer         "◄ Prev b"          :column "Buffer") ; Switch to the previous project buffer.
+   ("<right>" projectile-next-project-buffer             "► Next b"          :column "Buffer") ; Switch to the next project buffer.|
+        ("Ow" projectile-display-buffer                  "◬ b ∊ P → F"       :column "Buffer") ; Display a project buffer in another window without selecting it.
+        ("k"  projectile-kill-buffer                     "kill ∀ b ∈ P"      :column "Buffer") ; Kills all project buffers.
+        ("S"  projectile-save-project-buffers            "save ∀ b ∈ P"      :column "Buffer") ; Save all project buffers.
+        ("o"  projectile-multi-occur                     "occur ∀ b ∈ O ⊂ P" :column "Buffer") ; Runs multi-occur on all project buffers currently open.
+
+        ("fp" projectile-find-file                       "◬ ∀ f ∊ P ⊕"       :column "Find") ; Display a list of all files in the project. With a prefix argument it will clear the cache first.Find file in current project.
+        ("F"  projectile-find-file-in-known-projects     "◬ ∀ f ∊ P|P ∊ K ⊕" :column "Find") ; Display a list of all files in all known projects.
+        ("f4" projectile-find-file-other-window          "◬ ∀ f ∊ P → W"     :column "Find") ; Jump to a project's file using completion and show it in another window.
+        ("f5" projectile-find-file-other-frame           "◬ ∀ f ∊ P → F"     :column "Find") ; Jump to a project's file using completion and show it in another frame.
+        ("gg" projectile-find-file-dwim                  "◬ ∀ f → p → P"     :column "Find") ; Display a list of all files at point in the project. With a prefix argument it will clear the cache first.
+        ("g4" projectile-find-file-dwim-other-window     "◬ ∀ f → p → P → W" :column "Find") ; Jump to a project's file based on context at point and show it in another window.
+        ("g5" projectile-find-file-dwim-other-frame      "◬ ∀ f → p → P → F" :column "Find") ; Jump to a project's file based on context at point and show it in another frame.
+        ("aa" projectile-find-other-file                 "◬ f.a ≃ f.b"       :column "Find") ; Switch between files with the same name but different extensions.
+        ("a4" projectile-find-other-file-other-window    "◬ f.a ≃ f.b → W"   :column "Find") ; Switch between files with the same name but different extensions in other window.
+        ("a5" projectile-find-other-file-other-frame     "◬ f.a ≃ f.b → W"   :column "Find") ; Switch between files with the same name but different extensions in other frame.
+        ("l"  projectile-find-file-in-directory          "◬ ∀ f ∊ D"         :column "Find") ; Display a list of all files in a directory (that's not necessarily a project).
+        ("e"  projectile-recentf                         "◬ ∀ f ∊ R"         :column "Find") ; Shows a list of recently visited project files.
+        ("z"  projectile-cache-current-file              "f → C"             :column "Find") ; Adds the currently visited file to the cache.
+        ("i"  projectile-invalidate-cache                "C → ∅"             :column "Find") ; Invalidates the project cache (if existing).
+
+        ("dd" projectile-find-dir                        "◬ ∀ d ∊ P ⊕"   :column "Dired") ; Display a list of all directories in the project. With a prefix argument it will clear the cache first.
+        ("d4" projectile-find-dir-other-window           "◬ ∀ d ∊ P → W" :column "Dired") ; Switch to a project directory and show it in another window.
+        ("d5" projectile-find-dir-other-frame            "◬ ∀ d ∊ P → F" :column "Dired") ; Switch to a project directory and show it in another frame.
+        ("DD" projectile-dired                           "▻ ▽ ∊ P"       :column "Dired") ; Opens the root of the project in dired.
+        ("D4" projectile-dired-other-window              "▻ ▽ ∊ P → W"   :column "Dired") ; Opens the root of the project in dired in another window.
+        ("D5" projectile-dired-other-frame               "▻ ▽ ∊ P → F"   :column "Dired") ; Opens the root of the project in dired in another frame.
+
+        ("p"  projectile-switch-project                  "◬ ∀ p ∊ Ƥ"               :column "Project") ; Display a list of known projects you can switch to.
+        ("Q"  projectile-switch-open-project             "▻ p ∊ Ƥ ⊙"               :column "Project") ; Switch to a project we have currently opened.
+        ("j"  projectile-find-tag                        "◬ tag ∊ P"               :column "Project") ; Find tag in project.
+        ("R"  projectile-regenerate-tags                 "∅ tag ∊ P"               :column "Project") ; Regenerate the project's tags.
+        ("T"  projectile-find-test-file                  "◬ t ∊ P"                 :column "Project") ; Display a list of all test files(specs, features, etc) in the project.
+        ("sg" projectile-grep                            "∃ grep → f ∊ P"          :column "Project") ; Run grep on the files in the project.
+        ("sr" projectile-ripgrep                         "∃ ripgrep → ▽ ∊ P"       :column "Project") ; Run a Ripgrep search with 'SEARCH-TERM' at current root.
+        ("r"  projectile-replace                         "∃ query-replace → f ∊ P" :column "Project") ; Runs interactive query-replace on all files in the projects.
+        ("v"  projectile-vc                              "∃ vc-dir → ▽ ∊ P"        :column "Project") ; Run vc-dir on the root directory of the project.
+        ("V"  projectile-browse-dirty-projects           "browse dirty version"    :column "Project") ; Browse dirty version controlled projects.
+        ("E"  projectile-edit-dir-locals                 "dir-locals-file"         :column "Project") ; Opens the root dir-locals-file of the project.
+        ("ss" projectile-ag                              "∃ ag → f ∊ P"            :column "Project") ; Runs ag on the project, performing a literal search.
+
+        ("!"  projectile-run-shell-command-in-root       "∃ cmd → ▽ ∊ P"       :column "Shell") ; Runs shell-command in the root directory of the project.
+        ("&"  projectile-run-async-shell-command-in-root "∃ cmd → ▽ ∊ P async" :column "Shell") ; Runs async-shell-command in the root directory of the project.
+        ("xs" projectile-run-shell                       "shell → ▽ ∊ P"       :column "Shell") ; Invoke 'shell' in the project's root.
+        ("xv" projectile-run-vterm                       "vterm → ▽ ∊ P"       :column "Shell") ; Invoke 'vterm' in the project's root.
+        ("xe" projectile-run-eshell                      "eshell  → ▽ ∊ P"     :column "Shell") ; Invoke 'eshell' in the project's root.
+    )
+)
+#+END_SRC
+
+* Key bindings
+
+Additional key bindings for *Psimacs*:
+
+#+ATTR_HTML: :class styledtable
+| Key binding     | Command                                                        | Description                                                                                       |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =C-TAB=         | =M-x psimacs/buffer/next-user-buffer=                          | Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.     |
+| =C-S-TAB=       | =M-x psimacs/buffer/previous-user-buffer=                      | Switch to the previous user buffer. Buffer name starts with *, it's not considered a user buffer. |
+| =H-TAB=         | =M-x psimacs/buffer/next-emacs-buffer=                         | Switch to the next emacs buffer, i.e. that starts with *.                                         |
+| =H-S-TAB=       | =M-x psimacs/buffer/previous-emacs-buffer=                     | Switch to the previous emacs buffer, i.e. that starts with *.                                     |
+| =C-x <right>=   | =M-x next-buffer=                                              | Switch to the next buffer.                                                                        |
+| =C-x <left>=    | =M-x previous-buffer=                                          | Switch to the previous buffer.                                                                    |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-v C-o=   | =M-x psimacs/shell/open-file-in-visual-studio=                 | Open the given file argument in the MS Visual Studion session.                                    |
+| =H-m C-v C-i=   | =M-x psimacs/shell/import-file-in-visual-studio=               | Import the given file argument in the MS Visual Studion session.                                  |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-f C-a c= | =M-x find-file <psimacs/config/org-capture-coding-diary-file>= | Find coding diary file in agenda directory.                                                       |
+| =H-m C-f C-a d= | =M-x find-file <Diary.org>=                                    | Find diary file in agenda directory.                                                              |
+| =H-m C-f C-a j= | =M-x find-file <Journal.org>=                                  | Find journal file in agenda directory.                                                            |
+| =H-m C-f C-a l= | =M-x find-file <TimeLog.org>=                                  | Find time log file in agenda directory.                                                           |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-e C-m v= | =M-x visual-line-mode=                                         | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                              |
+| =H-m C-p C-b=   | =M-x psimacs/pair/bounce-sexp=                                 | Will bounce between matching parens.                                                              |
+| =H-m C-x s b=   | =M-x psimacs/convenience/bind-f6-to-last-command=              | Bind function key F6 to the last command used.                                                    |
+
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-keybindings.el :var file-description="Key bindings setup"
+;;
+;; Extra key bindings
+;;
+(bind-key* "<C-tab>"       'psimacs/buffer/next-user-buffer)
+(bind-key* "<C-S-tab>"     'psimacs/buffer/previous-user-buffer)
+(bind-key* "<H-tab>"       'psimacs/buffer/next-emacs-buffer)
+(bind-key* "<H-S-tab>"     'psimacs/buffer/previous-emacs-buffer)
+
+
+(define-key psimacs/config/global-key-map/special (kbd "C-v C-o") 'psimacs/shell/open-file-in-visual-studio)
+(define-key psimacs/config/global-key-map/special (kbd "C-v C-i") 'psimacs/shell/import-file-in-visual-studio)
+
+(define-key psimacs/config/global-key-map/special (kbd "C-f C-a c") (lambda () (interactive) (find-file (concat psimacs/config/org-agenda-dir psimacs/config/org-capture-coding-diary-file))))
+(define-key psimacs/config/global-key-map/special (kbd "C-f C-a d") (lambda () (interactive) (find-file (concat psimacs/config/org-agenda-dir "Diary.org"))))
+(define-key psimacs/config/global-key-map/special (kbd "C-f C-a j") (lambda () (interactive) (find-file (concat psimacs/config/org-agenda-dir "Journal.org"))))
+(define-key psimacs/config/global-key-map/special (kbd "C-f C-a l") (lambda () (interactive) (find-file (concat psimacs/config/org-agenda-dir "TimeLog.org"))))
+
+(define-key psimacs/config/global-key-map/special (kbd "C-e C-m v") 'visual-line-mode)
+
+(define-key psimacs/config/global-key-map/special (kbd "C-p C-b") 'psimacs/pair/bounce-sexp)
+
+(define-key psimacs/config/global-key-map/special (kbd "C-x s b") 'psimacs/convenience/bind-f6-to-last-command)
+#+END_SRC
+
 * Overview of Psimacs key bindings
 
 The following tables summarizes the key bindings added explicitly by *Psimacs*. Neither shown are the bindings provided
@@ -12624,6 +13417,13 @@ by the various packages nor by *Emacs* itself.
 
 #+ATTR_HTML: :class styledtable
 | Key binding         | Command                                                                 | Description                                                                                                                                                                                                                                                                                      |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-TAB=             | =M-x psimacs/buffer/next-user-buffer=                                   | Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.                                                                                                                                                                                                    |
+| =C-S-TAB=           | =M-x psimacs/buffer/previous-user-buffer=                               | Switch to the previous user buffer. Buffer name starts with *, it's not considered a user buffer.                                                                                                                                                                                                |
+| =H-TAB=             | =M-x psimacs/buffer/next-emacs-buffer=                                  | Switch to the next emacs buffer, i.e. that starts with *.                                                                                                                                                                                                                                        |
+| =H-S-TAB=           | =M-x psimacs/buffer/previous-emacs-buffer=                              | Switch to the previous emacs buffer, i.e. that starts with *.                                                                                                                                                                                                                                    |
+| =C-x <right>=       | =M-x next-buffer=                                                       | Switch to the next buffer.                                                                                                                                                                                                                                                                       |
+| =C-x <left>=        | =M-x previous-buffer=                                                   | Switch to the previous buffer.                                                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =M-<f4>=            | =M-x psimacs/config/delete-frame=                                       | Delete current frame.                                                                                                                                                                                                                                                                            |
 | =C-x p=             | =M-x pop-to-mark-command=                                               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                                                               |
@@ -12707,6 +13507,22 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-g=               | =M-x keyboard-escape-quit=                                              | Quit or abort.                                                                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-h a=             | =M-x psimacs/hydra/apropos/body=                                        | Apropos...                                                                                                                                                                                                                                                                                       |
+| =H-h h=             | =M-x psimacs/hydra/help/body=                                           | Help...                                                                                                                                                                                                                                                                                          |
+| =H-h m=             | =M-x psimacs/hydra/word-modes/body=                                     | CamelCase...                                                                                                                                                                                                                                                                                     |
+| =H-h p=             | =M-x psimacs/hydra/projectile/body=                                     | Projectile...                                                                                                                                                                                                                                                                                    |
+| =H-h t=             | =M-x psimacs/hydra/avy/body=                                            | Fast Jumping in Text...                                                                                                                                                                                                                                                                          |
+| =H-h T=             | =M-x psimacs/hydra/transpose/body=                                      | Transposing...                                                                                                                                                                                                                                                                                   |
+| =H-h w=             | =M-x psimacs/hydra/window/body=                                         | Window...                                                                                                                                                                                                                                                                                        |
+| =H-h y=             | =M-x psimacs/hydra/yasnippet/body=                                      | YASnippet...                                                                                                                                                                                                                                                                                     |
+| =H-h C-c=           | =M-x psimacs/hydra/multiple-cursors/body=                               | Multiple Cursors...                                                                                                                                                                                                                                                                              |
+| =H-h C-f=           | =M-x psimacs/hydra/flycheck/body=                                       | Flycheck...                                                                                                                                                                                                                                                                                      |
+| =H-h C-i=           | =M-x psimacs/hydra/image+/body=                                         | Image...                                                                                                                                                                                                                                                                                         |
+| =H-h C-l=           | =M-x psimacs/hydra/vlf-large-files/body=                                | Large Files...                                                                                                                                                                                                                                                                                   |
+| =H-h C-o=           | =M-x psimacs/hydra/org/body=                                            | Org-Mode...                                                                                                                                                                                                                                                                                      |
+| =H-h C-p=           | =M-x hydra-projectile-cmake/body=                                       | Projectile CMake...                                                                                                                                                                                                                                                                              |
+| =H-h C-r=           | =M-x psimacs/hydra/rectangle/body=                                      | Rectangle...                                                                                                                                                                                                                                                                                     |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m (=             | =M-x psimacs/pair/insert-paren=                                         | Insert paranthesis =(▮)=.                                                                                                                                                                                                                                                                        |
 | =H-m [=             | =M-x psimacs/pair/insert-bracket=                                       | Insert brackets =[▮]=.                                                                                                                                                                                                                                                                           |
 | =H-m {=             | =M-x psimacs/pair/insert-brace=                                         | Insert braces ={▮}=.                                                                                                                                                                                                                                                                             |
@@ -12731,6 +13547,8 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-c K=         | =M-x psimacs/else/kill-always=                                          | Like =else-kill= but kills required placeholders without prompting.                                                                                                                                                                                                                              |
 | =H-m C-c C-c=       | =M-x else-template-compile-buffer=                                      | Compile the whole current buffer.                                                                                                                                                                                                                                                                |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-e C-m v=     | =M-x visual-line-mode=                                                  | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                                                                                                                                                                                                                             |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f m=         | =M-x flyspell-mode=                                                     | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f r=         | =M-x flyspell-region=                                                   | Checks all words inside a region.                                                                                                                                                                                                                                                                |
@@ -12752,6 +13570,11 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-f e=         | =M-x psimac/spell/switch-to-english=                                    | Change to english language dictionary.                                                                                                                                                                                                                                                           |
 | =H-m C-f t=         | =M-x psimac/spell/toggle-language=                                      | Toggle german and english language dictionaries.                                                                                                                                                                                                                                                 |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-f C-a c=     | =M-x find-file <psimacs/config/org-capture-coding-diary-file>=          | Find coding diary file in agenda directory.                                                                                                                                                                                                                                                      |
+| =H-m C-f C-a d=     | =M-x find-file <Diary.org>=                                             | Find diary file in agenda directory.                                                                                                                                                                                                                                                             |
+| =H-m C-f C-a j=     | =M-x find-file <Journal.org>=                                           | Find journal file in agenda directory.                                                                                                                                                                                                                                                           |
+| =H-m C-f C-a l=     | =M-x find-file <TimeLog.org>=                                           | Find time log file in agenda directory.                                                                                                                                                                                                                                                          |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-l b=         | =M-x langtool-check-buffer=                                             | To check current buffer and show warnings. With prefix =C-u= check with different language.                                                                                                                                                                                                      |
 | =H-m C-l p=         | =M-x langtool-goto-previous-error=                                      | Goto previous error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                   |
 | =H-m C-l n=         | =M-x langtool-goto-next-error=                                          | Goto next error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                       |
@@ -12764,6 +13587,8 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-m C-v w=     | =M-x whitespace-mode=                                                   | Toggle  [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html][whitespace-mode]].                                                                                                                                                                                                                                                                         |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-m C-v f=     | =M-x global-display-fill-column-indicator-mode=                         | Toggle the display of the fill column indicator.                                                                                                                                                                                                                                                 |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-p C-b=       | =M-x psimacs/pair/bounce-sexp=                                          | Will bounce between matching parens.                                                                                                                                                                                                                                                             |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-p C-f p=     | =M-x ps-print-buffer-with-faces=                                        | Color print buffer via Ghostscript                                                                                                                                                                                                                                                               |
 | =H-m C-p C-f r=     | =M-x ps-print-region-with-faces=                                        | Color print region via Ghosts                                                                                                                                                                                                                                                                    |
@@ -12795,6 +13620,9 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-u C-w t=     | =M-x psimacs/which-key/toogle-sort-order=                               | Toggle the which-key-mode sort order.                                                                                                                                                                                                                                                            |
 | =H-m C-u C-w c=     | =M-x psimacs/which-key/cycle-sort-order=                                | Cycle through the which-key-mode sort orders.                                                                                                                                                                                                                                                    |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-v C-o=       | =M-x psimacs/shell/open-file-in-visual-studio=                          | Open the given file argument in the MS Visual Studion session.                                                                                                                                                                                                                                   |
+| =H-m C-v C-i=       | =M-x psimacs/shell/import-file-in-visual-studio=                        | Import the given file argument in the MS Visual Studion session.                                                                                                                                                                                                                                 |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-x o=             | =M-x ace-window=                                                        | Either =other-window= or easy switching by first character of window label. Swap window with prefix =C-u= and delete selected window with double prefix =C-u C-u=.                                                                                                                               |
 | =C-x O=             | =M-x other-frame=                                                       | Switch to the next frame in ring.                                                                                                                                                                                                                                                                |
@@ -12829,6 +13657,8 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-x G t=       | =M-x google-this=                                                       | Decide what the user wants to google (always something under point). Unlike =google-this-search= (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited.                                                              |
 | =H-m C-x G w=       | =M-x google-this-word=                                                  | Google the current word.                                                                                                                                                                                                                                                                         |
 | =H-m C-x G RET=     | =M-x google-this-search=                                                | Write and do a google search.                                                                                                                                                                                                                                                                    |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x s b=       | =M-x psimacs/convenience/bind-f6-to-last-command=                       | Bind function key F6 to the last command used.                                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x S RET=     | =M-x sx-tab-all-questions=                                              | Display a list of All-Questions questions for SITE.                                                                                                                                                                                                                                              |
 | =H-m C-x S s=       | =M-x sx-search=                                                         | Display search on SITE for question titles containing QUERY.                                                                                                                                                                                                                                     |
