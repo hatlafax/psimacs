@@ -543,6 +543,9 @@ is because it breaks some old (badly written) code.
 
 - Avoid garbage collection at startup
 
+  The GC can easily double startup time, so we suppress it at startup by turning up =gc-cons-threshold=
+  and the =gc-cons-percentage= temporarily.
+
   For detail information read the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Garbage-Collection.html][Garbage Collection manual entry]].
 
   Later in the initialization process the garbage collection procedure is even more fine tuned.
@@ -2895,7 +2898,7 @@ The [[https://github.com/alezost/dim.el][dim]] package can be used to change the
 
 *** Provide the bind-key.el package
 
-[[https://github.com/jwiegley/use-package][Use-package]] contains the package 
+[[https://github.com/jwiegley/use-package][Use-package]] contains the package
 [[https://github.com/jwiegley/use-package/blob/master/bind-key.el][bind-key]]
 which is required at various places of the configuration.
 
@@ -3721,9 +3724,9 @@ Whenever the window scrolls up or down a light will blink on your cursor with th
 (use-package beacon
     :diminish beacon-mode
     :config
-        (beacon-mode 1)
         (setq beacon-push-mark 35)
         (setq beacon-color "#666600")
+        (beacon-mode 1)
 )
 #+END_SRC
 
@@ -4065,6 +4068,13 @@ See also:
 ;; Always insert space characters instead of tab characters.
 ;;
 (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Pressing TAB indents first then complete
+;;
+(setq tab-always-indent 'complete)
 #+END_SRC
 
 Use of standard tab width, that is the length of the =TAB= character.
@@ -5585,7 +5595,8 @@ minor-modes, to access mode-specific menus, and to get help about modes.
 *Psimacs* uses a central [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Backup.html#Backup][backup]] directory. I like to have a [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Backup.html#Backup][backup]] on each save and with the correct relative
 path below of my central backup directory. Each new backup file is created by appending a '~' character to
 the orginal file name. If this file already exists in the backup location then this file is itself renamed
-etc. until we can rename our original file.
+etc. until we can rename our original file. All backup files that are older than one week will be removed
+at startup.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-backups.el :var file-description="Basic backup system setup"
 ;;
@@ -5683,6 +5694,29 @@ If the new path's directories does not exist, create them."
 ;; Backup files can be made by copying the old file or by renaming it
 ;;
 (setq backup-by-copying t)
+
+;;
+;; Remove backup files older than one week
+;;
+(defun psimacs/backup/clear-backups ()
+  "Remove all backup files that are older than one week."
+  (interactive)
+  (let ( (week (* 60 60 24 7))
+         (current (float-time (current-time))) )
+    (dolist (f (f-files psimacs/config/backup-dir nil t))
+      (when (and (backup-file-name-p f)
+                 (> (- current (float-time (nth 5 (file-attributes f)))) week))
+        (message "Removed backup file %s" f)
+        (delete-file f)))
+    (dolist (f (reverse (f-directories psimacs/config/backup-dir nil t)))
+      ;(message "Found directory %s" f)
+      (when (f-empty? f)
+        (message "Removed directory %s" f)
+        (f-delete f)))
+  )
+)
+
+(add-hook 'emacs-startup-hook 'psimacs/backup/clear-backups)
 #+END_SRC
 
 *** Auto-Save
@@ -8481,6 +8515,25 @@ The user will be prompted to choose a directory starting with 'directory-to-star
 )
 #+END_SRC
 
+*** Rename file and buffer
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-functions.el
+(defun psimacs/file-system/rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
+#+END_SRC
+
 ** Directory local settings
 
 Functionality related to directory local settings.
@@ -9264,6 +9317,10 @@ See also:
 - [[http://ergoemacs.org/emacs/emacs_templates.html][Using Templates with YASnippet]]
 - [[https://www.youtube.com/watch?v=-4O-ZYjQxks][Youtube: Emacs Tutorial: Yasnippet]]
 
+| Key binding | Command                  | Description                                                    |
+|-------------+--------------------------+----------------------------------------------------------------|
+| =H-x x=     | =M-x yas-insert-snippet= | Choose a snippet to expand, popup a list of choices according. |
+
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-yasnippet.el :var file-description="Advanced yasnippet setup"
 ;;
 ;; yasnipped is a template system for Emacs
@@ -9284,10 +9341,31 @@ See also:
           (yas-minor-mode -1)
           )
 
-    :hook ((term-mode shell-mode) . psimacs/config/internal/force-yasnippet-off)
+        (defun psimacs/yasnippet/can-fire-p (&optional field)
+          (interactive)
+          (setq yas--condition-cache-timestamp (current-time))
+          (let (templates-and-pos)
+            (unless (and yas-expand-only-for-last-commands
+                         (not (member last-command yas-expand-only-for-last-commands)))
+              (setq templates-and-pos (if field
+                                          (save-restriction
+                                            (narrow-to-region (yas--field-start field)
+                                                              (yas--field-end field))
+                                            (yas--templates-for-key-at-point))
+                                        (yas--templates-for-key-at-point))))
+
+            (set-cursor-color (if (and templates-and-pos (first templates-and-pos))
+                                  "#d65d0e" (face-attribute 'default :foreground)))))
+
+    :hook (
+           ((term-mode shell-mode) . psimacs/config/internal/force-yasnippet-off)
+           (post-command . yasnippet-can-fire-p)
+           )
 
     :after hydra
     :bind (
+            :map psimacs/config/global-key-map/execute
+                 ("x" . yas-insert-snippet)
             :map psimacs/config/global-key-map/hydra ("y" . psimacs/hydra/yasnippet/body)
           )
     :hydra (psimacs/hydra/yasnippet (:color pink :hint nil)
@@ -10453,6 +10531,22 @@ Convenience function for compiling elips files found in directory.
 )
 #+END_SRC
 
+*** Replace sexp with its value
+
+Convenience function that allows you to write an /s-expression/ and replace it with the value of its evaluation.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-lisp.el :var file-description="Advanced lisp setup"
+;;
+;; Replace preceding sexp with its evaluated value
+;;
+(defun psimacs/elisp/eval-sexp-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (prin1 (eval (read (current-kill 0)))
+         (current-buffer)))
+#+END_SRC
+
 ** Python
 
 See also:
@@ -11259,6 +11353,38 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;; reStructuredText with org-mode
 ;;
 (use-package ox-rst :after org)
+#+END_SRC
+
+*** Lower case org keywords
+
+Replace [[https://orgmode.org][org-mode]] keywords to lowercase in accordance to [[https://orgmode.org][org-mode]] 9.2
+
+Reference: [[https://scripter.co/org-keywords-lower-case/][Converting Org keywords to lower-case]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; Lower case org keywords
+;;
+(defun psimacs/org/lower-case-org-keywords ()
+  "Lower case Org keywords and block identifiers.
+
+  Example: \"#+TITLE\" -> \"#+title\"
+           \"#+BEGIN_EXAMPLE\" -> \"#+begin_example\"
+
+  Inspiration:
+  https://code.orgmode.org/bzg/org-mode/commit/13424336a6f30c50952d291e7a82906c1210daf0."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((case-fold-search nil)
+          (count 0))
+      ;; Match examples: "#+FOO bar", "#+FOO:", "=#+FOO=", "~#+FOO~",
+      ;;                 "‘#+FOO’", "“#+FOO”", ",#+FOO bar",
+      ;;                 "#+FOO_bar<eol>", "#+FOO<eol>".
+      (while (re-search-forward "\\(?1:#\\+[A-Z_]+\\(?:_[[:alpha:]]+\\)*\\)\\(?:[ :=~’”]\\|$\\)" nil :noerror)
+        (setq count (1+ count))
+        (replace-match (downcase (match-string-no-properties 1)) :fixedcase nil nil 1))
+      (message "Lower-cased %d matches" count))))
 #+END_SRC
 
 *** Keybinding for Org-Mode                                        :noexport:
@@ -12119,6 +12245,9 @@ to them so I will stay with them.
 ;;
 (use-package find-func :straight nil)
 
+;;
+;; Describe Foo at point
+;;
 (defun psimacs/help/describe-foo-at-point ()
     "Show the documentation of the Elisp function and variable near point.
 This checks in turn:
@@ -12149,6 +12278,9 @@ This checks in turn:
 *** ASCII Table
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; ASCII Table
+;;
 (defun joemac/help/show-ascii-chart ()
     "Show ASCII character table in *scratch* buffer.
 
@@ -12299,7 +12431,7 @@ emacs buffer here is buffer whose name starts with *."
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
 ;;
-;; Movement functions
+;; Movement functions: Move to top of page
 ;;
 (defun psimacs/movement/top-of-page()
     "Brings point to the top of the current page.
@@ -12313,6 +12445,9 @@ Cursor is set to line 0 of current window."
 *** Move to bottom of page
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Move to bottom of page
+;;
 (defun psimacs/movement/bottom-of-page ()
     "Brings point to the bottom of the current page.
 
@@ -12325,6 +12460,9 @@ Cursor is set to last line of current window."
 *** Move text (internal)
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Move text (internal)
+;;
 (defun psimacs/internal/move-text-internal (arg)
     "Move selected region or line up or down.
 
@@ -12362,6 +12500,9 @@ Move selected region or line if there is no selection up or down"
 *** Move text down
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Move text down
+;;
 (defun psimacs/movement/move-text-down (arg)
     "Move region or line down.
 
@@ -12375,6 +12516,9 @@ arg lines down."
 *** Move text up
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Move text up
+;;
 (defun psimacs/movement/move-text-up (arg)
     "Move region or line down.
 
@@ -12388,6 +12532,9 @@ Move region (transient-mark-mode active) or current line
 *** Find selection forward
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Find selection forward
+;;
 (defun psimacs/search/find-selection-forward ()
     "Find text cut buffer forward"
     (interactive "")
@@ -12925,6 +13072,7 @@ References:
 | =H-h C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...             |
 | =H-h C-p=   | =M-x hydra-projectile-cmake/body=         | Projectile CMake...     |
 | =H-h C-r=   | =M-x psimacs/hydra/rectangle/body=        | Rectangle...            |
+| =H-h C-s=   | =M-x psimacs/hydra/straight/body=         | Straight...             |
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
 (require 'org)
@@ -13004,10 +13152,10 @@ _e_: value             _q_: quit
 _a_: apropos           _g_: groups            _q_: quit
 _f_: faces             _o_: options
 "
-    ("a" customize-apropos "apropos")
-    ("f" customize-apropos-faces "faces")
-    ("g" customize-apropos-groups "groups")
-    ("o" customize-apropos-options "options")
+    ("a" customize-apropos)
+    ("f" customize-apropos-faces)
+    ("g" customize-apropos-groups)
+    ("o" customize-apropos-options)
     ("q" nil "quit" :color blue)
 )
 #+END_SRC
@@ -13415,6 +13563,50 @@ _j_ _l_: ◄ ►  ^ ^                 _y_: yank rect
 )
 #+END_SRC
 
+** Straight
+
+The following hydra should help in working with the [[https://github.com/raxod502/straight.el][Straight]] package manager.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for straight
+;;
+(define-key psimacs/config/global-key-map/hydra (kbd "C-s")
+    (defhydra psimacs/hydra/straight
+        (:color pink :hint nil)
+        "
+_c_: check all       |_f_: fetch all     |_m_: merge all      |_n_: normalize all   | _u_: push all
+_C_: check package   |_F_: fetch package |_M_: merge package  |_N_: normlize package| _U_: push package
+-------------------^^+-----------------^^+------------------^^+-------------------^^+----------------^^
+_r_: rebuild all     |_p_: pull all      |_v_: versions freeze|_w_: watcher start   |_g_: get recipe
+_R_: rebuild package |_P_: pull package  |_V_: versions thaw  |_W_: watcher stop    |_e_: prune build
+
+_q_: quit_
+"
+        ("c" straight-check-all)
+        ("C" straight-check-package)
+        ("r" straight-rebuild-all)
+        ("R" straight-rebuild-package)
+        ("f" straight-fetch-all)
+        ("F" straight-fetch-package)
+        ("p" straight-pull-all)
+        ("P" straight-pull-package)
+        ("m" straight-merge-all)
+        ("M" straight-merge-package)
+        ("n" straight-normalize-all)
+        ("N" straight-normalize-package)
+        ("u" straight-push-all)
+        ("U" straight-push-package)
+        ("v" straight-freeze-versions)
+        ("V" straight-thaw-versions)
+        ("w" straight-watcher-start)
+        ("W" straight-watcher-stop)
+        ("g" straight-get-recipe)
+        ("e" straight-prune-build)
+        ("q" nil "quit" :color blue)
+))
+#+END_SRC
+
 * Key bindings
 
 Additional key bindings for *Psimacs*:
@@ -13446,11 +13638,13 @@ Additional key bindings for *Psimacs*:
 ;;
 ;; Extra key bindings
 ;;
-(bind-key* "<C-tab>"       'psimacs/buffer/next-user-buffer)
-(bind-key* "<C-S-tab>"     'psimacs/buffer/previous-user-buffer)
-(bind-key* "<H-tab>"       'psimacs/buffer/next-emacs-buffer)
-(bind-key* "<H-S-tab>"     'psimacs/buffer/previous-emacs-buffer)
+(bind-key* "<C-tab>"   'psimacs/buffer/next-user-buffer)
+(bind-key* "<C-S-tab>" 'psimacs/buffer/previous-user-buffer)
+(bind-key* "<H-tab>"   'psimacs/buffer/next-emacs-buffer)
+(bind-key* "<H-S-tab>" 'psimacs/buffer/previous-emacs-buffer)
 
+(define-key psimacs/config/global-key-map/execute (kbd "M-<up>")   'psimacs/movement/move-text-up)
+(define-key psimacs/config/global-key-map/execute (kbd "M-<down>") 'psimacs/movement/move-text-down)
 
 (define-key psimacs/config/global-key-map/special (kbd "C-v C-o") 'psimacs/shell/open-file-in-visual-studio)
 (define-key psimacs/config/global-key-map/special (kbd "C-v C-i") 'psimacs/shell/import-file-in-visual-studio)
@@ -13595,6 +13789,7 @@ by the various packages nor by *Emacs* itself.
 | =H-h C-o=           | =M-x psimacs/hydra/org/body=                                            | Org-Mode...                                                                                                                                                                                                                                                                                      |
 | =H-h C-p=           | =M-x hydra-projectile-cmake/body=                                       | Projectile CMake...                                                                                                                                                                                                                                                                              |
 | =H-h C-r=           | =M-x psimacs/hydra/rectangle/body=                                      | Rectangle...                                                                                                                                                                                                                                                                                     |
+| =H-h C-s=           | =M-x psimacs/hydra/straight/body=                                       | Straight...                                                                                                                                                                                                                                                                                      |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m (=             | =M-x psimacs/pair/insert-paren=                                         | Insert paranthesis =(▮)=.                                                                                                                                                                                                                                                                        |
 | =H-m [=             | =M-x psimacs/pair/insert-bracket=                                       | Insert brackets =[▮]=.                                                                                                                                                                                                                                                                           |
@@ -13817,6 +14012,8 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x f=             | =M-x counsel-recentf=                                                   | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
 | =H-x C-f=           | =M-x counsel-buffer-or-recentf=                                         | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x x=             | =M-x yas-insert-snippet=                                                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x C c=           | =M-x recentf-cleanup=                                                   | Cleanup the recent file list.                                                                                                                                                                                                                                                                    |
 | =H-x C C-c=         | =M-x psimacs/config/recentf-cleanup-directory-files=                    | Remove all files of DIR from recent file list.                                                                                                                                                                                                                                                   |
