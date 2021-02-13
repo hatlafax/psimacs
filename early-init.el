@@ -89,6 +89,9 @@ allows sharing of a single configuration on multiple machines.")
 (defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
 
+(defconst psimacs/config/private-folder "private"
+  "The psimacs private directory.")
+
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
 
@@ -154,8 +157,11 @@ It is the fraction of the current heap size."
 ;;
 ;; Change color to avoid screen flickering
 ;;
-(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
-(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
+;(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
+;(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
+
+(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
+(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
 
 ;;
 ;; Garbage collection optimization
@@ -643,6 +649,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/assets-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/assets-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/private-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/private-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
                                                                              psimacs/config/site-lisp-folder))
                                              (file-name-as-directory (concat db-dir

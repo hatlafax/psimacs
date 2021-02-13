@@ -460,6 +460,9 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 (defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
 
+(defconst psimacs/config/private-folder "private"
+  "The psimacs private directory.")
+
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
 
@@ -596,8 +599,11 @@ is because it breaks some old (badly written) code.
 ;;
 ;; Change color to avoid screen flickering
 ;;
-(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
-(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
+;(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
+;(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
+
+(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
+(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
 #+END_SRC
 
 - Avoid garbage collection at startup
@@ -1198,6 +1204,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/assets-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/private-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/private-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
                                                                              psimacs/config/site-lisp-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/site-lisp-folder))))
@@ -1305,66 +1315,64 @@ to it's documentation string.
 ;;
 (setq frame-resize-pixelwise t)
 
-(defvar psimacs/config/primary-monitor-left   0 "Left of primary monitor")
-(defvar psimacs/config/primary-monitor-top    0 "Top of primary monitor")
-(defvar psimacs/config/primary-monitor-width  0 "Width of primary monitor")
-(defvar psimacs/config/primary-monitor-height 0 "Height of primary monitor")
+(defconst psimacs/config/default-frame-offset 20)
 
 (let* ((primary-monitor (car (display-monitor-attributes-list)))
        (geometry        (assoc 'geometry primary-monitor))
+       (left            0)
+       (top             0)
+       (width           (nth 3 geometry))
+       (height          (nth 4 geometry))
+       (offset          psimacs/config/default-frame-offset)
       )
-    (setq psimacs/config/primary-monitor-width           (nth 3 geometry))
-    (setq psimacs/config/primary-monitor-height          (nth 4 geometry))
+
+    (defconst psimacs/config/initial-frame-pos-x  (round (* 28 (/ width 100))))
+    (defconst psimacs/config/initial-frame-pos-y  0)
+    (defconst psimacs/config/initial-frame-size-x (round (* 60 (/ width 100))))
+    (defconst psimacs/config/initial-frame-size-y (- height 80))
+
+    (defconst psimacs/config/default-frame-1-pos-x  0)
+    (defconst psimacs/config/default-frame-1-pos-y  psimacs/config/initial-frame-pos-y)
+    (defconst psimacs/config/default-frame-1-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-1-pos-x offset)))
+    (defconst psimacs/config/default-frame-1-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
+
+    (defconst psimacs/config/default-frame-2-pos-x  0)
+    (defconst psimacs/config/default-frame-2-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* offset 1.75))))
+    (defconst psimacs/config/default-frame-2-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-2-pos-x offset)))
+    (defconst psimacs/config/default-frame-2-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
+
+
+    (defconst psimacs/config/default-frame-3-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x offset))
+    (defconst psimacs/config/default-frame-3-pos-y  psimacs/config/initial-frame-pos-y)
+    (defconst psimacs/config/default-frame-3-size-x (- width (+ psimacs/config/default-frame-3-pos-x (round (* offset 1.5)))))
+    (defconst psimacs/config/default-frame-3-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
+
+    (defconst psimacs/config/default-frame-4-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x offset))
+    (defconst psimacs/config/default-frame-4-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* offset 1.75))))
+    (defconst psimacs/config/default-frame-4-size-x (- width (+ psimacs/config/default-frame-4-pos-x (round (* offset 1.5)))))
+    (defconst psimacs/config/default-frame-4-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
+
+    (defvar psimacs/config/default-frame-placement-counter 1)
+
+    ;;
+    ;; The initial frame
+    ;;
+    (set-frame-position (selected-frame) psimacs/config/initial-frame-pos-x  psimacs/config/initial-frame-pos-y)
+    (set-frame-size     (selected-frame) psimacs/config/initial-frame-size-x psimacs/config/initial-frame-size-y t)
+
+    ;;
+    ;; Somewhat redundant
+    ;;
+    (add-to-list 'initial-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+    (add-to-list 'initial-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+    (add-to-list 'initial-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+    (add-to-list 'initial-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+
+    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
 )
-
-;(let* ((primary-monitor (car (display-monitor-attributes-list)))
-;       (geometry        (assoc 'geometry primary-monitor))
-;       (width           (nth 3 geometry))
-;       (height          (nth 4 geometry)))
-
-(defconst psimacs/config/default-frame-offset 20)
-
-(defconst psimacs/config/initial-frame-pos-x  (round (* 28 (/ psimacs/config/primary-monitor-width 100))))
-(defconst psimacs/config/initial-frame-pos-y  0)
-(defconst psimacs/config/initial-frame-size-x (round (* 60 (/ psimacs/config/primary-monitor-width 100))))
-(defconst psimacs/config/initial-frame-size-y (- psimacs/config/primary-monitor-height 80))
-
-(defconst psimacs/config/default-frame-1-pos-x  0)
-(defconst psimacs/config/default-frame-1-pos-y  psimacs/config/initial-frame-pos-y)
-(defconst psimacs/config/default-frame-1-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-1-pos-x psimacs/config/default-frame-offset)))
-(defconst psimacs/config/default-frame-1-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
-
-(defconst psimacs/config/default-frame-2-pos-x  0)
-(defconst psimacs/config/default-frame-2-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* psimacs/config/default-frame-offset 1.75))))
-(defconst psimacs/config/default-frame-2-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-2-pos-x psimacs/config/default-frame-offset)))
-(defconst psimacs/config/default-frame-2-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
-
-
-(defconst psimacs/config/default-frame-3-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x psimacs/config/default-frame-offset))
-(defconst psimacs/config/default-frame-3-pos-y  psimacs/config/initial-frame-pos-y)
-(defconst psimacs/config/default-frame-3-size-x (- psimacs/config/primary-monitor-width (+ psimacs/config/default-frame-3-pos-x (round (* psimacs/config/default-frame-offset 1.5)))))
-(defconst psimacs/config/default-frame-3-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
-
-(defconst psimacs/config/default-frame-4-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x psimacs/config/default-frame-offset))
-(defconst psimacs/config/default-frame-4-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* psimacs/config/default-frame-offset 1.75))))
-(defconst psimacs/config/default-frame-4-size-x (- psimacs/config/primary-monitor-width (+ psimacs/config/default-frame-4-pos-x (round (* psimacs/config/default-frame-offset 1.5)))))
-(defconst psimacs/config/default-frame-4-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
-
-(defvar psimacs/config/default-frame-placement-counter 1)
-
-;;
-;; The initial frame
-;;
-(set-frame-position (selected-frame) psimacs/config/initial-frame-pos-x  psimacs/config/initial-frame-pos-y)
-(set-frame-size     (selected-frame) psimacs/config/initial-frame-size-x psimacs/config/initial-frame-size-y t)
-
-;;
-;; Somewhat redundant
-;;
-(add-to-list 'initial-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/initial-frame-pos-x))
-(add-to-list 'initial-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/initial-frame-pos-y))
-(add-to-list 'initial-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-(add-to-list 'initial-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
 
 ;;
 ;; Track the current frame creation strategy
@@ -1383,67 +1391,96 @@ Supported strategies are:
 (defun psimacs/window/set-frame-creation-strategy-layout ()
     "Set the frame layout creation strategy to 'layout'."
     (interactive)
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-left   default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-top    default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-width  default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-height default-frame-alist))
+    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
+            (geometry        (assoc 'geometry primary-monitor))
+            (left            0)
+            (top             0)
+            (width           (nth 3 geometry))
+            (height          (nth 4 geometry))
+            (offset          psimacs/config/default-frame-offset)
+          )
+        (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
 
-    (when (= psimacs/config/default-frame-placement-counter 1)
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-1-pos-x))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-1-pos-y))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
-      )
+        (when (= psimacs/config/default-frame-placement-counter 1)
+          (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-1-pos-x))
+          (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-1-pos-y))
+          (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
+          (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
+          )
 
-    (when (= psimacs/config/default-frame-placement-counter 2)
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-2-pos-x))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-2-pos-y))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
-      )
+        (when (= psimacs/config/default-frame-placement-counter 2)
+          (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-2-pos-x))
+          (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-2-pos-y))
+          (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
+          (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
+          )
 
-    (when (= psimacs/config/default-frame-placement-counter 3)
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-3-pos-x))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-3-pos-y))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
-      )
+        (when (= psimacs/config/default-frame-placement-counter 3)
+          (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-3-pos-x))
+          (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-3-pos-y))
+          (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
+          (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
+          )
 
-    (when (= psimacs/config/default-frame-placement-counter 4)
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-4-pos-x))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-4-pos-y))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
-      (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
-      )
-    (setq psimacs/config/default-frame-creation-strategy "layout")
-    (message "Switched to frame layout creation strategy."))
+        (when (= psimacs/config/default-frame-placement-counter 4)
+          (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-4-pos-x))
+          (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-4-pos-y))
+          (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
+          (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
+          )
+
+        (setq psimacs/config/default-frame-creation-strategy "layout")
+        (message "Switched to frame layout creation strategy.")))
 
 (defun psimacs/window/set-frame-creation-strategy-main ()
     "Set the frame layout creation strategy to 'main'."
     (interactive)
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-left   default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-top    default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-width  default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-height default-frame-alist))
-    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/initial-frame-pos-x))
-    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/initial-frame-pos-y))
-    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
-    (setq psimacs/config/default-frame-creation-strategy "main")
-    (message "Switched to main frame creation strategy."))
+    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
+            (geometry        (assoc 'geometry primary-monitor))
+            (left            0)
+            (top             0)
+            (width           (nth 3 geometry))
+            (height          (nth 4 geometry))
+            (offset          psimacs/config/default-frame-offset)
+          )
+        (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+
+        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+
+        (setq psimacs/config/default-frame-creation-strategy "main")
+        (message "Switched to main frame creation strategy.")))
 
 (defun psimacs/window/set-frame-creation-strategy-system ()
     "Set the frame layout creation strategy to 'system'."
     (interactive)
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-left   default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-top    default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-width  default-frame-alist))
-    (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-height default-frame-alist))
-    (setq psimacs/config/default-frame-creation-strategy "system")
-    (message "Switched to system frame creation strategy."))
+    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
+            (geometry        (assoc 'geometry primary-monitor))
+            (left            0)
+            (top             0)
+            (width           (nth 3 geometry))
+            (height          (nth 4 geometry))
+            (offset          psimacs/config/default-frame-offset)
+          )
+        (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+        (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
+
+        (setq psimacs/config/default-frame-creation-strategy "system")
+        (message "Switched to system frame creation strategy.")))
 
 (defun psimacs/window/set-frame-creation-strategy ()
     "Apply the current frame creation strategy."
+    (interactive)
     (cond ((string= psimacs/config/default-frame-creation-strategy "layout")
            (psimacs/window/set-frame-creation-strategy-layout))
           ((string= psimacs/config/default-frame-creation-strategy "main")
@@ -1462,93 +1499,105 @@ Supported strategies are:
 ;;
 (add-hook 'after-make-frame-functions
             #'(lambda (frame)
-                (when (equal psimacs/config/default-frame-creation-strategy "layout")
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-left   default-frame-alist))
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-top    default-frame-alist))
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-width  default-frame-alist))
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-height default-frame-alist))
+                (let* ( (primary-monitor (car (display-monitor-attributes-list)))
+                        (geometry        (assoc 'geometry primary-monitor))
+                        (left            0)
+                        (top             0)
+                        (width           (nth 3 geometry))
+                        (height          (nth 4 geometry))
+                        (offset          psimacs/config/default-frame-offset)
+                      )
+                    (when (equal psimacs/config/default-frame-creation-strategy "layout")
+                      (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+                      (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+                      (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+                      (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
 
-                  (setq psimacs/config/default-frame-placement-counter (+ psimacs/config/default-frame-placement-counter 1))
+                      (setq psimacs/config/default-frame-placement-counter (+ psimacs/config/default-frame-placement-counter 1))
 
-                  (when (> psimacs/config/default-frame-placement-counter 4)
-                    (setq psimacs/config/default-frame-placement-counter 1)
-                    )
+                      (when (> psimacs/config/default-frame-placement-counter 4)
+                        (setq psimacs/config/default-frame-placement-counter 1)
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 1)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-1-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-1-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
-                    )
+                      (when (= psimacs/config/default-frame-placement-counter 1)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-1-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-1-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 2)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-2-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-2-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
-                    )
+                      (when (= psimacs/config/default-frame-placement-counter 2)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-2-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-2-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 3)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-3-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-3-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
-                    )
+                      (when (= psimacs/config/default-frame-placement-counter 3)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-3-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-3-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 4)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-4-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-4-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
-                    )
-                  )
-                )
-            )
+                      (when (= psimacs/config/default-frame-placement-counter 4)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-4-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-4-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
+                        )
+                      ))))
 
 (add-hook 'after-delete-frame-functions
             #'(lambda (frame)
-                (when (equal psimacs/config/default-frame-creation-strategy "layout")
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-left   default-frame-alist))
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-top    default-frame-alist))
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-width  default-frame-alist))
-                  (setq default-frame-alist (assq-delete-all 'psimacs/config/primary-monitor-height default-frame-alist))
+                (let* ( (primary-monitor (car (display-monitor-attributes-list)))
+                        (geometry        (assoc 'geometry primary-monitor))
+                        (left            0)
+                        (top             0)
+                        (width           (nth 3 geometry))
+                        (height          (nth 4 geometry))
+                        (offset          psimacs/config/default-frame-offset)
+                      )
+                    (when (equal psimacs/config/default-frame-creation-strategy "layout")
+                      (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+                      (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+                      (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+                      (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
 
-                  (setq psimacs/config/default-frame-placement-counter (- psimacs/config/default-frame-placement-counter 1))
+                      (setq psimacs/config/default-frame-placement-counter (- psimacs/config/default-frame-placement-counter 1))
 
-                  (when (< psimacs/config/default-frame-placement-counter 1)
-                    (setq psimacs/config/default-frame-placement-counter 1)
-                    )
+                      (when (< psimacs/config/default-frame-placement-counter 1)
+                        (setq psimacs/config/default-frame-placement-counter 1)
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 1)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-1-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-1-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
-                    )
+                      (when (= psimacs/config/default-frame-placement-counter 1)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-1-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-1-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 2)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-2-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-2-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
-                    )
+                      (when (= psimacs/config/default-frame-placement-counter 2)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-2-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-2-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 3)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-3-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-3-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
-                    )
+                      (when (= psimacs/config/default-frame-placement-counter 3)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-3-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-3-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
+                        )
 
-                  (when (= psimacs/config/default-frame-placement-counter 4)
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-left   . ,psimacs/config/default-frame-4-pos-x))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-top    . ,psimacs/config/default-frame-4-pos-y))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
-                    (add-to-list 'default-frame-alist `(psimacs/config/primary-monitor-height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
-                    )
-                  )
-                )
-            )
+                      (when (= psimacs/config/default-frame-placement-counter 4)
+                        (add-to-list 'default-frame-alist `(left   . ,psimacs/config/default-frame-4-pos-x))
+                        (add-to-list 'default-frame-alist `(top    . ,psimacs/config/default-frame-4-pos-y))
+                        (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
+                        (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
+                        )
+                      ))))
 #+END_SRC
 
 ** System constants flags
@@ -1661,7 +1710,7 @@ In the following various *Psimacs* configuration constants are defined. They are
 used only later in the configuration. This section is rather boring. However, I decided to concentrate
 all these settings together so that it is easy to lookup or change them.
 
-** Primary directory
+** Primary directories
 
 This defines the =site-lisp= directory for storing local elisp code and the dependencies directory where non *Emacs*
 programs are installed.
@@ -1706,7 +1755,7 @@ the following directory.
 ;; Private directory and file might exists; not mandatory.
 ;;
 (defconst psimacs/config/private-dir
-  (psimacs/file-system/concat-directory user-emacs-directory "private")
+  (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/private-folder)
   "A directory that contains non public, i.e.  private data."
   )
 
@@ -1714,6 +1763,23 @@ the following directory.
   (psimacs/file-system/concat-file psimacs/config/private-dir "init-private.el")
   "A directory that contains non public, i.e.  private data."
   )
+#+END_SRC
+
+** Logos and the like
+
+This defines some logos and images that are used to give *Psimacs* a good look.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el :var file-description="Configuration constants"
+;;
+;; Logos and the like
+;;
+(defconst psimacs/config/logo-file
+  (psimacs/file-system/concat-file psimacs/config/private-dir "psimacs.png")
+  "The psimacs logo image.")
+
+(defconst psimacs/config/homepage
+  "https://github.com/https://github.com/hatlafax/psimacs"
+  "The Github page of Psimacs.")
 #+END_SRC
 
 ** Tools directory
@@ -2180,9 +2246,9 @@ Most important commands taken from
 | =pacman -S <name>=          | Install package.                                                                                                                                 |
 | =pacman -R <name>=          | Uninstall package.                                                                                                                               |
 |-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| =pacman -Q --help=          | Get help about the suboptions for local package database access.                                                                                 |
-| =pacman -S --help=          | Get help about the suboptions for sync database access.                                                                                          |
-| =pacman -F --help=          | Get help about the suboptions for files database access.                                                                                         |
+| =pacman -Q --help=          | Get help about the sub options for local package database access.                                                                                |
+| =pacman -S --help=          | Get help about the sub options for sync database access.                                                                                         |
+| =pacman -F --help=          | Get help about the sub options for files database access.                                                                                        |
 |-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | =pacman -Ss <string>=       | Search for packages in the database, searching both in packages' names and descriptions.                                                         |
 | =pacman -Qs <string>=       | To search for already installed packages.                                                                                                        |
@@ -2348,6 +2414,21 @@ Use the aspell spell checker if true, otherwise use the hunspell spell checker."
 (defconst psimacs/config/language-tool-dir
   (psimacs/file-system/concat-directory  psimacs/config/system-utils-dir "LanguageTool")
   "The psimacs language tool directory")
+#+END_SRC
+
+** Perspective
+
+The [[https://github.com/nex3/perspective-el][perspective]] package provides multiple named workspaces
+(or "perspectives") in *Emacs*, similar to multiple desktops in window managers.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+(defconst psimacs/config/persp-save-dir
+  psimacs/config/session-dir
+  "The perspective save directory.")
+
+(defconst psimacs/config/persp-auto-save-file
+  (psimacs/file-system/concat-file  psimacs/config/persp-save-dir ".perspective")
+  "The perspective auto save file.")
 #+END_SRC
 
 ** Projectile
@@ -3585,7 +3666,7 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 ;;
 (use-package dash
     :config
-        (dash-enable-font-lock)
+        (global-dash-fontify-mode)
 )
 
 (use-package dash-functional)
@@ -4458,10 +4539,12 @@ The default fill column is set to 120 characters because huge displays are now c
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-ui.el
 (setq-default fill-column 120)
-(setq display-fill-column-indicator-column t)
-(global-display-fill-column-indicator-mode 1)
+(setq display-fill-column-indicator-column nil)
+;(global-display-fill-column-indicator-mode 1)
 
-(define-key psimacs/config/global-key-map/special (kbd "C-m C-v f") 'global-display-fill-column-indicator-mode)
+(define-key psimacs/config/global-key-map/special (kbd "C-m C-v f") 'display-fill-column-indicator-mode)
+
+(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
 #+END_SRC
 
 ** Themes
@@ -4478,13 +4561,14 @@ variable for that information.
 ;;
 ;; Theming setup
 ;;
-(defvar psimacs/config/default-theme "alect-dark"
+(defvar psimacs/config/default-theme "doom-one"
     "The theme that should be loaded on default.
 afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
 ample, ample-zen, dracula, flatland, gandalf, github-modern, gruvbox-dark-medium, gruvbox-dark-soft,
 gruvbox-dark-hard, gruvbox-light-medium, gruvbox-light-soft, gruvbox-light-hard, pastelmac, moe-dark,
 moe-light, monokai, monokai-pro, sanityinc-tomorrow-day, sanityinc-tomorrow-night, sanityinc-tomorrow-blue,
-sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn
+sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn, doom-one, doom-molokai, doom-vibrant,
+doom-oceanic-next
 ")
 
 (defvar psimacs/config/theme-is-light-colored t
@@ -4515,6 +4599,52 @@ For the time being, the =alect-dark= is active in my configuration.
 
 See also:
 [[https://emacsthemes.com/][Emacs Themes]], [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Custom-Themes.html][Custom Themes Manual]], [[https://www.emacswiki.org/emacs/CustomThemes][EmacsWiki: Custom Themes]]
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package doom-themes
+    :config
+        ;; Global settings (defaults)
+        (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+              doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+        (when (equal psimacs/config/default-theme "doom-one")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'doom-one t)
+            (message "loaded theme doom-one")
+        )
+
+        (when (equal psimacs/config/default-theme "doom-molokai")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'doom-molokai t)
+            (message "loaded theme doom-molokai")
+        )
+
+        (when (equal psimacs/config/default-theme "doom-vibrant")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'doom-vibrant t)
+            (message "loaded theme doom-vibrant")
+        )
+
+        (when (equal psimacs/config/default-theme "doom-oceanic-next")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'doom-oceanic-next t)
+            (message "loaded theme doom-oceanic-next")
+        )
+
+        ;; Enable flashing mode-line on errors
+        (doom-themes-visual-bell-config)
+
+        ;; Enable custom neotree theme (all-the-icons must be installed!)
+        (doom-themes-neotree-config)
+
+        ;; or for treemacs users
+        (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+        (doom-themes-treemacs-config)
+
+        ;; Corrects (and improves) org-mode's native fontification.
+        (doom-themes-org-config)
+)
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
 (use-package afternoon-theme
@@ -4732,14 +4862,14 @@ See also:
         (when (equal psimacs/config/default-theme "moe-dark")
             (setq psimacs/config/theme-is-light-colored nil)
             (moe-dark)
-            (moe-theme-set-color 'orange)
+            (moe-theme-apply-color 'orange)
             (message "loaded theme moe-dark")
         )
 
         (when (equal psimacs/config/default-theme "moe-light")
             (setq psimacs/config/theme-is-light-colored t)
             (moe-light)
-            (moe-theme-set-color 'blue)
+            (moe-theme-apply-color 'blue)
             (message "loaded theme moe-light")
         )
         ;(powerline-moe-theme)
@@ -5522,7 +5652,6 @@ See also: [[https://www.emacswiki.org/emacs/PowerLine][EmacsWiki: PowerLine]]
 )
 #+END_SRC
 
-
 *** Doom Modeline
 
 [[https://github.com/seagle0128/doom-modeline][Doom-modeline]] is a fancy and fast mode-line inspired by minimalism design.
@@ -5963,6 +6092,8 @@ through the command =C-x C-r=.
                     "^.*\\.elc$"
                     ,(concat "^" (regexp-quote (expand-file-name psimacs/config/agenda-dir)) ".*$")
                     ,(concat "^" (regexp-quote (expand-file-name (concat invocation-directory "../"))) ".*$")
+                    "^.*\\.?cache" "^.*\\.cask" "url" "COMMIT_EDITMSG\\'" "bookmarks"
+                    "^.*\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\|bmp\\|xpm\\)$"
                    )
               )
 
@@ -6770,6 +6901,22 @@ Some usefule key bindings and commands:
 #+END_SRC
 
 *** Perspective
+*** So Long
+
+The package [[https://www.emacswiki.org/emacs/SoLong][so-long]] provides a workaround for the problem of really long buffer lines. *Emacs* can't work with
+these so good.
+
+When the lines in a buffer are so long that performance could suffer to an unacceptable degree, we say /so long/
+to the buffer’s major mode, and invoke something much more basic in its place (including disabling minor modes
+which are considered to affect performance noticeably).
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
+(use-package so-long
+    :straight nil
+    :hook (after-init . global-so-long-mode)
+    :config (setq so-long-threshold 400)
+)
+#+END_SRC
 
 The [[https://github.com/nex3/perspective-el][perspective]] package provides multiple named workspaces
 (or "perspectives") in *Emacs*, similar to multiple desktops in window managers.
@@ -6815,10 +6962,7 @@ Perspective-aware buffer switcher.
 | IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                    |
 | Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                   |
 | Ivy / Counsel   | Perspective provides two commands for listing buffers using Ivy and Counsel: =persp-ivy-switch-buffer= and =persp-counsel-switch-buffer=. When these functions are called normally, they show a list of buffers filtered by the current perspective. With a prefix argument, they shows a list of buffers in all perspectives. |
-|                 |                                                                                                                                                                                                                                                                                                                                |
 |-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-Currently, *Psimacs* has not enabled [[https://github.com/nex3/perspective-el][perspective]] on default. I have to think about its usefulness for my working habit.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 (use-package perspective
@@ -6826,9 +6970,12 @@ Currently, *Psimacs* has not enabled [[https://github.com/nex3/perspective-el][p
          ("C-x b" . persp-switch-to-buffer*)
          ("C-x k" . persp-kill-buffer*)
          )
-;  :config
-;      (persp-mode)
-  )
+  :config
+      (setq persp-save-dir psimacs/config/persp-save-dir)
+      (setq persp-auto-save-fname psimacs/config/persp-auto-save-file)
+
+      (persp-mode)
+)
 #+END_SRC
 
 *** Abbreviations
@@ -8485,6 +8632,7 @@ bindings and commands that comes into play when you actively participate in the 
 #+END_SRC
 
 ** Crux
+
 The package [[https://github.com/bbatsov/crux][crux]] is a collection of useful extensions for *Emacs*.
 [[https://github.com/bbatsov/crux][Crux]] bundles many useful interactive commands to enhance your
 overall *Emacs* experience.
@@ -10099,6 +10247,289 @@ The package [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra
 )
 #+END_SRC
 
+** Dashboard
+
+The [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] is an extensible *Emacs* startup screen showing you what's most important.
+
+| Shortcut                       | Function         |
+|--------------------------------+------------------|
+| =Tab=, =C-i=                   | Next Item        |
+| =Shift-Tab=                    | Previous Item    |
+| =Return=, =Mouse Click=, =C-m= | Open             |
+| =r=                            | Recent files     |
+| =m=                            | Bookmarks        |
+| =p=                            | Projects         |
+| =a=                            | Org-Mode Agenda  |
+| =e=                            | Registers        |
+| =g=                            | Refresh contents |
+| ={=                            | Previous section |
+| =}=                            | Next section     |
+|--------------------------------+------------------|
+
+*** Page-break lines
+
+The [[https://github.com/purcell/page-break-lines][page-break-lines]] package provides a global mode which displays ugly form feed characters
+as tidy horizontal rules.
+
+| Key binding | Command             | Description                     |
+|-------------+---------------------+---------------------------------|
+| =C-x ]=     | =M-x forward-page=  | Move forward to page boundary.  |
+| =C-x [=     | =M-x backward-page= | Move backward to page boundary. |
+|-------------+---------------------+---------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-dashboeard.el :var file-description="Advanced dashboard setup"
+;;
+;; Don't display ugly from feed characters
+;;
+(use-package page-break-lines
+    :diminish page-break-lines-mode
+    :config
+        (global-page-break-lines-mode)
+)
+#+END_SRC
+
+*** Dashboard Setup
+
+And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] configuration.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-dashboeard.el :var file-description="Advanced dashboard setup"
+;;
+;; The dashboard configuration
+;;
+(use-package dashboard
+    :demand t
+    :diminish dashboard-mode
+    :functions (all-the-icons-faicon
+                all-the-icons-material
+                winner-undo
+                widget-forward
+                persp-load-state-from-file
+               )
+    :defines (  persp-save-dir
+                persp-auto-save-fname
+              )
+    :custom-face (dashboard-heading ((t (:inherit (font-lock-string-face bold)))))
+    :hook (dashboard-mode . (lambda () (setq-local frame-title-format "")))
+    :config
+        (setq dashboard-projects-backend 'projectile)
+        (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+        (setq dashboard-banner-logo-title "PSIMACS - Don't Panic!")
+        (setq dashboard-startup-banner (or psimacs/config/logo-file 'official))
+
+        (setq dashboard-center-content t)
+        (setq dashboard-show-shortcuts nil)
+
+        (setq dashboard-set-heading-icons t)
+        (setq dashboard-set-file-icons t)
+
+        (setq dashboard-heading-icons '(
+                                            (recents   . "file-text")
+                                            (bookmarks . "bookmark")
+                                            (agenda    . "calendar")
+                                            (projects  . "briefcase")
+                                            (registers . "database")
+                                       ))
+
+        (setq dashboard-items '(
+                                (recents   . 5)
+                                (bookmarks . 5)
+                                (projects  . 5)
+                                (agenda    . 5)
+                                (registers . 5)
+                               ))
+
+        (setq dashboard-set-navigator t)
+
+        ;; Format: "(icon title help action face prefix suffix)"
+        (setq dashboard-navigator-buttons
+              `(
+                (
+                   (,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
+                    "Homepage"
+                    "Browse homepage"
+                    (lambda (&rest _) (browse-url psimacs/config/homepage)))
+                   (,(all-the-icons-material "restore" :height 1.35 :v-adjust -0.24)
+                    "Restore"
+                    "Restore previous session"
+                    (lambda (&rest _) (psimacs/dashboard/restore-previous-session)))
+                   (,(all-the-icons-octicon "tools" :height 1.0 :v-adjust 0.0)
+                    "Settings"
+                    "Open custom file"
+                    (lambda (&rest _) (find-file psimacs/config/custom-file)))
+                   (,(all-the-icons-faicon "question" :height 1.2 :v-adjust -0.1)
+                    ""
+                    "Help (?/h)"
+                    (lambda (&rest _) (psimacs/hydra/dashboard/body))
+                    font-lock-string-face)
+                )
+              ))
+
+        (setq dashboard-set-init-info t)
+        (setq dashboard-init-info "This is an init message!")
+
+        (setq dashboard-set-footer t)
+
+        (setq dashboard-footer-messages '("Psimacs is pretty cool!"))
+        (setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
+                                        :height 1.1
+                                        :v-adjust -0.05
+                                        :face 'font-lock-keyword-face))
+
+        (setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+
+        (setq dashboard-week-agenda t)
+        (setq dashboard-org-agenda-categories '("Tasks" "Appointments"))
+        ;(setq dashboard-filter-agenda-entry dashboard-no-filter-agenda)
+
+        (dashboard-setup-startup-hook)
+
+        (defvar psimacs/config/dashboard-recover-layout-p nil
+          "Whether recovers the layout.")
+
+        (defun psimacs/dashboard/browse-homepage ()
+          "Browse the Github page of Psimacs."
+          (interactive)
+          (browse-url psimacs/config/homepage)
+        )
+
+        (defun psimacs/dashboard/restore-session (fname)
+          "Restore the specified session."
+          (interactive (list (read-file-name "Load perspectives from a file: " persp-save-dir)))
+          (when (bound-and-true-p persp-mode)
+            (message "Restoring session...")
+            (quit-window t)
+            (condition-case-unless-debug err
+                (persp-load-state-from-file fname)
+              (error "Error: Unable to restore session -- %s" err))
+            (message "Restoring session...done"))
+        )
+
+        (defun psimacs/dashboard/restore-previous-session ()
+          "Restore the previous session."
+          (interactive)
+          (when (bound-and-true-p persp-mode)
+            (psimacs/dashboard/restore-session persp-auto-save-fname))
+        )
+
+        (defun psimacs/dashboard/open-custom-file ()
+          "Open or create `custom-file'."
+          (interactive)
+          (when (file-exists-p psimacs/config/custom-file)
+            (find-file psimacs/config/custom-file)
+           )
+        )
+
+        (defun psimacs/dashboard/goto-recent-files ()
+          "Go to recent files."
+          (interactive)
+          (let ((func (local-key-binding "r")))
+            (and func (funcall func))))
+
+        (defun psimacs/dashboard/goto-projects ()
+          "Go to projects."
+          (interactive)
+          (let ((func (local-key-binding "p")))
+            (and func (funcall func))))
+
+        (defun psimacs/dashboard/goto-bookmarks ()
+          "Go to bookmarks."
+          (interactive)
+          (let ((func (local-key-binding "m")))
+            (and func (funcall func))))
+
+
+        (declare-function dashboard-insert-startupify-lists "dashboard" (&optional ARG))
+
+        (defun psimacs/dashboard/open-dashboard ()
+          "Open the *dashboard* buffer and jump to the first widget."
+          (interactive)
+          ;; Check if need to recover layout
+          (if (> (length (window-list-1))
+                 ;; exclude `treemacs' window
+                 (if (and (fboundp 'treemacs-current-visibility)
+                          (eq (treemacs-current-visibility) 'visible))
+                     2
+                   1))
+              (setq psimacs/config/dashboard-recover-layout-p t))
+
+          (delete-other-windows)
+
+          ;; Refresh dashboard buffer
+          (when (get-buffer dashboard-buffer-name)
+            (kill-buffer dashboard-buffer-name))
+
+          (dashboard-insert-startupify-lists)
+          (switch-to-buffer dashboard-buffer-name)
+
+          ;; Jump to the first section
+          (psimacs/dashboard/goto-recent-files))
+
+        (defun psimacs/dashboard/quit-dashboard ()
+          "Quit dashboard window."
+          (interactive)
+          (quit-window t)
+          (when (and psimacs/config/dashboard-recover-layout-p
+                     (bound-and-true-p winner-mode))
+            (winner-undo)
+            (setq psimacs/config/dashboard-recover-layout-p nil)))
+
+    :pretty-hydra
+        (
+         psimacs/hydra/dashboard
+         (
+          :title (pretty-hydra-title "Dashboard" 'material "dashboard"
+          :height 1.2
+          :v-adjust -0.2)
+          :color pink
+          :quit-key "q"
+         )
+         ( "Navigator"
+           (
+             ("H" psimacs/dashboard/homepage                 "homepage" :exit t)
+             ("R" psimacs/dashboard/restore-previous-session "recover session" :exit t)
+             ("L" psimacs/dashboard/restore-session          "list sessions" :exit t)
+             ("S" psimacs/dashboard/open-custom-file         "settings" :exit t)
+           )
+           "Section"
+           (
+             ("}" dashboard-next-section              "next")
+             ("{" dashboard-previous-section          "previous")
+             ("r" psimacs/dashboard/goto-recent-files "recent files")
+             ("m" psimacs/dashboard/goto-bookmarks    "bookmarks")
+             ("p" psimacs/dashboard/goto-projects     "projects")
+           )
+           "Item"
+           (
+             ("RET"       widget-button-press "open" :exit t)
+             ("<tab>"     widget-forward      "next")
+             ("C-i"       widget-forward      "next")
+             ("<backtab>" widget-backward     "previous")
+             ("C-n"       next-line           "next line")
+             ("C-p"       previous-line       "previous  line")
+           )
+           "Misc"
+           (
+             ("<f8>" psimacs/dashboard/open-dashboard "open" :exit t)
+             ("g"    dashboard-refresh-buffer         "refresh" :exit t)
+             ("Q"    psimacs/dashboard/quit-dashboard "quit" :exit t)
+           )
+         )
+        )
+    :bind (
+           ("<f8>" . psimacs/dashboard/open-dashboard)
+           :map dashboard-mode-map
+           ("H" . psimacs/dashboard/homepage)
+           ("R" . psimacs/dashboard/restore-previous-session)
+           ("L" . psimacs/dashboard/restore-session)
+           ("S" . psimacs/dashboard/open-custom-file)
+           ("q" . psimacs/dashboard/quit-dashboard)
+           ("h" . psimacs/hydra/dashboard/body)
+           ("?" . psimacs/hydra/dashboard/body)
+          )
+)
+#+END_SRC
+
 ** Magit
 
 [[https://magit.vc/][Magit]] is an interface to the version control system  [[https://git-scm.com/][Git]] , implemented
@@ -11081,9 +11512,15 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 ;; The main org-mode configuration
 ;;
 (use-package org
+    :demand t
+    :straight (org-plus-contrib
+                :repo "https://code.orgmode.org/bzg/org-mode.git"
+                :local-repo "org"
+                :files (:defaults "contrib/lisp/*.el"))
+;(use-package org-plus-contrib ; org
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
-    :straight org-plus-contrib
-    :commands ( org-transpose-elements
+    ;:straight org-plus-contrib
+    :commands ( org-transpose-element
                 org-transpose-words
                 org-table-transpose-table-at-point
                 org-forward-heading-same-level
@@ -11268,8 +11705,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-indent-mode-turns-on-hiding-stars t)
 
         (setq org-src-preserve-indentation t)
-
-        (org-indent-mode t)
+        (setq org-startup-indented t)
 
         (setq org-agenda-files (list psimacs/config/agenda-dir))
 
@@ -13321,7 +13757,7 @@ Header and source files are expected to reside at the same place.
 
 * Hydras
 
-A colloction of *Psimacs* hydras that not directly belong to a single package.
+A collection of *Psimacs* hydras that not directly belong to a single package.
 
 References:
 - [[https://github.com/abo-abo/hydra][Hydra]]
@@ -13356,7 +13792,7 @@ References:
 
 A hydra to give easy access to a number of toggles like minor modes etc.
 
-Refefences:
+References:
 - [[https://emacsredux.com/blog/2016/02/07/auto-indent-your-code-with-aggressive-indent-mode/][Auto-indent your code with aggressive-indent-mode]]
 - [[https://endlessparentheses.com/hungry-delete-mode.html][Hungry Delete Mode]]
 
@@ -13384,6 +13820,7 @@ Refefences:
                     ("r" rainbow-delimiters-mode "rainbow delimiters" :toggle t)
                     ("R" psimacs/pair/rainbow-toggle-sized-delimiters "rainbow delimiters sized" :toggle psimacs/config/rainbow-toogle-sized-delimiters-flag)
                     ("w" (setq-default show-trailing-whitespace (not show-trailing-whitespace)) "whitespace" :toggle show-trailing-whitespace)
+                    ("i" display-fill-column-indicator-mode "fill column indicator" :toggle t)
                 )
             "Coding"
                 (
@@ -13398,7 +13835,7 @@ Refefences:
 )
 #+END_SRC
 
-XS** CamelCase and aLike
+** CamelCase and a Like
 
 A hydra to give easy access to the various build in word movement modes.
 
@@ -13623,7 +14060,7 @@ _p_: paragraphs    _q_: quit
         ("o" org-transpose-words)
         ("l" transpose-lines)
         ("s" transpose-sentences)
-        ("e" org-transpose-elements)
+        ("e" org-transpose-element)
         ("p" transpose-paragraphs)
         ("t" org-table-transpose-table-at-point)
         ("q" nil :color blue)
