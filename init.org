@@ -3004,12 +3004,6 @@ require in one of your custom commands.
 If you do want to start optimizing your startup, you will likely end up using just =:hook= for mode triggered
 loading and =:defer t= for command triggered loading!
 
-*** Provide the bind-key.el package
-
-#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el
-(use-package bind-key :demand t)
-#+END_SRC
-
 *** Provide the diminish.el package
 
 [[https://github.com/emacsmirror/diminish][Diminish]] implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
@@ -6099,7 +6093,10 @@ through the command =C-x C-r=.
 
         (recentf-mode t)
 
-        (run-at-time nil (* 5 60) 'recentf-save-list)
+        (run-with-idle-timer 60 t 
+                '(lambda ()
+                    (let ((save-silently t))
+                        (recentf-save-list))))
 
     :config
         (defun psimacs/config/recentf-cleanup-directory-files (dir)
@@ -8129,10 +8126,9 @@ Some more information about spell checking can be found in the following referen
 ;;
 ;; Setup the spell checking framework
 ;;
-(require 'flyspell)
-
 (use-package flyspell
   :diminish flyspell-mode
+  :commands (flyspell-accept-buffer-local-defs flyspell-get-word flyspell-do-correct flyspell-goto-next-error)
   :config
     (setq flyspell-issue-welcome-flag nil
           flyspell-issue-message-flag nil
@@ -8260,7 +8256,7 @@ Some more information about spell checking can be found in the following referen
           (when (not (file-exists-p dst-file))
             (copy-file src-file dst-file t t))))))
 
-  (psimacs/spell/setup-german-dic)
+  (psimacs/spell/setup-english-dic)
 
   :hook (
          (tex-mode . (lambda () (setq ispell-parser 'tex)))
@@ -10277,14 +10273,14 @@ as tidy horizontal rules.
 | =C-x [=     | =M-x backward-page= | Move backward to page boundary. |
 |-------------+---------------------+---------------------------------|
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-dashboeard.el :var file-description="Advanced dashboard setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-dashboard.el :var file-description="Advanced dashboard setup"
 ;;
 ;; Don't display ugly from feed characters
 ;;
 (use-package page-break-lines
     :diminish page-break-lines-mode
-    :config
-        (global-page-break-lines-mode)
+;    :config
+;        (global-page-break-lines-mode)
 )
 #+END_SRC
 
@@ -10292,7 +10288,7 @@ as tidy horizontal rules.
 
 And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] configuration.
 
-#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-dashboeard.el :var file-description="Advanced dashboard setup"
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-dashboard.el :var file-description="Advanced dashboard setup"
 ;;
 ;; The dashboard configuration
 ;;
@@ -11503,7 +11499,7 @@ to be removed and the =:ensure org-plus-contrib= is to be activated.
 (add-to-list 'load-path (concat psimacs/config/site-lisp-dir "org-plus-contrib-20200907"))
 #+END_SRC
 
-*** The main Org-Mode configuration
+*** The main Org-Mode configurationS
 
 If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be commented!
 
@@ -11512,14 +11508,14 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 ;; The main org-mode configuration
 ;;
 (use-package org
-    :demand t
-    :straight (org-plus-contrib
-                :repo "https://code.orgmode.org/bzg/org-mode.git"
-                :local-repo "org"
-                :files (:defaults "contrib/lisp/*.el"))
-;(use-package org-plus-contrib ; org
+;    :straight (org-plus-contrib
+;               :repo "https://code.orgmode.org/bzg/org-mode.git"
+;               :local-repo "org"
+;               :files (:defaults "contrib/lisp/*.el")
+;              )
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
-    ;:straight org-plus-contrib
+    :straight org-plus-contrib
+;    :straight nil
     :commands ( org-transpose-element
                 org-transpose-words
                 org-table-transpose-table-at-point
@@ -11705,7 +11701,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-indent-mode-turns-on-hiding-stars t)
 
         (setq org-src-preserve-indentation t)
-        (setq org-startup-indented t)
+        ;(setq org-startup-indented t)
 
         (setq org-agenda-files (list psimacs/config/agenda-dir))
 
@@ -11899,16 +11895,6 @@ code to whatever theme I'm using's background."
         ))
 
         (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
-
-
-        (defun psimacs/internal/export-filter-section-canceled (text backend info)
-          "Do not export the content of sections marked as canceled."
-          (message "TEXT: %s" text)
-          ""
-          )
-
-        (require 'ox)
-        (add-to-list 'org-export-filter-headline-functions 'psimacs/internal/export-filter-section-canceled)
 
         (require 'ox-odt)
         (setq org-odt-preferred-output-format "docx")
