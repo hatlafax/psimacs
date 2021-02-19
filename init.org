@@ -408,6 +408,29 @@ The local configuration can be synchronized with a mirror configuration on Dropb
 allows sharing of a single configuration on multiple machines.")
 #+END_SRC
 
+*** Byte compiling configuration
+
+*Psimacs* allows the byte compilation of the configuration files which are found in the
+=config= directory after tangling. The performance increase is very small currently. It
+is done nevertheless.
+
+#+BEGIN_SRC emacs-lisp :tangle early-init.el
+;;
+;; Inhibit the byte compilation of the config folder
+;;
+(defconst psimacs/config/inhibit-byte-compile-config-folder nil
+  "If set to true, config directory will not be byte-compiled.")
+
+(defvar psimacs/config/byte-compile-config-folder nil
+  "If true, config directory will be byte-compiled after initialization.
+
+This variable is set during the configuration process. If you would like
+to inhibit byte compilation use the constant 'psimacs/config/inhibit-byte-compile-config-folder'.
+
+Do not change it here!!!
+")
+#+END_SRC
+
 *** Some size numbers
 
 Huge byte sizes are conveniently written in /Mega Bytes/ or even in /Giga Bytes/ by *Psimacs*. Therefore we define
@@ -466,18 +489,12 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
 
+(defconst psimacs/config/straight-version-folder "straight/versions"
+  "The psimacs straight versions directory.")
+
 (defconst psimacs/config/config-folder "config"
   "The psimacs config directory.")
-
-(defvar psimacs/config/byte-compile-config-folder nil
-  "If set to true, config directory will be byte-compiled after initialization.
-This variable is set during the configuration process.
-Do not change it here!
-")
-
-(defconst psimacs/config/inhibit-byte-compile-config-folder nil
-  "If set to true, config directory will not be byte-compiled.")
- #+END_SRC
+#+END_SRC
 
 *** Copyright and author information
 
@@ -1207,6 +1224,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/private-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/private-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/straight-version-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/straight-version-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
                                                                              psimacs/config/site-lisp-folder))
                                              (file-name-as-directory (concat db-dir
@@ -2195,6 +2216,7 @@ pacman -S unzip
 pacman -S winpty
 pacman -S base-devel
 pacman -S compression
+pacman -S mingw-w64-x86_64-make
 pacman -S mingw-w64-x86_64-toolchain
 pacman -S mingw-w64-x86_64-zlib
 pacman -S mingw-w64-x86_64-libpng
@@ -3037,7 +3059,7 @@ The [[https://github.com/alezost/dim.el][dim]] package can be used to change the
 [[https://github.com/jwiegley/use-package/blob/master/bind-key.el][bind-key]]
 which is required at various places of the configuration.
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle config/init-package-manager.el
 (use-package bind-key :straight use-package)
 #+END_SRC
 
@@ -3662,8 +3684,6 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
     :config
         (global-dash-fontify-mode)
 )
-
-(use-package dash-functional)
 #+END_SRC
 
 *** String manipulation with the s.el library
@@ -4350,7 +4370,13 @@ References:
 ;;
 ;; Weeks starts on Mondays
 ;;
-(setq calendar-week-start-day t)
+(use-package calendar
+    :straight nil
+    :init
+        (setq calendar-date-style 'european
+              calendar-week-start-day 1
+              calendar-mark-holidays-flag t)
+)
 #+END_SRC
 
 *** Unicode fonts
@@ -4555,7 +4581,7 @@ variable for that information.
 ;;
 ;; Theming setup
 ;;
-(defvar psimacs/config/default-theme "doom-one"
+(defvar psimacs/config/default-theme "alect-dark"
     "The theme that should be loaded on default.
 afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
 ample, ample-zen, dracula, flatland, gandalf, github-modern, gruvbox-dark-medium, gruvbox-dark-soft,
@@ -4596,47 +4622,60 @@ See also:
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
 (use-package doom-themes
+    :defines doom-themes-treemacs-theme
     :config
-        ;; Global settings (defaults)
-        (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-              doom-themes-enable-italic t) ; if nil, italics is universally disabled
+        (let ((use-doom-theme nil))
+            ;; Global settings (defaults)
+            (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+                  doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-        (when (equal psimacs/config/default-theme "doom-one")
-            (setq psimacs/config/theme-is-light-colored nil)
-            (load-theme 'doom-one t)
-            (message "loaded theme doom-one")
+            (when (equal psimacs/config/default-theme "doom-one")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (load-theme 'doom-one t)
+                (message "loaded theme doom-one")
+
+                (setq use-doom-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "doom-molokai")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (load-theme 'doom-molokai t)
+                (message "loaded theme doom-molokai")
+
+                (setq use-doom-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "doom-vibrant")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (load-theme 'doom-vibrant t)
+                (message "loaded theme doom-vibrant")
+
+                (setq use-doom-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "doom-oceanic-next")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (load-theme 'doom-oceanic-next t)
+                (message "loaded theme doom-oceanic-next")
+
+                (setq use-doom-theme t)
+            )
+
+            (when use-doom-theme
+                ;; Enable flashing mode-line on errors
+                (doom-themes-visual-bell-config)
+
+                ;; Enable custom neotree theme (all-the-icons must be installed!)
+                (doom-themes-neotree-config)
+
+                ;; or for treemacs users
+                (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+                (doom-themes-treemacs-config)
+
+                ;; Corrects (and improves) org-mode's native fontification.
+                (doom-themes-org-config)
+            )
         )
-
-        (when (equal psimacs/config/default-theme "doom-molokai")
-            (setq psimacs/config/theme-is-light-colored nil)
-            (load-theme 'doom-molokai t)
-            (message "loaded theme doom-molokai")
-        )
-
-        (when (equal psimacs/config/default-theme "doom-vibrant")
-            (setq psimacs/config/theme-is-light-colored nil)
-            (load-theme 'doom-vibrant t)
-            (message "loaded theme doom-vibrant")
-        )
-
-        (when (equal psimacs/config/default-theme "doom-oceanic-next")
-            (setq psimacs/config/theme-is-light-colored nil)
-            (load-theme 'doom-oceanic-next t)
-            (message "loaded theme doom-oceanic-next")
-        )
-
-        ;; Enable flashing mode-line on errors
-        (doom-themes-visual-bell-config)
-
-        ;; Enable custom neotree theme (all-the-icons must be installed!)
-        (doom-themes-neotree-config)
-
-        ;; or for treemacs users
-        (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-        (doom-themes-treemacs-config)
-
-        ;; Corrects (and improves) org-mode's native fontification.
-        (doom-themes-org-config)
 )
 #+END_SRC
 
@@ -6579,6 +6618,7 @@ See also:
 - [[https://www.youtube.com/watch?v=ykjRUr7FgoI&list=PLP6Xwp2WTft7rAMgVPOTI2OE_PQlKGPy7&feature=plpp_play_all][Smartparens 1 - smart editing of paired expressions in Emacs - part 1 of 2]]
 - [[https://www.youtube.com/watch?v=efSvfqf3Ykw&list=PLP6Xwp2WTft7rAMgVPOTI2OE_PQlKGPy7&index=2][Smartparens 1 - smart editing of paired expressions in Emacs - part 2 of 2]]
 - [[https://www.youtube.com/watch?v=5pRxm0zXgas&list=PLP6Xwp2WTft7rAMgVPOTI2OE_PQlKGPy7&index=3][Smartparens 2 - On the navigation functions]]
+- [[https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95][smartparens-cheatsheet]]
 
 *Psimacs* provides the following key bindings for active [[https://github.com/Fuco1/smartparens][smartparens-mode]]:
 
@@ -6592,8 +6632,6 @@ See also:
 | =H-p M-B=       | =M-x sp-backward-symbol=                             | Move point to the next position that is the beginning of a symbol.             |
 | =H-p C-n=       | =M-x sp-next-sexp=                                   | Move forward to the beginning of next balanced expression.                     |
 | =H-p C-p=       | =M-x sp-previous-sexp=                               | Move backward to the end of previous balanced expression.                      |
-| =H-p M-n=       | =M-x sp-forward-hybrid-sexp=                         | Move forward across one hybrid expression.                                     |
-| =H-p M-p=       | =M-x sp-backward-hybrid-sexp=                        | Move backward across one hybrid expression.                                    |
 | =H-p C-u=       | =M-x sp-up-sexp=                                     | Move forward out of one level of parentheses.                                  |
 | =H-p C-d=       | =M-x sp-down-sexp=                                   | Move forward down one level of sexp.                                           |
 | =H-p M-u=       | =M-x sp-backward-up-sexp=                            | Move backward out of one level of parentheses.                                 |
@@ -6634,6 +6672,7 @@ See also:
 (use-package smartparens-config
     :straight smartparens
     :diminish smartparens-global-mode
+    :demand
     :config
         (defun psimacs/activate/toggle-smartparens-paren-mode ()
           "Toggle between 'smartparens' and show-paren' modes.
@@ -6666,9 +6705,6 @@ Either global 'smartparens-mode' and 'show-smartparens-mode' are active or the b
 
                     ("H-p C-n"             . sp-next-sexp)
                     ("H-p C-p"             . sp-previous-sexp)
-
-                    ("H-p M-n"             . sp-forward-hybrid-sexp)
-                    ("H-p M-p"             . sp-backward-hybrid-sexp)
 
                     ("H-p C-u"             . sp-up-sexp)
                     ("H-p C-d"             . sp-down-sexp)
@@ -6722,7 +6758,7 @@ Some additional configurations for working with org mode.
 #+BEGIN_SRC emacs-lisp :tangle config/init-basic-handling.el
 (use-package smartparens-org
   :straight smartparens
-  :after org)
+  :after org-plus-contrib)
 #+END_SRC
 
 *** Buffer List
@@ -10605,6 +10641,7 @@ See also:
 
 | Key binding   | Command                            | Description                                                            |
 |---------------+------------------------------------+------------------------------------------------------------------------|
+| =H-m C-c m=   | =M-x else-mode=                    | Enable/disable =else-mode=.                                            |
 | =H-m C-c n=   | =M-x else-next=                    | Move 'point' to the 'next' placeholder.                                |
 | =H-m C-c p=   | =M-x else-previous=                | Move `point' to the (nth) previous placeholder.                        |
 | =H-m C-c e=   | =M-x else-expand=                  | Expand the placeholder or any preceeding abbreviation at point.        |
@@ -10697,9 +10734,11 @@ Returns `else-Alternate-Mode-Names'."
 
         (require 'else-template-mode)
 
-    :hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
+    ;; Disable automatic else-mode activation. If active, there are problems with org-mode building
+    ;;:hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
     :bind (
              :map psimacs/config/global-key-map/special
+                  ("C-c m" . else-mode)
                   ("C-c n" . else-next)
                   ("C-c p" . else-previous)
                   ("C-c e" . else-expand)
@@ -11461,6 +11500,27 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 - [[http://pragmaticemacs.com/][Pragmatic Emacs]]
 - [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
 
+*** Remove build-in org from load-path
+
+*Psimacs* uses the [[https://orgmode.org/worg/org-contrib/][org-mode contributed packages]] which are 
+not part of the *Emacs* build-in [[https://orgmode.org][org-mode]] installation.
+Therefore a fresh [[https://code.orgmode.org/bzg/org-mode][org-mode]] containing the [[https://orgmode.org/worg/org-contrib/][org-mode contributed packages]]
+is installed by *Psimacs*.
+
+In order to avoid inconsistencies with of build-in org package, we just remove it from the load-path.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Remove the built-in version of org-mode from the load-path.
+;;
+(require 'cl-seq)
+(setq load-path
+      (cl-remove-if
+       (lambda (x)
+         (string-match-p "org$" x))
+       load-path))
+#+END_SRC
+
 *** Temporarily workaround Org-Mode problem :noexport:
 
 *Psimacs* relies on features provided by the [[https://orgmode.org/worg/org-contrib/][Org-mode Contributed Packages]].
@@ -11499,22 +11559,55 @@ to be removed and the =:ensure org-plus-contrib= is to be activated.
 (add-to-list 'load-path (concat psimacs/config/site-lisp-dir "org-plus-contrib-20200907"))
 #+END_SRC
 
-*** The main Org-Mode configurationS
+*** The main Org-Mode configuration
 
 If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be commented!
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
+;; Fix missing org-loaddefs.el
+;;
+(defun psimacs/config/fix-org-autoload-function (package &rest _)
+    "Pre-build function to fix missing autoloads Org."
+    (when (member package '("org" "org-plus-contrib"))
+        (let ( (default-directory (straight--repos-dir "org")) 
+               (repo-loaddef-file (concat (straight--repos-dir "org") "org-loaddefs.el"))
+               (load-path  (copy-sequence load-path))
+             )
+            (message "from org-fix %s" default-directory)
+
+            (when (file-exists-p repo-loaddef-file)
+                (message "... deleting %s" repo-loaddef-file)
+                (delete-file repo-loaddef-file)
+            )
+
+            (normal-top-level-add-to-load-path '("lisp"))
+            (load-library "../mk/org-fixup.el")
+
+            (declare-function org-make-autoloads "../mk/org-fixup.el" (&optional compile force))
+            (org-make-autoloads)
+
+            (when (get-buffer "org-loaddefs.el")
+                (kill-buffer "org-loaddefs.el")
+            )
+        )
+        (remove-hook 'straight-use-package-pre-build-functions #'psimacs/config/fix-org-autoload-function)
+    )
+)
+
+(add-hook 'straight-use-package-pre-build-functions #'psimacs/config/fix-org-autoload-function)
+
+;;
 ;; The main org-mode configuration
 ;;
 (use-package org
-;    :straight (org-plus-contrib
-;               :repo "https://code.orgmode.org/bzg/org-mode.git"
-;               :local-repo "org"
-;               :files (:defaults "contrib/lisp/*.el")
-;              )
+    :straight (org-plus-contrib
+                :repo "https://code.orgmode.org/bzg/org-mode.git"
+                :local-repo "org"
+                :files (:defaults "contrib/lisp/*.el")
+             )
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
-    :straight org-plus-contrib
+;    :straight org-plus-contrib
 ;    :straight nil
     :commands ( org-transpose-element
                 org-transpose-words
@@ -11704,6 +11797,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         ;(setq org-startup-indented t)
 
         (setq org-agenda-files (list psimacs/config/agenda-dir))
+        ;(setq org-agenda-files psimacs/config/org-capture-coding-diary-files)
 
         (setq org-highest-priority ?A)
         (setq org-lowest-priority  ?C)
@@ -11934,7 +12028,7 @@ Prettify headings and plain lists in Org mode. Package [[https://github.com/inte
 ;; Prettify headings and plain lists in Org mode
 ;;
 (use-package org-superstar
-    :after org
+    :after org-plus-contrib
     :config
         ;(setq org-superstar-special-todo-items t)
 
@@ -11988,7 +12082,7 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 ;; Insert links from the clipboard
 ;;
 (use-package org-cliplink
-    :after org
+    :after org-plus-contrib
     :bind*
         ("C-x p i" . org-cliplink)
 )
@@ -12005,7 +12099,7 @@ to =M-<TAB>=.
 ;; Provide auto-complete sources for org-mode
 ;;
 (use-package org-ac
-    :after org
+    :after org-plus-contrib
     :init
         (org-ac/config-default)
 )
@@ -12024,8 +12118,8 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;;
 ;; Presentations with org-mode
 ;;
-(use-package ox-beamer :straight nil :after org)
-(use-package epresent :straight t :after org)
+(use-package ox-beamer :straight nil :after org-plus-contrib)
+(use-package epresent :straight t :after org-plus-contrib)
 #+END_SRC
 
 *** Exporting to reStructuredText
@@ -12034,7 +12128,7 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;;
 ;; reStructuredText with org-mode
 ;;
-(use-package ox-rst :after org)
+(use-package ox-rst :after org-plus-contrib)
 #+END_SRC
 
 *** Lower case org keywords
@@ -12188,7 +12282,8 @@ Following an unsorted list if references:
 ;; Latex configuration
 ;;
 (use-package tex-site
-    :straight auctex
+    :straight (auctex :host github :repo "hatlafax/auctex")
+     ;:straight auctex
     :mode ("\\.tex\\'" . latex-mode)
     :commands TeX-revert-document-buffer
     :defines (TeX-save-query preview-image-type)
@@ -14400,8 +14495,6 @@ _q_: quit_
                     ("M-B" sp-backward-symbol "Beginning of a symbol")
                     ("C-n" sp-next-sexp "Forward to the beginning of next sexp")
                     ("C-p" sp-previous-sexp "Backward to the end of prev sexp")
-                    ("M-n" sp-forward-hybrid-sexp "Forward across one hybrid sexp")
-                    ("M-p" sp-backward-hybrid-sexp "Backward across one hybrid sexp")
                     ("C-u" sp-up-sexp "Forward out of one level of parentheses")
                     ("M-u" sp-backward-up-sexp "Backward out of one level of parentheses")
                     ("C-d" sp-down-sexp "Forward down one level of sexp")
@@ -14746,6 +14839,7 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-c C-h=       | (find-file-read-only history-file)                                      | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-c m=         | =M-x else-mode=                                                         | Enable/disable =else-mode=.                                                                                                                                                                                                                                                                      |
 | =H-m C-c n=         | =M-x else-next=                                                         | Move 'point' to the 'next' placeholder.                                                                                                                                                                                                                                                          |
 | =H-m C-c p=         | =M-x else-previous=                                                     | Move `point' to the (nth) previous placeholder.                                                                                                                                                                                                                                                  |
 | =H-m C-c e=         | =M-x else-expand=                                                       | Expand the placeholder or any preceeding abbreviation at point.                                                                                                                                                                                                                                  |
@@ -14908,8 +15002,6 @@ by the various packages nor by *Emacs* itself.
 | =H-p M-B=           | =M-x sp-backward-symbol=                                                | Move point to the next position that is the beginning of a symbol.                                                                                                                                                                                                                               |
 | =H-p C-n=           | =M-x sp-next-sexp=                                                      | Move forward to the beginning of next balanced expression.                                                                                                                                                                                                                                       |
 | =H-p C-p=           | =M-x sp-previous-sexp=                                                  | Move backward to the end of previous balanced expression.                                                                                                                                                                                                                                        |
-| =H-p M-n=           | =M-x sp-forward-hybrid-sexp=                                            | Move forward across one hybrid expression.                                                                                                                                                                                                                                                       |
-| =H-p M-p=           | =M-x sp-backward-hybrid-sexp=                                           | Move backward across one hybrid expression.                                                                                                                                                                                                                                                      |
 | =H-p C-u=           | =M-x sp-up-sexp=                                                        | Move forward out of one level of parentheses.                                                                                                                                                                                                                                                    |
 | =H-p C-d=           | =M-x sp-down-sexp=                                                      | Move forward down one level of sexp.                                                                                                                                                                                                                                                             |
 | =H-p M-u=           | =M-x sp-backward-up-sexp=                                               | Move backward out of one level of parentheses.                                                                                                                                                                                                                                                   |

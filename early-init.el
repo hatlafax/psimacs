@@ -52,6 +52,21 @@ The local configuration can be synchronized with a mirror configuration on Dropb
 allows sharing of a single configuration on multiple machines.")
 
 ;;
+;; Inhibit the byte compilation of the config folder
+;;
+(defconst psimacs/config/inhibit-byte-compile-config-folder nil
+  "If set to true, config directory will not be byte-compiled.")
+
+(defvar psimacs/config/byte-compile-config-folder nil
+  "If true, config directory will be byte-compiled after initialization.
+
+This variable is set during the configuration process. If you would like
+to inhibit byte compilation use the constant 'psimacs/config/inhibit-byte-compile-config-folder'.
+
+Do not change it here!!!
+")
+
+;;
 ;; Conveniency byte size constants
 ;;
 (defconst   1MB (* 1024 1024))
@@ -97,15 +112,6 @@ allows sharing of a single configuration on multiple machines.")
 
 (defconst psimacs/config/config-folder "config"
   "The psimacs config directory.")
-
-(defvar psimacs/config/byte-compile-config-folder nil
-  "If set to true, config directory will be byte-compiled after initialization.
-This variable is set during the configuration process.
-Do not change it here!
-")
-
-(defconst psimacs/config/inhibit-byte-compile-config-folder nil
-  "If set to true, config directory will not be byte-compiled.")
 
 (defconst psimacs/config/copyright/year       "2020-2021")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
