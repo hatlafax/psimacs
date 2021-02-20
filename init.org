@@ -2027,14 +2027,13 @@ your calendar.
 
 (defcustom psimacs/config/org-capture-coding-diary-files
     '(
-        "DiaryCoding.org"
+        "Diary.org"
         "DiaryCpp.org"
         "DiaryDataSolid.org"
         "DiaryEmacs.org"
         "DiaryLaTeX.org"
         "DiaryNodejs.org"
         "DiaryOrg.org"
-        "DiaryPersonal.org"
         "DiaryPython.org"
     )
     "The list of supported diary files for capturing coding points."
@@ -3768,6 +3767,7 @@ See also:
 - [[https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs][Working with Coding Systems and Unicode in Emacs]]
 - [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
 - [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
+- [[https://en.wikipedia.org/wiki/List_of_Unicode_characters][Wikipdia about Unicode Characters]]
 
 #+ATTR_HTML: :class styledtable
 | Key binding | Command                                 | Description                                                                                                                                                                                                      |
@@ -4112,6 +4112,7 @@ See also: [[https://www.emacswiki.org/emacs/LineNumbers][EmacsWike: LineNumbers]
         term-mode
         ansi-term-mode
         org-mode
+        treemacs-mode
         neotree-mode
         dashboard-mode
     )
@@ -6132,7 +6133,7 @@ through the command =C-x C-r=.
 
         (recentf-mode t)
 
-        (run-with-idle-timer 60 t 
+        (run-with-idle-timer 60 t
                 '(lambda ()
                     (let ((save-silently t))
                         (recentf-save-list))))
@@ -8125,7 +8126,7 @@ The following key bindings are defined for the spell checking mode.
 | Key binding | Command                                        | Description                                                                                                                                                                                                                                                                                      |
 |-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f m= | =M-x flyspell-mode=                            | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
-|             | =M-x flyspell-prog-mode=                       | Turn on  [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][flyspell-mode]] for comments and strings.                                                                                                                                                                                                                                                 |
+| =H-m C-f M= | =M-x flyspell-prog-mode=                       | Turn on  [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][flyspell-mode]] for comments and strings.                                                                                                                                                                                                                                                 |
 |-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f r= | =M-x flyspell-region=                          | Checks all words inside a region.                                                                                                                                                                                                                                                                |
 | =H-m C-f b= | =M-x flyspell-buffer=                          | Checks the whole buffer.                                                                                                                                                                                                                                                                         |
@@ -8296,8 +8297,11 @@ Some more information about spell checking can be found in the following referen
 
   :hook (
          (tex-mode . (lambda () (setq ispell-parser 'tex)))
-         ((text-mode message-mode markdown-mode org-mode TeX-mode LaTeX-mode) . flyspell-mode)
-         (prog--mode . flyspell-prog-mode)
+            ;;
+            ;; Do not enable on default, but explicit
+            ;;
+;;;         ((text-mode message-mode markdown-mode org-mode TeX-mode LaTeX-mode) . flyspell-mode)
+;;;         (prog--mode . flyspell-prog-mode)
          (ispell-change-dictionary . flyspell-buffer)
 
          ;;
@@ -8312,6 +8316,7 @@ Some more information about spell checking can be found in the following referen
   :bind (
          :map psimacs/config/global-key-map/special
               ("C-f m" . flyspell-mode)
+              ("C-f M" . flyspell-prog-mode)
 
          :map flyspell-mode-map
               ("C-:" . flyspell-auto-correct-previous-word)
@@ -10344,7 +10349,7 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
     :hook (dashboard-mode . (lambda () (setq-local frame-title-format "")))
     :config
         (setq dashboard-projects-backend 'projectile)
-        (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+        (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
         (setq dashboard-banner-logo-title "PSIMACS - Don't Panic!")
         (setq dashboard-startup-banner (or psimacs/config/logo-file 'official))
@@ -11499,10 +11504,11 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 - [[http://ergoemacs.org/emacs/emacs_org_markup.html][Org Mode Markup Cheatsheet]]
 - [[http://pragmaticemacs.com/][Pragmatic Emacs]]
 - [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
+- [[https://mmmyddd.github.io/wiki/emacs/org-mode.html][Org-Mode by Justin]]
 
 *** Remove build-in org from load-path
 
-*Psimacs* uses the [[https://orgmode.org/worg/org-contrib/][org-mode contributed packages]] which are 
+*Psimacs* uses the [[https://orgmode.org/worg/org-contrib/][org-mode contributed packages]] which are
 not part of the *Emacs* build-in [[https://orgmode.org][org-mode]] installation.
 Therefore a fresh [[https://code.orgmode.org/bzg/org-mode][org-mode]] containing the [[https://orgmode.org/worg/org-contrib/][org-mode contributed packages]]
 is installed by *Psimacs*.
@@ -11570,7 +11576,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 (defun psimacs/config/fix-org-autoload-function (package &rest _)
     "Pre-build function to fix missing autoloads Org."
     (when (member package '("org" "org-plus-contrib"))
-        (let ( (default-directory (straight--repos-dir "org")) 
+        (let ( (default-directory (straight--repos-dir "org"))
                (repo-loaddef-file (concat (straight--repos-dir "org") "org-loaddefs.el"))
                (load-path  (copy-sequence load-path))
              )
@@ -11624,6 +11630,13 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         ;(setq org-completion-use-ido t)
         ;(setq org-tags-exclude-from-inheritance '("review")))
 
+
+
+        ;;
+        ;; The extra stuff after each keyword defines a shortcut key and whether a log entry should be added.
+        ;; For example WAITING(i@/!) means 'i' is the keyboard shortcut, @ means "note with timestamp"
+        ;; and /! means "add a timestamp even if I bailed on writing a note."
+        ;;
         (setq
             org-todo-keywords '(
                 (sequence "TODO(t/!)" "WORK(w/!)" "WAIT(a/!)" "HOLD(h@/!)" "|" "DONE(d/!)" "STOP(s@/!)")
@@ -11632,101 +11645,179 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
             )
         )
 
-        ;(setq
-        ;    org-todo-keyword-faces '(
-        ;        ("TODO"         . org-todo)
-        ;        ("WORK"         . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("WAIT"         . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("HOLD"         . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("DONE"         . (org-done))
-        ;        ("STOP"         . (org-done))
+        (setq
+            org-todo-keyword-faces '(
+                ("TODO"         . (:foreground "OrangeRed" :weight bold)) ;org-todo)
+                ("WORK"         . (:foreground "LawnGreen" :weight bold))
+                ("WAIT"         . (:foreground "DeepPink" :weight bold))
+                ("HOLD"         . (:foreground "DeepPink" :weight bold))
+                ("DONE"         . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("STOP"         . (:foreground "DimGray" :weight bold)) ;(org-done))
 
-        ;        ("REPORT"       . org-todo)
-        ;        ("BUG"          . org-todo)
-        ;        ("FEEDBACK"     . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("WAITING"      . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("VERIFY"       . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("KNOWNCAUSE"   . (:background "Snow" :foreground "DeepPink"  :box (:line-width 1 :style none)))
-        ;        ("FIXED"        . (org-done))
+                ("REPORT"       . (:foreground "OrangeRed" :weight bold)) ;org-todo)
+                ("BUG"          . (:foreground "OrangeRed" :weight bold)) ;org-todo)
+                ("FEEDBACK"     . (:foreground "DeepPink" :weight bold))
+                ("WAITING"      . (:foreground "DeepPink" :weight bold))
+                ("VERIFY"       . (:foreground "DeepPink" :weight bold))
+                ("KNOWNCAUSE"   . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("FIXED"        . (:foreground "DimGray" :weight bold)) ;(org-done))
 
-        ;        ("CANCELED"     . (org-done))
-        ;        ("DELEGATED"    . (org-done))
-        ;    )
-        ;)
+                ("CANCELED"     . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("DELEGATED"    . (:foreground "DimGray" :weight bold)) ;(org-done))
+            )
+        )
 
-        (setq org-tag-alist
-            (quote (
+        ;; h j k u y z
+        ;; G M N Q U Y Z
+        ;; , . - ; : _  ' * < >
+        ;; 0
+
+        (setq org-tag-faces '(
                 ; Rough task assignment
-                (:startgroup)
-                ("Science"      . ?s)
-                ("Learn"        . ?l)
-                ("Develop"      . ?d)
-                ("Information"  . ?i)
-                ("Bug"          . ?b)
-                ("System"       . ?y)
-                ("Configuration". ?f)
-                (:endgroup)
+                ("research"     . (:foreground "LightGoldenrod1"))
+                ("learn"        . (:foreground "LightGoldenrod1"))
+                ("engineer"     . (:foreground "LightGoldenrod1"))
+                ("inform"       . (:foreground "LightGoldenrod1"))
+                ("publish"      . (:foreground "LightGoldenrod1"))
+                ("read"         . (:foreground "LightGoldenrod1"))
+                ("write"        . (:foreground "LightGoldenrod1"))
+                ("fix"          . (:foreground "LightGoldenrod1"))
+                ("do"           . (:foreground "LightGoldenrod1"))
+                ("config"       . (:foreground "LightGoldenrod1"))
+                ("get"          . (:foreground "LightGoldenrod1"))
+                ("request"      . (:foreground "LightGoldenrod1"))
+                ("buy"          . (:foreground "LightGoldenrod1"))
+                ("order"        . (:foreground "LightGoldenrod1"))
 
                 ; Category of the task
-                (:startgroup)
-                ("CADdy"        . ?c)
-                ("RenderEngine" . ?r)
-                ("Zinc"         . ?z)
-                ("OpenSG"       . ?o)
-                ("OpenGL"       . ?g)
-                ("Boost"        . ?t)
-                ("Emacs"        . ?e)
-                ("BuildSystem"  . ?m)
-                ("CADdyPython"  . ?p)
-                (:endgroup)
-
-                ; Context
-                (:startgroup)
-                ("2D"           . ?2)
-                ("3D"           . ?3)
-                ("Graphic"      . ?h)
-                (:endgroup)
+                ("caddy"        . (:foreground "DeepSkyBlue"))
+                ("render-engine". (:foreground "DeepSkyBlue"))
+                ("zinc"         . (:foreground "DeepSkyBlue"))
+                ("opensg"       . (:foreground "DeepSkyBlue"))
+                ("opengl"       . (:foreground "DeepSkyBlue"))
+                ("boost"        . (:foreground "DeepSkyBlue"))
+                ("emacs"        . (:foreground "DeepSkyBlue"))
+                ("build"        . (:foreground "DeepSkyBlue"))
+                ("caddy-python" . (:foreground "DeepSkyBlue"))
 
                 ; Language
-                (:startgroup)
-                ("Cpp"          . ?+)
-                ("Python"       . ?P)
-                ("Lisp"         . ?L)
-                ("Bash"         . ?S)
-                ("Prolog"       . ?J)
-                (:endgroup)
+                ("cpp"          . (:foreground "LawnGreen"))
+                ("python"       . (:foreground "LawnGreen"))
+                ("lisp"         . (:foreground "LawnGreen"))
+                ("bash"         . (:foreground "LawnGreen"))
+                ("prolog"       . (:foreground "LawnGreen"))
+                ("javascript"   . (:foreground "LawnGreen"))
+                ("java"         . (:foreground "LawnGreen"))
+                ("C#"           . (:foreground "LawnGreen"))
 
-                ; ToDo-Keywrds
-                (:startgroup)
-                ("TODO"         . ?T)
-                ("WORK"         . ?W)
-                ("WAIT"         . ?A)
-                ("HOLD"         . ?H)
-                ("DONE"         . ?D)
-                ("STOP"         . ?O)
-
-                ("REPORT"       . ?R)
-                ("BUG"          . ?B)
-                ("FEEDBACK"     . ?F)
-                ("WAITING"      . ?I)
-                ("VERIFY"       . ?V)
-                ("KNOWNCAUSE"   . ?K)
-                ("FIXED"        . ?X)
-
-                ("CANCELED"     . ?C)
-                ("DELEGATED"    . ?E)
-                (:endgroup)
+                ; ToDo-Keywords
+                ("todo"         . (:foreground "OrangeRed"))
+                ("work"         . (:foreground "OrangeRed"))
+                ("wait"         . (:foreground "OrangeRed"))
+                ("hold"         . (:foreground "OrangeRed"))
+                ("done"         . (:foreground "OrangeRed"))
+                ("stop"         . (:foreground "OrangeRed"))
+                ("report"       . (:foreground "OrangeRed"))
+                ("bug"          . (:foreground "OrangeRed"))
+                ("feedback"     . (:foreground "OrangeRed"))
+                ("waiting"      . (:foreground "OrangeRed"))
+                ("verify"       . (:foreground "OrangeRed"))
+                ("knowncause"   . (:foreground "OrangeRed"))
+                ("fixed"        . (:foreground "OrangeRed"))
+                ("canceled"     . (:foreground "OrangeRed"))
+                ("delegated"    . (:foreground "OrangeRed"))
 
                 ; Common unspecied tags
-                ("Faq"          . ??)
-                ("Question"     . ?&)
-                ("Note"         . ?n)
-                ("Meeting"      . ?x)
-                ("Private"      . ?a)
-                ("Time"         . ?k)
-                ("Important"    . ?#)
-                ("Flagged"      . ?!)
-            ))
+                ("noexport"     . (:foreground "gold1"))
+                ("faq"          . (:foreground "gold1"))
+                ("question"     . (:foreground "gold1"))
+                ("note"         . (:foreground "gold1"))
+                ("meeting"      . (:foreground "gold1"))
+                ("private"      . (:foreground "gold1"))
+                ("time"         . (:foreground "gold1"))
+                ("important"    . (:foreground "gold1"))
+                ("flagged"      . (:foreground "gold1"))
+              )
+        )
+
+        (setq org-tag-persistent-alist
+            '(
+                ; Rough task assignment
+                (:startgroup    . nil)
+                ("research"     . ?r)
+                ("learn"        . ?l)
+                ("engineer"     . ?e)
+                ("inform"       . ?i)
+                ("publish"      . ?p)
+                ("read"         . ?a)
+                ("write"        . ?w)
+                ("fix"          . ?f)
+                ("do"           . ?d)
+                ("config"       . ?c)
+                ("get"          . ?g)
+                ("request"      . ?q)
+                ("buy"          . ?b)
+                ("order"        . ?o)
+                (:endgroup      . nil)
+
+                ; Category of the task
+                (:startgroup    . nil)
+                ("caddy"        . ?1)
+                ("render-engine". ?2)
+                ("zinc"         . ?3)
+                ("opensg"       . ?4)
+                ("opengl"       . ?5)
+                ("boost"        . ?6)
+                ("emacs"        . ?7)
+                ("build"        . ?8)
+                ("caddy-python" . ?9)
+                ;; ("xxx" . ?0)
+                (:endgroup      . nil)
+
+                ; Language
+                (:startgroup    . nil)
+                ("cpp"          . ?+)
+                ("python"       . ?P)
+                ("lisp"         . ?L)
+                ("bash"         . ?s)
+                ("prolog"       . ?O)
+                ("javascript"   . ?J)
+                ("java"         . ?*)
+                ("C#"           . ?')
+                (:endgroup      . nil)
+
+                ; ToDo-Keywords
+                (:startgroup    . nil)
+                ("todo"         . ?T)
+                ("work"         . ?W)
+                ("wait"         . ?A)
+                ("hold"         . ?H)
+                ("done"         . ?D)
+                ("stop"         . ?S)
+
+                ("report"       . ?R)
+                ("bug"          . ?B)
+                ("feedback"     . ?F)
+                ("waiting"      . ?I)
+                ("verify"       . ?V)
+                ("knowncause"   . ?K)
+                ("fixed"        . ?X)
+
+                ("canceled"     . ?C)
+                ("delegated"    . ?E)
+                (:endgroup      . nil)
+
+                ; Common unspecied tags
+                ("noexport"     . ?x)
+                ("faq"          . ??)
+                ("question"     . ?&)
+                ("note"         . ?n)
+                ("meeting"      . ?m)
+                ("private"      . ?v)
+                ("time"         . ?t)
+                ("important"    . ?#)
+                ("flagged"      . ?=)
+            )
         )
 
         ; maybe later
@@ -11734,7 +11825,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         ;(setq org-fast-tag-selection-single-key (quote expert))
 
         (setq org-use-fast-tag-selection t)
-        (setq org-complete-tags-always-offer-all-agenda-tags t)
+        (setq org-complete-tags-always-offer-all-agenda-tags nil)
 
         (add-hook 'org-capture-mode-hook
             (lambda ()
@@ -11753,23 +11844,24 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 
         (setq org-todo-state-tags-triggers
             (quote (
-                ("TODO"                 ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("TODO"       . t))
-                ("WORK"        ("TODO")          ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("WORK"       . t))
-                ("WAIT"        ("TODO") ("WORK")          ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("WAIT"       . t))
-                ("HOLD"        ("TODO") ("WORK") ("WAIT")          ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("HOLD"       . t))
-                ("DONE"        ("TODO") ("WORK") ("WAIT") ("HOLD")          ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("DONE"       . t))
-                ("STOP"        ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE")          ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("DONE"       . t))
+                (""            ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") (""           . nil))
+                ("TODO"                 ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("todo"       . t))
+                ("WORK"        ("todo")          ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("work"       . t))
+                ("WAIT"        ("todo") ("work")          ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("wait"       . t))
+                ("HOLD"        ("todo") ("work") ("wait")          ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("hold"       . t))
+                ("DONE"        ("todo") ("work") ("wait") ("hold")          ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("done"       . t))
+                ("STOP"        ("todo") ("work") ("wait") ("hold") ("done")          ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("stop"       . t))
 
-                ("REPORT"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP")            ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("REPORT"     . t))
-                ("BUG"         ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT")         ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("BUG"        . t))
-                ("FEEDBACK"    ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG")              ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("FEEDBACK"   . t))
-                ("WAITING"     ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK")             ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("WAITING"    . t))
-                ("VERIFY"      ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING")            ("KNOWNCAUSE") ("FIXED") ("CANCELED") ("DELEGATED") ("VERIFY"     . t))
-                ("KNOWNCAUSE"  ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY")                ("FIXED") ("CANCELED") ("DELEGATED") ("KNOWNCAUSE" . t))
-                ("FIXED"       ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE")           ("CANCELED") ("DELEGATED") ("FIXED"      . t))
+                ("REPORT"      ("todo") ("work") ("wait") ("hold") ("done") ("stop")            ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("report"     . t))
+                ("BUG"         ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report")         ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("bug"        . t))
+                ("FEEDBACK"    ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug")              ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("feedback"   . t))
+                ("WAITING"     ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback")             ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("waiting"    . t))
+                ("VERIFY"      ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting")            ("knowncause") ("fixed") ("canceled") ("delegated") ("verify"    . t))
+                ("KNOWNCAUSE"  ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify")                ("fixed") ("canceled") ("delegated") ("knowncause" . t))
+                ("FIXED"       ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause")           ("canceled") ("delegated") ("fixed"      . t))
 
-                ("CANCELLED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED")              ("DELEGATED") ("CANCELED"   . t))
-                ("DELEGATED"   ("TODO") ("WORK") ("WAIT") ("HOLD") ("DONE") ("STOP") ("REPORT") ("BUG") ("FEEDBACK") ("WAITING") ("VERIFY") ("KNOWNCAUSE") ("FIXED") ("CANCELED")               ("DELEGATED"  . t))
+                ("CANCELED"    ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed")              ("delegated") ("canceled"   . t))
+                ("DELEGATED"   ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled")               ("delegated"  . t))
             ))
         )
 
@@ -11796,18 +11888,24 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-src-preserve-indentation t)
         ;(setq org-startup-indented t)
 
+
+        (setq org-agenda-file-regexp "\\`Diary[^.].*\\.org\\'")
         (setq org-agenda-files (list psimacs/config/agenda-dir))
         ;(setq org-agenda-files psimacs/config/org-capture-coding-diary-files)
 
         (setq org-highest-priority ?A)
-        (setq org-lowest-priority  ?C)
-        (setq org-default-priority ?A)
+        (setq org-lowest-priority  ?E)
+        (setq org-default-priority ?C)
 
-        (setq org-priority-faces '(
-            (?A . (:background "Snow" :foreground "Red"))
-            (?B . (:background "Snow" :foreground "BlueViolet"))
-            (?C . (:background "Snow" :foreground "DarkGreen"))
-        ))
+        (setq org-priority-faces
+              '(
+                (?A . (:foreground "Red" :weight bold))
+                (?B . (:foreground "DeepPink" :weight bold))
+                (?C . (:foreground "LawnGreen" :weight bold))
+                (?D . (:foreground "DeepSkyBlue" :weight bold))
+                (?E . (:foreground "gold1" :weight bold))
+               )
+        )
 
         (setq org-agenda-window-setup 'current-window)
 
@@ -11919,10 +12017,8 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         ; Counsel tag completion does not work properly.
         ;
         (require 'counsel)
-        (with-eval-after-load 'org
-            (define-key org-mode-map (kbd "C-c C-S-q") #'counsel-org-tag))
-        (with-eval-after-load 'org-agenda
-            (define-key org-agenda-mode-map (kbd "C-c C-S-q") #'counsel-org-tag-agenda))
+        (with-eval-after-load 'org        (define-key org-mode-map        (kbd "C-c C-S-q") #'counsel-org-tag))
+        (with-eval-after-load 'org-agenda (define-key org-agenda-mode-map (kbd "C-c C-S-q") #'counsel-org-tag-agenda))
 
         ; warn me of any deadlines in next 7 days
         (setq org-deadline-warning-days 7)
@@ -12028,7 +12124,7 @@ Prettify headings and plain lists in Org mode. Package [[https://github.com/inte
 ;; Prettify headings and plain lists in Org mode
 ;;
 (use-package org-superstar
-    :after org-plus-contrib
+    :after org
     :config
         ;(setq org-superstar-special-todo-items t)
 
@@ -12082,7 +12178,7 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 ;; Insert links from the clipboard
 ;;
 (use-package org-cliplink
-    :after org-plus-contrib
+    :after org
     :bind*
         ("C-x p i" . org-cliplink)
 )
@@ -12099,7 +12195,7 @@ to =M-<TAB>=.
 ;; Provide auto-complete sources for org-mode
 ;;
 (use-package org-ac
-    :after org-plus-contrib
+    :after org
     :init
         (org-ac/config-default)
 )
@@ -12118,8 +12214,8 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;;
 ;; Presentations with org-mode
 ;;
-(use-package ox-beamer :straight nil :after org-plus-contrib)
-(use-package epresent :straight t :after org-plus-contrib)
+(use-package ox-beamer :straight nil :after org)
+(use-package epresent :straight t :after org)
 #+END_SRC
 
 *** Exporting to reStructuredText
@@ -12128,7 +12224,7 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;;
 ;; reStructuredText with org-mode
 ;;
-(use-package ox-rst :after org-plus-contrib)
+(use-package ox-rst :after org)
 #+END_SRC
 
 *** Lower case org keywords
@@ -12359,7 +12455,6 @@ if the latter is bound."
                 ;(add-to-list 'LaTeX-indent-environment-list '("pycode" current-indentation))
 
                 (visual-line-mode)      ; word-wrapped document
-                (flyspell-mode)
                 (LaTeX-math-mode)       ; (C-c ~) minor mode rebinding the key LaTeX-math-abbrev-prefix to allow easy typing of mathematical symbols
                                         ; ` will read a character from the keyboard, and insert the symbol as specified in LaTeX-math-default and LaTeX-math-list.
                                         ; You can use another prefix key (instead of `) by setting the variable LaTeX-math-abbrev-prefix.
@@ -13896,7 +13991,8 @@ References:
                     ("a" global-aggressive-indent-mode "aggressive indent" :toggle t)
                     ("d" global-hungry-delete-mode "hungry delete" :toggle t)
                     ("p" psimacs/activate/toggle-smartparens-paren-mode  "smartparens mode" :toggle show-smartparens-mode)
-                    ("c" flyspell-mode "spell check" :toggle t)
+                    ("m" flyspell-mode "spell check" :toggle t)
+                    ("M" flyspell-prog-mode "spell check for programming" :toggle t)
                     ("s" prettify-symbols-mode "pretty symbol" :toggle t)
                     ("r" rainbow-delimiters-mode "rainbow delimiters" :toggle t)
                     ("R" psimacs/pair/rainbow-toggle-sized-delimiters "rainbow delimiters sized" :toggle psimacs/config/rainbow-toogle-sized-delimiters-flag)
@@ -13905,6 +14001,7 @@ References:
                 )
             "Coding"
                 (
+                    ("e" else-mode "else" :toggle t)
                     ("f" flycheck-mode "flycheck" :toggle t)
                     ("b" subword-mode "subword" :toggle t)
                     ("B" superword-mode "superword" :toggle t)
@@ -14850,6 +14947,7 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-e C-m v=     | =M-x visual-line-mode=                                                  | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                                                                                                                                                                                                                             |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f m=         | =M-x flyspell-mode=                                                     | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
+| =H-m C-f M=         | =M-x flyspell-prog-mode=                                                | Turn on [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][flyspell-mode]] for comments and strings.                                                                                                                                                                                                                                                 |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f r=         | =M-x flyspell-region=                                                   | Checks all words inside a region.                                                                                                                                                                                                                                                                |
 | =H-m C-f b=         | =M-x flyspell-buffer=                                                   | Checks the whole buffer.                                                                                                                                                                                                                                                                         |
