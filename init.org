@@ -4582,14 +4582,16 @@ variable for that information.
 ;;
 ;; Theming setup
 ;;
-(defvar psimacs/config/default-theme "alect-dark"
+(defvar psimacs/config/default-theme "kaolin-valley-dark"
     "The theme that should be loaded on default.
 afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
 ample, ample-zen, dracula, flatland, gandalf, github-modern, gruvbox-dark-medium, gruvbox-dark-soft,
 gruvbox-dark-hard, gruvbox-light-medium, gruvbox-light-soft, gruvbox-light-hard, pastelmac, moe-dark,
 moe-light, monokai, monokai-pro, sanityinc-tomorrow-day, sanityinc-tomorrow-night, sanityinc-tomorrow-blue,
 sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn, doom-one, doom-molokai, doom-vibrant,
-doom-oceanic-next
+doom-oceanic-next, kaolin-dark, kaolin-aurora, kaolin-blossom, kaolin-breeze, kaolin-bubblegum, kaolin-light, 
+kaolin-eclipse, kaolin-ocean, kaolin-galaxy, kaolin-valley-dark, kaolin-valley-light, kaolin-temple,
+vscode-dark-plus
 ")
 
 (defvar psimacs/config/theme-is-light-colored t
@@ -4676,6 +4678,108 @@ See also:
                 ;; Corrects (and improves) org-mode's native fontification.
                 (doom-themes-org-config)
             )
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package kaolin-themes
+    :config
+        (when (equal psimacs/config/default-theme "kaolin-dark")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-dark t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-dark")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-aurora")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-aurora t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-aurora")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-blossom")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-blossom t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-blossom")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-breeze")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'kaolin-breeze t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-breeze")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-bubblegum")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-bubblegum t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-bubblegum")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-light")
+            (setq psimacs/config/theme-is-light-colored t)
+            (load-theme 'kaolin-light t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-light")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-eclipse")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-eclipse t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-eclipse")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-ocean")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-ocean t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-ocean")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-galaxy")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-galaxy t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-galaxy")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-valley-dark")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-valley-dark t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-valley-dark")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-valley-light")
+            (setq psimacs/config/theme-is-light-colored t)
+            (setq kaolin-valley-dark-alt-bg t)
+            (load-theme 'kaolin-valley-light t)
+            (setq kaolin-valley-dark-alt-bg t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-valley-light")
+        )
+
+        (when (equal psimacs/config/default-theme "kaolin-temple")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'kaolin-temple t)
+            (kaolin-treemacs-theme)
+            (message "loaded theme kaolin-temple")
+        )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-themes.el
+(use-package vscode-dark-plus-theme
+    :config
+        (when (equal psimacs/config/default-theme "vscode-dark-plus")
+            (setq psimacs/config/theme-is-light-colored nil)
+            (load-theme 'vscode-dark-plus t)
+            (message "loaded theme vscode-dark-plus")
         )
 )
 #+END_SRC
