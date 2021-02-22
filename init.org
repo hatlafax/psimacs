@@ -4589,7 +4589,7 @@ ample, ample-zen, dracula, flatland, gandalf, github-modern, gruvbox-dark-medium
 gruvbox-dark-hard, gruvbox-light-medium, gruvbox-light-soft, gruvbox-light-hard, pastelmac, moe-dark,
 moe-light, monokai, monokai-pro, sanityinc-tomorrow-day, sanityinc-tomorrow-night, sanityinc-tomorrow-blue,
 sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn, doom-one, doom-molokai, doom-vibrant,
-doom-oceanic-next, kaolin-dark, kaolin-aurora, kaolin-blossom, kaolin-breeze, kaolin-bubblegum, kaolin-light, 
+doom-oceanic-next, kaolin-dark, kaolin-aurora, kaolin-blossom, kaolin-breeze, kaolin-bubblegum, kaolin-light,
 kaolin-eclipse, kaolin-ocean, kaolin-galaxy, kaolin-valley-dark, kaolin-valley-light, kaolin-temple,
 vscode-dark-plus
 ")
@@ -11728,7 +11728,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
     :defines org-agenda-mode-map
     :config
         (setq org-return-follows-link t)
-        (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "LOGBOOK" "CLOCK")))
+        (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "LOGBOOK" "CLOCK" "RESULTS" "PEOPLE" "RESOURCES")))
         (setq org-log-done 'time)
         (setq org-log-into-drawer t)
         ;(setq org-completion-use-ido t)
@@ -11763,18 +11763,13 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("FEEDBACK"     . (:foreground "DeepPink" :weight bold))
                 ("WAITING"      . (:foreground "DeepPink" :weight bold))
                 ("VERIFY"       . (:foreground "DeepPink" :weight bold))
-                ("KNOWNCAUSE"   . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("KNOWNCAUSE"   . (:foreground "DeepPink" :weight bold))
                 ("FIXED"        . (:foreground "DimGray" :weight bold)) ;(org-done))
 
                 ("CANCELED"     . (:foreground "DimGray" :weight bold)) ;(org-done))
                 ("DELEGATED"    . (:foreground "DimGray" :weight bold)) ;(org-done))
             )
         )
-
-        ;; h j k u y z
-        ;; G M N Q U Y Z
-        ;; , . - ; : _  ' * < >
-        ;; 0
 
         (setq org-tag-faces '(
                 ; Rough task assignment
@@ -11814,6 +11809,15 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("java"         . (:foreground "LawnGreen"))
                 ("C#"           . (:foreground "LawnGreen"))
 
+                ; Context
+                ("phone"        . (:foreground "turquoise1"))
+                ("home"         . (:foreground "turquoise1"))
+                ("office"       . (:foreground "turquoise1"))
+                ("shopping"     . (:foreground "turquoise1"))
+                ("d-dorf"       . (:foreground "turquoise1"))
+                ("cologne"      . (:foreground "turquoise1"))
+                ("motorcycle"   . (:foreground "turquoise1"))
+
                 ; ToDo-Keywords
                 ("todo"         . (:foreground "OrangeRed"))
                 ("work"         . (:foreground "OrangeRed"))
@@ -11841,8 +11845,14 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("time"         . (:foreground "gold1"))
                 ("important"    . (:foreground "gold1"))
                 ("flagged"      . (:foreground "gold1"))
+                ("project"      . (:foreground "gold1"))
+                ("appointment"  . (:foreground "gold1"))
               )
         )
+
+        ;; h j k u y z
+        ;; G M N Q U Y Z
+        ;; 0
 
         (setq org-tag-persistent-alist
             '(
@@ -11890,6 +11900,17 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("C#"           . ?')
                 (:endgroup      . nil)
 
+                ; Context
+                (:startgroup    . nil)
+                ("phone"        . ?_)
+                ("home"         . ?,)
+                ("office"       . ?\;)
+                ("shopping"     . ?.)
+                ("d-dorf"       . ?<)
+                ("cologne"      . ?>)
+                ("motorcycle"   . ?:)
+                (:endgroup      . nil)
+
                 ; ToDo-Keywords
                 (:startgroup    . nil)
                 ("todo"         . ?T)
@@ -11921,6 +11942,8 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("time"         . ?t)
                 ("important"    . ?#)
                 ("flagged"      . ?=)
+                ("project"      . ?-)
+                ("appointment"  . ?N)
             )
         )
 
@@ -12209,11 +12232,13 @@ code to whatever theme I'm using's background."
         (config-org-export-as-docx-via-odt)
 
     :bind (
-        ("C-c a" . org-agenda)
-    )
-    :bind* (
-        ("C-c c" . org-capture)
-    )
+           :map org-mode-map
+           ("C-c C-." . org-time-stamp-inactive)
+           :map psimacs/config/global-key-map/execute
+           ("a" . org-agenda)
+           ("l" . org-store-link)
+           ("c" . org-capture)
+          )
 )
 #+END_SRC
 
@@ -12288,7 +12313,7 @@ See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 )
 #+END_SRC
 
-*** Auto completion for Org-Mode :noexport:
+*** Auto completion for Org-Mode            :noexport:
 
 [[https://github.com/aki2o/org-ac][Org-ac]] is an extension of *Emacs* that provide auto-complete sources for [[https://orgmode.org][org-mode]].
 You'll be able to use auto-complete as substitute for pcomplete which is bound
@@ -12363,7 +12388,7 @@ Reference: [[https://scripter.co/org-keywords-lower-case/][Converting Org keywor
       (message "Lower-cased %d matches" count))))
 #+END_SRC
 
-*** Keybinding for Org-Mode                                        :noexport:
+*** Keybinding for Org-Mode                 :noexport:
 
 Some personal org-mode Key-bindings. This is only a suggestion from [[http://doc.norang.ca/org-mode.html][Organize Your Life In Plain Text!]].
 Therefore it is currently diasabled and should be activated after getting familiar with [[https://orgmode.org][org-mode]].
@@ -15051,7 +15076,7 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-e C-m v=     | =M-x visual-line-mode=                                                  | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                                                                                                                                                                                                                             |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f m=         | =M-x flyspell-mode=                                                     | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
-| =H-m C-f M=         | =M-x flyspell-prog-mode=                                                | Turn on [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][flyspell-mode]] for comments and strings.                                                                                                                                                                                                                                                 |
+| =H-m C-f M=         | =M-x flyspell-prog-mode=                                                | Turn on [[http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html][flyspell-mode]] for comments and strings.                                                                                                                                                                                                                                                  |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f r=         | =M-x flyspell-region=                                                   | Checks all words inside a region.                                                                                                                                                                                                                                                                |
 | =H-m C-f b=         | =M-x flyspell-buffer=                                                   | Checks the whole buffer.                                                                                                                                                                                                                                                                         |
@@ -15243,6 +15268,10 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x f=             | =M-x counsel-recentf=                                                   | Find a file on recent file list.                                                                                                                                                                                                                                                                 |
 | =H-x C-f=           | =M-x counsel-buffer-or-recentf=                                         | Find a buffer visiting a file or file on recent file list.                                                                                                                                                                                                                                       |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x l=             | =M-x org-store-link=                                                    | Store a link to the current location.                                                                                                                                                                                                                                                            |
+| =H-x a=             | =M-x org-agenda=                                                        | Dispatch agenda commands to collect entries to the agenda buffer.                                                                                                                                                                                                                                |
+| =H-x c=             | =M-x org-capture=                                                       | Capture something                                                                                                                                                                                                                                                                                |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x x=             | =M-x yas-insert-snippet=                                                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
