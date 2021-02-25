@@ -11735,6 +11735,9 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         ;(setq org-tags-exclude-from-inheritance '("review")))
 
 
+        ;;
+        ;; ToDo keywords
+        ;;
 
         ;;
         ;; The extra stuff after each keyword defines a shortcut key and whether a log entry should be added.
@@ -11753,24 +11756,27 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
             org-todo-keyword-faces '(
                 ("TODO"         . (:foreground "OrangeRed" :weight bold)) ;org-todo)
                 ("WORK"         . (:foreground "LawnGreen" :weight bold))
-                ("WAIT"         . (:foreground "DeepPink" :weight bold))
-                ("HOLD"         . (:foreground "DeepPink" :weight bold))
-                ("DONE"         . (:foreground "DimGray" :weight bold)) ;(org-done))
-                ("STOP"         . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("WAIT"         . (:foreground "DeepPink"  :weight bold))
+                ("HOLD"         . (:foreground "DeepPink"  :weight bold))
+                ("DONE"         . (:foreground "DimGray"   :weight bold)) ;(org-done))
+                ("STOP"         . (:foreground "DimGray"   :weight bold)) ;(org-done))
 
                 ("REPORT"       . (:foreground "OrangeRed" :weight bold)) ;org-todo)
                 ("BUG"          . (:foreground "OrangeRed" :weight bold)) ;org-todo)
-                ("FEEDBACK"     . (:foreground "DeepPink" :weight bold))
-                ("WAITING"      . (:foreground "DeepPink" :weight bold))
-                ("VERIFY"       . (:foreground "DeepPink" :weight bold))
-                ("KNOWNCAUSE"   . (:foreground "DeepPink" :weight bold))
-                ("FIXED"        . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("FEEDBACK"     . (:foreground "DeepPink"  :weight bold))
+                ("WAITING"      . (:foreground "DeepPink"  :weight bold))
+                ("VERIFY"       . (:foreground "DeepPink"  :weight bold))
+                ("KNOWNCAUSE"   . (:foreground "DeepPink"  :weight bold))
+                ("FIXED"        . (:foreground "DimGray"   :weight bold)) ;(org-done))
 
-                ("CANCELED"     . (:foreground "DimGray" :weight bold)) ;(org-done))
-                ("DELEGATED"    . (:foreground "DimGray" :weight bold)) ;(org-done))
+                ("CANCELED"     . (:foreground "DimGray"   :weight bold)) ;(org-done))
+                ("DELEGATED"    . (:foreground "DimGray"   :weight bold)) ;(org-done))
             )
         )
 
+        ;;
+        ;; Tag keywords
+        ;;
         (setq org-tag-faces '(
                 ; Rough task assignment
                 ("research"     . (:foreground "LightGoldenrod1"))
@@ -11954,21 +11960,6 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-use-fast-tag-selection t)
         (setq org-complete-tags-always-offer-all-agenda-tags nil)
 
-        (add-hook 'org-capture-mode-hook
-            (lambda ()
-                (setq-local org-tag-alist (org-global-tags-completion-table))
-            )
-        )
-
-        ;(add-hook 'org-capture-mode-hook
-        ;    (lambda ()
-        ;        (save-restriction
-        ;            (widen)
-        ;            (setq-local org-tag-alist (org-get-buffer-tags))
-        ;        )
-        ;    )
-        ;)
-
         (setq org-todo-state-tags-triggers
             (quote (
                 (""            ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") (""           . nil))
@@ -12009,36 +12000,125 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-adapt-indentation nil)
         ;(setq org-hide-leading-stars 'hidestars) ; see org-superstar
 
+        (setq org-indent-indentation-per-level 2)
+        (setq org-list-description-max-indent 4)
         (setq org-indent-mode-turns-off-org-adapt-indentation t)
         (setq org-indent-mode-turns-on-hiding-stars t)
 
         (setq org-src-preserve-indentation t)
-        ;(setq org-startup-indented t)
+        (setq org-startup-indented t)
+        (setq org-startup-folded t)
+
+        (setq org-deadline-warning-days 7)      ;; warn me of any deadlines in next 7 days
 
 
+        ;;
+        ;; Org babel language support
+        ;;
+        (setq org-confirm-babel-evaluate nil)
+
+        (org-babel-do-load-languages 'org-babel-load-languages '(
+            (C . t)
+            (python . t)
+            (plantuml . t)
+            (dot . t)
+            (emacs-lisp . t)
+            (latex . t)
+        ))
+
+        ;;
+        ;; Agenda
+        ;;
         (setq org-agenda-file-regexp "\\`Diary[^.].*\\.org\\'")
         (setq org-agenda-files (list psimacs/config/agenda-dir))
         ;(setq org-agenda-files psimacs/config/org-capture-coding-diary-files)
 
+        (setq org-agenda-window-setup 'current-window)
+
+        (setq org-agenda-dim-blocked-tasks nil) ;; Do not dim blocked tasks
+        (setq org-agenda-compact-blocks t)      ;; Compact the block agenda view
+
+        (setq org-agenda-span (quote fortnight)) ;; show me tasks scheduled or due in next fortnight
+
+        (setq org-agenda-skip-scheduled-if-deadline-is-shown t) ;; don't show tasks as scheduled if they are already shown as a deadline
+
+        (setq org-agenda-skip-deadline-prewarning-if-scheduled (quote pre-scheduled)) ;; don't give awarning colour to tasks with impending deadlines if they are scheduled to be done
+
+        (setq org-agenda-todo-ignore-deadlines (quote all)) ;; don't show tasks that have deadlines in the normal todo list
+        (setq org-agenda-todo-ignore-scheduled (quote all)) ;; don't show tasks that are scheduled  in the normal todo list
+
+        (setq org-agenda-sorting-strategy                   ;; sort tasks in order of when they are due and then by priority
+            (quote
+                (
+                    (agenda deadline-up priority-down)
+                    (todo priority-down category-keep)
+                    (tags priority-down category-keep)
+                    (search category-keep)
+                )
+            )
+        )
+
+        (setq org-agenda-custom-commands
+              (quote (("f" "Agenda + flagged"
+                       ((tags "flagged")
+                        (agenda ""))))))
+
+        (unless (file-directory-p psimacs/config/agenda-dir)
+            (mkdir psimacs/config/agenda-dir t)
+        )
+
+        ;;
+        ;; Refiling
+        ;;
+        (setq org-refile-targets '((org-agenda-files :maxlevel . 9)))
+        (setq org-refile-use-outline-path 'file)
+        (setq org-outline-path-complete-in-steps nil)
+        (setq org-refile-allow-creating-parent-nodes 'confirm)
+
+        (setq org-log-refile t)        ;; a timestamp or a note is recorded whenever an entry is refiled.
+        (setq org-refile-keep nil)     ;; Do not refile and keep the entry in place
+        (setq org-refile-use-cache t)  ;; Caching of refile targets for performane reasons. See command org-refile-cache-clear
+
+        (run-with-idle-timer 300 t (lambda ()
+                            (org-refile-cache-clear)
+                            (org-refile-get-targets)))
+
+        (setq org-reverse-note-order nil)
+
+        ;;
+        ;; Priorities
+        ;;
         (setq org-highest-priority ?A)
         (setq org-lowest-priority  ?E)
         (setq org-default-priority ?C)
 
         (setq org-priority-faces
               '(
-                (?A . (:foreground "Red" :weight bold))
-                (?B . (:foreground "DeepPink" :weight bold))
-                (?C . (:foreground "LawnGreen" :weight bold))
+                (?A . (:foreground "Red"         :weight bold))
+                (?B . (:foreground "DeepPink"    :weight bold))
+                (?C . (:foreground "LawnGreen"   :weight bold))
                 (?D . (:foreground "DeepSkyBlue" :weight bold))
-                (?E . (:foreground "gold1" :weight bold))
+                (?E . (:foreground "gold1"       :weight bold))
                )
         )
 
-        (setq org-agenda-window-setup 'current-window)
-
-        (unless (file-directory-p psimacs/config/agenda-dir)
-            (mkdir psimacs/config/agenda-dir t)
+        ;;
+        ;; Capture
+        ;;
+        (add-hook 'org-capture-mode-hook
+            (lambda ()
+                (setq-local org-tag-alist (org-global-tags-completion-table))
+            )
         )
+
+        ;;(add-hook 'org-capture-mode-hook
+        ;;    (lambda ()
+        ;;        (save-restriction
+        ;;            (widen)
+        ;;            (setq-local org-tag-alist (org-get-buffer-tags))
+        ;;        )
+        ;;    )
+        ;;)
 
         (defun psimacs/internal/org-capture-file-link ()
             (let (
@@ -12094,28 +12174,32 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (defun psimacs/internal/org-catpure-set-templates ()
             (let (
                     (code-point-template "* %? %^G\nEntered: %U\n%(psimacs/internal/org-capture-file-link)\n %(psimacs/internal/org-capture-code-block)\n")
-                    (todo-template      "* TODO [#A] %? %^G\nEntered:   %U\nScheduled: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%i\n")
-                    (note-template      "* %? :Note:%^G\nEntered: %U\n")
-                    (meeting-template   "* %? :Meeting:%^G\nEntered:   %U\nScheduled: %T\n")
-                    (journal-template   "** %^{Heading}\nEntered: %U\n%i\n%a")
-                    (log-time-template  "** %U - %^{Activity} :Time:")
+                    (todo-template       "* TODO [#C] %? %^G\nEntered:   %U\nScheduled: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%i\n")
+                    (note-template       "* %? :Note:%^G\nEntered: %U\n")
+                    (meeting-template    "* %? :Meeting:%^G\nEntered:   %U\nScheduled: %T\n")
+                    (journal-template    "** %^{Heading}\nEntered: %U\n%i\n%a")
+                    (log-time-template   "** %U - %^{Activity} :Time:")
 
-                    (code-diary-file (concat psimacs/config/agenda-dir psimacs/config/org-capture-coding-diary-file))
-                    (diary-file      (concat psimacs/config/agenda-dir "Diary.org"))
-                    (journal-file    (concat psimacs/config/agenda-dir "Journal.org"))
-                    (time-log-file   (concat psimacs/config/agenda-dir "TimeLog.org"))
+                    (code-diary-file     (concat psimacs/config/agenda-dir psimacs/config/org-capture-coding-diary-file))
+                    (diary-file          (concat psimacs/config/agenda-dir "Diary.org"))
+                    (journal-file        (concat psimacs/config/agenda-dir "Journal.org"))
+                    (time-log-file       (concat psimacs/config/agenda-dir "TimeLog.org"))
                 )
 
                 (setq org-capture-templates
                     `(
                         ("c" "Code Point" entry (file+headline ,diary-file      "Code Points") ,code-point-template :empty-lines 1)
                         ("C" "Code Point" entry (file+headline ,code-diary-file "Code Points") ,code-point-template :empty-lines 1)
+
                         ("t" "ToDo"       entry (file+headline ,diary-file      "Tasks")       ,todo-template       :empty-lines 1)
                         ("T" "ToDo"       entry (file+headline ,code-diary-file "Tasks")       ,todo-template       :empty-lines 1)
+
                         ("n" "Note"       entry (file+headline ,diary-file      "Notes")       ,note-template       :empty-lines 1)
                         ("N" "Note"       entry (file+headline ,code-diary-file "Notes")       ,note-template       :empty-lines 1)
+
                         ("m" "Meeting"    entry (file+headline ,diary-file      "Meetings")    ,meeting-template    :empty-lines 1)
                         ("M" "Meeting"    entry (file+headline ,code-diary-file "Meetings")    ,meeting-template    :empty-lines 1)
+
                         ("j" "Journal"    entry (file+datetree ,journal-file)                  ,journal-template)
                         ("l" "Log Time"   entry (file+datetree ,time-log-file)                 ,log-time-template)
                     )
@@ -12140,43 +12224,13 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 
         (psimacs/internal/org-catpure-set-templates)
 
-        ;
-        ; Counsel tag completion does not work properly.
-        ;
+        ;;
+        ;; Counsel tag completion does not work properly.
+        ;;
         (require 'counsel)
         (with-eval-after-load 'org        (define-key org-mode-map        (kbd "C-c C-S-q") #'counsel-org-tag))
         (with-eval-after-load 'org-agenda (define-key org-agenda-mode-map (kbd "C-c C-S-q") #'counsel-org-tag-agenda))
 
-        ; warn me of any deadlines in next 7 days
-        (setq org-deadline-warning-days 7)
-        ; show me tasks scheduled or due in next fortnight
-        (setq org-agenda-span (quote fortnight))
-        ; don't show tasks as scheduled if they are already shown as a deadline
-        (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
-        ; don't give awarning colour to tasks with impending deadlines if they are scheduled to be done
-        (setq org-agenda-skip-deadline-prewarning-if-scheduled (quote pre-scheduled))
-        ; don't show tasks that are scheduled or have deadlines in the normal todo list
-        (setq org-agenda-todo-ignore-deadlines (quote all))
-        (setq org-agenda-todo-ignore-scheduled (quote all))
-        ; sort tasks in order of when they are due and then by priority
-        (setq org-agenda-sorting-strategy
-            (quote
-                (
-
-                    (agenda deadline-up priority-down)
-                    (todo priority-down category-keep)
-                    (tags priority-down category-keep)
-                    (search category-keep)
-                )
-            )
-        )
-
-        ; Do not dim blocked tasks
-        (setq org-agenda-dim-blocked-tasks nil)
-        ; Compact the block agenda view
-        (setq org-agenda-compact-blocks t)
-
-        (setq org-confirm-babel-evaluate nil)
 
 
         (defun psimacs/internal/org-inline-css-hook (exporter)
@@ -12201,16 +12255,6 @@ code to whatever theme I'm using's background."
 
         (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
 
-        ;; Org babel language support
-        (org-babel-do-load-languages 'org-babel-load-languages '(
-            (C . t)
-            (python . t)
-            (plantuml . t)
-            (dot . t)
-            (emacs-lisp . t)
-            (latex . t)
-        ))
-
         (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
 
         (require 'ox-odt)
@@ -12230,6 +12274,22 @@ code to whatever theme I'm using's background."
 
         ;; Run the function I just defined to set up org-export-as-docx-via-odt.
         (config-org-export-as-docx-via-odt)
+
+
+        (defun psimacs/org/search ()
+          "Search for headings"
+          (interactive)
+          (org-refile '(4)))
+
+        (defun psimacs/org/opened-buffer-files ()
+          "Return the list of files currently opened in emacs"
+          (delq nil
+                (mapcar (lambda (x)
+                  (if (and (buffer-file-name x)
+                           (string-match "\\.org$"
+                                         (buffer-file-name x)))
+                      (buffer-file-name x)))
+                (buffer-list))))
 
     :bind (
            :map org-mode-map
