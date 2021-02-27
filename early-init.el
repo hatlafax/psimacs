@@ -110,6 +110,9 @@ Do not change it here!!!
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
 
+(defconst psimacs/config/straight-version-folder "straight/versions"
+  "The psimacs straight versions directory.")
+
 (defconst psimacs/config/config-folder "config"
   "The psimacs config directory.")
 
@@ -170,7 +173,6 @@ It is the fraction of the current heap size."
 ;(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
 
 (set-face-background 'default "#2B2320" nil) ; the kaolin-valley-dark theme background color
-
 
 ;;
 ;; Garbage collection optimization
@@ -662,6 +664,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/private-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/private-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/straight-version-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/straight-version-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
                                                                              psimacs/config/site-lisp-folder))
                                              (file-name-as-directory (concat db-dir

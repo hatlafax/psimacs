@@ -619,8 +619,10 @@ is because it breaks some old (badly written) code.
 ;(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
 ;(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
 
-(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
-(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
+;(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
+;(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
+
+(set-face-background 'default "#2B2320" nil) ; the kaolin-valley-dark theme background color
 #+END_SRC
 
 - Avoid garbage collection at startup
@@ -1998,7 +2000,7 @@ References:
                (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f"))))
 #+END_SRC
 
-** Agenda files
+** Org-Mode and agenda files
 
 Quoting [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/][My Workflow with Org-Agenda]]:
 #+BEGIN_QUOTE
@@ -2015,7 +2017,11 @@ your calendar.
 ;;
 (defconst psimacs/config/agenda-dir
     (psimacs/file-system/prefer-dropbox-directory psimacs/config/agenda-folder)
-    "The psimacs org agenda  directory.")
+    "The psimacs org agenda directory.")
+
+(defconst psimacs/config/org-id-file
+    (psimacs/file-system/concat-file psimacs/config/agenda-dir ".org-id-locations")
+    "The psimacs org id locations file.")
 
 ;;
 ;; Diary files
@@ -11724,16 +11730,21 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 org-table-transpose-table-at-point
                 org-forward-heading-same-level
                 org-backward-heading-same-level
+                org-agenda-show
+                org-agenda-goto
               )
     :defines org-agenda-mode-map
     :config
         (setq org-return-follows-link t)
-        (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "LOGBOOK" "CLOCK" "RESULTS" "PEOPLE" "RESOURCES")))
+        (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "CLOCKING" "LOGBOOK" "CLOCK" "RESULTS" "PEOPLE" "RESOURCES")))
         (setq org-log-done 'time)
         (setq org-log-into-drawer t)
+        (setq org-clock-into-drawer "CLOCKING")
         ;(setq org-completion-use-ido t)
         ;(setq org-tags-exclude-from-inheritance '("review")))
 
+        (add-to-list 'org-modules 'org-habit t)
+        (setq org-habit-show-habits-only-for-today t) ;; only show habits in today’s agenda view.
 
         ;;
         ;; ToDo keywords
@@ -11774,11 +11785,14 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
             )
         )
 
+        (setq org-enforce-todo-dependencies t)
+        (setq org-enforce-todo-checkbox-dependencies t)
+
         ;;
         ;; Tag keywords
         ;;
         (setq org-tag-faces '(
-                ; Rough task assignment
+                ;; Rough task assignment
                 ("research"     . (:foreground "LightGoldenrod1"))
                 ("learn"        . (:foreground "LightGoldenrod1"))
                 ("engineer"     . (:foreground "LightGoldenrod1"))
@@ -11794,7 +11808,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("buy"          . (:foreground "LightGoldenrod1"))
                 ("order"        . (:foreground "LightGoldenrod1"))
 
-                ; Category of the task
+                ;; Category of the task
                 ("caddy"        . (:foreground "DeepSkyBlue"))
                 ("render-engine". (:foreground "DeepSkyBlue"))
                 ("zinc"         . (:foreground "DeepSkyBlue"))
@@ -11805,7 +11819,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("build"        . (:foreground "DeepSkyBlue"))
                 ("caddy-python" . (:foreground "DeepSkyBlue"))
 
-                ; Language
+                ;; Language
                 ("cpp"          . (:foreground "LawnGreen"))
                 ("python"       . (:foreground "LawnGreen"))
                 ("lisp"         . (:foreground "LawnGreen"))
@@ -11815,7 +11829,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("java"         . (:foreground "LawnGreen"))
                 ("C#"           . (:foreground "LawnGreen"))
 
-                ; Context
+                ;; Context
                 ("phone"        . (:foreground "turquoise1"))
                 ("home"         . (:foreground "turquoise1"))
                 ("office"       . (:foreground "turquoise1"))
@@ -11824,7 +11838,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("cologne"      . (:foreground "turquoise1"))
                 ("motorcycle"   . (:foreground "turquoise1"))
 
-                ; ToDo-Keywords
+                ;; ToDo-Keywords
                 ("todo"         . (:foreground "OrangeRed"))
                 ("work"         . (:foreground "OrangeRed"))
                 ("wait"         . (:foreground "OrangeRed"))
@@ -11841,7 +11855,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("canceled"     . (:foreground "OrangeRed"))
                 ("delegated"    . (:foreground "OrangeRed"))
 
-                ; Common unspecied tags
+                ;; Common unspecied tags
                 ("noexport"     . (:foreground "gold1"))
                 ("faq"          . (:foreground "gold1"))
                 ("question"     . (:foreground "gold1"))
@@ -11853,16 +11867,19 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("flagged"      . (:foreground "gold1"))
                 ("project"      . (:foreground "gold1"))
                 ("appointment"  . (:foreground "gold1"))
+
+                ;; property tags
+                ("ordered"      . (:foreground "chocolate1"))
               )
         )
 
         ;; h j k u y z
-        ;; G M N Q U Y Z
+        ;; G M N Q U Y
         ;; 0
 
         (setq org-tag-persistent-alist
             '(
-                ; Rough task assignment
+                ;; Rough task assignment
                 (:startgroup    . nil)
                 ("research"     . ?r)
                 ("learn"        . ?l)
@@ -11880,7 +11897,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("order"        . ?o)
                 (:endgroup      . nil)
 
-                ; Category of the task
+                ;; Category of the task
                 (:startgroup    . nil)
                 ("caddy"        . ?1)
                 ("render-engine". ?2)
@@ -11894,7 +11911,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ;; ("xxx" . ?0)
                 (:endgroup      . nil)
 
-                ; Language
+                ;; Language
                 (:startgroup    . nil)
                 ("cpp"          . ?+)
                 ("python"       . ?P)
@@ -11906,7 +11923,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("C#"           . ?')
                 (:endgroup      . nil)
 
-                ; Context
+                ;; Context
                 (:startgroup    . nil)
                 ("phone"        . ?_)
                 ("home"         . ?,)
@@ -11917,7 +11934,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("motorcycle"   . ?:)
                 (:endgroup      . nil)
 
-                ; ToDo-Keywords
+                ;; ToDo-Keywords
                 (:startgroup    . nil)
                 ("todo"         . ?T)
                 ("work"         . ?W)
@@ -11938,7 +11955,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("delegated"    . ?E)
                 (:endgroup      . nil)
 
-                ; Common unspecied tags
+                ;; Common unspecied tags
                 ("noexport"     . ?x)
                 ("faq"          . ??)
                 ("question"     . ?&)
@@ -11950,15 +11967,19 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("flagged"      . ?=)
                 ("project"      . ?-)
                 ("appointment"  . ?N)
+
+                ;; property tags
+                ("ordered"  . ?Z)
             )
         )
 
-        ; maybe later
-        ;(setq org-fast-tag-selection-single-key (quote auto))
-        ;(setq org-fast-tag-selection-single-key (quote expert))
+        ;; maybe later
+        ;;(setq org-fast-tag-selection-single-key (quote auto))
+        ;;(setq org-fast-tag-selection-single-key (quote expert))
 
         (setq org-use-fast-tag-selection t)
         (setq org-complete-tags-always-offer-all-agenda-tags nil)
+        (setq org-track-ordered-property-with-tag "ordered")
 
         (setq org-todo-state-tags-triggers
             (quote (
@@ -12011,6 +12032,8 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 
         (setq org-deadline-warning-days 7)      ;; warn me of any deadlines in next 7 days
 
+        (setq org-id-locations-file psimacs/config/org-id-file)
+
 
         ;;
         ;; Org babel language support
@@ -12035,7 +12058,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 
         (setq org-agenda-window-setup 'current-window)
 
-        (setq org-agenda-dim-blocked-tasks nil) ;; Do not dim blocked tasks
+        (setq org-agenda-dim-blocked-tasks t)
         (setq org-agenda-compact-blocks t)      ;; Compact the block agenda view
 
         (setq org-agenda-span (quote fortnight)) ;; show me tasks scheduled or due in next fortnight
@@ -12255,13 +12278,25 @@ code to whatever theme I'm using's background."
 
         (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
 
+
+        ;; (setq org-publish-project alist
+        ;;       '(
+        ;;         ("org"
+        ;;          :base-directory             "~/org"
+        ;;          :publishing-directory       "~/public-html"
+        ;;          :publishing-function        "org-html-publish-to-html"
+        ;;          :section-nubers             nil
+        ;;          :with-toc                   nil
+        ;;        )
+        ;;     ))
+
+
         (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
 
         (require 'ox-odt)
         (setq org-odt-preferred-output-format "docx")
 
-        (defun config-org-export-as-docx-via-odt ()
-            (interactive)
+        (defun psimacs/config/org-export-as-docx-via-odt ()
             (let ((cmd psimacs/config/libre-office-exe))
                 (when (and (eq system-type 'windows-nt) (file-exists-p cmd))
                     (setq cmd (shell-quote-argument cmd))
@@ -12272,8 +12307,7 @@ code to whatever theme I'm using's background."
                     (setq org-odt-convert-processes `(("LibreOffice" ,(concat cmd " --headless --convert-to %f%x --outdir %d %i")))))
             ))
 
-        ;; Run the function I just defined to set up org-export-as-docx-via-odt.
-        (config-org-export-as-docx-via-odt)
+        (psimacs/config/org-export-as-docx-via-odt)    ;; Run the function I just defined to set up org-export-as-docx-via-odt.
 
 
         (defun psimacs/org/search ()
@@ -12282,7 +12316,8 @@ code to whatever theme I'm using's background."
           (org-refile '(4)))
 
         (defun psimacs/org/opened-buffer-files ()
-          "Return the list of files currently opened in emacs"
+          "Return the list of files currently opened in emacs."
+          (interactive)
           (delq nil
                 (mapcar (lambda (x)
                   (if (and (buffer-file-name x)
@@ -12291,13 +12326,48 @@ code to whatever theme I'm using's background."
                       (buffer-file-name x)))
                 (buffer-list))))
 
+
+        (defun psimacs/org/ids-to-headlines-in-file ()
+            "Add ID properties to all headlines in the current file which do not already have one."
+            (interactive)
+            (org-map-entries 'org-id-get-create)
+        )
+
+        (add-hook 'org-mode-hook
+            (lambda ()
+                    (add-hook 'before-save-hook 'psimacs/org/ids-to-headlines-in-file nil 'local)))
+
+
+        (defun psimacs/org/copy-id-to-clipboard ()
+            "Copy an ID link with the headline to killring, if no ID is there then create a new unique ID.
+This function works only in org-mode or org-agenda buffers.
+The purpose of this function is to easily construct id:-links to org-mode items.
+If its assigned to a key it saves you marking the text and copying to the killring."
+            (interactive)
+            (when (eq major-mode 'org-agenda-mode) ;switch to orgmode
+                (org-agenda-show)
+                (org-agenda-goto)
+            )
+            (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
+                (let* ( (mytmphead (nth 4 (org-heading-components)))
+                        (mytmpid (funcall 'org-id-get-create))
+                        (mytmplink (format "[[id:%s][%s]]" mytmpid mytmphead)) )
+                    (kill-new mytmplink)
+                    (message "Copied %s to killring (clipboard)" mytmplink)
+                )
+            )
+        )
+
     :bind (
            :map org-mode-map
            ("C-c C-." . org-time-stamp-inactive)
+           ("H-x C-c C-i" . psimacs/org/copy-id-to-clipboard)
+
            :map psimacs/config/global-key-map/execute
            ("a" . org-agenda)
            ("l" . org-store-link)
            ("c" . org-capture)
+           ("&" . org-mark-ring-goto)
           )
 )
 #+END_SRC
