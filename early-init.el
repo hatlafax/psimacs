@@ -98,6 +98,9 @@ Do not change it here!!!
 (defconst psimacs/config/agenda-folder "agenda"
   "The psimacs agenda directory.")
 
+(defconst psimacs/config/org-folder "org"
+  "The psimacs org directory.")
+
 (defconst psimacs/config/latex-folder "latex"
   "The psimacs latex directory.")
 
@@ -652,6 +655,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/agenda-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/agenda-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/org-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/org-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
                                                                              psimacs/config/latex-folder))
                                              (file-name-as-directory (concat db-dir
