@@ -16,7 +16,8 @@
 # #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 #+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
 
-* Introduction
+g* Introduction
+
 This is *Psimacs*, a /modern/ *Emacs* configuration build from the ground up using a [[https://de.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
 The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is the file that your are
 currently reading.
@@ -109,7 +110,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Working with Org-Mode
+
 ** Embedding code
+
 [[https://orgmode.org/][Org-mode]] allows embedding of source code blocks into =.org=-files and evaluating them by [[https://orgmode.org/worg/org-contrib/babel/][babel]] a core feature build
 into [[https://orgmode.org/manual/Working-with-Source-Code.html][org]]. The [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into special code blocks:
 
@@ -154,10 +157,12 @@ which will enter enter the debugger on execution.
 #+END_EXAMPLE
 
 ** References to Org-Mode markup
+
 An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic [[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail explanation about
 the markup rules used in [[https://orgmode.org][org-mode]] files.
 
 ** References to Org-Mode
+
 The following links might be useful for diving deeper into [[http://orgmode.org/][Org-Mode]]:
 - [[http://orgmode.org/manual/index.html][Org Mode Manual]]
 - [[http://orgmode.org/worg/][Worg, the Org Mode Community]]
@@ -174,9 +179,11 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 - [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
 
 * Working with ELisp
+
 This section gives some basic help with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] and debugging of [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code.
 
 ** Debugging ELisp with EDebug
+
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]] is a source-level debugger for Emacs Lisp programs that is very useful developing /Lisp/ code. In the following
 you can find some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
 
@@ -238,6 +245,7 @@ Embedding a breakpoint into source code: =(edebug)=
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** References to Emacs Lisp
+
 The following links might be useful for diving deeper into [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]]:
 - [[https://www.gnu.org/software/emacs/manual/eintr.html][Introduction to Programming in Emacs Lisp]]
 - [[https://www.emacswiki.org/emacs/ElispCookbook][EmacsWiki: Lisp Cookbook]]
@@ -247,6 +255,7 @@ The following links might be useful for diving deeper into [[https://www.gnu.org
 - [[http://ergoemacs.org/emacs/elisp.html][Practical Emacs Lisp]]
 
 * Key binding
+
 I am trying to setup keybinding in a /mnemonics/ way so it's easy to remember (and use).
 I am staying with the /standard/ emacs keybinding as much as possible.
 
@@ -2985,7 +2994,6 @@ To get running at all, the [[https://github.com/raxod502/straight.el][Straight]]
 #+END_SRC
 
 *** use-package
-Replace =use-package= automatically by =straight-use-package= in our configuration.
 
 [[https://github.com/jwiegley/use-package][use-package]] is a macro that provides convenient syntactic sugar for many common tasks
 related to installing and configuring *Emacs* packages. Of course, it does not actually
@@ -3244,7 +3252,7 @@ The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hac
 #+END_SRC
 
 *** Process data exchange
-Basically, this is an optimization with respect to the data exchange between [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]] servers and
+
 its clients.
 
 [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode: Language Server Protocol Support for Emacs]], aims to provide IDE-like experience by providing optional
@@ -3457,7 +3465,6 @@ See also:
 #+END_SRC
 
 ** User Site-Lisp load path
-We have one directory that we use for user elips code. We add this path the the list of load pathes.
 
 Our own /Emacs/ code resides in one directory that must be added to the load path.
 
@@ -6966,6 +6973,9 @@ See also:
 (global-set-key (kbd "<f12>") 'cua-mode)
 (define-key psimacs/config/global-key-map/special (kbd "c") 'cua-mode)
 (cua-mode t)
+(define-key cua-global-keymap (kbd "C-<return>") nil)
+(define-key cua-global-keymap (kbd "H-x C-<return>") 'cua-set-rectangle-mark)
+
 #+END_SRC
 
 *** Dired+
@@ -7052,7 +7062,6 @@ Some usefule key bindings and commands:
 #+END_SRC
 
 *** Perspective
-*** So Long
 
 The package [[https://www.emacswiki.org/emacs/SoLong][so-long]] provides a workaround for the problem of really long buffer lines. *Emacs* can't work with
 these so good.
@@ -9645,7 +9654,7 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 #+END_SRC
 
 *** Amx
-[[https://github.com/DarwinAwardWinner/amx][Amx]] is an alternative interface for M-x in Emacs.
+
 It provides several enhancements over the ordinary =execute-extended-command=, such as prioritizing
 your most-used commands in the completion list and showing keyboard shortcuts.
 
@@ -11332,7 +11341,6 @@ The package [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] integrat
 #+END_SRC
 
 ** Lisp
-*** Autoformatting
 
 The package [[https://www.emacswiki.org/emacs/elisp-format.el][elisp-format]] format elisp code.
 
@@ -11602,7 +11610,6 @@ Useful key bindings:
 #+END_SRC
 
 * Major Modes
-** Org-Mode
 
 Package [[https://orgmode.org][org-mode]] is for keeping notes, maintaining TODO lists,
 planning projects, and authoring documents with a fast and effective plain-text system.
@@ -11742,6 +11749,32 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
               )
     :defines org-agenda-mode-map
     :config
+        ;;
+        ;; Some helper functions that are used below
+        ;;
+        (defun psimacs/internal/org-global-props (&optional property buffer)
+          "Get the plists of global org properties of current buffer."
+          (unless property (setq property "PROPERTY"))
+          (with-current-buffer (or buffer (current-buffer))
+            (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+
+        (defun psimacs/internal/org-global-prop-value (key)
+          "Get global org property KEY of current buffer."
+          (org-element-property :value (car (psimacs/internal/org-global-props key))))
+
+        ;;(setq org-M-RET-may-split-line nil) ;; Do not split line at cursor position
+
+        ;;
+        ;; Conflicts with other packages
+        ;;
+
+        ;; Make windmove work in Org mode
+        (add-hook 'org-shiftup-final-hook    'windmove-up)
+        (add-hook 'org-shiftleft-final-hook  'windmove-left)
+        (add-hook 'org-shiftdown-final-hook  'windmove-down)
+        (add-hook 'org-shiftright-final-hook 'windmove-right)
+
+        (setq org-support-shift-select t)   ;; Make shift-cursor commands select text when possible
         (setq org-return-follows-link t)
         (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "CLOCKING" "LOGBOOK" "CLOCK" "RESULTS" "PEOPLE" "RESOURCES")))
         (setq org-log-done 'time)
@@ -12340,9 +12373,18 @@ code to whatever theme I'm using's background."
             (org-map-entries 'org-id-get-create)
         )
 
+        (defun psimacs/config/ids-to-headlines-in-file ()
+          "Calls 'psimacs/org/ids-to-headlines-in-file' only if buffer has property 'auto_ids' set to 'on','t','yes' or 'active'.
+
+Example: #+AUTO_IDS: yes"
+          (let ( (val (psimacs/internal/org-global-prop-value "auto_ids")) )
+              (when (and val (or (equalp val "on") (equalp val "yes") (equalp val "t") (equalp val "active")) )
+                  (psimacs/org/ids-to-headlines-in-file)
+          )))
+
         (add-hook 'org-mode-hook
             (lambda ()
-                    (add-hook 'before-save-hook 'psimacs/org/ids-to-headlines-in-file nil 'local)))
+               (add-hook 'before-save-hook 'psimacs/config/ids-to-headlines-in-file nil 'local)))
 
 
         (defun psimacs/org/copy-id-to-clipboard ()
@@ -12367,8 +12409,9 @@ If its assigned to a key it saves you marking the text and copying to the killri
 
     :bind (
            :map org-mode-map
-           ("C-c C-." . org-time-stamp-inactive)
+           ("C-c C-."     . org-time-stamp-inactive)
            ("H-x C-c C-i" . psimacs/org/copy-id-to-clipboard)
+           ("H-x C-c C-I" . psimacs/org/ids-to-headlines-in-file)
 
            :map psimacs/config/global-key-map/execute
            ("a" . org-agenda)
@@ -12481,7 +12524,7 @@ Presenting with [[https://orgmode.org][org-mode]]:
 ;; Presentations with org-mode
 ;;
 (use-package ox-beamer :straight nil :after org)
-(use-package epresent :straight t :after org)
+;(use-package epresent :straight t :after org)
 #+END_SRC
 
 *** Exporting to reStructuredText
@@ -13115,7 +13158,6 @@ See also:
 - [[https://www.gnu.org/software/emacs/manual/html_mono/ccmode.html][CC-Mode]], [[https://www.emacswiki.org/emacs/IndentingC][Indenting C]], [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Indentation-Commands.html][Indentation commands]], [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Styles.html#Styles][Styles]], [[https://en.wikipedia.org/wiki/Indent_style][Indent style]]
 
 **** Basic offset
-Always default to 4 spaces indent offset.
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
 ;;
@@ -13125,7 +13167,6 @@ Always default to 4 spaces indent offset.
 #+END_SRC
 
 **** Guess Style
-The following style is gueesed from some /CADdy++/ - source code files.
 
 See also:
 - [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html#Guessing-the-Style][Guessing the Style]]
@@ -13254,7 +13295,6 @@ Always default to 4 spaces indent offset.
 #+END_SRC
 
 * Shells
-** Microsoft PowerShell
 
 [[https://github.com/jschaf/powershell.el/tree/87826777bd3ebd53740be99b4546bfc11ccc625d][PowerShell]] is an Emacs major mode for editing and running [[https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.1][Microsoft PowerShell]] files.
 
@@ -13360,7 +13400,6 @@ are of high quality and some of them are obsolete because better alternatives ar
 to them so I will stay with them.
 
 ** Convenience
-*** Bind F6 to last command
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
 ;;
@@ -13374,7 +13413,6 @@ to them so I will stay with them.
 #+END_SRC
 
 ** Help
-*** Describe Foo at point
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
 ;;
