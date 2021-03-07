@@ -11651,47 +11651,19 @@ In order to avoid inconsistencies with of build-in org package, we just remove i
        load-path))
 #+END_SRC
 
-*** Temporarily workaround Org-Mode problem :noexport:
-
-*Psimacs* relies on features provided by the [[https://orgmode.org/worg/org-contrib/][Org-mode Contributed Packages]].
-At the time of working on this setup, I encountered a problem in the =org-plus-contrib-20200907= package.
-
-The code in this section circumvented the problem by patching one file in this package.
-Hopefully, I can get rid of this hack in the near future.
-
-Remove the built-in version of [[https://orgmode.org][org-mode]] from the load-path.
-
-#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
-;;
-;; Remove the built-in version of org-mode from the load-path.
-;;
-(require 'cl-seq)
-(setq load-path
-      (cl-remove-if
-       (lambda (x)
-         (string-match-p "org$" x))
-       load-path))
-#+END_SRC
-
-The current =org-plus-contrib-20200907= package does have an error in file =org.el= in line 5320.
-We use a loaclly patched version of this package with a fixed =org.el=.
-We load this patched package by the following =load-path=  modification.
-
-Check on [[https://orgmode.org/elpa/][OrgElpa]] and on [[https://code.orgmode.org/bzg/org-mode][org-mode]].
-
-Hopefully, this will be fixed upstream in the near future. In that case the following statement is
-to be removed and the =:ensure org-plus-contrib= is to be activated.
-
-#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el
-;;
-;; Add local path to org-plus-contrib to search path
-;;
-(add-to-list 'load-path (concat psimacs/config/site-lisp-dir "org-plus-contrib-20200907"))
-#+END_SRC
-
 *** The main Org-Mode configuration
 
-If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be commented!
+The configuration is long and gets longer with time. Therefore it is split
+into multiple chunks of code.
+
+**** Fixing missing org-loaddefs.el
+
+The problem is that *Psimacs* uses currently an =org-plus-contrib= version taken directly from
+the [[https://code.orgmode.org/bzg/org-mode.git][org-mode git]] repository. In order to install that version compatible =make= needs to be
+installed on the machine. In order to circumvent this problem the following code gets installed,
+that basically calls fixing functionality provided by [[https://orgmode.org][org-mode]]. This is described in the subsection
+ [[https://orgmode.org/worg/dev/org-build-system.html][Support for Manual Build]] of the /Org Build System/ page.
+
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
@@ -11726,19 +11698,29 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 )
 
 (add-hook 'straight-use-package-pre-build-functions #'psimacs/config/fix-org-autoload-function)
+#+END_SRC
 
+**** Org-Mode package installation
+
+If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be replaced by the =:straight nil= statement.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
 ;; The main org-mode configuration
 ;;
 (use-package org
+    ;; :straight nil
     :straight (org-plus-contrib
                 :repo "https://code.orgmode.org/bzg/org-mode.git"
                 :local-repo "org"
                 :files (:defaults "contrib/lisp/*.el")
              )
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
-;    :straight org-plus-contrib
-;    :straight nil
+
+    ;;
+    ;; The following code lines are only necessary because of the config files byte-compiling feature of Psimacs.
+    ;; Probably a better way exists for this.
+    ;;
     :commands ( org-transpose-element
                 org-transpose-words
                 org-table-transpose-table-at-point
@@ -11748,10 +11730,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 org-agenda-goto
               )
     :defines org-agenda-mode-map
+)
+#+END_SRC
+
+**** Helper functions for Org-Mode
+
+A small number of internal helper functions used in *Psimacs's* [[https://code.orgmode.org/bzg/org-mode][org-mode]] configuration.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Some helper functions that are used below
+;;
+(use-package org
+    :straight nil
     :config
-        ;;
-        ;; Some helper functions that are used below
-        ;;
         (defun psimacs/internal/org-global-props (&optional property buffer)
           "Get the plists of global org properties of current buffer."
           (unless property (setq property "PROPERTY"))
@@ -11761,12 +11753,24 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (defun psimacs/internal/org-global-prop-value (key)
           "Get global org property KEY of current buffer."
           (org-element-property :value (car (psimacs/internal/org-global-props key))))
+)
+#+END_SRC
 
-        ;;(setq org-M-RET-may-split-line nil) ;; Do not split line at cursor position
+**** Resolve conflicts with other packages
 
-        ;;
-        ;; Conflicts with other packages
-        ;;
+[[https://code.orgmode.org/bzg/org-mode][Org-mode]] does introduce some conflicts with other packages. The known ones are described in [[https://orgmode.org/manual/Conflicts.html][Packages that conflict with Org mode]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Conflicts with other packages
+;;
+;;
+;; The main org-mode configuration
+;;
+(use-package org
+    :straight nil
+    :config
+
 
         ;; Make windmove work in Org mode
         (add-hook 'org-shiftup-final-hook    'windmove-up)
@@ -11775,6 +11779,27 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (add-hook 'org-shiftright-final-hook 'windmove-right)
 
         (setq org-support-shift-select t)   ;; Make shift-cursor commands select text when possible
+
+        ;;
+        ;; Counsel tag completion does not work properly.
+        ;;
+        (require 'counsel)
+        (with-eval-after-load 'org        (define-key org-mode-map        (kbd "C-c C-S-q") #'counsel-org-tag))
+        (with-eval-after-load 'org-agenda (define-key org-agenda-mode-map (kbd "C-c C-S-q") #'counsel-org-tag-agenda))
+)
+#+END_SRC
+
+**** Basic Org-Mode settings
+
+The following are basic [[https://code.orgmode.org/bzg/org-mode][org-mode]] settings used by *Psimacs*.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Basic org-mode configuration
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-return-follows-link t)
         (setq org-drawers (quote ("PROPERTIES" "CLOCKTABLE" "CLOCKING" "LOGBOOK" "CLOCK" "RESULTS" "PEOPLE" "RESOURCES")))
         (setq org-log-done 'time)
@@ -11786,10 +11811,48 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (add-to-list 'org-modules 'org-habit t)
         (setq org-habit-show-habits-only-for-today t) ;; only show habits in today’s agenda view.
 
-        ;;
-        ;; ToDo keywords
-        ;;
+        (setq org-src-fontify-natively t)
+        (setq org-list-description-max-indent 5)
 
+        (setq org-adapt-indentation nil)
+        ;(setq org-hide-leading-stars 'hidestars) ; see org-superstar
+
+        (setq org-indent-indentation-per-level 2)
+        (setq org-list-description-max-indent 4)
+        (setq org-indent-mode-turns-off-org-adapt-indentation t)
+        (setq org-indent-mode-turns-on-hiding-stars t)
+
+        (setq org-src-preserve-indentation t)
+        (setq org-startup-indented t)
+        (setq org-startup-folded t)
+
+        (setq org-deadline-warning-days 7)      ;; warn me of any deadlines in next 7 days
+
+        (setq org-id-locations-file psimacs/config/org-id-file)
+
+        (defun psimacs/internal/org-remove-empty-drawer-on-clock-out()
+            (save-excursion
+                (beginning-of-line 0)
+                (org-remove-empty-drawer-at (point))
+            )
+        )
+
+        (add-hook 'org-clock-out-hook 'psimacs/internal/org-remove-empty-drawer-on-clock-out 'append)
+
+)
+#+END_SRC
+
+**** The ToDo-keywords configuration
+
+*Psimacs* defines a number of /ToDo/ keyword sequences.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; ToDo keywords setup
+;;
+(use-package org
+    :straight nil
+    :config
         ;;
         ;; The extra stuff after each keyword defines a shortcut key and whether a log entry should be added.
         ;; For example WAITING(i@/!) means 'i' is the keyboard shortcut, @ means "note with timestamp"
@@ -11828,9 +11891,22 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-enforce-todo-dependencies t)
         (setq org-enforce-todo-checkbox-dependencies t)
 
-        ;;
-        ;; Tag keywords
-        ;;
+        (setq org-use-fast-todo-selection t)
+        (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+)
+#+END_SRC
+
+**** The Tag-keywords configuration
+
+A list of useful tags is predefined by *Psimacs*.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Tag keywords
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-tag-faces '(
                 ;; Rough task assignment
                 ("research"     . (:foreground "LightGoldenrod1"))
@@ -11913,6 +11989,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
               )
         )
 
+        ;; Available key shortcuts for further tags.
         ;; h j k u y z
         ;; G M N Q U Y
         ;; 0
@@ -12020,7 +12097,21 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (setq org-use-fast-tag-selection t)
         (setq org-complete-tags-always-offer-all-agenda-tags nil)
         (setq org-track-ordered-property-with-tag "ordered")
+)
+#+END_SRC
 
+**** ToDo-state tag triggers
+
+For each /ToDo/-state a corresponding /tag/ is defined above. This section defines
+/tag/ changes that should be triggered by /ToDo/ state changes.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; The defined ToDo state Tag triggers
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-todo-state-tags-triggers
             (quote (
                 (""            ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") (""           . nil))
@@ -12043,41 +12134,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 ("DELEGATED"   ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled")               ("delegated"  . t))
             ))
         )
+)
+#+END_SRC
 
-        (defun psimacs/internal/org-remove-empty-drawer-on-clock-out()
-            (save-excursion
-                (beginning-of-line 0)
-                (org-remove-empty-drawer-at (point))
-            )
-        )
+**** Org bable language configuration
 
-        (add-hook 'org-clock-out-hook 'psimacs/internal/org-remove-empty-drawer-on-clock-out 'append)
+Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.html][org bable]].
 
-        (setq org-use-fast-todo-selection t)
-        (setq org-treat-S-cursor-todo-selection-as-state-change nil)
-        (setq org-src-fontify-natively t)
-        (setq org-list-description-max-indent 5)
-
-        (setq org-adapt-indentation nil)
-        ;(setq org-hide-leading-stars 'hidestars) ; see org-superstar
-
-        (setq org-indent-indentation-per-level 2)
-        (setq org-list-description-max-indent 4)
-        (setq org-indent-mode-turns-off-org-adapt-indentation t)
-        (setq org-indent-mode-turns-on-hiding-stars t)
-
-        (setq org-src-preserve-indentation t)
-        (setq org-startup-indented t)
-        (setq org-startup-folded t)
-
-        (setq org-deadline-warning-days 7)      ;; warn me of any deadlines in next 7 days
-
-        (setq org-id-locations-file psimacs/config/org-id-file)
-
-
-        ;;
-        ;; Org babel language support
-        ;;
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Org babel language support
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-confirm-babel-evaluate nil)
 
         (org-babel-do-load-languages 'org-babel-load-languages '(
@@ -12089,9 +12159,21 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
             (latex . t)
         ))
 
-        ;;
-        ;; Agenda
-        ;;
+        (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
+)
+#+END_SRC
+
+**** Org Agenda configuration
+
+Setup of the [[https://orgmode.org/manual/Agenda-Views.html][org agenda views]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Agenda setup
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-agenda-file-regexp "\\`Diary[^.].*\\.org\\'")
         (setq org-agenda-files (list psimacs/config/agenda-dir))
         ;(setq org-agenda-files psimacs/config/org-capture-coding-diary-files)
@@ -12129,10 +12211,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
         (unless (file-directory-p psimacs/config/agenda-dir)
             (mkdir psimacs/config/agenda-dir t)
         )
+)
+#+END_SRC
 
-        ;;
-        ;; Refiling
-        ;;
+**** Refiling and Archiving
+
+Once information is in the system, it may need to be moved around. Org provides [[https://orgmode.org/manual/Refiling-and-Archiving.html][Refile, Copy and Archive]] commands for this.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Refiling
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-refile-targets '((org-agenda-files :maxlevel . 9)))
         (setq org-refile-use-outline-path 'file)
         (setq org-outline-path-complete-in-steps nil)
@@ -12147,10 +12239,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                             (org-refile-get-targets)))
 
         (setq org-reverse-note-order nil)
+)
+#+END_SRC
 
-        ;;
-        ;; Priorities
-        ;;
+**** Priorities configuration
+
+[[https://orgmode.org/manual/Priorities.html#Priorities][Priorities]] allows to give /ToDo/ states an additional dimension.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Priorities
+;;
+(use-package org
+    :straight nil
+    :config
         (setq org-highest-priority ?A)
         (setq org-lowest-priority  ?E)
         (setq org-default-priority ?C)
@@ -12164,10 +12266,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 (?E . (:foreground "gold1"       :weight bold))
                )
         )
+)
+#+END_SRC
 
-        ;;
-        ;; Capture
-        ;;
+**** Capturing base configuration
+
+[[https://orgmode.org/manual/Capture.html#Capture][Capture]] lets you quickly store notes with little interruption of your work flow.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Capture
+;;
+(use-package org
+    :straight nil
+    :config
         (add-hook 'org-capture-mode-hook
             (lambda ()
                 (setq-local org-tag-alist (org-global-tags-completion-table))
@@ -12233,7 +12345,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
                 result
             )
         )
+)
+#+END_SRC
 
+**** Capturing templates
+
+*Psimacs* provides some predefined  [[https://orgmode.org/manual/Capture.html#Capture][capture]] templates that are defined in the following block.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Capturing templates
+;;
+(use-package org
+    :straight nil
+    :config
         (defun psimacs/internal/org-catpure-set-templates ()
             (let (
                     (code-point-template "* %? %^G\nEntered: %U\n%(psimacs/internal/org-capture-file-link)\n %(psimacs/internal/org-capture-code-block)\n")
@@ -12286,16 +12411,20 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
               )))
 
         (psimacs/internal/org-catpure-set-templates)
+)
+#+END_SRC
 
-        ;;
-        ;; Counsel tag completion does not work properly.
-        ;;
-        (require 'counsel)
-        (with-eval-after-load 'org        (define-key org-mode-map        (kbd "C-c C-S-q") #'counsel-org-tag))
-        (with-eval-after-load 'org-agenda (define-key org-agenda-mode-map (kbd "C-c C-S-q") #'counsel-org-tag-agenda))
+**** HTML export tuning
 
+Some configuration for HTML export is neccessary.
 
-
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; org-mode html export
+;;
+(use-package org
+    :straight nil
+    :config
         (defun psimacs/internal/org-inline-css-hook (exporter)
             "Insert custom inline css on html export.
 
@@ -12317,7 +12446,20 @@ code to whatever theme I'm using's background."
         )
 
         (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
+)
+#+END_SRC
 
+**** Publishing support :noexport:
+
+ToBe done.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Publishing setup
+;;
+(use-package org
+    :straight nil
+    :config
 
         ;; (setq org-publish-project alist
         ;;       '(
@@ -12329,10 +12471,20 @@ code to whatever theme I'm using's background."
         ;;          :with-toc                   nil
         ;;        )
         ;;     ))
+)
+#+END_SRC
 
+**** ODT export support
 
-        (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
+Provide some support for the [[https://en.wikipedia.org/wiki/OpenDocument][OpenDocument ODT]] file export.
 
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; ODT support for export
+;;
+(use-package org
+    :straight nil
+    :config
         (require 'ox-odt)
         (setq org-odt-preferred-output-format "docx")
 
@@ -12348,13 +12500,31 @@ code to whatever theme I'm using's background."
             ))
 
         (psimacs/config/org-export-as-docx-via-odt)    ;; Run the function I just defined to set up org-export-as-docx-via-odt.
+)
+#+END_SRC
 
+**** Generally useful functions for Org-Mode
 
+This section contains a number of useful functions for working with [[https://code.orgmode.org/bzg/org-mode][org-mode]] files.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Generally useful functions
+;;
+(use-package org
+    :straight nil
+    :config
+        ;;
+        ;; Search for headings
+        ;;
         (defun psimacs/org/search ()
           "Search for headings"
           (interactive)
           (org-refile '(4)))
 
+        ;;
+        ;; Currently open org files
+        ;;
         (defun psimacs/org/opened-buffer-files ()
           "Return the list of files currently opened in emacs."
           (interactive)
@@ -12365,20 +12535,48 @@ code to whatever theme I'm using's background."
                                          (buffer-file-name x)))
                       (buffer-file-name x)))
                 (buffer-list))))
+)
+#+END_SRC
 
+**** Handling of IDs in org-mode files
 
+Unique ID properties for headlines can be quite useful for linking =org= files together. This
+section contains some useful funcionality with respect to automatically generating such IDs.
+
+Function =psimacs/org/ids-to-headlines-in-file= generates unique IDs for each headline found in
+the current file.
+
+Additionally the code defines a property =#+AUTO_IDS: yes= that when found in the file automatically
+generates IDs for all headlines on file save.
+
+Function =psimacs/org/copy-id-to-clipboard= conveniently allows you to copy the ID link of a headline
+to the clipboad allowing to easily construct =id:= links to [[https://code.orgmode.org/bzg/org-mode][org-mode]] items.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Handling of IDs in org-mode files
+;;
+(use-package org
+    :straight nil
+    :config
+        ;;
+        ;; Add ID properties to all headlines of file
+        ;;
         (defun psimacs/org/ids-to-headlines-in-file ()
             "Add ID properties to all headlines in the current file which do not already have one."
             (interactive)
             (org-map-entries 'org-id-get-create)
         )
 
+        ;;
+        ;; Add ID properties to all headlines of file automatically if property '#+AUTO_IDS: yes'
+        ;;
         (defun psimacs/config/ids-to-headlines-in-file ()
           "Calls 'psimacs/org/ids-to-headlines-in-file' only if buffer has property 'auto_ids' set to 'on','t','yes' or 'active'.
 
 Example: #+AUTO_IDS: yes"
           (let ( (val (psimacs/internal/org-global-prop-value "auto_ids")) )
-              (when (and val (or (equalp val "on") (equalp val "yes") (equalp val "t") (equalp val "active")) )
+              (when (and val (or (cl-equalp val "on") (cl-equalp val "yes") (cl-equalp val "t") (cl-equalp val "active")) )
                   (psimacs/org/ids-to-headlines-in-file)
           )))
 
@@ -12386,7 +12584,9 @@ Example: #+AUTO_IDS: yes"
             (lambda ()
                (add-hook 'before-save-hook 'psimacs/config/ids-to-headlines-in-file nil 'local)))
 
-
+        ;;
+        ;; Copy ID link with headline. Probably create new ID.
+        ;;
         (defun psimacs/org/copy-id-to-clipboard ()
             "Copy an ID link with the headline to killring, if no ID is there then create a new unique ID.
 This function works only in org-mode or org-agenda buffers.
@@ -12406,7 +12606,34 @@ If its assigned to a key it saves you marking the text and copying to the killri
                 )
             )
         )
+)
+#+END_SRC
 
+**** Functions for generating /Keybinding, Command, Description/ tables.
+
+In order to document the keybindings used in this configuration tables are used that
+have three columns, namely =Keybinding=, =Command= and =Description=.
+
+Function =psimacs/org/table-create-preamble-keybinding-command-description= starts a new tabel of
+that kind.
+
+Function =psimacs/org/table-insert-row-keybinding-command-description= inserts either above or
+below of point in the current table a template entry allowing to faster generate a final entry
+to the table.
+
+Function =psimacs/org/table-append-row-keybinding-command-description= performs the same operation
+but always appends to the end of the table.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Support for easy keybinding, command, description table editing
+;;
+(use-package org
+    :straight nil
+    :config
+        ;;
+        ;; Support for writing this configuration file.
+        ;;
         (defun psimacs/org/table-create-preamble-keybinding-command-description ()
           "This function creates a three column table with header 'Keybinding', 'Command' and 'Description'."
           (interactive)
@@ -12414,24 +12641,22 @@ If its assigned to a key it saves you marking the text and copying to the killri
             (insert "| Keybinding | Command | Description |\n")
             (insert "|------------+---------+-------------|\n")))
 
-        (defun psimacs/org/table-insert-row-keybinding-command-description
-            (&optional
-             arg)
+        (defun psimacs/org/table-insert-row-keybinding-command-description (&optional arg)
           "This function inserts a three column row template above the current line into the table.
 
-        The current table is the active table or the last table above point.
-        The
+The current table is the active table or the last table above point.
+The
         "
           (interactive "P")
           (let ((last-point (point)))
-            (unless (org-table-p)
+            (unless (org-at-table-p)
               (beginning-of-line)
               (while (and (not (org-at-table-p))
                           (> (point)
                              (point-min)))
                 (beginning-of-line)
-                (previous-line)))
-            (if (org-table-p)
+                (forward-line -1)))
+            (if (org-at-table-p)
                 (progn (with-current-buffer (current-buffer)
                          (org-table-insert-row arg)
                          (insert "==")
@@ -12444,29 +12669,42 @@ If its assigned to a key it saves you marking the text and copying to the killri
         (defun psimacs/org/table-append-row-keybinding-command-description ()
           "This function appends a three column row template to the current table.
 
-        The current table is the active table or the last table above point.
+The current table is the active table or the last table above point.
         "
           (interactive)
           (let ((last-point (point)))
-            (if (org-table-p)
-                (progn (while (and (org-table-p)
+            (if (org-at-table-p)
+                (progn (while (and (org-at-table-p)
                                    (< (point)
                                       (point-max)))
                          (beginning-of-line)
-                         (next-line))
-                       (previous-line))
+                         (forward-line 1))
+                       (forward-line -1))
               ;; else
               (progn (beginning-of-line)
                      (while (and (not (org-at-table-p))
                                  (> (point)
                                     (point-min)))
                        (beginning-of-line)
-                       (previous-line))))
-            (if (org-table-p)
+                       (forward-line -1))))
+            (if (org-at-table-p)
                 (psimacs/org/table-insert-row-keybinding-command-description t)
               ;; else
               (progn (goto-char last-point)))))
+)
+#+END_SRC
 
+**** Keybindings used for org mode.
+
+In this section the keybinds for the *Psimacs* [[https://code.orgmode.org/bzg/org-mode][org-mode]] configuration are defined.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; Keybindings for org-mode
+;;
+(use-package org
+    :straight nil
+    :config
     :bind (
            :map org-mode-map
            ("C-c C-."     . org-time-stamp-inactive)
