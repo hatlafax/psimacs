@@ -12407,11 +12407,76 @@ If its assigned to a key it saves you marking the text and copying to the killri
             )
         )
 
+        (defun psimacs/org/table-create-preamble-keybinding-command-description ()
+          "This function creates a three column table with header 'Keybinding', 'Command' and 'Description'."
+          (interactive)
+          (with-current-buffer (current-buffer)
+            (insert "| Keybinding | Command | Description |\n")
+            (insert "|------------+---------+-------------|\n")))
+
+        (defun psimacs/org/table-insert-row-keybinding-command-description
+            (&optional
+             arg)
+          "This function inserts a three column row template above the current line into the table.
+
+        The current table is the active table or the last table above point.
+        The
+        "
+          (interactive "P")
+          (let ((last-point (point)))
+            (unless (org-table-p)
+              (beginning-of-line)
+              (while (and (not (org-at-table-p))
+                          (> (point)
+                             (point-min)))
+                (beginning-of-line)
+                (previous-line)))
+            (if (org-table-p)
+                (progn (with-current-buffer (current-buffer)
+                         (org-table-insert-row arg)
+                         (insert "==")
+                         (org-table-next-field)
+                         (insert "=M-x =")
+                         (org-table-next-field)
+                         (beginning-of-line)))
+              (progn (goto-char last-point)))))
+
+        (defun psimacs/org/table-append-row-keybinding-command-description ()
+          "This function appends a three column row template to the current table.
+
+        The current table is the active table or the last table above point.
+        "
+          (interactive)
+          (let ((last-point (point)))
+            (if (org-table-p)
+                (progn (while (and (org-table-p)
+                                   (< (point)
+                                      (point-max)))
+                         (beginning-of-line)
+                         (next-line))
+                       (previous-line))
+              ;; else
+              (progn (beginning-of-line)
+                     (while (and (not (org-at-table-p))
+                                 (> (point)
+                                    (point-min)))
+                       (beginning-of-line)
+                       (previous-line))))
+            (if (org-table-p)
+                (psimacs/org/table-insert-row-keybinding-command-description t)
+              ;; else
+              (progn (goto-char last-point)))))
+
     :bind (
            :map org-mode-map
            ("C-c C-."     . org-time-stamp-inactive)
-           ("H-x C-c C-i" . psimacs/org/copy-id-to-clipboard)
-           ("H-x C-c C-I" . psimacs/org/ids-to-headlines-in-file)
+           ("H-x C-c C-c i" . psimacs/org/copy-id-to-clipboard)
+           ("H-x C-c C-x i" . psimacs/org/ids-to-headlines-in-file)
+           ("H-x C-c C-k i" . org-table-insert-row)
+           ("H-x C-c C-k h" . org-table-insert-hline)
+           ("H-x C-c S-C-k p" . psimacs/org/table-create-preamble-keybinding-command-description)
+           ("H-x C-c S-C-k i" . psimacs/org/table-insert-row-keybinding-command-description)
+           ("H-x C-c S-C-k a" . psimacs/org/table-append-row-keybinding-command-description)
 
            :map psimacs/config/global-key-map/execute
            ("a" . org-agenda)
@@ -12510,11 +12575,11 @@ to =M-<TAB>=.
 )
 #+END_SRC
 
-*** Completions of structured templats.
+*** Completions of structured templates.
 
 [[https://orgmode.org/manual/Structure-Templates.html][Org tempo]] reimplements completions of structure template before point.
 
-﻿| Speed key  | Result                                  |
+| Keybinding | Description                             |
 |------------+-----------------------------------------|
 | =<﻿a <tab>= | =#+BEGIN_EXPORT ascii ... #+END_EXPORT= |
 | =<c <tab>= | =#+BEGIN_CENTER ... #+END_CENTER=       |
