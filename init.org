@@ -3,7 +3,7 @@
 #+DESCRIPTION: Loading Emacs configuration using org-babel
 #+TAGS: Emacs
 #+CATEGORIES: editing
-#+STARTUP: showeverything
+# #+STARTUP: showeverything
 #+OPTIONS: toc:4 h:4 tags:nil
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+HTML_HEAD: <style type="text/css">
@@ -2523,7 +2523,9 @@ are to be installed into the following directory.
 
 Installation of the following packages is recommended: autopep8, black, certifi, cmake-language-server, flake8,
 ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
-pycparser, pydocstyle, pywin32, pywinpty, sphinx
+pycparser, pydocstyle, pywin32, pywinpty, sphinx.
+
+If using [[https://www.sphinx-doc.org/en/master/][Sphinx]] with a non default contrib theme or extension, additional =pip= installation might be necessary.
 
 *Psimacs* installation does reference the python tools explicitly. Nevertheless, the Windows OS [[https://www.python.org/][Python]] runtime directory
 as well as the Windows OS [[https://www.python.org/][Python]] scripts directory will be added to the environment search path list prior to [[https://www.msys2.org/][MSYS2]]
@@ -2574,6 +2576,103 @@ pathes. Therefore our Windows OS [[https://www.python.org/][Python]] should alwa
   "The psimacs used python pyls runtime.")
 #+END_SRC
 
+** Sphinx
+
+[[https://www.sphinx-doc.org/en/master/][Sphinx]] is a tool that makes it easy to create intelligent and beautiful documentation.
+It must be alongside with installed with [[https://www.python.org/][Python]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Sphinx configuration constants
+;;
+(defconst psimacs/config/sphinx-apidoc-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-apidoc.exe")
+  "The psimacs used sphinx-apidoc runtime.")
+
+(defconst psimacs/config/sphinx-autogen-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-autogen.exe")
+  "The psimacs used sphinx-autogen runtime.")
+
+(defconst psimacs/config/sphinx-build-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-build.exe")
+  "The psimacs used sphinx-build runtime.")
+
+(defconst psimacs/config/sphinx-quickstart-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-quickstart.exe")
+  "The psimacs used sphinx-quickstart runtime.")
+
+(defcustom psimacs/config/sphinx/html-theme "sphinx_rtd_theme"
+  "Default theme used in sphinx RST to HTML converision."
+  :group 'sphinx
+  :type '(choice
+	    (string :tag "alabaster")
+          (string :tag "classic")
+          (string :tag "agogo")
+          (string :tag "bizstyle")
+          (string :tag "haiku")
+          (string :tag "nature")
+          (string :tag "pyramid")
+          (string :tag "scrolls")
+          (string :tag "sphinxdoc")
+          (string :tag "traditional")
+          (string :tag "furo")
+          (string :tag "sphinx_rtd_theme")
+          (string :tag "cloud")
+          (string :tag "pydata_sphinx_theme")
+          (string :tag "renga")
+          (string :tag "sphinx_book_theme")
+          (string :tag "sphinx_celery")
+          (string :tag "sphinx_materialdesign_theme")
+          (string :tag "sphinx_modern_theme")
+          (string :tag "readable")
+          (string :tag "sphinx_ustack_theme")
+          (string :tag "sphinxbootstrap4theme")
+          (string :tag "sphinxjp")
+          (string :tag "stanford_theme")
+          (string :tag "sunpy")
+          (string :tag "zerovm")
+    ))
+
+(defcustom psimacs/config/sphinx/builder "html"
+  "Default builder used in sphinx RST converision."
+  :group 'sphinx
+  :type '(choice
+	    (string :tag "html")
+          (string :tag "dirhtml")
+          (string :tag "singlehtml")
+          (string :tag "htmlhelp")
+          (string :tag "qthelp")
+          (string :tag "devhelp")
+          (string :tag "epub")
+          (string :tag "applehelp")
+          (string :tag "latex")
+          (string :tag "texinfo")
+          (string :tag "text")
+          (string :tag "gettext")
+          (string :tag "doctest")
+          (string :tag "linkcheck")
+          (string :tag "xml")
+          (string :tag "pseudoxml")
+    ))
+#+END_SRC
+
+** Pandoc
+
+[[https://pandoc.org/][Pandoc]] is a universal document converter.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-constants.el
+;;
+;; Pandoc configuration constants
+;;
+(defconst psimacs/config/pandoc-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "pandoc")
+  "The psimacs pandoc tool directory.")
+
+(defconst psimacs/config/pandoc-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/pandoc-dir "pandoc.exe")
+  "The psimacs used pandoc runtime.")
+#+END_SRC
+
 ** PlantUML
 
 . [[https://plantuml.com/][PlantUML]] is an open-source tool allowing users to create [[https://en.wikipedia.org/wiki/Unified_Modeling_Language][UML]] diagrams from a plain text language.
@@ -2588,7 +2687,7 @@ References:
 ;;
 (defconst psimacs/config/plantuml-dir
   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "plantUML")
-  "The psimacs plantUml tool  directory.")
+  "The psimacs plantUml tool directory.")
 
 (defconst psimacs/config/plantuml-jar-file
   (concat psimacs/config/plantuml-dir "lib/plantuml.jar")
@@ -12484,6 +12583,7 @@ Provide some support for the [[https://en.wikipedia.org/wiki/OpenDocument][OpenD
 ;;
 (use-package org
     :straight nil
+    :defines ( org-export-odt-convert-processes )
     :config
         (require 'ox-odt)
         (setq org-odt-preferred-output-format "docx")
@@ -14560,6 +14660,69 @@ Header and source files are expected to reside at the same place.
         )
         (widen)
     )
+)
+#+END_SRC
+
+** Sphinx
+
+[[https://www.sphinx-doc.org/en/master/][Sphinx]] is a tool that makes it easy to create intelligent and beautiful documentation.
+It must be alongside with installed with [[https://www.python.org/][Python]].
+
+*** Run Sphinx-build
+
+The following function run the *sphinx-build* command. It ask for a *reStructuredText* input =.rst= file.
+A configuration file =conf.py= beside the input file is respected.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Run the sphinx build process
+;;
+(defun psimacs/sphinx/build ()
+  "Run the sphinx-build tool for the given file.
+
+Ask for the input file.
+If configuration conf.py exists beside the input file, this configuration governs the build.
+Otherwise, a simple command line configuration is assembled using customization variables
+psimacs/config/sphinx/builder and psimacs/config/sphinx/html-theme.
+"
+  (interactive)
+  (let* ((file (read-file-name "Enter file name: " default-directory))
+         (src-dir (file-name-directory file))
+         (dst-dir (concat src-dir "build"))
+         (conf (concat src-dir "conf.py"))
+        )
+    (when (file-exists-p file)
+      (if (file-exists-p conf)
+          (shell-command (concat psimacs/config/sphinx-build-runtime-exe " " src-dir " " dst-dir " " file))
+        ;; else
+        (let ((builder   (concat "-b " psimacs/config/sphinx/builder))
+              (config    "-C")
+              (theme     (concat "-D html_theme=" psimacs/config/sphinx/html-theme))
+              (project   (concat "-D project=\"org-mode\""))
+              (copyright (concat "-D copyright=\"" (format-time-string "%Y") ", " psimacs/config/copyright/author "\"" ))
+              (author    (concat "-D author=\"" psimacs/config/copyright/author "\""))
+              (master    (concat "-D master_doc=" (file-name-sans-extension (file-name-nondirectory file))))
+             )
+          ;; (message builder)
+          ;; (message theme)
+          ;; (message project)
+          ;; (message copyright)
+          ;; (message author)
+          ;; (message master)
+          ;; (message src-dir)
+          ;; (message dst-dir)
+          ;; (message file)
+          (shell-command (concat psimacs/config/sphinx-build-runtime-exe " "
+                                 builder   " "
+                                 config    " "
+                                 theme     " "
+                                 project   " "
+                                 copyright " "
+                                 author    " "
+                                 master    " "
+                                 src-dir   " "
+                                 dst-dir   " "
+                                 file))))))
 )
 #+END_SRC
 
