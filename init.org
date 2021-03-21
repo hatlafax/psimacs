@@ -5251,12 +5251,40 @@ See also: [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][About prettify-
     :straight nil
     :config
         (setq prettify-symbols-unprettify-at-point 'right-edge)
+
+        (defun psimacs/config/prettify-symbols-compose-p (start end _match)
+          "Return true iff the symbol MATCH should be composed.
+The symbol starts at position START and ends at position END.
+This is the default for `prettify-symbols-compose-predicate'
+which is suitable for most programming languages such as C or Lisp.
+
+Additional to 'prettify-symbols-compose-p' function found in prog-mode.el
+this variant recoginizes a valid symbol if it starts with and/or ends with
+characters '_' or '/'.
+"
+          ;; Check that the chars should really be composed into a symbol.
+          (let* ((syntaxes-beg (if (memq (char-syntax (char-after start)) '(?w ?_))
+                                   '(?w ?_) '(?. ?\\)))
+                 (syntaxes-end (if (memq (char-syntax (char-before end)) '(?w ?_))
+                                   '(?w ?_) '(?. ?\\))))
+            (not (or (and
+                       (null (memq (char-before start) '(?_ ?/)))
+                       (memq (char-syntax (or (char-before start) ?\s)) syntaxes-beg))
+                     (and
+                       (null (memq (char-after end) '(?_ ?/)))
+                       (memq (char-syntax (or (char-after end) ?\s)) syntaxes-end))
+                     (nth 8 (syntax-ppss))))))
+
         (global-prettify-symbols-mode t)
         (add-hook
             'prog-mode-hook
                 (lambda ()
+                    (setq prettify-symbols-compose-predicate #'psimacs/config/prettify-symbols-compose-p)
                     (mapc (lambda (pair) (push pair prettify-symbols-alist))
                        '(
+                        ;; Psimacs
+                            ("psimacs". ?𝝍)
+
                         ;; Greek Letters
                             ("ALPHA"  . ?𝜜)
                             ("Alpha"  . ?𝛢)
@@ -14123,7 +14151,7 @@ arg lines down."
 ;; Move text up
 ;;
 (defun psimacs/movement/move-text-up (arg)
-    "Move region or line down.
+    "Move region or line up.
 
 Move region (transient-mark-mode active) or current line
   arg lines up."
@@ -14677,7 +14705,7 @@ A configuration file =conf.py= beside the input file is respected.
 ;;
 ;; Run the sphinx build process
 ;;
-(defun psimacs/sphinx/build ()
+(defun psimacs/sphinx/build (&optional arg-file)
   "Run the sphinx-build tool for the given file.
 
 Ask for the input file.
@@ -14686,7 +14714,7 @@ Otherwise, a simple command line configuration is assembled using customization 
 psimacs/config/sphinx/builder and psimacs/config/sphinx/html-theme.
 "
   (interactive)
-  (let* ((file (read-file-name "Enter file name: " default-directory))
+  (let* ((file (or arg-file (read-file-name "Enter file name: " default-directory)))
          (src-dir (file-name-directory file))
          (dst-dir (concat src-dir "build"))
          (conf (concat src-dir "conf.py"))
@@ -14723,6 +14751,15 @@ psimacs/config/sphinx/builder and psimacs/config/sphinx/html-theme.
                                  src-dir   " "
                                  dst-dir   " "
                                  file))))))
+)
+
+(defun psimacs/sphinx/org-sphinx-build ()
+    "Run the sphinx-build tool for the current org buffer."
+    (interactive)
+    (when (eq major-mode 'org-mode)
+      (org-rst-export-to-rst)
+      (psimacs/sphinx/build (concat (file-name-sans-extension (buffer-file-name)) ".rst"))
+    )
 )
 #+END_SRC
 
@@ -15514,26 +15551,33 @@ _q_: quit_
 Additional key bindings for *Psimacs*:
 
 #+ATTR_HTML: :class styledtable
-| Key binding     | Command                                                        | Description                                                                                       |
-|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
-| =C-TAB=         | =M-x psimacs/buffer/next-user-buffer=                          | Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.     |
-| =C-S-TAB=       | =M-x psimacs/buffer/previous-user-buffer=                      | Switch to the previous user buffer. Buffer name starts with *, it's not considered a user buffer. |
-| =H-TAB=         | =M-x psimacs/buffer/next-emacs-buffer=                         | Switch to the next emacs buffer, i.e. that starts with *.                                         |
-| =H-S-TAB=       | =M-x psimacs/buffer/previous-emacs-buffer=                     | Switch to the previous emacs buffer, i.e. that starts with *.                                     |
-| =C-x <right>=   | =M-x next-buffer=                                              | Switch to the next buffer.                                                                        |
-| =C-x <left>=    | =M-x previous-buffer=                                          | Switch to the previous buffer.                                                                    |
-|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
-| =H-m C-v C-o=   | =M-x psimacs/shell/open-file-in-visual-studio=                 | Open the given file argument in the MS Visual Studion session.                                    |
-| =H-m C-v C-i=   | =M-x psimacs/shell/import-file-in-visual-studio=               | Import the given file argument in the MS Visual Studion session.                                  |
-|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
-| =H-m C-f C-a c= | =M-x find-file <psimacs/config/org-capture-coding-diary-file>= | Find coding diary file in agenda directory.                                                       |
-| =H-m C-f C-a d= | =M-x find-file <Diary.org>=                                    | Find diary file in agenda directory.                                                              |
-| =H-m C-f C-a j= | =M-x find-file <Journal.org>=                                  | Find journal file in agenda directory.                                                            |
-| =H-m C-f C-a l= | =M-x find-file <TimeLog.org>=                                  | Find time log file in agenda directory.                                                           |
-|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
-| =H-m C-e C-m v= | =M-x visual-line-mode=                                         | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                              |
-| =H-m C-p C-b=   | =M-x psimacs/pair/bounce-sexp=                                 | Will bounce between matching parens.                                                              |
-| =H-m C-x s b=   | =M-x psimacs/convenience/bind-f6-to-last-command=              | Bind function key F6 to the last command used.                                                    |
+| Key binding       | Command                                                        | Description                                                                                       |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =C-TAB=           | =M-x psimacs/buffer/next-user-buffer=                          | Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.     |
+| =C-S-TAB=         | =M-x psimacs/buffer/previous-user-buffer=                      | Switch to the previous user buffer. Buffer name starts with *, it's not considered a user buffer. |
+| =H-TAB=           | =M-x psimacs/buffer/next-emacs-buffer=                         | Switch to the next emacs buffer, i.e. that starts with *.                                         |
+| =H-S-TAB=         | =M-x psimacs/buffer/previous-emacs-buffer=                     | Switch to the previous emacs buffer, i.e. that starts with *.                                     |
+| =C-x <right>=     | =M-x next-buffer=                                              | Switch to the next buffer.                                                                        |
+| =C-x <left>=      | =M-x previous-buffer=                                          | Switch to the previous buffer.                                                                    |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-<up>=          | =M-x psimacs/movement/move-text-up=                            | Move region or line up.                                                                           |
+| =H-<down>=        | =M-x psimacs/movement/move-text-down=                          | Move region or line down.                                                                         |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-v C-o=     | =M-x psimacs/shell/open-file-in-visual-studio=                 | Open the given file argument in the MS Visual Studion session.                                    |
+| =H-m C-v C-i=     | =M-x psimacs/shell/import-file-in-visual-studio=               | Import the given file argument in the MS Visual Studion session.                                  |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-f C-a c=   | =M-x find-file <psimacs/config/org-capture-coding-diary-file>= | Find coding diary file in agenda directory.                                                       |
+| =H-m C-f C-a d=   | =M-x find-file <Diary.org>=                                    | Find diary file in agenda directory.                                                              |
+| =H-m C-f C-a j=   | =M-x find-file <Journal.org>=                                  | Find journal file in agenda directory.                                                            |
+| =H-m C-f C-a l=   | =M-x find-file <TimeLog.org>=                                  | Find time log file in agenda directory.                                                           |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-e C-m v=   | =M-x visual-line-mode=                                         | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                              |
+| =H-m C-p C-b=     | =M-x psimacs/pair/bounce-sexp=                                 | Will bounce between matching parens.                                                              |
+| =H-m C-x s b=     | =M-x psimacs/convenience/bind-f6-to-last-command=              | Bind function key F6 to the last command used.                                                    |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-x C-c C-e s h= | =M-x psimacs/sphinx/org-sphinx-build=                          | Run the sphinx-build tool for the current org buffer.                                             |
+| =H-x C-c C-e s H= | =M-x psimacs/sphinx/build=                                     | Run the sphinx-build tool for the given file.                                                     |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
 
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-keybindings.el :var file-description="Key bindings setup"
@@ -15545,8 +15589,8 @@ Additional key bindings for *Psimacs*:
 (bind-key* "<H-tab>"   'psimacs/buffer/next-emacs-buffer)
 (bind-key* "<H-S-tab>" 'psimacs/buffer/previous-emacs-buffer)
 
-(define-key psimacs/config/global-key-map/execute (kbd "M-<up>")   'psimacs/movement/move-text-up)
-(define-key psimacs/config/global-key-map/execute (kbd "M-<down>") 'psimacs/movement/move-text-down)
+(bind-key* "<H-<up>>"   'psimacs/movement/move-text-up)
+(bind-key* "<H-<down>"  'psimacs/movement/move-text-down)
 
 (define-key psimacs/config/global-key-map/special (kbd "C-v C-o") 'psimacs/shell/open-file-in-visual-studio)
 (define-key psimacs/config/global-key-map/special (kbd "C-v C-i") 'psimacs/shell/import-file-in-visual-studio)
@@ -15561,6 +15605,9 @@ Additional key bindings for *Psimacs*:
 (define-key psimacs/config/global-key-map/special (kbd "C-p C-b") 'psimacs/pair/bounce-sexp)
 
 (define-key psimacs/config/global-key-map/special (kbd "C-x s b") 'psimacs/convenience/bind-f6-to-last-command)
+
+(define-key psimacs/config/global-key-map/execute (kbd "C-c C-e s h") 'psimacs/sphinx/org-sphinx-build)
+(define-key psimacs/config/global-key-map/execute (kbd "C-c C-e s H") 'psimacs/sphinx/build)
 #+END_SRC
 
 * Byte compile configuration
@@ -15664,6 +15711,9 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =s-p=               | =M-x centaur-tabs-backward=                                             | Select the previous available tab.                                                                                                                                                                                                                                                               |
 | =s-n=               | =M-x centaur-tabs-forward=                                              | Select the next available tab.                                                                                                                                                                                                                                                                   |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-<up>=            | =M-x psimacs/movement/move-text-up=                                     | Move region or line up.                                                                                                                                                                                                                                                                          |
+| =H-<down>=          | =M-x psimacs/movement/move-text-down=                                   | Move region or line down.                                                                                                                                                                                                                                                                        |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-;=               | =M-x iedit-mode=                                                        | Toggle [[https://github.com/victorhge/iedit][iedit-mode]].                                                                                                                                                                                                                                                                               |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -15938,6 +15988,9 @@ by the various packages nor by *Emacs* itself.
 | =H-x l=             | =M-x org-store-link=                                                    | Store a link to the current location.                                                                                                                                                                                                                                                            |
 | =H-x a=             | =M-x org-agenda=                                                        | Dispatch agenda commands to collect entries to the agenda buffer.                                                                                                                                                                                                                                |
 | =H-x c=             | =M-x org-capture=                                                       | Capture something                                                                                                                                                                                                                                                                                |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x C-c C-e s h=   | =M-x psimacs/sphinx/org-sphinx-build=                                   | Run the sphinx-build tool for the current org buffer.                                                                                                                                                                                                                                            |
+| =H-x C-c C-e s H=   | =M-x psimacs/sphinx/build=                                              | Run the sphinx-build tool for the given file.                                                                                                                                                                                                                                                    |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x x=             | =M-x yas-insert-snippet=                                                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
