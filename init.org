@@ -7717,7 +7717,6 @@ the golden ration.
 (use-package golden-ratio
     :diminish golden-ratio-mode
     :config
-        (golden-ratio-mode 1)
 	(setq golden-ratio-auto-scale nil)
 
         (setq golden-ratio-adjust-factor 1.0)
@@ -7725,6 +7724,40 @@ the golden ration.
     :bind (
          :map psimacs/config/global-key-map/special
               ("C-w C-r" . golden-ratio-mode)
+        )
+)
+#+END_SRC
+
+*** Zoom
+
+Package [[https://github.com/cyrus-and/zoom][zoom]] provides a minor mode that takes care of managing the window sizes by enforcing 
+a fixed and automatic balanced layout where the currently selected window is resized according to zoom-size which can be an absolute 
+value in lines/columns, a ratio between the selected window and frame size or even a custom callback.
+
+[[https://github.com/cyrus-and/zoom][Zoom]] is an alternative to package [[https://github.com/roman/golden-ratio.el][Golden-Ratio]]
+which does have some problems to be convenient.
+
+| Key binding   | Command         | Description                                                             |
+|---------------+-----------------+-------------------------------------------------------------------------|
+| =H-m C-w +=   | =M-x zoom=      | Zoom the current window and balance the others according to =zoom-size=.|
+| =H-m C-w C-z= | =M-x zoom-mode= | Toggle automatic window resizing with zoom.                             |
+|---------------+-----------------+-------------------------------------------------------------------------|
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-basic-layout.el
+;;
+;; Manage sizes of focues windows
+;;
+(use-package zoom
+    :diminish
+    :config
+        (zoom-mode t)
+
+        (setq zoom-size '(0.618 . 0.618)
+              zoom-ignored-major-modes '(which-key-mode
+                                         hydra-mode))
+    :bind (
+         :map psimacs/config/global-key-map/special
+              ("C-w +" . zoom)
         )
 )
 #+END_SRC
@@ -9641,6 +9674,14 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 )
 #+END_SRC
 
+Display icons for all buffers in ivy with the help of package [[https://github.com/asok/all-the-icons-ivy][all-the-icons-ivy]].
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-swiper-key.el
+(use-package all-the-icons-ivy
+    :after ivy
+)
+#+END_SRC
+
 Display icons for all buffers in ivy with the help of package [[https://github.com/seagle0128/all-the-icons-ivy-rich][all-the-icons-ivy-rich]].
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-swiper-key.el
@@ -9808,6 +9849,55 @@ your most-used commands in the completion list and showing keyboard shortcuts.
             ("H-x m" . amx-mode)
             ("H-x u" . amx-show-unbound-commands)
         )
+)
+#+END_SRC
+
+*** Frog jumping
+
+The package [[https://github.com/waymondo/frog-jump-buffer][frog-jump-buffer]] is the spiritual successor to 
+ace-jump-buffer and is powered by avy via frog-menu. Just like =ace-jump-buffer=, it allows you to hop to any 
+*Emacs* buffer in 2-3 key strokes.
+
+#+BEGIN_SRC emacs-lisp :tangle config/init-advanced-frog-jump.el :var file-description="Advanced frog jump buffer setup"
+;;
+;; Easily hopping between buffers
+;;
+(use-package frog-jump-buffer
+    :after ivy-rich
+    :config
+        (setq frog-jump-buffer-max-buffers 24)
+        (setq frog-jump-buffer-include-current-buffer nil)
+        (dolist (regexp '("TAGS" "^\\*Compile-log" "-debug\\*$" "^\\:" "errors\\*$" "^\\*Backtrace" "-ls\\*$"
+                  "stderr\\*$" "^\\*Flymake" "^\\*vc" "^\\*Warnings" "^\\*eldoc" "\\^*Shell Command"))
+            (push regexp frog-jump-buffer-ignore-buffers))
+
+        (set-face-attribute 'frog-menu-prompt-face nil 
+                            :foreground "#d0bf8f"
+                            :background "#3f3f3f")
+                            
+        (set-face-attribute 'frog-menu-candidates-face nil 
+                            :foreground (face-foreground 'default)
+                            :background "#3f3f3f")
+                            
+        (set-face-attribute 'frog-menu-actions-face nil 
+                            :foreground (face-foreground 'default)
+                            :background "#3f3f3f")
+                            
+        (set-face-attribute 'frog-menu-action-keybinding-face nil 
+                            :foreground (face-foreground 'default)
+                            :background "#3f3f3f")
+                            
+        (set-face-attribute 'frog-menu-posframe-background-face nil 
+                            :foreground "#10bf8f"
+                            :background "#3f3f3f")
+                            
+        (set-face-attribute 'frog-menu-border nil
+                            :foreground (face-foreground 'default)
+                            :background "#3f3f3f")
+                            
+    :bind (
+            ("H-b" . frog-jump-buffer)
+          )
 )
 #+END_SRC
 
@@ -15878,6 +15968,9 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-w C-s s=     | =M-x smooth-scrolling-mode=                                             | Enable or disable the smooth scrolling mode.                                                                                                                                                                                                                                                     |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-w C-r=       | =M-x golden-ratio-mode=                                                 | Toggle automatic window resizing with golden ratio.                                                                                                                                                                                                                                              |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-w +=         | =M-x zoom=                                                              | Zoom the current window and balance the others according to =zoom-size=.                                                                                                                                                                                                                         |
+| =H-m C-w C-z=       | =M-x zoom-mode=                                                         | Toggle automatic window resizing with zoom.                                                                                                                                                                                                                                                      |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C RET=     | =M-x counsel-search=                                                    | Shows search suggestions as you type and visit page in your default browser on =RET=.                                                                                                                                                                                                            |
 | =H-m C-x C s=       | =M-x counsel-web-suggest=                                               | Shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.                                                                                                                                                                                  |
