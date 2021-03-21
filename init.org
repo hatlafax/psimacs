@@ -7730,8 +7730,8 @@ the golden ration.
 
 *** Zoom
 
-Package [[https://github.com/cyrus-and/zoom][zoom]] provides a minor mode that takes care of managing the window sizes by enforcing 
-a fixed and automatic balanced layout where the currently selected window is resized according to zoom-size which can be an absolute 
+Package [[https://github.com/cyrus-and/zoom][zoom]] provides a minor mode that takes care of managing the window sizes by enforcing
+a fixed and automatic balanced layout where the currently selected window is resized according to zoom-size which can be an absolute
 value in lines/columns, a ratio between the selected window and frame size or even a custom callback.
 
 [[https://github.com/cyrus-and/zoom][Zoom]] is an alternative to package [[https://github.com/roman/golden-ratio.el][Golden-Ratio]]
@@ -9854,9 +9854,15 @@ your most-used commands in the completion list and showing keyboard shortcuts.
 
 *** Frog jumping
 
-The package [[https://github.com/waymondo/frog-jump-buffer][frog-jump-buffer]] is the spiritual successor to 
-ace-jump-buffer and is powered by avy via frog-menu. Just like =ace-jump-buffer=, it allows you to hop to any 
+The package [[https://github.com/waymondo/frog-jump-buffer][frog-jump-buffer]] is the spiritual successor to
+ace-jump-buffer and is powered by avy via frog-menu. Just like =ace-jump-buffer=, it allows you to hop to any
 *Emacs* buffer in 2-3 key strokes.
+
+| Key binding | Command                             | Description                                                           |
+|-------------+-------------------------------------+-----------------------------------------------------------------------|
+| =H-b=       | =M-x frog-jump-buffer=              | Presents a /frog-menu/ for jumping to an open buffer.                 |
+| =H-B=       | =M-x frog-jump-buffer-other-window= | Presents a /frog-menu/ for jumping to an open buffer in other window. |
+|-------------+-------------------------------------+-----------------------------------------------------------------------|
 
 #+BEGIN_SRC emacs-lisp :tangle config/init-advanced-frog-jump.el :var file-description="Advanced frog jump buffer setup"
 ;;
@@ -9871,32 +9877,33 @@ ace-jump-buffer and is powered by avy via frog-menu. Just like =ace-jump-buffer=
                   "stderr\\*$" "^\\*Flymake" "^\\*vc" "^\\*Warnings" "^\\*eldoc" "\\^*Shell Command"))
             (push regexp frog-jump-buffer-ignore-buffers))
 
-        (set-face-attribute 'frog-menu-prompt-face nil 
+        (set-face-attribute 'frog-menu-prompt-face nil
                             :foreground "#d0bf8f"
                             :background "#3f3f3f")
-                            
-        (set-face-attribute 'frog-menu-candidates-face nil 
+
+        (set-face-attribute 'frog-menu-candidates-face nil
                             :foreground (face-foreground 'default)
                             :background "#3f3f3f")
-                            
-        (set-face-attribute 'frog-menu-actions-face nil 
+
+        (set-face-attribute 'frog-menu-actions-face nil
                             :foreground (face-foreground 'default)
                             :background "#3f3f3f")
-                            
-        (set-face-attribute 'frog-menu-action-keybinding-face nil 
+
+        (set-face-attribute 'frog-menu-action-keybinding-face nil
                             :foreground (face-foreground 'default)
                             :background "#3f3f3f")
-                            
-        (set-face-attribute 'frog-menu-posframe-background-face nil 
+
+        (set-face-attribute 'frog-menu-posframe-background-face nil
                             :foreground "#10bf8f"
                             :background "#3f3f3f")
-                            
+
         (set-face-attribute 'frog-menu-border nil
                             :foreground (face-foreground 'default)
                             :background "#3f3f3f")
-                            
+
     :bind (
             ("H-b" . frog-jump-buffer)
+            ("H-B" . frog-jump-buffer-other-window)
           )
 )
 #+END_SRC
@@ -15806,6 +15813,9 @@ by the various packages nor by *Emacs* itself.
 | =H-<down>=          | =M-x psimacs/movement/move-text-down=                                   | Move region or line down.                                                                                                                                                                                                                                                                        |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-;=               | =M-x iedit-mode=                                                        | Toggle [[https://github.com/victorhge/iedit][iedit-mode]].                                                                                                                                                                                                                                                                               |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-b=               | =M-x frog-jump-buffer=                                                  | Presents a /frog-menu/ for jumping to an open buffer.                                                                                                                                                                                                                                            |
+| =H-B=               | =M-x frog-jump-buffer-other-window=                                     | Presents a /frog-menu/ for jumping to an open buffer in other window.                                                                                                                                                                                                                            |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-c C-e=           | =M-x edit-indirect-region=                                              | Edit region in separate buffer *edit-indirect buffer*                                                                                                                                                                                                                                            |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
