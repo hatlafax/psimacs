@@ -1976,6 +1976,17 @@ Auto saving is performed by *Psimacs* a lot.
   "The psimacs bm bookmarks file.")
 #+end_src
 
+Additionally the vanilla bookmark mode file is also defined in the =psimacs/config/session-dir=.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for bookmarking
+;;
+(defconst psimacs/config/bookmarks-file
+  (psimacs/file-system/concat-file psimacs/config/bookmarks-dir ".bookmarks")
+  "The psimacs bookmarks file.")
+#+end_src
+
 ** Abbreviations
 
 *Psimacs uses the default *Emacs* [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbreviation]] facility.
@@ -3005,6 +3016,10 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 (defconst psimacs/config/projectile-known-projects-file
   (psimacs/file-system/concat-file psimacs/config/projectile-dir ".projectile-bookmarks")
   "The psimacs projectile bookmark file.")
+
+(defconst psimacs/config/projectile-cache-file
+  (psimacs/file-system/concat-file psimacs/config/projectile-dir ".projectile.cache")
+  "The psimacs projectile cache file.")
 #+end_src
 
 ** LSP-Mode
@@ -3018,6 +3033,19 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 (defconst psimacs/config/lsp-session-file
   (psimacs/file-system/concat-file psimacs/config/session-dir ".lsp-session-v1")
   "The psimacs lsp-mode session file.")
+#+end_src
+
+** DAP-Mode
+
+*Psimacs* uses the following file for storing [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] breakpoint information:
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for dap-mode
+;;
+(defconst psimacs/config/dap-breakpoints-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".dap-breakpoints")
+  "The psimacs dap-mode breakpoints file.")
 #+end_src
 
 * Environment
@@ -8195,6 +8223,21 @@ See also:
 )
 #+end_src
 
+*** Vanilla Bookmarks
+
+Just define the bookmark file in the =psimacs/config/bookmarks-dir=.
+
+#+begin_src emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Define the bookmark file
+;;
+(use-package bookmark
+    :straight nil
+    :config
+        (setq bookmark-default-file psimacs/config/bookmarks-file)
+)
+#+end_src
+
 *** Avy - jumping to visible text
 
 [[https://github.com/abo-abo/avy][Avy]] is a GNU Emacs package for jumping to visible text using
@@ -10513,6 +10556,7 @@ The file is only created if it does not already exist."
         ;(setq projectile-sort-order 'modification-time)
 
         (setq projectile-known-projects-file psimacs/config/projectile-known-projects-file)
+        (setq projectile-cache-file          psimacs/config/projectile-cache-file)
 
     :config
         (setq projectile-project-search-path psimacs/config/project-search-path)
@@ -11064,6 +11108,7 @@ task that involves generation of repetitive text/blocks of text e.g. there is a 
 #+end_quote
 
 See also:
+- [[https://github.com/hatlafax/ELSE][ELSE fork by me]]
 - [[https://github.com/peter-milliken/ELSE][ELSE]]
 - [[https://github.com/jschaf/else.el][Emacs Language Sensitive Editor (ELSE)]]
 - [[https://www.emacswiki.org/emacs/ElseMode][EmacsWiki: Else Mode]]
@@ -11088,7 +11133,7 @@ See also:
 #+begin_src emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
 (use-package else-mode
     :diminish (else-mode else-template-mode)
-    :straight (else :host github :repo "peter-milliken/ELSE")
+    :straight (else :host github :repo "hatlafax/ELSE" :no-byte-compile t)
     :commands (else-mode else-template-mode else-template-compile-buffer)
     :mode ("\\.lse\\'" . else-template-mode)
     :init
@@ -11221,6 +11266,24 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
 * Programming Support
 
 *Psimacs* provides extended support for programming.
+
+** Commenter
+
+The package [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commenter]] help you comment code efficiently.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-programming.el :var file-description="Advanced programming setup"
+;;
+;; Comment code efficiently
+;;
+(use-package evil-nerd-commenter
+    :bind (
+            :map psimacs/config/global-key-map/common
+            ("k" . evilnc-comment-or-uncomment-lines)
+          )
+
+)
+#+end_src
+
 
 ** Quick-Peek
 
@@ -11408,14 +11471,27 @@ See also:
 ;;
 (use-package dap-mode
     :after lsp-mode
-    :commands dap-mode
+    :commands (dap-mode dap-debug dap-debug-edit-template)
     :config
-        (dap-mode t)
-        (dap-ui-mode t)
-        (dap-tooltip-mode 1)
-        (tooltip-mode 1)
-        (dap-ui-controls-mode 1)
+        (dap-auto-configure-mode)
+        (setq dap-breakpoints-file psimacs/config/dap-breakpoints-file)
+
+        ;;(setq dap-auto-configure-features '(sessions locals tooltip))
+        ;;(setq dap-auto-configure-features '(sessions locals breakpoints expressions controls tooltip))
+        ;;(dap-mode 1)
+        ;;(dap-ui-mode 1)
+        ;;(dap-tooltip-mode 1)
+        ;;(tooltip-mode 1)
+        ;;(dap-ui-controls-mode 1)
     :hook (dap-stopped . (lambda (arg) (call-interactively #'dap-hydra)))
+    :bind (
+           :map lsp-command-map
+           ("<tab>"   . company-indent-or-complete-common)
+           ("C-c h d" . dap-hydra)
+
+           :map psimacs/config/global-key-map/hydra
+           ("d"       . dap-hydra)
+         )
 )
 #+end_src
 
@@ -11480,11 +11556,8 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 | =C-c l G r=     | =M-x lsp-ui-peek-find-references=           | Peek references to the identifier at point.                                                  |
 | =C-c l G s=     | =M-x lsp-ui-peek-workspace-symbol=          | Peek symbols in the workspace.                                                               |
 |-----------------+---------------------------------------------+----------------------------------------------------------------------------------------------|
-| =C-c l C-c C-r= | =M-x lsp-ui-peek-find-references=           | Find references to the identifier at point.                                                  |
-| =C-c l C-c C-j= | =M-x lsp-ui-peek-find-definitions=          | Find definitions to the identifier at point.                                                 |
 | =C-c l C-c i=   | =M-x lsp-ui-peek-find-implementation=       | Find implementation locations of the symbol at point.                                        |
 | =C-c l C-c m=   | =M-x lsp-ui-imenu=                          | Open ui-imenu in side window.                                                                |
-| =C-c l C-c s=   | =M-x lsp-ui-sideline-mode=                  | Minor mode for showing information for current line.                                         |
 | =C-c l C-c d=   | =M-x psimacs/lsp-ui-mode/toggle-lsp-ui-doc= | Minor mode for showing information in child frame.                                           |
 |-----------------+---------------------------------------------+----------------------------------------------------------------------------------------------|
 
@@ -11494,11 +11567,8 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 ;; Support language servers
 ;;
 (use-package lsp-mode
-    ;:commands lsp
     :commands (lsp lsp-deferred)
     :init
-        ;(setq lsp-keymap-prefix "s-l")
-        ;(setq lsp-keymap-prefix "H-v")
         (setq lsp-keymap-prefix "C-c l")
 
         (setq lsp-session-file psimacs/config/lsp-session-file)
@@ -11517,6 +11587,10 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (setq lsp-headerline-breadcrumb-enable t)
         (setq lsp-modeline-code-actions-enable t)
     :config
+        ;(define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+
+        (setq lsp-enable-dap-auto-configure t)
+
         (setq lsp-clients-clangd-executable psimacs/config/clangd-runtime-exe)
         (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
 
@@ -11524,22 +11598,16 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (require 'dap-cpptools)
         ;;(require 'dap-python)
 
-    :hook ( ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-            ;(python-mode . lsp-deferred) ; . lsp)
+    :hook (
             (c-mode      . lsp-deferred) ; . lsp)
             (c++-mode    . lsp-deferred) ; . lsp)
             (cmake-mode  . lsp-deferred) ; . lsp)
 
-            ;; if you want which-key integration
-            (lsp-mode . lsp-enable-which-key-integration)
+            (lsp-mode    . lsp-enable-which-key-integration)
 
-            ;(before-save . lsp-format-buffer)
-            ;(before-save . lsp-organize-imports)
-        )
-    :bind (
-           :map lsp-mode-map
-           ("<tab>" . company-indent-or-complete-common)
-          )
+            ;;(before-save . lsp-format-buffer)
+            ;;(before-save . lsp-organize-imports)
+         )
 )
 #+end_src
 
@@ -11571,7 +11639,15 @@ CodeLens are links in your code:
 ;; UI modules for lsp-mode
 ;;
 (use-package lsp-ui
-    :commands (lsp-ui-mode lsp-ui-doc-mode lsp-ui-doc--hide-frame lsp-ui-doc-hide)
+    :after lsp-mode
+    :commands (
+                lsp-ui-mode 
+                lsp-ui-doc-mode 
+                lsp-ui-doc--hide-frame 
+                lsp-ui-doc-hide
+                lsp-ui-peek-find-definitions
+                lsp-ui-peek-find-references
+              )
     :config
         (setq lsp-ui-doc-enable nil)
         (setq lsp-ui-doc-header t)
@@ -11606,14 +11682,50 @@ CodeLens are links in your code:
                     (lsp-ui-doc-mode 1)))
 
         (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide)
+
+    :hydra (psimacs/hydra/lsp
+        (:exit t :hint nil)
+"
+Prelimanary Language Server Protocol Hydra:
+
+ ^ ^Buffer             ^   ^Server               ^ ^Symbol           ^ ^Refactor
+-------------------------------------------------------------------------------------
+ _f_: format           _M-r_: restart            _d_: declaration    _r_: rename
+ _m_: imenu            _S_  : shutdown           _D_: definition
+ _x_: execute action   _M-s_: describe session   _R_: references
+                                                 _i_: implementation
+ ^ ^                   ^   ^                     _t_: type
+ ^ ^                   ^   ^                     _s_: signature
+ _q_: quit             ^   ^                     _o_: documentation
+"
+        ("d" lsp-find-declaration)
+        ("D" lsp-ui-peek-find-definitions)
+        ("R" lsp-ui-peek-find-references)
+        ("i" lsp-ui-peek-find-implementation)
+        ("t" lsp-find-type-definition)
+        ("s" lsp-signature-activate)
+        ("o" lsp-describe-thing-at-point)
+        ("r" lsp-rename)
+
+        ("f" lsp-format-buffer)
+        ("m" lsp-ui-imenu)
+        ("x" lsp-execute-code-action)
+
+        ("M-s" lsp-describe-session)
+        ("M-r" lsp-workspace-restart)
+        ("S" lsp-workspace-shutdown)
+
+        ("q" nil :color blue)
+       )
     :bind
         (:map lsp-command-map
-            ("C-c C-r" . lsp-ui-peek-find-references)
-            ("C-c C-j" . lsp-ui-peek-find-definitions)
+            ("<tab>"   . company-indent-or-complete-common)
             ("C-c i"   . lsp-ui-peek-find-implementation)
             ("C-c m"   . lsp-ui-imenu)
-            ("C-c s"   . lsp-ui-sideline-mode)
             ("C-c d"   . psimacs/lsp-ui-mode/toggle-lsp-ui-doc)
+            ("C-c h l" . psimacs/hydra/lsp/body)
+            :map psimacs/config/global-key-map/hydra
+            ("l"       . psimacs/hydra/lsp/body)
         )
     :hook
         (lsp-mode . lsp-ui-mode)
@@ -12225,6 +12337,13 @@ Always default to 4 spaces indent offset.
 
 Package [[https://github.com/emacs-typescript/typescript.el][typescript]] provides support for the [[https://www.typescriptlang.org/][TypeScript]] programming language.
 
+For typescript the language server must be installed with =node.js=:
+
+#+begin_example
+npm i -g typescript-language-server
+npm i -g typescript
+#+end_example
+
 #+begin_src emacs-lisp :tangle config/init-advanced-typescript.el :var file-description="Advanced TypeScript setup"
 ;;
 ;; Configure basic typescript-mode
@@ -12234,6 +12353,7 @@ Package [[https://github.com/emacs-typescript/typescript.el][typescript]] provid
     :hook (typescript-mode . lsp-deferred)
     :config
         (setq typescript-indent-level 4)
+        (require 'dap-node)
 )
 #+end_src
 
@@ -15036,9 +15156,11 @@ References:
 | =H-SPC H-SPC= | =M-x psimacs/hydra/hydra/body=            | Hydra...                |
 | =H-SPC SPC=   | =M-x psimacs/hydra/toggle/body=           | Toggles...              |
 | =H-SPC a=     | =M-x psimacs/hydra/apropos/body=          | Apropos...              |
+| =H-SPC d=     | =M-x dap-hydra=                           | DAP-Mode hydra...       |
 | =H-SPC h=     | =M-x psimacs/hydra/help/body=             | Help...                 |
 | =H-SPC H=     | =M-x psimacs/hydra/helpful/body=          | Helpful...              |
 | =H-SPC i=     | =M-x hydra-ivy/body=                      | Ivy...                  |
+| =H-SPC l=     | =M-x psimacs/hydra/lsp/body=              | LSP Mode hydra...       |
 | =H-SPC m=     | =M-x major-mode-hydra=                    | Major Mode's hydra...   |
 | =H-SPC p=     | =M-x psimacs/hydra/projectile/body=       | Projectile...           |
 | =H-SPC t=     | =M-x psimacs/hydra/avy/body=              | Fast Jumping in Text... |
