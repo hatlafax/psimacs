@@ -175,7 +175,9 @@ It is the fraction of the current heap size."
 ;(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
 ;(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
 
-(set-face-background 'default "#2B2320" nil) ; the kaolin-valley-dark theme background color
+;(set-face-background 'default "#2B2320" nil) ; the kaolin-valley-dark theme background color
+
+(set-face-background 'default "#1a1a1a" nil) ; the nimbus theme background color
 
 ;;
 ;; Garbage collection optimization
