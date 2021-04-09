@@ -2588,7 +2588,7 @@ are to be installed into the following directory.
 
 [[https://www.python.org/][Python]] is one of my favorite languages. I use the Windows OS [[https://www.python.org/][Python]] installer and not the [[https://www.msys2.org/][MSYS2]] python package.
 
-Installation of the following packages is recommended: autopep8, black, certifi, cmake-language-server, flake8,
+Installation of the following packages is recommended: autopep8, autoflake, black, certifi, cmake-language-server, flake8,
 ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
 pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy.
 
@@ -2645,6 +2645,18 @@ pathes. Therefore our Windows OS [[https://www.python.org/][Python]] should alwa
 (defconst psimacs/config/pyflakes-runtime-exe
   (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pyflakes.exe")
   "The psimacs used python pyflakes runtime.")
+
+(defconst psimacs/config/autoflake-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "autoflake.exe")
+  "The psimacs used python autoflake runtime.")
+
+(defconst psimacs/config/black-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "black.exe")
+  "The psimacs used python black runtime.")
+
+(defconst psimacs/config/yapf-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "yapf.exe")
+  "The psimacs used python yapf runtime.")
 
 (defconst psimacs/config/pyls-runtime-exe
   (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pyls.exe")
@@ -2896,6 +2908,10 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
 (defconst psimacs/config/cmake-gui-runtime-exe
   (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmake-gui.exe")
   "The psimacs CMake cmake-gui runtime file.")
+
+(defconst psimacs/config/cmake-format-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "cmake-format.exe")
+  "The psimacs used cmake-format runtime.")
 #+end_src
 
 ** Clang/LLVM
@@ -11330,6 +11346,11 @@ GNU Emacs, intended as replacement for the older Flymake extension which is part
         (flycheck-python-pycompile-executable   psimacs/config/python-runtime-exe)
         (flycheck-python-pylint-executable      psimacs/config/pylint-runtime-exe)
 
+;psimacs/config/flake8-runtime-exe
+;psimacs/config/pylint-runtime-exe
+;psimacs/config/mypy-runtime-exe
+;psimacs/config/pyflakes-runtime-exe
+
         ;; Disable for emacs-lisp because of error:
         ;;      Suspicious state from syntax checker emacs-lisp: Flycheck checker emacs-lisp
         ;;      returned 255, but its output contained no errors: End of file during parsing
@@ -11407,41 +11428,50 @@ the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protoco
 
 [[https://emacs-lsp.github.io/dap-mode/][Dap-mode]] provides the following commands:
 
-| Key binding | Command                            | Description                                                      |
-|-------------+------------------------------------+------------------------------------------------------------------|
-|             | =M-x dap-breakpoint-toggle=        | Toggle breakpoint at line.                                       |
-|             | =M-x dap-breakpoint-delete=        | Delete breakpoint at line.                                       |
-|             | =M-x dap-breakpoint-add=           | Add breakpoint at line.                                          |
-|             | =M-x dap-breakpoint-condition=     | Set/unset breakpoint condition.                                  |
-|             | =M-x dap-breakpoint-hit-condition= | Set/unset breakpoint hit condition.                              |
-|             | =M-x dap-breakpoint-log-message=   | Set/unset breakpoint log message.                                |
-|             | =M-x dap-eval=                     | Eval string.                                                     |
-|             | =M-x dap-eval-region=              | Eval region string.                                              |
-|             | =M-x dap-eval-thing-at-point=      | Eval symbol at point.                                            |
-|             | =M-x dap-step-in=                  | Debug step in.                                                   |
-|             | =M-x dap-next=                     | Debug next.                                                      |
-|             | =M-x dap-step-out=                 | Debug step out.                                                  |
-|             | =M-x dap-stop-thread=              | Stop thread.                                                     |
-|             | =M-x dap-restart-frame=            | Restart frame.                                                   |
-|             | =M-x dap-continue=                 | Debug continue.                                                  |
-|             | =M-x dap-disconnect=               | Cancel current debug session.                                    |
-|             | =M-x dap-switch-stack-frame=       | Switch active stack frame.                                       |
-|             | =M-x dap-switch-thread=            | Switch active thread.                                            |
-|             | =M-x dap-switch-session=           | Switch active session.                                           |
-|             | =M-x dap-debug-edit-template=      | Generate run command.                                            |
-|             | =M-x dap-debug=                    | Create and run new configuration using the available templates.  |
-|             | =M-x dap-debug-last=               | Debug previous configuration.                                    |
-|             | =M-x dap-debug-recent=             | Select configuration to run from the previously started command. |
-|             | =M-x dap-go-to-output-buffer=      | Go output buffer.                                                |
-|-------------+------------------------------------+------------------------------------------------------------------|
-|             | =M-x dap-ui-sessions=              | Show active/terminated sessions view.                            |
-|             | =M-x dap-ui-locals=                | Show locals view.                                                |
-|             | =M-x dap-ui-expressions=           | Show expressions view.                                           |
-|             | =M-x dap-ui-breakpoints=           | Show breakpoints view.                                           |
-|             | =M-x dap-ui-repl=                  | DAP UI REPL.                                                     |
-|-------------+------------------------------------+------------------------------------------------------------------|
-|             | =M-x dap-tm-loaded-sources=        | Loaded sources can be viewed by invoking this command.           |
-|-------------+------------------------------------+------------------------------------------------------------------|
+| Key binding     | Command                                 | Description                                                      |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
+| =<f9>=          | =M-x dap-breakpoint-toggle=             | Toggle breakpoint at line.                                       |
+| =S-<f9>=        | =M-x dap-breakpoint-delete=             | Delete breakpoint at line.                                       |
+| =C-S-<f9>=      | =M-x dap-breakpoint-delete-all=         | Delete all breakpoints.                                          |
+| =C-<f9>=        | =M-x dap-breakpoint-add=                | Add breakpoint at line.                                          |
+| =M-<f9>=        | =M-x dap-breakpoint-condition=          | Set/unset breakpoint condition.                                  |
+| =C-M-<f9>=      | =M-x dap-breakpoint-hit-condition=      | Set/unset breakpoint hit condition.                              |
+| =S-M-<f9>=      | =M-x dap-breakpoint-log-message=        | Set/unset breakpoint log message.                                |
+|                 | =M-x dap-eval=                          | Eval string.                                                     |
+|                 | =M-x dap-eval-region=                   | Eval region string.                                              |
+|                 | =M-x dap-eval-thing-at-point=           | Eval symbol at point.                                            |
+| =<f10>=         | =M-x dap-next=                          | Debug next.                                                      |
+| =C-<f10>=       | =M-x psimacs/dap/run-to-cursor=         | Add breakpoint at point and continue.                            |
+| =<f11>=         | =M-x dap-step-in=                       | Debug step in.                                                   |
+| =S-<f11>=       | =M-x dap-step-out=                      | Debug step out.                                                  |
+|                 | =M-x dap-stop-thread=                   | Stop thread.                                                     |
+| =S-<f6>=        | =M-x dap-restart-frame=                 | Restarts current frame.                                          |
+| =<f6>=          | =M-x dap-continue=                      | Debug continue.                                                  |
+| =S-<f5>=        | =M-x dap-disconnect=                    | Cancel current debug session.                                    |
+|                 | =M-x dap-switch-stack-frame=            | Switch active stack frame.                                       |
+|                 | =M-x dap-switch-thread=                 | Switch active thread.                                            |
+|                 | =M-x dap-switch-session=                | Switch active session.                                           |
+|                 | =M-x dap-debug-edit-template=           | Generate run command.                                            |
+| =<f5>=          | =M-x dap-debug=                         | Create and run new configuration using the available templates.  |
+| =M-<f5>=        | =M-x dap-debug-last=                    | Debug previous configuration.                                    |
+| =C-M-<f5>=      | =M-x dap-debug-recent=                  | Select configuration to run from the previously started command. |
+| =C-S-<f5>=      | =M-x dap-debug-restart=                 | Restarts current frame.                                          |
+|                 | =M-x dap-go-to-output-buffer=           | Go output buffer.                                                |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
+|                 | =M-x dap-ui-sessions=                   | Show active/terminated sessions view.                            |
+|                 | =M-x dap-ui-locals=                     | Show locals view.                                                |
+|                 | =M-x dap-ui-expressions=                | Show expressions view.                                           |
+|                 | =M-x dap-ui-breakpoints=                | Show breakpoints view.                                           |
+|                 | =M-x dap-ui-repl=                       | DAP UI REPL.                                                     |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
+|                 | =M-x dap-tm-loaded-sources=             | Loaded sources can be viewed by invoking this command.           |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
+| =C-c-l <tab>=   | =M-x company-indent-or-complete-common= | Indent the current line or region, or complete the common part.  |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
+| =<f7>=          | =M-x dap-hydra=                         | Opens a [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] hydra.                                          |
+| =C-c l C-c h d= | =M-x dap-hydra=                         | Opens a [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] hydra.                                          |
+| =H-SPC d=       | =M-x dap-hydra=                         | Opens a [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] hydra.                                          |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
 
 Breakpoints can be viewed after invoking =dap-ui-breakpoints= with:
 
@@ -11470,7 +11500,7 @@ See also:
 ;;
 (use-package dap-mode
     :after lsp-mode
-    :commands (dap-mode dap-debug dap-debug-edit-template)
+    :commands (dap-mode dap-debug dap-debug-edit-template dap-auto-configure-mode)
     :config
         (dap-auto-configure-mode)
         (setq dap-breakpoints-file psimacs/config/dap-breakpoints-file)
@@ -11508,7 +11538,7 @@ See also:
            ("<f9>"     . dap-breakpoint-toggle)
            ("C-<f9>"   . dap-breakpoint-add)
            ("S-<f9>"   . dap-breakpoint-delete)
-2           ("C-S-<f9>" . dap-breakpoint-delete-all)
+           ("C-S-<f9>" . dap-breakpoint-delete-all)
            ("M-<f9>"   . dap-breakpoint-condition)
            ("C-M-<f9>" . dap-breakpoint-hit-condition)
            ("S-M-<f9>" . dap-breakpoint-log-message)
@@ -11545,7 +11575,7 @@ When using [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] most of the featu
 [[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]] provides default bindings which are dynamically enabled/disabled based on the server functionality.
 All the commands are configured =lsp-command-map= which is bound to =lsp-keymap-prefix=.
 
-*Psimacs* bindes [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] commands to key prefix =C-c l=.
+*Psimacs* binds [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] commands to key prefix =C-c l=.
 
 Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] command bindings:
 
@@ -11594,7 +11624,6 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 | =C-c l C-c d=   | =M-x psimacs/lsp-ui-mode/toggle-lsp-ui-doc= | Minor mode for showing information in child frame.                                           |
 |-----------------+---------------------------------------------+----------------------------------------------------------------------------------------------|
 
-
 #+begin_src emacs-lisp :tangle config/init-advanced-lsp-mode.el :var file-description="Advanced lsp-mode setup"
 ;;
 ;; Support language servers
@@ -11612,13 +11641,23 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (setq lsp-auto-guess-root t)
         (setq lsp-enable-indentation t)
         (setq lsp-enable-imenu t)
-        (setq lsp-file-watch-threshold 500)
+        (setq lsp-file-watch-threshold 1500)
         (setq lsp-prefer-flymake nil)
 
         (setq lsp-enable-symbol-highlighting t)
         (setq lsp-lens-enable t)
         (setq lsp-headerline-breadcrumb-enable t)
         (setq lsp-modeline-code-actions-enable t)
+
+        ;;(setq lsp-modeline-diagnostics-enable nil)
+        ;;(setq lsp-keep-workspace-alive nil)
+        ;;(setq lsp-auto-execute-action nil)
+        ;;(setq lsp-before-save-edits nil)
+        ;;(setq lsp-eldoc-enable-hover nil)
+        ;;(setq lsp-diagnostic-package :none)
+        ;;(setq lsp-completion-provider :none)
+        ;;(setq lsp-enable-links nil)
+        ;;(setq lsp-enable-on-type-formatting nil)
     :config
         ;(define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
 
@@ -11680,11 +11719,24 @@ CodeLens are links in your code:
                 lsp-ui-doc-hide
                 lsp-ui-peek-find-definitions
                 lsp-ui-peek-find-references
+
+                lsp-find-declaration
+                lsp-find-type-definition
+                lsp-signature-activate
+                lsp-describe-thing-at-point
+                lsp-rename
+                lsp-format-buffer
+                lsp-execute-code-action
+                lsp-describe-session
+                lsp-workspace-restart
+                lsp-workspace-shutdown
               )
     :config
         (setq lsp-ui-doc-enable nil)
         (setq lsp-ui-doc-header t)
         (setq lsp-ui-doc-include-signature nil)
+        ;;(setq lsp-ui-doc-show-with-cursor nil)
+        ;;(setq lsp-ui-doc-show-with-mouse nil)
         (setq lsp-ui-doc-position 'at-point) ;; top, bottom, or at-point
         (setq lsp-ui-doc-max-width 120)
         (setq lsp-ui-doc-max-height 30)
@@ -11698,6 +11750,7 @@ CodeLens are links in your code:
         (setq lsp-ui-sideline-show-diagnostics nil)
         (setq lsp-ui-sideline-show-code-actions t)
         (setq lsp-ui-sideline-code-actions-prefix "😳")
+        ;;(setq lsp-ui-sideline-delay 0.5)
         (setq lsp-ui-imenu-enable t)
         (setq lsp-ui-imenu-kind-position 'top)
         (setq lsp-ui-peek-enable t)
@@ -11746,7 +11799,7 @@ Prelimanary Language Server Protocol Hydra:
 
         ("M-s" lsp-describe-session)
         ("M-r" lsp-workspace-restart)
-        ("S" lsp-workspace-shutdown)
+        ("S"   lsp-workspace-shutdown)
 
         ("q" nil :color blue)
        )
@@ -11857,6 +11910,21 @@ See also:
 
 Configuration of the build-in python mode.
 
+| Key binding | Command                                    | Description                                                 |
+|-------------+--------------------------------------------+-------------------------------------------------------------|
+| =H-M-b=     | =M-x python-nav-backward-block=            | Moves to the previous python block.                         |
+| =H-M-f=     | =M-x python-nav-forward-block=             | Moves to the next python block.                             |
+|-------------+--------------------------------------------+-------------------------------------------------------------|
+| =H-x C-c r= | =M-x psimacs/python/remove-unused-imports= | Removes unused imports and unused variables with [[https://github.com/myint/autoflake][autoflake]]. |
+| =H-x C-c R= | =M-x psimacs/python/blacken=               | Reformat buffer with tool [[https://github.com/psf/black][black]].                            |
+| =H-x C-c Y= | =M-x psimacs/python/yapify=                | Reformat buffer with tool [[https://github.com/google/yapf][yapf]].                             |
+|-------------+--------------------------------------------+-------------------------------------------------------------|
+
+References:
+- Formatter [[https://github.com/google/yapf][yapf]].
+- Formatter [[https://github.com/psf/black][black]].
+- Code clean up tool [[https://github.com/myint/autoflake][autoflake]].
+
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 ;;
 ;; Configure basic python-mode
@@ -11865,6 +11933,7 @@ Configuration of the build-in python mode.
     :straight nil
     :init
         (setq python-indent-offset 4)
+        (setq python-indent-guess-indent-offset-verbose nil)
 
         ;(setq python-shell-interpreter psimacs/config/python-runtime-exe)
         ;(setq python-shell-interpreter-args "-i")
@@ -11881,6 +11950,72 @@ Configuration of the build-in python mode.
         ;(setq python-shell-interpreter-args "console --simple-prompt --existing")
 
         ;(python-check-command psimacs/config/flake8-runtime-exe)
+
+    :config
+        (defun psimacs/python/remove-unused-imports()
+          "Removes unused imports and unused variables with autoflake."
+          (interactive)
+          (if (executable-find  psimacs/config/autoflake-runtime-exe)
+              (progn
+                (shell-command (format "%s --remove-all-unused-imports -i %s"
+                                       psimacs/config/autoflake-runtime-exe
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "python-mode: Cannot find autoflake executable."))
+        )
+
+        (defun psimacs/python/blacken()
+          "Reformat buffer with tool black."
+          (interactive)
+          (if (executable-find psimacs/config/black-runtime-exe)
+              (progn
+                (shell-command (format "%s -l %s %s"
+                                       psimacs/config/black-runtime-exe
+                                       fill-column
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "python-mode: Cannot find black executable."))
+        )
+
+        (defun psimacs/python/yapify()
+          "Reformat buffer with tool yapf."
+          (interactive)
+          (if (executable-find psimacs/config/yapf-runtime-exe)
+              (progn
+                (shell-command (format "%s -i --style pep8 %s"
+                                       psimacs/config/yapf-runtime-exe
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "python-mode: Cannot find yapf executable."))
+        )
+
+    :bind (
+              :map python-mode-map
+              ("H-M-b" . python-nav-backward-block)
+              ("H-M-f" . python-nav-forward-block)
+
+              ("H-x C-c r" . psimacs/python/remove-unused-imports)
+              ("H-x C-c R" . psimacs/python/blacken)
+              ("H-x C-c Y" . psimacs/python/yapify)
+          )
+)
+#+end_src
+
+*** Yapfify
+
+Package [[https://github.com/JorisE/yapfify][yapfify]] uses [[https://github.com/google/yapf][yapf]] to format a Python buffer.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
+;;
+;; Format the python buffer following YAPF rules
+;;
+(use-package yapfify
+    :defer t
+    :config
+        (setq yapfify-executable psimacs/config/yapf-runtime-exe)
 )
 #+end_src
 
@@ -11902,7 +12037,7 @@ Configuration of the build-in python mode.
 )
 #+end_src
 
-*** flycheck-pycheckers
+*** flycheck-pycheckers                                          :noexport:
 
 The package [[https://github.com/msherry/flycheck-pycheckers][flycheck-pycheckers]] provides
 multiple syntax checker for Python in *Emacs*, using [[http://www.flycheck.org/][Flycheck]].
@@ -11924,7 +12059,7 @@ See also: [[http://www.flycheck.org/en/latest/user/quickstart.html][Flycheck Qui
 
 ToDo: Disabled because it does not work out of the box on windows.
 
-#+begin_src emacs-lisp :tangle no config/init-advanced-python.el :var file-description="Advanced Python setup"
+#+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 ;;
 ;; Multiple Python checkers at once
 ;;
@@ -11940,7 +12075,7 @@ ToDo: Disabled because it does not work out of the box on windows.
 )
 #+end_src
 
-*** LSP-Python-MS Mode
+*** LSP-Python-MS Mode                                           :noexport:
 
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-python-ms
@@ -11949,6 +12084,16 @@ ToDo: Disabled because it does not work out of the box on windows.
                           (require 'lsp-python-ms)
                           (lsp-deferred)))  ; . lsp
 )
+#+end_src
+
+*** lsp-pyright
+
+#+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
+(use-package lsp-pyright
+    :after lsp-mode
+    :hook (python-mode . (lambda ()
+                            (require 'lsp-pyright)
+                            (lsp-deferred))))  ; or lsp
 #+end_src
 
 *** elpy                                                         :noexport:
@@ -12127,11 +12272,34 @@ Useful key bindings:
 [[https://gitlab.kitware.com/cmake/cmake/blob/master/Auxiliary/cmake-mode.el][Cmake-mode]] provides syntax
 highlighting and indentation for =CMakeLists.txt= and =*.cmake= source files.
 
+| Key binding | Command                           | Description                              |
+|-------------+-----------------------------------+------------------------------------------|
+| =H-x C-c R= | =M-x psimacs/cmake/format-buffer= | Reformat buffer with tool  [[https://github.com/cheshirekow/cmake_format][cmake-format]]. |
+|-------------+-----------------------------------+------------------------------------------|
+
 #+begin_src emacs-lisp :tangle config/init-advanced-cmake-mode.el :var file-description="Advanced cmake-mode setup"
 ;;
 ;; Support for CMake
 ;;
-(use-package cmake-mode)
+(use-package cmake-mode
+    :config
+        (defun psimacs/cmake/format-buffer()
+          "Format cmake-mode buffer with the cmake-format tool."
+          (interactive)
+          (if (executable-find psimacs/config/cmake-format-runtime-exe)
+              (progn
+                (shell-command (format "%s -i %s"
+                                       psimacs/config/cmake-format-runtime-exe
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "cmake-mode: Cannot find cmake-format executable."))
+        )
+    :bind (
+              :map cmake-mode-map
+              ("H-x C-c R" . psimacs/cmake/format-buffer)
+          )
+)
 #+end_src
 
 *** CMake Font Lock
@@ -16091,9 +16259,11 @@ by the various packages nor by *Emacs* itself.
 | =H-SPC H-SPC=       | =M-x psimacs/hydra/hydra/body=                                          | Hydra...                                                                                                                                                                                                                                                                                         |
 | =H-SPC SPC=         | =M-x psimacs/hydra/toggle/body=                                         | Toggles...                                                                                                                                                                                                                                                                                       |
 | =H-SPC a=           | =M-x psimacs/hydra/apropos/body=                                        | Apropos...                                                                                                                                                                                                                                                                                       |
+| =H-SPC d=           | =M-x dap-hydra=                                                         | DAP-Mode hydra...                                                                                                                                                                                                                                                                                |
 | =H-SPC h=           | =M-x psimacs/hydra/help/body=                                           | Help...                                                                                                                                                                                                                                                                                          |
 | =H-SPC H=           | =M-x psimacs/hydra/helpful/body=                                        | Helpful...                                                                                                                                                                                                                                                                                       |
 | =H-SPC i=           | =M-x hydra-ivy/body=                                                    | Ivy...                                                                                                                                                                                                                                                                                           |
+| =H-SPC l=           | =M-x psimacs/hydra/lsp/body=                                            | LSP Mode hydra...                                                                                                                                                                                                                                                                                |
 | =H-SPC m=           | =M-x major-mode-hydra=                                                  | Major Mode's hydra...                                                                                                                                                                                                                                                                            |
 | =H-SPC p=           | =M-x psimacs/hydra/projectile/body=                                     | Projectile...                                                                                                                                                                                                                                                                                    |
 | =H-SPC t=           | =M-x psimacs/hydra/avy/body=                                            | Fast Jumping in Text...                                                                                                                                                                                                                                                                          |
@@ -16125,7 +16295,7 @@ by the various packages nor by *Emacs* itself.
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-c g s=       | =M-x magit-status=                                                      | Run git status command.                                                                                                                                                                                                                                                                          |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-c C-h=       | (find-file-read-only history-file)                                      | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
+| =H-m C-c C-h=       | =M-x (find-file-read-only history-file)=                                | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-c m=         | =M-x else-mode=                                                         | Enable/disable =else-mode=.                                                                                                                                                                                                                                                                      |
 | =H-m C-c n=         | =M-x else-next=                                                         | Move 'point' to the 'next' placeholder.                                                                                                                                                                                                                                                          |
@@ -16343,6 +16513,14 @@ by the various packages nor by *Emacs* itself.
 | =H-x C-c C-e s h=   | =M-x psimacs/sphinx/org-sphinx-build=                                   | Run the sphinx-build tool for the current org buffer.                                                                                                                                                                                                                                            |
 | =H-x C-c C-e s H=   | =M-x psimacs/sphinx/build=                                              | Run the sphinx-build tool for the given file.                                                                                                                                                                                                                                                    |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-M-b=             | =M-x python-nav-backward-block=                                         | Moves to the previous python block.                                                                                                                                                                                                                                                              |
+| =H-M-f=             | =M-x python-nav-forward-block=                                          | Moves to the next python block.                                                                                                                                                                                                                                                                  |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x C-c r=         | =M-x psimacs/python/remove-unused-imports=                              | Removes unused imports and unused variables with [[https://github.com/myint/autoflake][autoflake]].                                                                                                                                                                                                                                      |
+| =H-x C-c R=         | =M-x psimacs/python/blacken=                                            | Reformat buffer with tool [[https://github.com/psf/black][black]].                                                                                                                                                                                                                                                                 |
+| =H-x C-c R=         | =M-x psimacs/cmake/format-buffer=                                       | Reformat buffer with tool [[https://github.com/cheshirekow/cmake_format][cmake-format]].                                                                                                                                                                                                                                                          |
+| =H-x C-c Y=         | =M-x psimacs/python/yapify=                                             | Reformat buffer with tool [[https://github.com/google/yapf][yapf]].                                                                                                                                                                                                                                                                  |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x x=             | =M-x yas-insert-snippet=                                                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x C c=           | =M-x recentf-cleanup=                                                   | Cleanup the recent file list.                                                                                                                                                                                                                                                                    |
@@ -16392,4 +16570,69 @@ by the various packages nor by *Emacs* itself.
 | =H-x H-x C-x C-l=   | =M-x crux-downcase-region=                                              | Downcase-region when transient-mark-mode is on and region is active.                                                                                                                                                                                                                             |
 | =H-x H-x C-x M-c=   | =M-x crux-capitalize-region=                                            | Capitalize-region when transient-mark-mode is on and region is active.                                                                                                                                                                                                                           |
 | =H-x H-x M-o=       | =M-x crux-other-window-or-switch-buffer=                                | Select other window, or switch to most recent buffer if only one windows.                                                                                                                                                                                                                        |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =<f5>=              | =M-x dap-debug=                                                         | Create and run new configuration using the available templates.                                                                                                                                                                                                                                  |
+| =S-<f5>=            | =M-x dap-disconnect=                                                    | Cancel current debug session.                                                                                                                                                                                                                                                                    |
+| =M-<f5>=            | =M-x dap-debug-last=                                                    | Debug previous configuration.                                                                                                                                                                                                                                                                    |
+| =C-M-<f5>=          | =M-x dap-debug-recent=                                                  | Select configuration to run from the previously started command.                                                                                                                                                                                                                                 |
+| =C-S-<f5>=          | =M-x dap-debug-restart=                                                 | Restarts current frame.                                                                                                                                                                                                                                                                          |
+| =<f6>=              | =M-x dap-continue=                                                      | Debug continue.                                                                                                                                                                                                                                                                                  |
+| =S-<f6>=            | =M-x dap-restart-frame=                                                 | Restarts current frame.                                                                                                                                                                                                                                                                          |
+| =<f7>=              | =M-x dap-hydra=                                                         | Opens a [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] hydra.                                                                                                                                                                                                                                                                          |
+| =<f9>=              | =M-x dap-breakpoint-toggle=                                             | Toggle breakpoint at line.                                                                                                                                                                                                                                                                       |
+| =C-<f9>=            | =M-x dap-breakpoint-add=                                                | Add breakpoint at line.                                                                                                                                                                                                                                                                          |
+| =S-<f9>=            | =M-x dap-breakpoint-delete=                                             | Delete breakpoint at line.                                                                                                                                                                                                                                                                       |
+| =C-S-<f9>=          | =M-x dap-breakpoint-delete-all=                                         | Delete all breakpoints.                                                                                                                                                                                                                                                                          |
+| =M-<f9>=            | =M-x dap-breakpoint-condition=                                          | Set/unset breakpoint condition.                                                                                                                                                                                                                                                                  |
+| =C-M-<f9>=          | =M-x dap-breakpoint-hit-condition=                                      | Set/unset breakpoint hit condition.                                                                                                                                                                                                                                                              |
+| =S-M-<f9>=          | =M-x dap-breakpoint-log-message=                                        | Set/unset breakpoint log message.                                                                                                                                                                                                                                                                |
+| =<f10>=             | =M-x dap-next=                                                          | Debug next.                                                                                                                                                                                                                                                                                      |
+| =C-<f10>=           | =M-x psimacs/dap/run-to-cursor=                                         | Add breakpoint at point and continue.                                                                                                                                                                                                                                                            |
+| =<f11>=             | =M-x dap-step-in=                                                       | Debug step in.                                                                                                                                                                                                                                                                                   |
+| =S-<f11>=           | =M-x dap-step-out=                                                      | Debug step out.                                                                                                                                                                                                                                                                                  |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c-l <tab>=       | =M-x company-indent-or-complete-common=                                 | Indent the current line or region, or complete the common part.                                                                                                                                                                                                                                  |
+| =C-c l C-c h d=     | =M-x dap-hydra=                                                         | Opens a [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] hydra.                                                                                                                                                                                                                                                                          |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c l s s=         | =M-x lsp=                                                               | Entry point for the server startup.                                                                                                                                                                                                                                                              |
+| =C-c l s r=         | =M-x lsp-workspace-restart=                                             | Restart workspace and language server.                                                                                                                                                                                                                                                           |
+| =C-c l s q=         | =M-x lsp-workspace-shutdown=                                            | Shutdown workspace and language server.                                                                                                                                                                                                                                                          |
+| =C-c l s d=         | =M-x lsp-describe-session=                                              | Describes current session.                                                                                                                                                                                                                                                                       |
+| =C-c l s D=         | =M-x lsp-disconnect=                                                    | Disconnect the buffer from the language server keeping the server running.                                                                                                                                                                                                                       |
+| =C-c l = ==         | =M-x lsp-format-buffer=                                                 | Ask the server to format this document.                                                                                                                                                                                                                                                          |
+| =C-c l = r=         | =M-x lsp-format-region=                                                 | Ask the server to format the region, or if none is selected, the current line.                                                                                                                                                                                                                   |
+| =C-c l F a=         | =M-x lsp-workspace-folders-add=                                         | Add new project root to the list of workspace folders.                                                                                                                                                                                                                                           |
+| =C-c l F r=         | =M-x lsp-workspace-folders-remove=                                      | Remove project root from the list of workspace folders.                                                                                                                                                                                                                                          |
+| =C-c l F b=         | =M-x lsp-workspace-blacklist-remove=                                    | Remove project root from the workspace blacklist.                                                                                                                                                                                                                                                |
+| =C-c l T a=         | =M-x lsp-modeline-code-actions-mode=                                    | Toggle code actions on modeline.                                                                                                                                                                                                                                                                 |
+| =C-c l T b=         | =M-x lsp-headerline-breadcrumb-mode=                                    | Toggle breadcrumb on headerline.                                                                                                                                                                                                                                                                 |
+| =C-c l T L=         | =M-x lsp-toggle-trace-io=                                               | Toggle client-server protocol logging.                                                                                                                                                                                                                                                           |
+| =C-c l T h=         | =M-x lsp-toggle-symbol-highlight=                                       | Toggle symbol highlighting.                                                                                                                                                                                                                                                                      |
+| =C-c l T S=         | =M-x lsp-ui-sideline-mode=                                              | Toggle minor mode for showing information for current line in sideline.                                                                                                                                                                                                                          |
+| =C-c l T d=         | =M-x lsp-ui-doc-mode=                                                   | Toggle minor mode for showing hover information in child frame.                                                                                                                                                                                                                                  |
+| =C-c l T s=         | =M-x lsp-toggle-signature-auto-activate=                                | Toggle signature auto activate.                                                                                                                                                                                                                                                                  |
+| =C-c l T f=         | =M-x lsp-toggle-on-type-formatiing=                                     | Toggle on type formatting.                                                                                                                                                                                                                                                                       |
+| =C-c l T D=         | =M-x lsp-modeline-diagnostics-mode=                                     | Toggle diagnostics modeline.                                                                                                                                                                                                                                                                     |
+| =C-c l T T=         | =M-x lsp-treemacs-sync-mode=                                            | Toggle global minor mode for synchronizing lsp-mode workspace folders and treemacs projects.                                                                                                                                                                                                     |
+| =C-c l g g=         | =M-x lsp-find-definition=                                               | Find definitions of the symbol under point.                                                                                                                                                                                                                                                      |
+| =C-c l g r=         | =M-x lsp-find-references=                                               | Find references of the symbol under point.                                                                                                                                                                                                                                                       |
+| =C-c l g e=         | =M-x lsp-treemacs-errors-list=                                          | Display error list.                                                                                                                                                                                                                                                                              |
+| =C-c l g d=         | =M-x lsp-find-declaration=                                              | Find declarations of the symbol under point.                                                                                                                                                                                                                                                     |
+| =C-c l g h=         | =M-x lsp-treemacs-call-hierarchy=                                       | Show the incoming call hierarchy for the symbol at point.                                                                                                                                                                                                                                        |
+| =C-c l g a=         | =M-x xref-find-apropos=                                                 | Find all meaningful symbols that match pattern.                                                                                                                                                                                                                                                  |
+| =C-c l G s=         | =M-x lsp-ui-peak-find-workspace-symbol=                                 | Find symbols in the workspace.                                                                                                                                                                                                                                                                   |
+| =C-c l h h=         | =M-x lsp-describe-thing-at-point=                                       | Display the type signature and documentation of the thing at                                                                                                                                                                                                                                     |
+| =C-c l h s=         | =M-x lsp-signature-activate=                                            | Activate signature help.                                                                                                                                                                                                                                                                         |
+| =C-c l h g=         | =M-x lsp-ui-doc-glance=                                                 | Trigger display hover information popup and hide it on next typing.                                                                                                                                                                                                                              |
+| =C-c l r r=         | =M-x lsp-rename=                                                        | Rename the symbol (and all references to it).                                                                                                                                                                                                                                                    |
+| =C-c l r o=         | =M-x lsp-organize-imports=                                              | Perform the source.organizeImports code action, if available.                                                                                                                                                                                                                                    |
+| =C-c l a a=         | =M-x lsp-execute-code-action=                                           | Execute code action.                                                                                                                                                                                                                                                                             |
+| =C-c l a h=         | =M-x lsp-document-highlight=                                            | Highlight all relevant references to the symbol at point.                                                                                                                                                                                                                                        |
+| =C-c l G g=         | =M-x lsp-ui-peek-find-definitions=                                      | Peek definitions to the identifier at point.                                                                                                                                                                                                                                                     |
+| =C-c l G r=         | =M-x lsp-ui-peek-find-references=                                       | Peek references to the identifier at point.                                                                                                                                                                                                                                                      |
+| =C-c l G s=         | =M-x lsp-ui-peek-workspace-symbol=                                      | Peek symbols in the workspace.                                                                                                                                                                                                                                                                   |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c l C-c i=       | =M-x lsp-ui-peek-find-implementation=                                   | Find implementation locations of the symbol at point.                                                                                                                                                                                                                                            |
+| =C-c l C-c m=       | =M-x lsp-ui-imenu=                                                      | Open ui-imenu in side window.                                                                                                                                                                                                                                                                    |
+| =C-c l C-c d=       | =M-x psimacs/lsp-ui-mode/toggle-lsp-ui-doc=                             | Minor mode for showing information in child frame.                                                                                                                                                                                                                                               |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
