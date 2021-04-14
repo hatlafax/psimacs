@@ -5376,11 +5376,12 @@ defined for the Python programming mode.
 See also: [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][About prettify-symbols-mode]]
 
 #+attr_html: :class styledtable
-| Key binding   | Command                     | Description                     |
-|---------------+-----------------------------+---------------------------------|
-| =H-m C-x C-p= | =M-x prettify-symbols-mode= | Toggle =prettify-symbols-mode=. |
-| =<f8>=        | =M-x prettify-symbols-mode= | Toggle =prettify-symbols-mode=. |
-|---------------+-----------------------------+---------------------------------|
+| Key binding   | Command                            | Description                              |
+|---------------+------------------------------------+------------------------------------------|
+| =H-m C-x C-p= | =M-x prettify-symbols-mode=        | Toggle =prettify-symbols-mode=.          |
+| =<f8>=        | =M-x prettify-symbols-mode=        | Toggle =prettify-symbols-mode=.          |
+| =M-<f8>=      | =M-x global-prettify-symbols-mode= | Toggle =prettify-symbols-mode= globally. |
+|---------------+------------------------------------+------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-prettify.el :var file-description="Basic prettification of Emacs"
 ;;
@@ -5415,8 +5416,8 @@ characters '_' or '/'.
                      (nth 8 (syntax-ppss))))))
 
         (global-prettify-symbols-mode t)
-        (add-hook
-            'prog-mode-hook
+    :hook (
+            (prog-mode .
                 (lambda ()
                     (setq prettify-symbols-compose-predicate #'psimacs/config/prettify-symbols-compose-p)
                     (mapc (lambda (pair) (push pair prettify-symbols-alist))
@@ -5837,10 +5838,9 @@ characters '_' or '/'.
                         )
                     )
                 )
-        )
+            )
 
-        (add-hook
-            'python-mode-hook
+            (python-mode .
                 (lambda ()
                     (mapc (lambda (pair) (push pair prettify-symbols-alist))
                        '(       ;; Syntax
@@ -5972,9 +5972,11 @@ characters '_' or '/'.
                         )
                     )
                 )
+            )
         )
     :bind (
-            ("<f8>" . prettify-symbols-mode)
+            ("<f8>"   . prettify-symbols-mode)
+            ("M-<f8>" . global-prettify-symbols-mode)
 
             :map psimacs/config/global-key-map/special
             ("C-x C-p" . prettify-symbols-mode)
@@ -11650,7 +11652,9 @@ See also:
           ;)
         )
 
-    :hook (dap-stopped . (lambda (arg) (call-interactively #'dap-hydra)))
+    :hook (
+            (dap-stopped . (lambda (arg) (call-interactively #'dap-hydra)))
+          )
     :bind (:map dap-mode-map
            ("<f5>"     . dap-debug)
            ("M-<f5>"   . dap-debug-last)
@@ -11796,14 +11800,11 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 
         ;(require 'dap-lldb)
         (require 'dap-cpptools)
-        ;;(require 'dap-python)
 
     :hook (
             (c-mode      . lsp-deferred) ; . lsp)
             (c++-mode    . lsp-deferred) ; . lsp)
             (cmake-mode  . lsp-deferred) ; . lsp)
-
-            ;;(python-mode . lsp-deferred) ; . lsp)      ;; see lsp-python-ms or lsp-pyright, repsp.
 
             (lsp-mode    . lsp-enable-which-key-integration)
 
@@ -12062,6 +12063,7 @@ References:
 ;;
 (use-package python
     :straight nil
+    :mode ("\\.py\\'" . python-mode)
     :init
         (setq python-indent-offset 4)
         (setq python-indent-guess-indent-offset-verbose nil)
@@ -12168,7 +12170,7 @@ Package [[https://github.com/JorisE/yapfify][yapfify]] uses [[https://github.com
         ;;
         (setq dap-python-debugger 'debugpy)
         (setq dap-python-executable psimacs/config/python-runtime-exe)
-    ;:hook (python-mode . (lambda () (require 'dap-python)))
+    :hook (python-mode . (lambda () (require 'dap-python)))
 )
 #+end_src
 
@@ -12212,23 +12214,30 @@ ToDo: Disabled because it does not work out of the box on windows.
 
 *** LSP-Python-MS Mode                                           :noexport:
 
+Package [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]] is a [[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]]
+client leveraging the [[https://github.com/Microsoft/python-language-server][Microsoft’s python-language-server]].
+
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-python-ms
+;  :after lsp-mode
   :init (setq lsp-python-ms-auto-install-server t)
   :hook (python-mode . (lambda ()
                           (require 'lsp-python-ms)
-                          (lsp)))  ; . lsp-deferred
+                          (lsp-deferred)))  ; . lsp-deferred
 )
 #+end_src
 
-*** lsp-pyright
+*** LSP-Pyright
+
+Package [[https://github.com/emacs-lsp/lsp-pyright][lsp-pyright]] is a [[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]]
+client leveraging the [[https://github.com/microsoft/pyright][Pyright language server]].
 
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-pyright
-    :after lsp-mode
+;    :after lsp-mode
     :hook (python-mode . (lambda ()
                             (require 'lsp-pyright)
-                            (lsp)))  ; or lsp-deferred
+                            (lsp-deferred)))  ; or lsp-deferred
 )
 #+end_src
 
@@ -16297,6 +16306,7 @@ by the various packages nor by *Emacs* itself.
 | =C-S-<f2>=          | =M-x bm-remove-all-current-buffer=                                      | Remove all bookmarks of the current buffer.                                                                                                                                                                                                                                                      |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =<f8>=              | =M-x prettify-symbols-mode=                                             | Toggle =prettify-symbols-mode=.                                                                                                                                                                                                                                                                  |
+| =M-<f8>=            | =M-x global-prettify-symbols-mode=                                      | Toggle =prettify-symbols-mode= globally.                                                                                                                                                                                                                                                         |
 | =C-<f8>=            | =M-x psimacs/dashboard/open-dashboard=                                  | Open the dashboard.                                                                                                                                                                                                                                                                              |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-TAB=             | =M-x company-try-hard=                                                  | Try hard to find a completion. If none of the current completions look good, call the command again to try the next backend.                                                                                                                                                                     |
