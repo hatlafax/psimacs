@@ -11803,7 +11803,10 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
             (c++-mode    . lsp-deferred) ; . lsp)
             (cmake-mode  . lsp-deferred) ; . lsp)
 
+            ;;(python-mode . lsp-deferred) ; . lsp)      ;; see lsp-python-ms or lsp-pyright, repsp.
+
             (lsp-mode    . lsp-enable-which-key-integration)
+
 
             ;;(before-save . lsp-format-buffer)
             ;;(before-save . lsp-organize-imports)
@@ -12158,13 +12161,14 @@ Package [[https://github.com/JorisE/yapfify][yapfify]] uses [[https://github.com
 ;;
 (use-package dap-python
     :straight nil
-    :after (python dap-mode)
+    :after dap-mode
     :config
         ;;
         ;; Python specific
         ;;
         (setq dap-python-debugger 'debugpy)
         (setq dap-python-executable psimacs/config/python-runtime-exe)
+    ;:hook (python-mode . (lambda () (require 'dap-python)))
 )
 #+end_src
 
@@ -12213,7 +12217,7 @@ ToDo: Disabled because it does not work out of the box on windows.
   :init (setq lsp-python-ms-auto-install-server t)
   :hook (python-mode . (lambda ()
                           (require 'lsp-python-ms)
-                          (lsp-deferred)))  ; . lsp
+                          (lsp)))  ; . lsp-deferred
 )
 #+end_src
 
@@ -12224,7 +12228,8 @@ ToDo: Disabled because it does not work out of the box on windows.
     :after lsp-mode
     :hook (python-mode . (lambda ()
                             (require 'lsp-pyright)
-                            (lsp-deferred))))  ; or lsp
+                            (lsp)))  ; or lsp-deferred
+)
 #+end_src
 
 *** elpy                                                         :noexport:
