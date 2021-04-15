@@ -10343,9 +10343,17 @@ See also:
 - [[http://ergoemacs.org/emacs/emacs_templates.html][Using Templates with YASnippet]]
 - [[https://www.youtube.com/watch?v=-4O-ZYjQxks][Youtube: Emacs Tutorial: Yasnippet]]
 
-| Key binding | Command                  | Description                                                    |
-|-------------+--------------------------+----------------------------------------------------------------|
-| =H-x x=     | =M-x yas-insert-snippet= | Choose a snippet to expand, popup a list of choices according. |
+| Key binding | Command                                 | Description                                                                                                                                                                                                           |
+|-------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x x=     | =M-x yas-insert-snippet=                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                        |
+|-------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c & C-n= | =M-x yas-new-snippet=                   | Creates a new buffer with a template for making a new snippet.                                                                                                                                                        |
+| =C-c & C-v= | =M-x yas-visit-snippet-file=            | Prompts you for possible snippet expansions and takes you directly to the snippet definition's file, if it exists.                                                                                                    |
+|-------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-c C-l=   | =M-x yas-load-snippet-buffer=           | Prompts for a snippet table and loads the snippet currently being edited.                                                                                                                                             |
+| =C-c C-c=   | =M-x yas-load-snippet-buffer-and-close= | Prompts for a snippet table and loads the snippet currently being edited. Also saves the snippet and calls quit-window. The destination is decided based on the chosen snippet table and snippet collection directly. |
+| =C-c C-t=   | =M-x yas-tryout-snippet=                | When editing a snippet, this opens a new empty buffer, sets it to the appropriate major mode and inserts the snippet there, so you can see what it looks like.                                                        |
+|-------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-yasnippet.el :var file-description="Advanced yasnippet setup"
 ;;
@@ -10399,27 +10407,31 @@ See also:
           )
     :hydra (psimacs/hydra/yasnippet (:color pink :hint nil)
           "
-^^^^^^            YASnippets
-^^^^^^-------------------------------------
-  ^^Modes:     ^^Load/Visit:     ^^Actions:
+YASnippets:
 
- _g_: global  _d_: directory    _i_: insert
- _m_: minor   _f_: file         _t_: tryout
- _e_: extra   _l_: list         _n_: new
- ^ ^          _r_: reload all
-_q_: quit
+ ^ ^Modes:     ^ ^Load/Visit:         ^ ^Actions:
+-^-^-----------^-^--------------------^-^--------------------
+ _g_: global   _d_: load directory    _n_: new
+ _m_: minor    _v_: visit file        _i_: insert
+ _e_: extra    _D_: describe tables   _t_: tryout
+ ^ ^           _r_: reload all        _l_: load buffer
+ _q_: quit     ^ ^                    _c_: load buffer & save
 "
-          ("d" yas-load-directory)
-          ("e" yas-activate-extra-mode)
-          ("i" yas-insert-snippet)
-          ("f" yas-visit-snippet-file :color blue)
-          ("n" yas-new-snippet)
-          ("t" yas-tryout-snippet)
-          ("l" yas-describe-tables)
           ("g" yas-global-mode)
           ("m" yas-minor-mode)
-          ("r" yas-reload-all)
+          ("e" yas-activate-extra-mode)
           ("q" nil :color blue)
+
+          ("d" yas-load-directory)
+          ("v" yas-visit-snippet-file :color blue)
+          ("D" yas-describe-tables)
+          ("r" yas-reload-all)
+
+          ("n" yas-new-snippet)
+          ("i" yas-insert-snippet)
+          ("t" yas-tryout-snippet)
+          ("l" yas-load-snippet-buffer)
+          ("c" yas-load-snippet-buffer-and-close)
         )
 )
 
