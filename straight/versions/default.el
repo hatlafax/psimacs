@@ -3,6 +3,7 @@
  ("GitHub-Modern-Theme-for-Emacs" . "a7e7b8e5e9c122138e79e837caf9b7299e748d44")
  ("ace-window" . "c7cb315c14e36fded5ac4096e158497ae974bec9")
  ("aggressive-indent-mode" . "b0ec0047aaae071ad1647159613166a253410a63")
+ ("alect-themes" . "684249b83d711145865ec31650e66ed9aa6e691b")
  ("alert" . "7046393272686c7a1a9b3e7f7b1d825d2e5250a6")
  ("all-the-icons-dired" . "f401fe289cd93936e7747b1541aa98117b7ca96f")
  ("all-the-icons-ivy" . "a70cbfa1effe36efc946a823a580cec686d5e88d")
