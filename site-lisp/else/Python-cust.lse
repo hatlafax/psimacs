@@ -1,4 +1,4 @@
-;; Copyright (C) 2000-2017 Peter Milliken
+;; Copyright (C) 2021-2017 Peter Milliken
 ;;
 ;; Author: Peter Milliken <peter.milliken@gmail.com>
 ;;
@@ -51,14 +51,17 @@
 ;;******************************************************************************
 
 ;;
+;; Python 3.9.x and Psimacs
 ;;
-;; customisations altered to conform with PEP8 Coding style
-;;
-;;
+
+;;------------------------------------------------------------------------------
+
 DEFINE LANGUAGE Python
     /INDENT_SIZE=4
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER ", IDENTIFIER"
   /LANGUAGE="Python"
@@ -74,56 +77,7 @@ DEFINE PLACEHOLDER ", IDENTIFIER"
 
 END DEFINE
 
-DELETE PLACEHOLDER CALL_STMT
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER CALL_STMT
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="Call statement"
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "{primary} ([parameter_association]...);"
-
-END DEFINE
-
-DELETE PLACEHOLDER FUNCDEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER FUNCDEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "def {identifier} ([defparameter]...):"
-    "  [document_string]"
-    "  {statement}..."
-    ""
-
-END DEFINE
-
-DELETE PLACEHOLDER CLASSDEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER CLASSDEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "class {classname} ([object]):"
-    "  [document_string]"
-    ""
-    "  [init_def]"
-    ""
-    "  [class_funcdef]..."
-    ""
-
-END DEFINE
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER OBJECT
     /LANGUAGE="Python"
@@ -139,38 +93,7 @@ DEFINE PLACEHOLDER OBJECT
 
 END DEFINE
 
-DELETE PLACEHOLDER INIT_DEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER INIT_DEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="Provides an __init__ def."
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "def __init__ (self, [defparameter]...):"
-    "  [document_string]"
-    "  {statement}..."
-
-END DEFINE
-
-DELETE PLACEHOLDER CLASS_FUNCDEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER CLASS_FUNCDEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="Function definition when within a class"
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "def {identifier} (self, [defparameter]...):"
-    "  [document_string]"
-    "  {statement}..."
-    " "
-
-END DEFINE
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER COMPILATION_UNIT
     /LANGUAGE="Python"
@@ -191,6 +114,8 @@ DEFINE PLACEHOLDER COMPILATION_UNIT
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER TEST_STATEMENT
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER TEST_STATEMENT
@@ -206,22 +131,7 @@ DEFINE PLACEHOLDER TEST_STATEMENT
 
 END DEFINE
 
-DELETE PLACEHOLDER CLASSFUNCDEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER CLASSFUNCDEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "def {identifier} (self, [defparameter]...):"
-    "  [document_string]"
-    "  {statement}..."
-    ""
-
-END DEFINE
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER FROM
     /LANGUAGE="Python"
@@ -237,43 +147,170 @@ DEFINE PLACEHOLDER FROM
 
 END DEFINE
 
-DELETE PLACEHOLDER MODULE_HEADER
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER YYYY
+    /LANGUAGE="Python" 
+DEFINE PLACEHOLDER YYYY 
+    /LANGUAGE="Python" 
+    /NOAUTO_SUBSTITUTE 
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL 
+    /SEPARATOR="" 
+    /TYPE=TERMINAL 
+
+    "Please enter a valid date"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER APACHE_LICENSE_2.0
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER MODULE_HEADER
+DEFINE PLACEHOLDER APACHE_LICENSE_2.0
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
+    /DESCRIPTION="Apache Licence v2.0"
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    "================================================================================="
-    ""
-    "@@Module Description: {text}..."
-    ""
-    "@@@@@$Id::                                                         $"
-    ""
-    "@@@@This item is the property of ResMed Ltd, and contains confidential and trade"
-    "@@@@secret information. It may not be transferred from the custody or control of"
-    "@@@@ResMed except as authorised in writing by an officer of ResMed. Neither this"
-    "@@@@item nor the information it contains may be used, transferred, reproduced,"
-    "@@@@published, or disclosed, in whole or in part, and directly or indirectly,"
-    "@@@@except as expressly authorised by an officer of ResMed, pursuant to written"
-    "@@@@agreement."
-    ""
-    "@@@@Copyright (c) 2010 ResMed Ltd.  All rights reserved."
-    ""
-    "================================================================================="
+    "#"
+    "# Distributed under the Apache License, Version 2.0."
+    "#"
+    "# Copyright (c) {yyyy} {text}. All rights reserved."
+    "#"
+    "# Licensed under the Apache License, Version 2.0 (the "License"); you may"
+    "# not use this file except in compliance with the License. You may obtain"
+    "# a copy of the License at"
+    "#"
+    "#     http://www.apache.org/licenses/LICENSE-2.0"
+    "#"
+    "# Unless required by applicable law or agreed to in writing, software"
+    "# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT"
+    "# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the"
+    "# License for the specific language governing permissions and limitations"
+    "# under the License."
+    "#"
 
 END DEFINE
 
-;;
-;; ResMed Python Coding Standards
-;;
+;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER DEFPARAMETER
+DELETE PLACEHOLDER MIT_LICENSE
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER DEFPARAMETER
+DEFINE PLACEHOLDER MIT_LICENSE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="MIT Licence"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "#"
+    "# Distributed under the MIT License."
+    "#"
+    "# Copyright (c) {yyyy} {text}"
+    "#"
+    "# Permission is hereby granted, free of charge, to any person obtaining a copy"
+    "# of this software and associated documentation files (the "Software"), to deal"
+    "# in the Software without restriction, including without limitation the rights"
+    "# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell"
+    "# copies of the Software, and to permit persons to whom the Software is"
+    "# furnished to do so, subject to the following conditions:"
+    "#"
+    "# The above copyright notice and this permission notice shall be included in"
+    "# all copies or substantial portions of the Software."
+    "#"
+    "# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+    "# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+    "# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE"
+    "# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER"
+    "# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,"
+    "# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE"
+    "# SOFTWARE."
+    "#"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LGPL_2_1_LICENSE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER LGPL_2_1_LICENSE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="LGPL Licence v2.1"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "#"
+    "# Distributed under the GNU Lesser General Public License, Version 2.1."
+    "#"
+    "# Copyright (c) {yyyy} {text}"
+    "#"
+    "# This library is free software; you can redistribute it and/or modify it under"
+    "# the terms of the GNU Lesser General Public License as published by the"
+    "# Free Software Foundation; either version 2.1 of the License, or (at your option)"
+    "# any later version."
+    "# This library is distributed in the hope that it will be useful, but"
+    "# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY"
+    "# or FITNESS FOR A PARTICULAR PURPOSE."
+    "# See the GNU Lesser General Public License for more details."
+    "#"
+    "# You should have received a copy of the GNU Lesser General Public License along"
+    "# with this library; if not, write to the Free Software Foundation, Inc.,"
+    "# 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
+    "#"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER BOOST_LICENSE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER BOOST_LICENSE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Boost Licence v1.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "#"
+    "# Distributed under the Boost Software License, Version 1.0."
+    "#"
+    "# Copyright (c) {yyyy} {text}"
+    "#"
+    "# Permission is hereby granted, free of charge, to any person or organization"
+    "# obtaining a copy of the software and accompanying documentation covered by"
+    "# this license (the "Software") to use, reproduce, display, distribute, execute,"
+    "# and transmit the Software, and to prepare derivative works of the Software, and"
+    "# to permit third-parties to whom the Software is furnished to do so, all subject"
+    "# to the following:"
+    "#"
+    "# The copyright notices in the Software and this entire statement, including the"
+    "# above license grant, this restriction and the following disclaimer, must be"
+    "# included in all copies of the Software, in whole or in part, and all derivative"
+    "# works of the Software, unless such copies or derivative works are solely in the"
+    "# form of machine-executable object code generated by a source language processor."
+    "#"
+    "# THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+    "# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+    "# FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL"
+    "# THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE FOR ANY DAMAGES"
+    "# OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR"
+    "# IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    "#"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LICENSE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER LICENSE
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -281,11 +318,14 @@ DEFINE PLACEHOLDER DEFPARAMETER
     /SEPARATOR=", "
     /TYPE=MENU
 
-    "{parameter}[={expression}]"
-    "*{identifier}"
-    "**{identifier}"
+    "APACHE_LICENSE_2.0"/PLACEHOLDER
+    "BOOST_LICENSE"/PLACEHOLDER
+    "MIT_LICENSE"/PLACEHOLDER
+    "LGPL_2_1_LICENSE"/PLACEHOLDER
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER "={EXPRESSION}"
     /LANGUAGE="Python"
@@ -301,54 +341,7 @@ DEFINE PLACEHOLDER "={EXPRESSION}"
 
 END DEFINE
 
-DELETE PLACEHOLDER INIT_DEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER INIT_DEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="Provides an __init__ def."
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "def __init__(self, [defparameter]...):"
-    "  [document_string]"
-    "  {statement}..."
-
-END DEFINE
-
-DELETE PLACEHOLDER CLASS_FUNCDEF
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER CLASS_FUNCDEF
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="Function definition when within a class"
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "def {identifier}(self, [defparameter]...):"
-    "  [document_string]"
-    "  {statement}..."
-    " "
-
-END DEFINE
-
-DELETE PLACEHOLDER IMPORT_STMT
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER IMPORT_STMT
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=MENU
-
-    "import {module} [as {name}]"
-    "from {module} import {identifier} [as {name}], [identifier_as_name]..."
-    "from {module} import *"
-
-END DEFINE
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER DOCUMENT_STRING
     /LANGUAGE="Python"
@@ -366,6 +359,8 @@ DEFINE PLACEHOLDER DOCUMENT_STRING
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER COMPREHENSION
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER COMPREHENSION
@@ -379,6 +374,24 @@ DEFINE PLACEHOLDER COMPREHENSION
     "[{expression} for {target}... in {or_test} [comp_iter]...]"
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER GENERATOR
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER GENERATOR
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="generator construct"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({expression} for {target}... in {or_test} [comp_iter]...)"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER COMP_ITER
     /LANGUAGE="Python"
@@ -395,6 +408,8 @@ DEFINE PLACEHOLDER COMP_ITER
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER COMP_FOR
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER COMP_FOR
@@ -409,6 +424,8 @@ DEFINE PLACEHOLDER COMP_FOR
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER COMP_IF
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER COMP_IF
@@ -422,6 +439,8 @@ DEFINE PLACEHOLDER COMP_IF
     "if {expression_nocond}"
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER EXPRESSION_NOCOND
     /LANGUAGE="Python"
@@ -438,6 +457,8 @@ DEFINE PLACEHOLDER EXPRESSION_NOCOND
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER LAMBDA_EXPR_NOCOND
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER LAMBDA_EXPR_NOCOND
@@ -453,6 +474,7 @@ DEFINE PLACEHOLDER LAMBDA_EXPR_NOCOND
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER LAMBDA_FORM
     /LANGUAGE="Python"
@@ -467,6 +489,8 @@ DEFINE PLACEHOLDER LAMBDA_FORM
     "lambda [parameter_list]: {expression}"
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER OR_TEST
     /LANGUAGE="Python"
@@ -483,6 +507,8 @@ DEFINE PLACEHOLDER OR_TEST
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER AND_TEST
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER AND_TEST
@@ -498,6 +524,8 @@ DEFINE PLACEHOLDER AND_TEST
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER NOT_TEST
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER NOT_TEST
@@ -510,5 +538,174 @@ DEFINE PLACEHOLDER NOT_TEST
 
     "comparision"/PLACEHOLDER
     "not {not_test}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER DEFPARAMETER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER DEFPARAMETER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{parameter}[:{typehint}]"
+    "{parameter}[:{typehint}][={expression}]"
+    "{parameter}[={expression}]"
+    "{parameter}"
+    "*{identifier}"
+    "**{identifier}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ":{TYPEHINT}"
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ":{TYPEHINT}"
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /FOLLOW
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ": {identifier}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORT_STMT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER IMPORT_STMT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "import {module} [as {name}]"
+    "from {module} import {identifier} [as {name}], [identifier_as_name]..."
+    "from {module} import *"
+    "from __future__ import annotations"
+    "from typing import TypeVar, Iterable, Sequence, Generic, List, Callable, Set, Deque, Dict, Any, Optional"
+    "from typing import Protocol"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER CALL_STMT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER CALL_STMT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Call statement"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{primary}([parameter_association]...);"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER FUNCDEF
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER FUNCDEF
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "def {identifier}([defparameter]...)[ -> {type_hint}]:"
+    "  [document_string]"
+    "  {statement}..."
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER INIT_DEF
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER INIT_DEF
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Provides an __init__ def."
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "def __init__(self, [defparameter]...)[ -> {type_hint}]:"
+    "  [document_string]"
+    "  {statement}..."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER CLASS_FUNCDEF
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER CLASS_FUNCDEF
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Function definition when within a class"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "def {identifier}(self, [defparameter]...)[ -> {type_hint}]:"
+    "  [document_string]"
+    "  {statement}..."
+    " "
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER " -> {TYPE_HINT}"
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER " -> {TYPE_HINT}"
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    " -> {identifier}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER CLASSDEF 
+    /LANGUAGE="Python" 
+DEFINE PLACEHOLDER CLASSDEF 
+    /LANGUAGE="Python" 
+    /NOAUTO_SUBSTITUTE 
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT 
+    /SEPARATOR="" 
+    /TYPE=NONTERMINAL 
+
+    "class {classname}[inheritance]:"
+    "  [document_string]"
+    ""
+    "  [init_def]"
+    ""
+    "  [class_funcdef]..."
+    ""
 
 END DEFINE
