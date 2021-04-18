@@ -7954,24 +7954,28 @@ It is an enhancement of the build-in =M-x text-adjust-scale= command.
 (use-package frame-fns)
 (use-package frame-cmds)
 (use-package zoom-frm
-    :init
-        (setq zoom-frame/buffer 'frame)
+    :config
+        ;;(setq zoom-frame/buffer 'frame)
 
-        (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
-        (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
-        (define-key ctl-x-map [(control ?=)] 'zoom-in/out)
-        (define-key ctl-x-map [(control ?0)] 'zoom-in/out)
+        (defun psimacs/config/initalize-zoom-frm ()
+            (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
+            (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
+            (define-key ctl-x-map [(control ?=)] 'zoom-in/out)
+            (define-key ctl-x-map [(control ?0)] 'zoom-in/out)
 
-        (global-set-key (vector (list 'control mouse-wheel-down-event)) 'zoom-in)
-        (global-set-key (vector (list 'control mouse-wheel-up-event))   'zoom-out)
+            (global-set-key (vector (list 'control mouse-wheel-down-event)) 'zoom-in)
+            (global-set-key (vector (list 'control mouse-wheel-up-event))   'zoom-out)
+    
+            (global-set-key (vector (list 'control 'meta mouse-wheel-down-event)) 'zoom-all-frames-in)
+            (global-set-key (vector (list 'control 'meta mouse-wheel-up-event))   'zoom-all-frames-out)
 
-        (global-set-key (vector (list 'control 'meta mouse-wheel-down-event)) 'zoom-all-frames-in)
-        (global-set-key (vector (list 'control 'meta mouse-wheel-up-event))   'zoom-all-frames-out)
+            (global-set-key [S-mouse-1]    'zoom-in)
+            (global-set-key [C-S-mouse-1]  'zoom-out)
+            ;;;; Get rid of `mouse-set-font' or `mouse-appearance-menu':
+            (global-set-key [S-down-mouse-1] nil)
+        )
 
-        (global-set-key [S-mouse-1]    'zoom-in)
-        (global-set-key [C-S-mouse-1]  'zoom-out)
-        ;;;; Get rid of `mouse-set-font' or `mouse-appearance-menu':
-        (global-set-key [S-down-mouse-1] nil)
+    :hook (after-init . psimacs/config/initalize-zoom-frm)
     :bind (
             :map psimacs/config/global-key-map/special
             ("C-x C-0" . zoom-frm-unzoom)
