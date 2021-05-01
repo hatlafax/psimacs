@@ -112,20 +112,129 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Working with Emacs
 
 *Emacs* provides a great number of predefined key bindings to quite useful commands. In the following
-a table is provided that contain such treasures. The list is not exhaustive, but contains only
-bindings and commands that I did not know about beforhand or that I might forget about in the future.
+sections some of these bindings are introduced.
 
-b| Key binding | Command  | Description                                                                                                    |
-|-----------+------------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x z=   | =M-x repeat=                 | Repeat the most recently executed command. After first execution pressing key =z= repeats the command further.    |
-| =C-x M-:= | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
-|           | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
-|-----------+------------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x C--= | =C-u -1 M-x zoom-out=        | Decrease the default face height by one step.                                                                     |
-| =C-x C-+= | =C-u +1 M-x zoom-in=         | Increase the default face height by one step.                                                                     |
-| =C-x C-0= | =C-u  0 M-x zoom-frm-unzoom= | Reset the default face height to the global default.                                                              |
-|-----------+------------------------------+-------------------------------------------------------------------------------------------------------------------|
+** Basic movements
 
+The table that follows contain the basic movement commands with their corresponding
+key binding. In case that *Psimacs* has a differing binding, the *Psimacs* binding is
+provided but the standard binding is given in the second column.
+
+References:
+- [[https://www.youtube.com/watch?v=wT_jUtEGfeg][Efficient Movement with Emacs Key Bindings - Emacs Essentials #2]]
+
+| Key binding  | Standard | Command                      | Description                                                                                                                 |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-f=        |          | =M-x forward-char=           | Move point forward by one character.                                                                                        |
+| =C-b=        |          | =M-x backward-char=          | Move point backward by one character.                                                                                       |
+| =C-n=        |          | =M-x next-line=              | Move point forward by one line, keeping horizontal position.                                                                |
+| =C-p=        |          | =M-x previous-line=          | Move point backward by one line, keeping horizontal position.                                                               |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =<Left>=     |          | =M-x left-char=              | Properly respect the /right-to-left/ text.                                                                                  |
+| =<Rigth>=    |          | =M-x right-char=             | Dito.                                                                                                                       |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-a=        |          | =M-x move-beginning-of-line= | Goto the beginning of the line.                                                                                             |
+| =C-e=        |          | =M-x move-end-of-line=       | Goto the end of the line.                                                                                                   |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =M-<=        |          | =M-x beginning-of-buffer=    | Goto the beginning of the buffer.                                                                                           |
+| =M->=        |          | =M-x end-of-buffer=          | Goto the end of the buffer.                                                                                                 |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-<Home>=   |          | =M-x beginning-of-buffer=    | Goto the beginning of the buffer.                                                                                           |
+| =C-<End>=    |          | =M-x end-of-buffer=          | Goto the end of the buffer.                                                                                                 |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =M-g M-g=    |          | =M-x goto-line=              | Goto line number N                                                                                                          |
+| =M-g <Tab>=  |          | =M-x goto-column=            | Goto column number N                                                                                                        |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =M-f=        |          | =M-x forward-word=           | Move point forward by one word.                                                                                             |
+| =M-b=        |          | =M-x backward-word=          | Move point backward by one word.                                                                                            |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =M-{=        |          | =M-x forward-paragraph=      | Move point forward by one paragraph.                                                                                        |
+| =M-}=        |          | =M-x backward-paragraph=     | Move point backward by one paragrah.                                                                                        |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-<Down>=   |          | =M-x forward-paragraph=      | Move point forward by one paragraph.                                                                                        |
+| =C-<Up>=     |          | =M-x backward-paragraph=     | Move point backward by one paragrah.                                                                                        |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-M-f=      |          | =M-x forward-sexp=           | Move point forward across one balanced expression.                                                                          |
+| =C-M-b=      |          | =M-x backward-sexp=          | Move point backward across one balanced expression.                                                                         |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =M-e=        |          | =M-x forward-sentence=       | Move point forward by one sentence.                                                                                         |
+| =M-a=        |          | =M-x backward-sentence=      | Move point backward by one sentence.                                                                                        |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-v=        |          | =M-x scroll-up-command=      | Move the window to the next page. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                             |
+| =M-v=        |          | =M-x scroll-down-command=    | Move the window to the previous page.                                                                                       |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =<PageDown>= |          | =M-x scroll-up-command=      | Move the window to the next page. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                             |
+| =<PageUp>=   |          | =M-x scroll-down-command=    | Move the window to the previous page.                                                                                       |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-l=        |          | =M-x recenter-top-bottom=    | Center line of point to the middle of the buffer window. Pressing it repeatedly cycles throug /top/, /bottom/ and /center/. |
+| =C-M-l=      |          | =M-x reposition-window=      | Attempt to scroll the screen to fit as much as possible in the window.                                                      |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s s=  | =C-s=    | =M-x isearch-forward=        | Search term forward and places point after the occurence.                                                                   |
+| =H-m C-s r=  | =C-r=    | =M-x isearch-backward=       | Search term backward and places point before the occurence.                                                                 |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =C-s=        |          | =M-x swiper-isearch=         | Isearch enhanced by /Ivy Swiper/.                                                                                           |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+| =M-m=        |          | =M-x back-to-indentation=    | Move point to the first non-whitespace character in the current line.                                                       |
+|--------------+----------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------|
+
+** Basic selection
+
+The fundamental selection commands with their corresponding key bindings are listed in the next table.
+
+References:
+- [[https://www.youtube.com/watch?v=Dq5UOt63Mms][Efficient Text Selection with Emacs Key Bindings - Emacs Essentials #3]]
+- Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
+
+#+attr_html: :class styledtable
+| Key binding                   | Command                                   | Description                                                                                                                                                                                                                                          |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+| =C-SPC= =C-@=                 | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |   |   |
+| =C-u C-SPC= =C-u C-@= =H-x p= | =M-x pop-to-mark-command=                 | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |   |   |
+| =C-x C-SPC= =C-x C-@= =H-x q= | =M-x pop-global-mark=                     | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |   |   |
+| =C-SPC C-SPC=                 |                                           | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |   |   |
+| =C-u C-u C-SPC=               |                                           | Unconditionally set mark.                                                                                                                                                                                                                            |   |   |
+| =C-x C-x=                     | =M-x exchange-point-and-mark=             | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+| =S-C-f=                       | =M-x forward-char S-<Ret>=                | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |   |   |
+| =S-...=                       | =M-x ... S-<Ret>=                         | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+| =C-w=                         | =M-x kill-region=                         | Deletes text in region and copies it to kill ring.                                                                                                                                                                                                   |   |   |
+| =M-w=                         | =M-x kill-ring-save=                      | Copies text in region to the kill ring.                                                                                                                                                                                                              |   |   |
+| =C-y=                         | =M-x yank=                                | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |   |   |
+| =M-y=                         | =M-x counsel-yank-pop=                    | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+| =C-x C-u=                     | =M-x upcase-region=                       | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                         |   |   |
+| =C-x C-l=                     | =M-x downcase-region=                     | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                         |   |   |
+| =H-x H-x C-x C-u=             | =M-x crux-upcase-region=                  | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                 |   |   |
+| =H-x H-x C-x C-l=             | =M-x crux-downcase-region=                | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                 |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+| =C-g=                         | =M-x keyboard-quit=                       | Deselect current region.                                                                                                                                                                                                                             |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+| =M-@=                         | =M-x mark-word=                           | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |   |   |
+| =C-M-@=                       | =M-x mark-sexp=                           | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |   |   |
+| =M-h=                         | =M-x mark-paragraph=                      | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |   |   |
+| =C-M-h=                       | =M-x mark-defun=                          | Marks the whole /defun/ under point.                                                                                                                                                                                                                 |   |   |
+| =C-x C-p=                     | =M-x mark-page=                           | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |   |   |
+| =C-x h=                       | =M-x mark-whole-buffer=                   | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                                                                                                                                  |   |   |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---+---|
+
+** Useful commands
+
+In the following, a table is provided that contain useful commands and their key bindings.
+The list is not exhaustive, but contains only bindings and commands that I did not know
+about beforhand or that I might forget about in the future.
+
+#+attr_html: :class styledtable
+| Key binding | Command                      | Description                                                                                                       |
+|-------------+------------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =C-x z=     | =M-x repeat=                 | Repeat the most recently executed command. After first execution pressing key =z= repeats the command further.    |
+| =C-x M-:=   | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
+|             | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
+|-------------+------------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =C-x C--=   | =C-u -1 M-x zoom-out=        | Decrease the default face height by one step.                                                                     |
+| =C-x C-+=   | =C-u +1 M-x zoom-in=         | Increase the default face height by one step.                                                                     |
+| =C-x C-0=   | =C-u  0 M-x zoom-frm-unzoom= | Reset the default face height to the global default.                                                              |
+|-------------+------------------------------+-------------------------------------------------------------------------------------------------------------------|
 
 * Working with Info
 
@@ -3688,6 +3797,34 @@ See also:
 (global-set-key (kbd "H-g") 'keyboard-escape-quit)
 #+end_src
 
+*** Key cast
+
+The [[https://github.com/tarsius/keycast][keycast]] package provides two modes that display the current command and its key or
+mouse binding, and update the displayed information once another command is invoked.
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Show current command and its key or mouse bindings.
+;;
+(use-package keycast
+    :commands keycast-mode
+    :config
+        (define-minor-mode keycast-mode
+          "Show current command and its key binding in the mode line."
+          :global t
+          (if keycast-mode
+              (progn
+                (add-hook 'pre-command-hook 'keycast--update t)
+                (add-to-list 'global-mode-string '("" mode-line-keycast "    ")))
+            (remove-hook 'pre-command-hook 'keycast--update)
+            (setq global-mode-string (remove '("" mode-line-keycast "   ") global-mode-string))))
+
+        (custom-set-faces
+         '(keycast-command ((t (:inherit doom-modeline-debug :height 0.9))))
+         '(keycast-key     ((t (:inherit custom-modified :height 1.1 :weight bold)))))
+)
+#+end_src
+
 ** User Site-Lisp load path
 
 Our own /Emacs/ code resides in one directory that must be added to the load path.
@@ -4473,14 +4610,14 @@ mark onto this ring. One of the uses of the mark ring is to remember spots that 
 #+end_quote
 
 #+attr_html: :class styledtable
-| Key binding                     | Command                                    | Description                                                                                                                                                                                                                                             |
-|---------------------------------+--------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-SPC=, =C-@=                  | =M-x cua-set-mark=, =M-x set-mark-command= | Set mark at where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
-| =C-u C-SPC=, =C-u C-@=, =C-x p= | =M-x pop-to-mark-command=                  | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                      |
-| =C-x C-@=                       | =M-x pop-global-mark=                      | Jump to a mark off the global mark ring.                                                                                                                                                                                                                |
-| =C-SPC C-SPC=                   |                                            | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                     |
-| =C-u C-u C-SPC=                 |                                            | Unconditionally set mark.                                                                                                                                                                                                                               |
-|---------------------------------+--------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding                   | Command                                   | Description                                                                                                                                                                                                                                          |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC=  =C-@=                | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
+| =C-u C-SPC= =C-u C-@= =H-x p= | =M-x pop-to-mark-command=                 | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
+| =C-x C-SPC= =C-x C-@= =H-x q= | =M-x pop-global-mark=                     | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
+| =C-SPC C-SPC=                 |                                           | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
+| =C-u C-u C-SPC=               |                                           | Unconditionally set mark.                                                                                                                                                                                                                            |
+|-------------------------------+-------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 If you set =set-mark-command-repeat-pop= to non-nil, then immediately after you type =C-u C-SPC=, you can type =C-SPC=
 instead of =C-u C-SPC= to cycle through the mark ring.
@@ -4490,7 +4627,8 @@ instead of =C-u C-SPC= to cycle through the mark ring.
 ;; Handy way of getting back to previous places.
 ;;
 (setq set-mark-command-repeat-pop t)
-(bind-key "C-x p" 'pop-to-mark-command)
+(bind-key "H-x p" 'pop-to-mark-command)
+(bind-key "H-x q" 'pop-global-mark)
 #+end_src
 
 *** Indentation and Tab stops
@@ -7298,6 +7436,9 @@ mark is on, all text that you kill or copy is automatically inserted at the glob
 mark, and text you type is inserted at the global mark rather than at the current
 position.
 
+By default *Psimacs* does not activate [[https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][CUA mode]] on start-up, because it is to intrusive with
+respect to /normal/ *Emacs* operation.
+
 See also:
 - [[http://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html][Manual: Cua-Bindings]],
 - [[https://www.emacswiki.org/emacs/CuaMode][EmacsWiki: Cua Mode]],
@@ -7330,15 +7471,25 @@ See also:
 ;;
 ;; CUA-Mode: Enabled on default
 ;;
-(setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
-(setq cua-keep-region-after-copy t)   ;; Standard Windows behaviour
-(setq cua-delete-selection t)
-(setq cua-remap-control-z nil)        ;; We use undo-fu instead
-(global-set-key (kbd "<f12>") 'cua-mode)
-(define-key psimacs/config/global-key-map/special (kbd "c") 'cua-mode)
-(cua-mode t)
-(define-key cua-global-keymap (kbd "C-<return>") nil)
-(define-key cua-global-keymap (kbd "H-x C-<return>") 'cua-set-rectangle-mark)
+(use-package cua-base
+    :straight nil
+    :config
+        (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
+        (setq cua-keep-region-after-copy t)   ;; Standard Windows behaviour
+        (setq cua-delete-selection t)
+        (setq cua-remap-control-z nil)        ;; We use undo-fu instead
+
+        ;;(cua-mode t)
+
+    :bind (
+            ("<f12>" . cua-mode)
+            :map psimacs/config/global-key-map/special
+            ("c" . cua-mode)
+            :map cua-global-keymap
+            ("C-<return>"     . nil)
+            ("H-x C-<return>" . cua-set-rectangle-mark)
+          )
+)
 #+end_src
 
 *** Dired+
@@ -7965,7 +8116,7 @@ It is an enhancement of the build-in =M-x text-adjust-scale= command.
 
             (global-set-key (vector (list 'control mouse-wheel-down-event)) 'zoom-in)
             (global-set-key (vector (list 'control mouse-wheel-up-event))   'zoom-out)
-    
+
             (global-set-key (vector (list 'control 'meta mouse-wheel-down-event)) 'zoom-all-frames-in)
             (global-set-key (vector (list 'control 'meta mouse-wheel-up-event))   'zoom-all-frames-out)
 
@@ -11444,7 +11595,7 @@ Returns `else-Alternate-Mode-Names'."
 
     ;; Disable automatic else-mode activation. If active, there are problems with org-mode building
     ;;:hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
-    :hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
+    :hook ((sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
     :bind (
              :map else-mode-key-map
              ("H-n" . else-next)
@@ -15599,6 +15750,7 @@ References:
                 (
                     ("n" display-line-numbers-mode  "line number" :toggle t)
                     ("a" global-aggressive-indent-mode "aggressive indent" :toggle t)
+                    ("c" keycast-mode "key cast mode" :toggle t)
                     ("d" global-hungry-delete-mode "hungry delete" :toggle t)
                     ("p" psimacs/activate/toggle-smartparens-paren-mode  "smartparens mode" :toggle show-smartparens-mode)
                     ("m" flyspell-mode "spell check" :toggle t)
@@ -16421,7 +16573,6 @@ by the various packages nor by *Emacs* itself.
 | =C-x <left>=        | =M-x previous-buffer=                                                   | Switch to the previous buffer.                                                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =M-<f4>=            | =M-x psimacs/config/delete-frame=                                       | Delete current frame.                                                                                                                                                                                                                                                                            |
-| =C-x p=             | =M-x pop-to-mark-command=                                               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                                                               |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =<f2>=              | =M-x bm-next=                                                           | Jump to the next bookmark.                                                                                                                                                                                                                                                                       |
 | =S-<f2>=            | =M-x bm-previous=                                                       | Jump to the previous bookmark.                                                                                                                                                                                                                                                                   |
@@ -16797,6 +16948,9 @@ by the various packages nor by *Emacs* itself.
 | =H-x C-c R=         | =M-x psimacs/python/blacken=                                            | Reformat buffer with tool [[https://github.com/psf/black][black]].                                                                                                                                                                                                                                                                 |
 | =H-x C-c R=         | =M-x psimacs/cmake/format-buffer=                                       | Reformat buffer with tool [[https://github.com/cheshirekow/cmake_format][cmake-format]].                                                                                                                                                                                                                                                          |
 | =H-x C-c Y=         | =M-x psimacs/python/yapify=                                             | Reformat buffer with tool [[https://github.com/google/yapf][yapf]].                                                                                                                                                                                                                                                                  |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x p=             | =M-x pop-to-mark-command=                                               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                                                               |
+| =H-x q=             | =M-x pop-global-mark=                                                   | Jump to a mark off the global mark ring.                                                                                                                                                                                                                                                         |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x x=             | =M-x yas-insert-snippet=                                                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                                                                                                   |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
