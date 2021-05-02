@@ -1,8 +1,11 @@
-;; Copyright (C) 2021-2017 Peter Milliken
+;; Copyright (C) 2020-2021 Johannes Brunen
 ;;
-;; Author: Peter Milliken <peter.milliken@gmail.com>
+;; Author: Johannes Brunen <hatlafax@gmx.de>
 ;;
 ;; Keywords: language sensitive abbreviation template placeholder token
+;;
+;; This is a customization of the 'Python.lse' specification from 
+;; Peter Milliken <peter.milliken@gmail.com> targeting Python 3.9.x.
 ;;
 ;; GNU Emacs is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -18,41 +21,6 @@
 ;; along with GNU Emacs; see the file COPYING.  If not, write to the
 ;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
-
-;;******************************************************************************
-;; These definitions are my personal customisations for the language. This is
-;; where you should place YOUR customisations.
-;;
-;; Sometimes there is a definition(s) in here that override definitions in the
-;; main language template file that are here to make that definition more
-;; "usable" - this is because I (primarily) try and generate/maintain the main
-;; .lse files from EBNF definitions of the language. Sometimes I just can't
-;; express the appropriate customisation in the EBNF and so I am forced to
-;; override the placeholder definition in this file.
-;;
-;; This entries in this file should be used as an example of how to create your
-;; own customisations. I would caution that you don't delete any definitions
-;; though until you are sure that your edit sessions will not be adversely
-;; affected. The best way to check out the effects of a delete is to "compile"
-;; (else-compile-buffer) the "delete" command for that definition (this will
-;; remove it from your edit session and you can nolonger access the definition
-;; until next you load language template files) and then see whether anything
-;; has been "lost" in your code generation ability i.e. say you think you don't
-;; need the definition for placeholder XXX, just place the following lines at
-;; the end of one of your source files (when ELSE is enabled for that buffer)
-;; and perform a compile (M-x else-compile-buffer) with the cursor positioned at
-;; the beginning of the line:
-;;
-;; DELETE PLACEHOLDER XXX
-;;    /LANGUAGE = "Python"
-;;
-;; This will delete definition XXX from memory.
-;;
-;;******************************************************************************
-
-;;
-;; Python 3.9.x and Psimacs
-;;
 
 ;;------------------------------------------------------------------------------
 
@@ -564,6 +532,251 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER VARIABLE_NAME 
+    /LANGUAGE="Python" 
+DEFINE PLACEHOLDER VARIABLE_NAME 
+    /LANGUAGE="Python" 
+    /AUTO_SUBSTITUTE 
+    /SUBSTITUTE_COUNT=2
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT 
+    /SEPARATOR="" 
+    /TYPE=TERMINAL 
+
+    "Please enter a valid varable name"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ASSIGNMENT_STMT 
+    /LANGUAGE="Python" 
+DEFINE PLACEHOLDER ASSIGNMENT_STMT 
+    /LANGUAGE="Python" 
+    /AUTO_SUBSTITUTE 
+    /SUBSTITUTE_COUNT=2
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL 
+    /SEPARATOR="" 
+    /TYPE=MENU 
+
+    "{target} = {expression}..."
+    "{variable_name}[:{typehint}] = {expression}..."
+    "self.{variable_name}[:{typehint}] = {expression}..."
+    "self._{variable_name}[:{typehint}] = {expression}..."
+    "self.{variable_name}[:{typehint}] = {variable_name}..."
+    "self._{variable_name}[:{typehint}] = {variable_name}..."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TYPE_IDENTIFIER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TYPE_IDENTIFIER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "Annotated"
+    "Any"
+    "AnyStr"
+    "BinaryIO"
+    "ClassVar"
+    "Final"
+    "Generic"
+    "IO"
+    "Literal"
+    "NamedTuple"
+    "NoReturn"
+    "Optional"
+    "Protocol"
+    "Text"
+    "TextIO"
+    "TYPE_CHECKING"
+    "TypedDict"
+    "TypeVar"
+    "Union"
+
+    ;; Deprecated since Python 3.9.0
+    "AbstractSet"
+    "AsyncContextManager"
+    "AsyncGenerator"
+    "AsyncIterable"
+    "AsyncIterator"
+    "Awaitable"
+    "ByteString"
+    "Callable"
+    "ChainMap"
+    "Collection"
+    "Container"
+    "ContextManager"
+    "Coroutine"
+    "Counter"
+    "DefaultDict"
+    "Deque"
+    "Dict"
+    "FrozenSet"
+    "Generator"
+    "Hashable"
+    "ItemsView"
+    "Iterable"
+    "Iterator"
+    "KeysView"
+    "List"
+    "Mapping"
+    "MappingView"
+    "Match"
+    "MutableMapping"
+    "MutableSequence"
+    "MutableSet"
+    "OrderedDict"
+    "Pattern"
+    "Reversible"
+    "Sequence"
+    "Set"
+    "Sized"
+    "Tuple"
+    "Type"
+    "ValuesView"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TYPE_PROTOCOL
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TYPE_PROTOCOL
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "SupportsAbs"
+    "SupportsBytes"
+    "SupportsComplex"
+    "SupportsFloat"
+    "SupportsIndex"
+    "SupportsInt"
+    "SupportsRound"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TYPE_FUNCTION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TYPE_FUNCTION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "cast"
+    "ForwardRef"
+    "get_type_hints"
+    "get_args"
+    "get_origin"
+    "NewType"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER COLLECTION_IDENTIFIER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER COLLECTION_IDENTIFIER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "deque"
+    "defaultdict"
+    "OrderedDict"
+    "Counter"
+    "ChainMap"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER COLLECTION_ABC_IDENTIFIER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER COLLECTION_ABC_IDENTIFIER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "AsyncIterable"
+    "AsyncIterator"
+    "AsyncGenerator"
+    "Awaitable"
+    "ByteString"
+    "Callable"
+    "Collection"
+    "Container"
+    "Coroutine"
+    "Generator"
+    "Hashable"
+    "ItemsView"
+    "Iterable"
+    "Iterator"
+    "KeysView"
+    "Mapping"
+    "MappingView"
+    "MutableMapping"
+    "MutableSequence"
+    "MutableSet"
+    "Reversible"
+    "Sequence"
+    "Set"
+    "Sized"
+    "MappingView"
+    "ValuesView"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER PROTOCOL_IDENTIFIER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER PROTOCOL_IDENTIFIER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "final"
+    "overload"
+    "no_type_check"
+    "no_type_check_decorator"
+    "type_check_only"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER ":{TYPEHINT}"
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER ":{TYPEHINT}"
@@ -575,7 +788,7 @@ DEFINE PLACEHOLDER ":{TYPEHINT}"
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    ": {identifier}"
+    ": {type}"
 
 END DEFINE
 
@@ -591,13 +804,26 @@ DEFINE PLACEHOLDER IMPORT_STMT
     /SEPARATOR=""
     /TYPE=MENU
 
+    "import {module}"
     "import {module} [as {name}]"
+    
+    "from {module} import {identifier}, [identifier]..."
     "from {module} import {identifier} [as {name}], [identifier_as_name]..."
     "from {module} import *"
-    "from __future__ import annotations"
-    "from dataclasses import dataclass"
+
+    "from collections import {collection_identifier}, [collection_identifier]..."
+    "from collections.abc import {collection_abc_identifier}, [collection_abc_identifier]..."
+
+    "from typing import {type_identifier}, [type_identifier]..."
+    "from typing import {type_protocol}, [type_protocol]..." 
+    "from typing import {type_function}, [type_function]..." 
+
     "from typing import TypeVar, Iterable, Sequence, Generic, List, Callable, Set, Deque, Dict, Any, Optional"
     "from typing import Protocol"
+
+    "from __future__ import annotations"
+    "from dataclasses import dataclass"
+    "from logging import Logger"
 
 END DEFINE
 
@@ -666,10 +892,36 @@ DEFINE PLACEHOLDER CLASS_FUNCDEF
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
+    "[@annotation_string]..."
     "def {identifier}(self, [defparameter]...)[ -> {type_hint}]:"
     "  [document_string]"
     "  {statement}..."
     " "
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER "@ANNOTATION_STRING"
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER "@ANNOTATION_STRING"
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "@{identifier}"
+    "@abstractmethod"
+    "@dataclass"
+    "@final"
+    "@no_type_check"
+    "@no_type_check_decorator"
+    "@overload"
+    "@property"
+    "@runtime_checkable"
+    "@type_check_only"
 
 END DEFINE
 
@@ -683,9 +935,99 @@ DEFINE PLACEHOLDER " -> {TYPE_HINT}"
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
-    /TYPE=NONTERMINAL
+    /TYPE=MENU
 
+    " -> None"
+    " -> bool"
+    " -> byte"
+    " -> str"
+    " -> int"
+    " -> float"
+    " -> {type}"
     " -> {identifier}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER "TYPE"
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER "TYPE"
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=HORIZONTAL
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "None"
+    "int"
+    "bool"
+    "float"
+    "list[{type}]"
+    "deque[{type}]"
+    "dict[{type}, {type}]"
+    "set[{type}]"
+    "frozenset[{type}]"
+    "Optional[{type}]"
+
+    "{identifier}[{type}, [type]...]"
+    "{identifier}"
+
+    ;; Deprecated since Python 3.9.0 
+    "List[{type}]"
+    "Deque[{type}]"
+    "Dict[{type}, {type}]"
+    "Set[{type}]"
+    "FrozenSet[{type}]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER "CLASS-TYPE"
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER "CLASS-TYPE"
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=HORIZONTAL
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{identifier}"
+    "{identifier}[{type}, [type]...]"
+    "list[{type}]"
+    "deque[{type}]"
+    "dict[{type}, {type}]"
+    "set[{type}]"
+    "frozenset[{type}]"
+    "Optional[{type}]"
+    "Generic[{type}, [type]...]"
+    "ABC"
+
+    ;; Deprecated since Python 3.9.0 
+    "List[{type}]"
+    "Deque[{type}]"
+    "Dict[{type}, {type}]"
+    "Set[{type}]"
+    "FrozenSet[{type}]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER INHERITANCE 
+    /LANGUAGE="Python" 
+DEFINE PLACEHOLDER INHERITANCE 
+    /LANGUAGE="Python" 
+    /NOAUTO_SUBSTITUTE 
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT 
+    /SEPARATOR="" 
+    /TYPE=NONTERMINAL 
+
+    "([class-type]...)"
 
 END DEFINE
 
@@ -701,6 +1043,7 @@ DEFINE PLACEHOLDER CLASSDEF
     /SEPARATOR="" 
     /TYPE=NONTERMINAL 
 
+    "[@annotation_string]..."
     "class {classname}[inheritance]:"
     "  [document_string]"
     ""
