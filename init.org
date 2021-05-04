@@ -11486,26 +11486,36 @@ See also:
 - [[http://www.winpaw.com/Else/][Additional Emacs Language Sensitive Editor (ELSE) templates]]
 - [[https://github.com/peter-milliken/ELSE/blob/master/else.pdf][Else Documentation]]
 
-| Key binding   | Command                            | Description                                                            |
-|---------------+------------------------------------+------------------------------------------------------------------------|
-| =H-e=         | =M-x else-expand=                  | Expand the placeholder or any preceeding abbreviation at point.        |
-| =H-n=         | =M-x else-next=                    | Move 'point' to the 'next' placeholder.                                |
-| =H-p=         | =M-x else-previous=                | Move `point' to the (nth) previous placeholder.                        |
-| =H-k=         | =M-x else-kill=                    | Kill the placeholder at point.                                         |
-| =H-K=         | =M-x psimacs/else/kill-always=     | Like =else-kill= but kills required placeholders without prompting.    |
-|---------------+------------------------------------+------------------------------------------------------------------------|
-| =H-m C-c m=   | =M-x else-mode=                    | Enable/disable =else-mode=.                                            |
-| =H-m C-c n=   | =M-x else-next=                    | Move 'point' to the 'next' placeholder.                                |
-| =H-m C-c p=   | =M-x else-previous=                | Move `point' to the (nth) previous placeholder.                        |
-| =H-m C-c e=   | =M-x else-expand=                  | Expand the placeholder or any preceeding abbreviation at point.        |
-| =H-m C-c k=   | =M-x else-kill=                    | Kill the placeholder at point.                                         |
-| =H-m C-c K=   | =M-x psimacs/else/kill-always=     | Like =else-kill= but kills required placeholders without prompting.    |
-| =H-m C-c C-c= | =M-x else-template-compile-buffer= | Compile the whole current buffer.                                      |
-|               | =M-x else-compile-buffer=          | Compile the language template definitions from 'point' to the end.     |
-|               | =M-x else-extract-placeholder=     | Place the definition of an placeholder into the buffer at point.       |
-|               | =M-x else-extract-all=             | Extract the full language definition at point.                         |
-|               | =M-x else-show-placeholder-names=  | Display info on all Placeholders in the current language template set. |
-|---------------+------------------------------------+------------------------------------------------------------------------|
+| Key binding   | Command                              | Description                                                            |
+|---------------+--------------------------------------+------------------------------------------------------------------------|
+| =H-e=         | =M-x else-expand=                    | Expand the placeholder or any preceeding abbreviation at point.        |
+| =H-E=         | =M-x else-expand-or-next-expand=     | Expand if possible else move to next and expand this one.              |
+| =H-n=         | =M-x else-next=                      | Move 'point' to the 'next' placeholder.                                |
+| =H-p=         | =M-x else-previous=                  | Move `point' to the (nth) previous placeholder.                        |
+| =H-N=         | =M-x else-expand-or-next-expand=     | Expand if possible else move to next and expand this one.              |
+| =H-P=         | =M-x else-expand-or-previous-expand= | Expand if possible else move to previous and expand this one.          |
+| =H-C-n=       | =M-x else-kill-or-next-kill=         | Kill if possible else move to next and kill this one.                  |
+| =H-C-p=       | =M-x else-kill-or-previous-kill=     | Kill if possible else move to previous and kill this one.              |
+| =H-k=         | =M-x else-kill=                      | Kill the placeholder at point.                                         |
+| =H-K=         | =M-x psimacs/else/kill-always=       | Like =else-kill= but kills required placeholders without prompting.    |
+|---------------+--------------------------------------+------------------------------------------------------------------------|
+| =H-m C-c m=   | =M-x else-mode=                      | Enable/disable =else-mode=.                                            |
+| =H-m C-c e=   | =M-x else-expand=                    | Expand the placeholder or any preceeding abbreviation at point.        |
+| =H-m C-c E=   | =M-x else-expand-or-next-expand=     | Expand if possible else move to next and expand this one.              |
+| =H-m C-c n=   | =M-x else-next=                      | Move 'point' to the 'next' placeholder.                                |
+| =H-m C-c p=   | =M-x else-previous=                  | Move `point' to the (nth) previous placeholder.                        |
+| =H-m C-c N=   | =M-x else-expand-or-next-expand=     | Expand if possible else move to next and expand this one.              |
+| =H-m C-c P=   | =M-x else-expand-or-previous-expand= | Expand if possible else move to previous and expand this one.          |
+| =H-m C-c C-n= | =M-x else-kill-or-next-kill=         | Kill if possible else move to next and kill this one.                  |
+| =H-m C-c C-p= | =M-x else-kill-or-previous-kill=     | Kill if possible else move to previous and kill this one.              |
+| =H-m C-c k=   | =M-x else-kill=                      | Kill the placeholder at point.                                         |
+| =H-m C-c K=   | =M-x psimacs/else/kill-always=       | Like =else-kill= but kills required placeholders without prompting.    |
+| =H-m C-c C-c= | =M-x else-template-compile-buffer=   | Compile the whole current buffer.                                      |
+|               | =M-x else-compile-buffer=            | Compile the language template definitions from 'point' to the end.     |
+|               | =M-x else-extract-placeholder=       | Place the definition of an placeholder into the buffer at point.       |
+|               | =M-x else-extract-all=               | Extract the full language definition at point.                         |
+|               | =M-x else-show-placeholder-names=    | Display info on all Placeholders in the current language template set. |
+|---------------+--------------------------------------+------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
 (use-package else-mode
@@ -11572,9 +11582,6 @@ Returns `else-Alternate-Mode-Names'."
           (interactive)
           (else-kill 'force))
 
-        (defvar psimacs/config/internal/else-next-placeholder-threshold 5
-          "Goto the next placeholder after a kill if less than n lines away.")
-
         (psimacs/config/add-else-template-mappings
                 "Lisp Interaction" "Emacs-Lisp"
                 "Elisp"            "Emacs-Lisp"
@@ -11598,18 +11605,28 @@ Returns `else-Alternate-Mode-Names'."
     :hook ((sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
     :bind (
              :map else-mode-key-map
-             ("H-n" . else-next)
-             ("H-p" . else-previous)
-             ("H-e" . else-expand)
-             ("H-k" . else-kill)
-             ("H-K" . psimacs/else/kill-always)
+             ("H-n"   . else-next)
+             ("H-p"   . else-previous)
+             ("H-N"   . else-expand-or-next-expand)
+             ("H-P"   . else-expand-or-previous-expand)
+             ("H-C-n" . else-kill-or-next-kill)
+             ("H-C-p" . else-kill-or-previous-kill)
+             ("H-e"   . else-expand)
+             ("H-E"   . else-expand-or-next-expand)
+             ("H-k"   . else-kill)
+             ("H-K"   . psimacs/else/kill-always)
 
              :map psimacs/config/global-key-map/hydra ("e" . psimacs/hydra/else/body)
              :map psimacs/config/global-key-map/special
                   ("C-c m"   . else-mode)
+                  ("C-c e"   . else-expand)
+                  ("C-c E"   . else-expand-or-next-expand)
                   ("C-c n"   . else-next)
                   ("C-c p"   . else-previous)
-                  ("C-c e"   . else-expand)
+                  ("C-c N"   . else-expand-or-next-expand)
+                  ("C-c P"   . else-expand-or-previous-expand)
+                  ("C-c C-n" . else-kill-or-next-kill)
+                  ("C-c C-p" . else-kill-or-previous-kill)
                   ("C-c k"   . else-kill)
                   ("C-c K"   . psimacs/else/kill-always)
                   ("C-c C-c" . else-template-compile-buffer)
@@ -11618,18 +11635,25 @@ Returns `else-Alternate-Mode-Names'."
     :hydra (psimacs/hydra/else (:color pink :hint nil)
           "
 Emacs Language Sensitive Editor:
--^-^------------------^-^-----^-^---------------^-^---------------------
- _m_: ELSE mode       _p_ ◄ ► _n_: prev/next    _x_: extract placeholder
- _T_: Template mode   ^ ^     _e_: expand       _X_: extract all
- _C_: compile buffer  ^ ^     _k_: kill         _s_: show placeholders
- ^ ^                  ^ ^     _K_: kill always
- _q_: quit
+-^-^------------------^-^-----^-^-------------------------^-^---------------------
+ _m_: ELSE mode       _p_ ◄ ►   _n_: prev/next          _x_: extract placeholder
+ _T_: Template mode   _P_ ◄ ►   _N_: prev-/next-expand  _X_: extract all
+ _C_: compile buffer  ^ ^       _e_: expand             _s_: show placeholders
+ ^ ^                  ^ ^       _E_: next-expand
+ _q_: quit            ^ ^       _k_: kill
+ ^ ^                  ^ ^       _K_: kill always
+ ^ ^                _C-p_ ◄ ► _C-n_: prev-/next-kill
 "
           ("m"    else-mode)
           ("T"    else-template-mode)
           ("n"    else-next :color blue)
           ("p"    else-previous :color blue)
+          ("N"    else-expand-or-next-expand :color blue)
+          ("P"    else-expand-or-previous-expand :color blue)
+          ("C-n"  else-kill-or-next-kill :color blue)
+          ("C-p"  else-kill-or-previous-kill :color blue)
           ("e"    else-expand :color blue)
+          ("E"    else-expand-or-next-expand :color blue)
           ("k"    else-kill :color blue)
           ("K"    psimacs/else/kill-always :color blue)
           ("C"    else-template-compile-buffer)
@@ -16720,15 +16744,25 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-c C-h=       | =M-x (find-file-read-only history-file)=                                | Open the history file in read-only mode.                                                                                                                                                                                                                                                         |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-e=               | =M-x else-expand=                                                       | Expand the placeholder or any preceeding abbreviation at point.                                                                                                                                                                                                                                  |
+| =H-E=               | =M-x else-expand-or-next-expand=                                        | Expand if possible else move to next and expand this one.                                                                                                                                                                                                                                        |
 | =H-n=               | =M-x else-next=                                                         | Move 'point' to the 'next' placeholder.                                                                                                                                                                                                                                                          |
 | =H-p=               | =M-x else-previous=                                                     | Move `point' to the (nth) previous placeholder.                                                                                                                                                                                                                                                  |
+| =H-N=               | =M-x else-expand-or-next-expand=                                        | Expand if possible else move to next and expand this one.                                                                                                                                                                                                                                        |
+| =H-P=               | =M-x else-expand-or-previous-expand=                                    | Expand if possible else move to previous and expand this one.                                                                                                                                                                                                                                    |
+| =H-C-n=             | =M-x else-kill-or-next-kill=                                            | Kill if possible else move to next and kill this one.                                                                                                                                                                                                                                            |
+| =H-C-p=             | =M-x else-kill-or-previous-kill=                                        | Kill if possible else move to previous and kill this one.                                                                                                                                                                                                                                        |
 | =H-k=               | =M-x else-kill=                                                         | Kill the placeholder at point.                                                                                                                                                                                                                                                                   |
 | =H-K=               | =M-x psimacs/else/kill-always=                                          | Like =else-kill= but kills required placeholders without prompting.                                                                                                                                                                                                                              |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-c m=         | =M-x else-mode=                                                         | Enable/disable =else-mode=.                                                                                                                                                                                                                                                                      |
+| =H-m C-c e=         | =M-x else-expand=                                                       | Expand the placeholder or any preceeding abbreviation at point.                                                                                                                                                                                                                                  |
+| =H-m C-c E=         | =M-x else-expand-or-next-expand=                                        | Expand if possible else move to next and expand this one.                                                                                                                                                                                                                                        |
 | =H-m C-c n=         | =M-x else-next=                                                         | Move 'point' to the 'next' placeholder.                                                                                                                                                                                                                                                          |
 | =H-m C-c p=         | =M-x else-previous=                                                     | Move `point' to the (nth) previous placeholder.                                                                                                                                                                                                                                                  |
-| =H-m C-c e=         | =M-x else-expand=                                                       | Expand the placeholder or any preceeding abbreviation at point.                                                                                                                                                                                                                                  |
+| =H-m C-c N=         | =M-x else-expand-or-next-expand=                                        | Expand if possible else move to next and expand this one.                                                                                                                                                                                                                                        |
+| =H-m C-c P=         | =M-x else-expand-or-previous-expand=                                    | Expand if possible else move to previous and expand this one.                                                                                                                                                                                                                                    |
+| =H-m C-c C-n=       | =M-x else-kill-or-next-kill=                                            | Kill if possible else move to next and kill this one.                                                                                                                                                                                                                                            |
+| =H-m C-c C-p=       | =M-x else-kill-or-previous-kill=                                        | Kill if possible else move to previous and kill this one.                                                                                                                                                                                                                                        |
 | =H-m C-c k=         | =M-x else-kill=                                                         | Kill the placeholder at point.                                                                                                                                                                                                                                                                   |
 | =H-m C-c K=         | =M-x psimacs/else/kill-always=                                          | Like =else-kill= but kills required placeholders without prompting.                                                                                                                                                                                                                              |
 | =H-m C-c C-c=       | =M-x else-template-compile-buffer=                                      | Compile the whole current buffer.                                                                                                                                                                                                                                                                |

@@ -1,5 +1,4 @@
-(("ELSE" . "d15b2630da5e28eb8b075282ca43121300793004")
- ("Emacs-langtool" . "8276eccc5587bc12fd205ee58a7a982f0a136e41")
+(("Emacs-langtool" . "8276eccc5587bc12fd205ee58a7a982f0a136e41")
  ("GitHub-Modern-Theme-for-Emacs" . "a7e7b8e5e9c122138e79e837caf9b7299e748d44")
  ("ace-window" . "c7cb315c14e36fded5ac4096e158497ae974bec9")
  ("aggressive-indent-mode" . "b0ec0047aaae071ad1647159613166a253410a63")

@@ -4,7 +4,7 @@
 ;;
 ;; Keywords: language sensitive abbreviation template placeholder token
 ;;
-;; This is a customization of the 'Python.lse' specification from 
+;; This is a customization of the 'Python.lse' specification from
 ;; Peter Milliken <peter.milliken@gmail.com> targeting Python 3.9.x.
 ;;
 ;; GNU Emacs is free software; you can redistribute it and/or modify
@@ -63,6 +63,38 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER SINGLE_QUOTED_STRING
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER SINGLE_QUOTED_STRING
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "'{stringliteral}'"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER DOUBLE_QUOTED_STRING
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER DOUBLE_QUOTED_STRING
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    ""{stringliteral}""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER COMPILATION_UNIT
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER COMPILATION_UNIT
@@ -110,7 +142,7 @@ DEFINE PLACEHOLDER FROM
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    
+
     "from {module} import {identifier} [as {name}], [identifier_as_name]..."
 
 END DEFINE
@@ -118,14 +150,14 @@ END DEFINE
 ;;------------------------------------------------------------------------------
 
 DELETE PLACEHOLDER YYYY
-    /LANGUAGE="Python" 
-DEFINE PLACEHOLDER YYYY 
-    /LANGUAGE="Python" 
-    /NOAUTO_SUBSTITUTE 
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER YYYY
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
-    /DUPLICATION=VERTICAL 
-    /SEPARATOR="" 
-    /TYPE=TERMINAL 
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
 
     "Please enter a valid date"
 
@@ -339,7 +371,7 @@ DEFINE PLACEHOLDER COMPREHENSION
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    "[{expression} for {target}... in {or_test} [comp_iter]...]"
+    "[{expression} for {target}... in {expression} [comp_iter]...]"
 
 END DEFINE
 
@@ -355,7 +387,7 @@ DEFINE PLACEHOLDER GENERATOR
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    "({expression} for {target}... in {or_test} [comp_iter]...)"
+    "({expression} for {target}... in {expression} [comp_iter]...)"
 
 END DEFINE
 
@@ -388,7 +420,7 @@ DEFINE PLACEHOLDER COMP_FOR
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    "for {target}... in {or_test}"
+    "for {target}... in {expression}"
 
 END DEFINE
 
@@ -410,6 +442,65 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "{primary}"
+    "self.{primary}"
+    "self._{primary}"
+
+    "{primary}({expression}, [expression]...)"
+    "self.{primary}({expression}, [expression]...)"
+    "self._{primary}({expression}, [expression]...)"
+
+    "{primary}[{expression}, [expression]...]"
+    "self.{primary}[{expression}, [expression]...]"
+    "self._{primary}[{expression}, [expression]...]"
+
+    "single_quoted_string"/PLACEHOLDER
+    "double_quoted_string"/PLACEHOLDER
+
+    "or_test"/PLACEHOLDER
+    "lambda_form"/PLACEHOLDER
+    "comprehension"/PLACEHOLDER
+    "generator"/PLACEHOLDER
+
+    "enumeration_expression"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ENUMERATION_EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ENUMERATION_EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "[{expression}, [expression]...]"
+    "({expression}, [expression]...)"
+
+    "[{single_quoted_string}, [single_quoted_string]...]"
+    "({single_quoted_string}, [single_quoted_string]...)"
+
+    "[{double_quoted_string}, [double_quoted_string]...]"
+    "({double_quoted_string}, [double_quoted_string]...)"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER EXPRESSION_NOCOND
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER EXPRESSION_NOCOND
@@ -419,6 +510,18 @@ DEFINE PLACEHOLDER EXPRESSION_NOCOND
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
+
+    "{primary}"
+    "self.{primary}"
+    "self._{primary}"
+
+    "{primary}({expression}, [expression]...)"
+    "self.{primary}({expression}, [expression]...)"
+    "self._{primary}({expression}, [expression]...)"
+
+    "{primary}[{expression}, [expression]...]"
+    "self.{primary}[{expression}, [expression]...]"
+    "self._{primary}[{expression}, [expression]...]"
 
     "or_test"/PLACEHOLDER
     "lambda_expr_nocond"/PLACEHOLDER
@@ -453,7 +556,7 @@ DEFINE PLACEHOLDER LAMBDA_FORM
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=TERMINAL
-    
+
     "lambda [parameter_list]: {expression}"
 
 END DEFINE
@@ -532,16 +635,16 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER VARIABLE_NAME 
-    /LANGUAGE="Python" 
-DEFINE PLACEHOLDER VARIABLE_NAME 
-    /LANGUAGE="Python" 
-    /AUTO_SUBSTITUTE 
+DELETE PLACEHOLDER VARIABLE_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER VARIABLE_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
     /SUBSTITUTE_COUNT=2
     /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT 
-    /SEPARATOR="" 
-    /TYPE=TERMINAL 
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
 
     "Please enter a valid varable name"
 
@@ -549,23 +652,58 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER ASSIGNMENT_STMT 
-    /LANGUAGE="Python" 
-DEFINE PLACEHOLDER ASSIGNMENT_STMT 
-    /LANGUAGE="Python" 
-    /AUTO_SUBSTITUTE 
+DELETE PLACEHOLDER TYPE_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TYPE_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
     /SUBSTITUTE_COUNT=2
     /DESCRIPTION=""
-    /DUPLICATION=VERTICAL 
-    /SEPARATOR="" 
-    /TYPE=MENU 
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid varable name"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER "TYPE_BOUND_DETAIL"
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER "TYPE_BOUND_DETAIL"
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /FOLLOW
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "bound='{identifier}'"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ASSIGNMENT_STMT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ASSIGNMENT_STMT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
 
     "{target} = {expression}..."
     "{variable_name}[:{typehint}] = {expression}..."
     "self.{variable_name}[:{typehint}] = {expression}..."
     "self._{variable_name}[:{typehint}] = {expression}..."
-    "self.{variable_name}[:{typehint}] = {variable_name}..."
-    "self._{variable_name}[:{typehint}] = {variable_name}..."
+    "self.{variable_name}[:{typehint}] = {variable_name}"
+    "self._{variable_name}[:{typehint}] = {variable_name}"
+    "{variable_name} = TypeVar('{variable_name}', [type_bound_detail])"
+    "{target}: {type_name}[type_list] = {type_name}([argument_list])"
 
 END DEFINE
 
@@ -806,7 +944,7 @@ DEFINE PLACEHOLDER IMPORT_STMT
 
     "import {module}"
     "import {module} [as {name}]"
-    
+
     "from {module} import {identifier}, [identifier]..."
     "from {module} import {identifier} [as {name}], [identifier_as_name]..."
     "from {module} import *"
@@ -815,8 +953,8 @@ DEFINE PLACEHOLDER IMPORT_STMT
     "from collections.abc import {collection_abc_identifier}, [collection_abc_identifier]..."
 
     "from typing import {type_identifier}, [type_identifier]..."
-    "from typing import {type_protocol}, [type_protocol]..." 
-    "from typing import {type_function}, [type_function]..." 
+    "from typing import {type_protocol}, [type_protocol]..."
+    "from typing import {type_function}, [type_function]..."
 
     "from typing import TypeVar, Iterable, Sequence, Generic, List, Callable, Set, Deque, Dict, Any, Optional"
     "from typing import Protocol"
@@ -824,6 +962,38 @@ DEFINE PLACEHOLDER IMPORT_STMT
     "from __future__ import annotations"
     "from dataclasses import dataclass"
     "from logging import Logger"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER "FORMAL_PARAMETER_NAME ="
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER "FORMAL_PARAMETER_NAME ="
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{formal_parameter_name} = "
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER PARAMETER_ASSOCIATION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER PARAMETER_ASSOCIATION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "[formal_parameter_name =]{expression}"
 
 END DEFINE
 
@@ -837,9 +1007,12 @@ DEFINE PLACEHOLDER CALL_STMT
     /DESCRIPTION="Call statement"
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
-    /TYPE=NONTERMINAL
+    /TYPE=MENU
 
-    "{primary}([parameter_association]...);"
+    "{primary}([parameter_association]...)"
+    "self.{primary}([parameter_association]...)"
+    "self._{primary}([parameter_association]...)"
+    "{primary} [parameter_list]"
 
 END DEFINE
 
@@ -939,10 +1112,13 @@ DEFINE PLACEHOLDER " -> {TYPE_HINT}"
 
     " -> None"
     " -> bool"
-    " -> byte"
-    " -> str"
     " -> int"
+    " -> long"
     " -> float"
+    " -> complex"
+    " -> str"
+    " -> byte"
+    " -> file"
     " -> {type}"
     " -> {identifier}"
 
@@ -961,9 +1137,15 @@ DEFINE PLACEHOLDER "TYPE"
     /TYPE=MENU
 
     "None"
-    "int"
     "bool"
+    "int"
+    "long"
     "float"
+    "complex"
+    "str"
+    "byte"
+    "file"
+    "tuple[{type}, [type]...]"
     "list[{type}]"
     "deque[{type}]"
     "dict[{type}, {type}]"
@@ -974,12 +1156,13 @@ DEFINE PLACEHOLDER "TYPE"
     "{identifier}[{type}, [type]...]"
     "{identifier}"
 
-    ;; Deprecated since Python 3.9.0 
+    ;; Deprecated since Python 3.9.0
     "List[{type}]"
     "Deque[{type}]"
     "Dict[{type}, {type}]"
     "Set[{type}]"
     "FrozenSet[{type}]"
+    "Tuple[{type}, [type]...]"
 
 END DEFINE
 
@@ -997,6 +1180,7 @@ DEFINE PLACEHOLDER "CLASS-TYPE"
 
     "{identifier}"
     "{identifier}[{type}, [type]...]"
+    "tuple[{type}, [type]...]"
     "list[{type}]"
     "deque[{type}]"
     "dict[{type}, {type}]"
@@ -1006,26 +1190,43 @@ DEFINE PLACEHOLDER "CLASS-TYPE"
     "Generic[{type}, [type]...]"
     "ABC"
 
-    ;; Deprecated since Python 3.9.0 
+    ;; Deprecated since Python 3.9.0
     "List[{type}]"
     "Deque[{type}]"
     "Dict[{type}, {type}]"
     "Set[{type}]"
     "FrozenSet[{type}]"
+    "Tuple[{type}, [type]...]"
 
 END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER INHERITANCE 
-    /LANGUAGE="Python" 
-DEFINE PLACEHOLDER INHERITANCE 
-    /LANGUAGE="Python" 
-    /NOAUTO_SUBSTITUTE 
+DELETE PLACEHOLDER TYPE_LIST
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TYPE_LIST
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT 
-    /SEPARATOR="" 
-    /TYPE=NONTERMINAL 
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[{type}, [type]...]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER INHERITANCE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER INHERITANCE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
 
     "([class-type]...)"
 
@@ -1033,15 +1234,15 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER CLASSDEF 
-    /LANGUAGE="Python" 
-DEFINE PLACEHOLDER CLASSDEF 
-    /LANGUAGE="Python" 
-    /NOAUTO_SUBSTITUTE 
+DELETE PLACEHOLDER CLASSDEF
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER CLASSDEF
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT 
-    /SEPARATOR="" 
-    /TYPE=NONTERMINAL 
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
 
     "[@annotation_string]..."
     "class {classname}[inheritance]:"
