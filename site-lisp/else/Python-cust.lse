@@ -105,20 +105,21 @@ DEFINE PLACEHOLDER COMPILATION_UNIT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    """"[text]...""""
+    "[license]"
+    "[document_string]"
     "[import_stmt]..."
     ""
     "{statement}..."
     ""
-    "[test_statement]"
+    "[if_main_statement]"
 
 END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER TEST_STATEMENT
+DELETE PLACEHOLDER IF_MAIN_STATEMENT
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER TEST_STATEMENT
+DEFINE PLACEHOLDER IF_MAIN_STATEMENT
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -165,6 +166,24 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER LICENSER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER LICENSER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "Johannes Brunen <hatlafax@gmx.de>"
+    "DataSolid GmbH, Mönchengladbach <csons@datasolid.de>"
+    "{text}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER APACHE_LICENSE_2.0
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER APACHE_LICENSE_2.0
@@ -178,7 +197,7 @@ DEFINE PLACEHOLDER APACHE_LICENSE_2.0
     "#"
     "# Distributed under the Apache License, Version 2.0."
     "#"
-    "# Copyright (c) {yyyy} {text}. All rights reserved."
+    "# Copyright (c) {yyyy} {licenser}. All rights reserved."
     "#"
     "# Licensed under the Apache License, Version 2.0 (the "License"); you may"
     "# not use this file except in compliance with the License. You may obtain"
@@ -210,7 +229,7 @@ DEFINE PLACEHOLDER MIT_LICENSE
     "#"
     "# Distributed under the MIT License."
     "#"
-    "# Copyright (c) {yyyy} {text}"
+    "# Copyright (c) {yyyy} {licenser}"
     "#"
     "# Permission is hereby granted, free of charge, to any person obtaining a copy"
     "# of this software and associated documentation files (the "Software"), to deal"
@@ -248,7 +267,7 @@ DEFINE PLACEHOLDER LGPL_2_1_LICENSE
     "#"
     "# Distributed under the GNU Lesser General Public License, Version 2.1."
     "#"
-    "# Copyright (c) {yyyy} {text}"
+    "# Copyright (c) {yyyy} {licenser}"
     "#"
     "# This library is free software; you can redistribute it and/or modify it under"
     "# the terms of the GNU Lesser General Public License as published by the"
@@ -281,7 +300,7 @@ DEFINE PLACEHOLDER BOOST_LICENSE
     "#"
     "# Distributed under the Boost Software License, Version 1.0."
     "#"
-    "# Copyright (c) {yyyy} {text}"
+    "# Copyright (c) {yyyy} {licenser}"
     "#"
     "# Permission is hereby granted, free of charge, to any person or organization"
     "# obtaining a copy of the software and accompanying documentation covered by"
@@ -354,8 +373,8 @@ DEFINE PLACEHOLDER DOCUMENT_STRING
     /TYPE=NONTERMINAL
 
     """"{text}..."
-    ""
     """""
+    ""
 
 END DEFINE
 
@@ -388,6 +407,47 @@ DEFINE PLACEHOLDER GENERATOR
     /TYPE=NONTERMINAL
 
     "({expression} for {target}... in {expression} [comp_iter]...)"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER COMP_EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER COMP_EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="comparision expression"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{expression} {comp_operator} {expression}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER COMP_OPERATOR
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER COMP_OPERATOR
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "<"
+    ">"
+    "=="
+    ">="
+    "<="
+    "!="
+    "is"
+    "is not"
+    "in"
+    "not in"
 
 END DEFINE
 
@@ -473,6 +533,7 @@ DEFINE PLACEHOLDER EXPRESSION
     "generator"/PLACEHOLDER
 
     "enumeration_expression"/PLACEHOLDER
+    "comp_expression"/PLACEHOLDER
 
 END DEFINE
 
@@ -555,7 +616,7 @@ DEFINE PLACEHOLDER LAMBDA_FORM
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
-    /TYPE=TERMINAL
+    /TYPE=NONTERMINAL
 
     "lambda [parameter_list]: {expression}"
 
@@ -686,6 +747,23 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER CLASS_VARIABLES
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER CLASS_VARIABLES
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{variable_name}[:{typehint}]"
+    "{variable_name}[:{typehint}] = {expression}..."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER ASSIGNMENT_STMT
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER ASSIGNMENT_STMT
@@ -703,7 +781,7 @@ DEFINE PLACEHOLDER ASSIGNMENT_STMT
     "self.{variable_name}[:{typehint}] = {variable_name}"
     "self._{variable_name}[:{typehint}] = {variable_name}"
     "{variable_name} = TypeVar('{variable_name}', [type_bound_detail])"
-    "{target}: {type_name}[type_list] = {type_name}([argument_list])"
+    "{variable_name}: {type_name}[type_list] = {type_name}([argument_list])"
 
 END DEFINE
 
@@ -1009,9 +1087,14 @@ DEFINE PLACEHOLDER CALL_STMT
     /SEPARATOR=""
     /TYPE=MENU
 
+    "{primary}([expression]...)"
+    "self.{primary}([expression]...)"
+    "self._{primary}([expression]...)"
+
     "{primary}([parameter_association]...)"
     "self.{primary}([parameter_association]...)"
     "self._{primary}([parameter_association]...)"
+
     "{primary} [parameter_list]"
 
 END DEFINE
@@ -1247,6 +1330,7 @@ DEFINE PLACEHOLDER CLASSDEF
     "[@annotation_string]..."
     "class {classname}[inheritance]:"
     "  [document_string]"
+    "  [class_variables]..."
     ""
     "  [init_def]"
     ""
