@@ -10429,7 +10429,7 @@ See also:
         (setq company-dabbrev-code-ignore-case nil)
         (setq company-dabbrev-downcase         nil)
         (setq company-begin-commands           '(self-insert-command))
-        (setq company-transformers             '(company-sort-by-occurrence))
+        
 
         (setq company-idle-delay 0.5)
         (setq company-minimum-prefix-length 1)
@@ -10437,23 +10437,76 @@ See also:
         (setq company-selection-wrap-around t)
         (setq company-tooltip-flip-when-above t)
         (setq company-tooltip-align-annotations t)
+        (setq company-show-numbers t)
+
     :config
-        (global-company-mode)
+
+    (setq company-transformers '(psimacs/company/remove-dabbrev-dups-keep-order)) ;; company-sort-by-occurrence
+
+    (defun psimacs/company/remove-dabbrev-dups-keep-order (candidates)
+        "Loop over CANDIDATES and remove duplicate candidates if they belong to
+`company-dabbrev' or `company-dabbrev-code'."
+        (let ( (hash (make-hash-table :test 'equal :size (length candidates)))
+               (new-list nil) )
+            (dolist (candidate candidates)
+                (let ( (stripped-candidate (substring-no-properties candidate))
+                       (candidate-backend ( get-text-property 0 'company-backend candidate))
+                     )
+                    (cond
+                        ;; Candidate is `company-yasnippet', always push this.
+                        ((eq (get-text-property 0 'company-backend candidate) 'company-yasnippet)
+                            (push candidate new-list))
+                        ;; Candidate has not been seen.
+                        ((not (gethash stripped-candidate hash))
+                            (puthash stripped-candidate candidate hash)
+                            (push candidate new-list))
+                        ;; Candidate has been seen.
+                        ;; `company-dabbrev' or `company-dabbrev-code' is the candidate.
+                        ((or candidate-backend
+                            (eq candidate-backend 'company-dabbrev-code)
+                            (eq candidate-backend 'company-dabbrev)
+                         ) t)
+                        ;; Candidate has been seen but is not `company-dabbrev'
+                        ;; or `company-dabbrev-code'.
+                        (:seen-but-candidate-not-dabbrev
+                            ;; If the candidate in the hash table is dabbrev, replace it.
+                            ;; Otherwise, we are fine with duplicates as long as the backends
+                            ;; are meaningful.
+                            (let* ( (hash-candidate (gethash stripped-candidate hash))
+                                    (hash-backend (get-text-property 0 'company-backend hash-candidate))
+                                  )
+                                (if (or hash-backend
+                                        (eq hash-backend 'company-dabbrev)
+                                        (eq hash-backend 'company-dabbrev-code) )
+                                    (progn
+                                        (setcar
+                                            (nthcdr
+                                                (cl-position hash-candidate new-list :test 'eq)
+                                                new-list)
+                                            candidate)
+                                        (puthash stripped-candidate candidate hash)
+                                    t)
+                                    ;; Only need one candidate in the hash table.
+                                    (push candidate new-list)))))))
+            (reverse new-list)
+        ))
 
         (setq company-backends
             '(
                 (
-                    company-files               ; files & directory
-                    company-keywords            ; keywords
                     company-capf                ; completion-at-point-functions
-                    company-yasnippet           ; yasnippet
-                    company-ispell              ; ispell
+                    company-keywords            ; keywords
                     company-abbrev
                     company-dabbrev
+                    company-files               ; files & directory
+                    company-ispell              ; ispell
+                    company-yasnippet           ; yasnippet
                 )
-                (company-abbrev company-dabbrev)
+                ;;(company-abbrev company-dabbrev)
              )
         )
+
+    :hook (after-init . global-company-mode)
     :bind (
         :map company-active-map
             ("C-n"      . company-select-next)
@@ -12081,7 +12134,7 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         ;;(setq lsp-before-save-edits nil)
         ;;(setq lsp-eldoc-enable-hover nil)
         ;;(setq lsp-diagnostic-package :none)
-        ;;(setq lsp-completion-provider :none)
+        (setq lsp-completion-provider :none)
         ;;(setq lsp-enable-links nil)
         ;;(setq lsp-enable-on-type-formatting nil)
     :config
@@ -12105,7 +12158,19 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 
             ;;(before-save . lsp-format-buffer)
             ;;(before-save . lsp-organize-imports)
-         )
+
+            (lsp-mode . (lambda ()
+                            (set (make-local-variable 'company-backends) 
+                                '(
+                                    (company-capf 
+                                         company-keywords
+                                              company-abbrev
+                                              company-dabbrev
+                                              company-dabbrev-code 
+                                              company-files
+                                              company-yasnippet
+                                    )
+                                 )))))
 )
 #+end_src
 
@@ -12503,6 +12568,42 @@ ToDo: Disabled because it does not work out of the box on windows.
         (flycheck-pycheckers-checkers '(flake8 pylint mypy3 pyflakes))
 
     :hook (flycheck-mode . flycheck-pycheckers-setup)
+)
+#+end_src
+
+*** Python pyls configuration                                           :noexport:
+
+#+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
+(use-package lsp-mode
+  :straight nil
+  :config
+        (lsp-register-custom-settings
+            '(("pyls.plugins.pyls_mypy.enabled" t t)
+              ("pyls.plugins.pyls_mypy.live_mode" nil t)
+              ("pyls.plugins.pyls_black.enabled" t t)
+              ("pyls.plugins.pyls_isort.enabled" t t)
+             )
+        )
+  :hook
+        ((python-mode . lsp)))
+#+end_src
+
+*** lsp-jedi                                           :noexport:
+
+Package [[https://github.com/fredcamps/lsp-jedi][lsp-jedi]] is [[https://emacs-lsp.github.io/lsp-mode/][Lsp-mode]]
+client leveraging the [[https://github.com/pappasam/jedi-language-server][jedi-language-server]].
+
+This one is currently not functioning!
+
+#+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
+(use-package lsp-jedi
+  :config
+        (with-eval-after-load "lsp-mode"
+            (add-to-list 'lsp-disabled-clients 'pyls)
+            (add-to-list 'lsp-enabled-clients 'jedi)
+        )
+    :hook
+        ((python-mode . lsp))
 )
 #+end_src
 
@@ -14503,6 +14604,33 @@ if the latter is bound."
                 (call-process (concat psimacs/config/pdf-viewer-runtime " -reuse-instance") nil 0 nil fpath)))
 
         (setq ivy-bibtex-default-action 'bibtex-completion-insert-citation)
+)
+#+end_src
+
+*** Company-auctex
+
+Package [[https://github.com/alexeyr/company-auctex][company-auctex]] provides a group of backends for 
+[[https://company-mode.github.io/][company]] providing auto-completion for AUCTeX.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
+(use-package company-auctex
+    :after (auctex company)
+    :config (company-auctex-init)
+)
+#+end_src
+
+Package [[https://github.com/vspinu/company-math][company-math]] defines three company-mode backends: 
+=company-math-symbols-latex, =company-math-symbols-unicode= and =company-latex-commands=.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
+(use-package company-math
+    :after (auctex company)
+    :config
+        (defun psimacs/latex/company-mode-setup ()
+            (setq-local company-backends
+                (append '((company-math-symbols-latex company-math-symbols-unicode company-latex-commands)) company-backends))
+        )
+    :hook (TeX-mode . psimacs/latex/company-mode-setup)
 )
 #+end_src
 
