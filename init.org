@@ -1968,6 +1968,10 @@ programs are installed.
   (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/site-lisp-folder)
   "The psimacs personal site-lisp directory.")
 
+(defconst psimacs/config/work-lisp-dir
+  (psimacs/file-system/concat-directory user-emacs-directory "work-lisp")
+  "The psimacs personal work-lisp directory for hacking.")
+
 (defconst psimacs/config/session-dir
   (psimacs/file-system/concat-directory user-emacs-directory "session")
   "The psimacs session directory used for storing various session information.")
@@ -3190,6 +3194,14 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 (defconst psimacs/config/lsp-session-file
   (psimacs/file-system/concat-file psimacs/config/session-dir ".lsp-session-v1")
   "The psimacs lsp-mode session file.")
+
+(defconst psimacs/config/lsp-server-install-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir ".cache/lsp")
+  "The psimacs lsp-mode server installation directory.")
+
+(defconst psimacs/config/lsp-yaml-schema-store-local-db-file
+  (psimacs/file-system/concat-file psimacs/config/lsp-server-install-dir "lsp-yaml-schemas.json")
+  "The psimacs lsp-yaml schema store local database file.")
 #+end_src
 
 ** DAP-Mode
@@ -3203,6 +3215,59 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 (defconst psimacs/config/dap-breakpoints-file
   (psimacs/file-system/concat-file psimacs/config/session-dir ".dap-breakpoints")
   "The psimacs dap-mode breakpoints file.")
+#+end_src
+
+** Transient
+
+[[https://github.com/magit/transient][Transient]] is provided by [[https://github.com/magit][magit]]. Transient implements an abstraction involving a prefix command,
+infix arguments and suffix commands.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for transient from magit
+;;
+(defconst psimacs/config/transient-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "transient")
+  "The psimacs transient directorty.")
+
+(defconst psimacs/config/transient-levels-file
+  (psimacs/file-system/concat-file psimacs/config/transient-dir "levels.el")
+  "The psimacs transient levels file.")
+
+(defconst psimacs/config/transient-values-file
+  (psimacs/file-system/concat-file psimacs/config/transient-dir "values.el")
+  "The psimacs transient values file.")
+
+(defconst psimacs/config/transient-history-file
+  (psimacs/file-system/concat-file psimacs/config/transient-dir "history.el")
+  "The psimacs transient history file.")
+#+end_src
+
+** Emojify
+
+[[https://github.com/iqbalansari/emacs-emojify][Emojify]] is an *Emacs* extension to display emojis. It can display github style emojis like :smile: or plain ascii ones
+like :). It tries to be as efficient as possible, while also providing a lot of flexibility.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for emojify
+;;
+(defconst psimacs/config/emojify-emojis-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "emojis")
+  "The psimacs emojify emojis directorty.")
+#+end_src
+
+** PCache
+
+[[https://github.com/sigma/pcache][Pcache]] provides a persistent way of caching data, in a hashtable-like structure.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for pcache
+;;
+(defconst psimacs/config/pcache-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "var/pcache")
+  "The psimacs pcache directorty.")
 #+end_src
 
 * Environment
@@ -3847,6 +3912,10 @@ Our own /Emacs/ code resides in one directory that must be added to the load pat
 ;;
 ;; Our site-lisp directory.
 ;;
+(when (file-directory-p psimacs/config/work-lisp-dir)
+    (add-to-list 'load-path psimacs/config/work-lisp-dir)
+)
+
 (add-to-list 'load-path psimacs/config/site-lisp-dir)
 #+end_src
 
@@ -4829,30 +4898,30 @@ About Unicode:
 ;;
 (use-package unicode-fonts
     :init
-       (unicode-fonts-setup)
+        (setq pcache-directory psimacs/config/pcache-dir)
+        (unicode-fonts-setup)
+        ;;(when (member "DejaVu Sans Mono" (font-family-list))
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-8.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-9.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-10.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-11.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-12.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-14.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-16.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-18.0")
+        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-20.0")
+        ;;)
 
-       ;;(when (member "DejaVu Sans Mono" (font-family-list))
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-8.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-9.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-10.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-11.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-12.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-14.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-16.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-18.0")
-         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-20.0")
-       ;;)
+        (when (member "Hack" (font-family-list))
+            (set-face-attribute 'default nil :font "Hack-10.0")
+        )
 
-       (when (member "Hack" (font-family-list))
-         (set-face-attribute 'default nil :font "Hack-10.0")
-         )
-
-       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono" nil 'append)
-       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Oblique" nil 'append)
-       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold" nil 'append)
-       ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold Oblique" nil 'append)
-       ;;(set-fontset-font "fontset-default" 'unicode "Consolas" nil)
-       ;;(set-fontset-font "fontset-default" 'unicode "Symbola" nil 'append)
+        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono" nil 'append)
+        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Oblique" nil 'append)
+        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold" nil 'append)
+        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold Oblique" nil 'append)
+        ;;(set-fontset-font "fontset-default" 'unicode "Consolas" nil)
+        ;;(set-fontset-font "fontset-default" 'unicode "Symbola" nil 'append)
 )
 #+end_src
 
@@ -6153,6 +6222,8 @@ as efficient as possible, while also providing a lot of flexibility.
 
 #+begin_src emacs-lisp :tangle config/init-basic-prettify.el
 (use-package emojify
+    :init
+        (setq emojify-emojis-dir psimacs/config/emojify-emojis-dir)
     :hook (after-init . global-emojify-mode)
 )
 #+end_src
@@ -10080,7 +10151,7 @@ narrowing and picking the right string from a vast number of choices.
 | =C-x b=     | =M-x ivy-switch-buffer= | Switch to another buffer.                                               |
 | =C-c C-S-r= | =M-x ivy-resume=        | Resumes the last Ivy-based completion.                                  |
 | =M-y=       | =M-x ivy-next-line=     | In minibuffer, Move cursor vertically down.                             |
-| =C-'=       | =M-x ivy-avy=           | Uses avy to select one of the candidates on the current candidate page. |
+| =H-w= =C-'= | =M-x ivy-avy=           | Uses avy to select one of the candidates on the current candidate page. |
 |-------------+-------------------------+-------------------------------------------------------------------------|
 
 See also [[https://oremacs.com/swiper/][Ivy User Manual]]
@@ -10089,27 +10160,27 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 ;;
 ;; First configure ivy...
 ;;
-(use-package ivy
+(use-package counsel
     :demand t
     :diminish
     :bind (
-        ("C-s" . swiper-isearch)
-        ("C-r" . swiper)
+        ("C-s"       . swiper-isearch)
+        ("C-r"       . swiper)
         ("C-x b"     . ivy-switch-buffer)
         ("C-c C-S-r" . ivy-resume)
-        ("C-c v"   . ivy-push-view)
-        ("C-c V"   . ivy-pop-view)
+        ("C-c v"     . ivy-push-view)
+        ("C-c V"     . ivy-pop-view)
         :map ivy-minibuffer-map
             ("M-y"   . ivy-next-line)
         :map ivy-mode-map
             ("C-'"   . ivy-avy)
+            ("H-w"   . ivy-avy)
         :map psimacs/config/global-key-map/special
             ("C-s a" . swiper-all)
             ("C-s s" . isearch-forward)
             ("C-s r" . isearch-backward)
        )
     :config
-        (ivy-mode 1)
         (setq ivy-use-virtual-buffers t)        ; ﻿add recent files and/or bookmarks to ‘ivy-switch-buffer’
         (setq enable-recursive-minibuffers t)   ; if this variable is non-nil, you can invoke commands (such as find-file)
                                                 ; that use minibuffers even while the minibuffer is active. Such invocation
@@ -10135,7 +10206,13 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 
         (setq magit-completing-read-function 'ivy-completing-read)
         (setq projectile-completion-system 'ivy)
+    :hook (
+            (after-init . ivy-mode)
+            (ivy-mode . counsel-mode)
+        )
 )
+
+(use-package ivy-avy)
 #+end_src
 
 Display icons for all buffers in ivy with the help of package [[https://github.com/asok/all-the-icons-ivy][all-the-icons-ivy]].
@@ -10246,7 +10323,8 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 ;; ... then counsel
 ;;
 (use-package counsel
-    :after ivy
+    :straight nil
+;;    :after ivy
     :diminish
     :commands counsel-find-files
     :bind (
@@ -10443,7 +10521,7 @@ See also:
         (setq company-dabbrev-code-ignore-case nil)
         (setq company-dabbrev-downcase         nil)
         (setq company-begin-commands           '(self-insert-command))
-        
+
 
         (setq company-idle-delay 0.5)
         (setq company-minimum-prefix-length 1)
@@ -11517,6 +11595,10 @@ See also:
          :map psimacs/config/global-key-map/special
              ("C-c g s" . magit-status)
          )
+    :init
+        (setq transient-levels-file psimacs/config/transient-levels-file)
+        (setq transient-values-file psimacs/config/transient-values-file)
+        (setq transient-history-file psimacs/config/transient-history-file)
     :config
         (add-hook 'git-commit-setup-hook 'flyspell-mode)
 
@@ -11587,6 +11669,7 @@ See also:
 #+begin_src emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
 (use-package else-mode
     :diminish (else-mode else-template-mode)
+    ;straight nil
     :straight (else :host github :repo "hatlafax/ELSE" :build (:not compile))
     ;:straight (else :host github :repo "peter-milliken/ELSE")
     :commands (else-mode
@@ -11625,6 +11708,7 @@ See also:
         (setq else-fast-load-directory psimacs/config/else-esl-dir)
         (setq else-kill-proceed-to-next-placeholder t)
         (setq else-only-proceed-within-window t)
+        (setq else-use-menu-framework 'else-use-ivy)
 
         (defun psimacs/config/add-else-template-mappings (mode-name else-template-name &rest bindings)
           "Set up mappings from major MODE-NAME to ELSE-TEMPLATE-NAME.
@@ -12127,6 +12211,8 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (setq lsp-keymap-prefix "C-c l")
 
         (setq lsp-session-file psimacs/config/lsp-session-file)
+        ;;(setq lsp-server-install-dir psimacs/config/lsp-server-install-dir)
+        ;;(setq lsp-yaml-schema-store-local-db psimacs/config/lsp-yaml-schema-store-local-db-file)
 
         ;(setq lsp-pyls-server-command psimacs/config/pyls-runtime-exe)
         (setq lsp-idle-delay 0.1)
@@ -12174,13 +12260,13 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
             ;;(before-save . lsp-organize-imports)
 
             (lsp-mode . (lambda ()
-                            (set (make-local-variable 'company-backends) 
+                            (set (make-local-variable 'company-backends)
                                 '(
-                                    (company-capf 
+                                    (company-capf
                                          company-keywords
                                               company-abbrev
                                               company-dabbrev
-                                              company-dabbrev-code 
+                                              company-dabbrev-code
                                               company-files
                                               company-yasnippet
                                     )
@@ -12628,11 +12714,11 @@ client leveraging the [[https://github.com/Microsoft/python-language-server][Mic
 
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-python-ms
-;  :after lsp-mode
+  ;;:after lsp-mode
   :init (setq lsp-python-ms-auto-install-server t)
   :hook (python-mode . (lambda ()
                           (require 'lsp-python-ms)
-                          (lsp-deferred)))  ; . lsp-deferred
+                          (lsp-deferred)))  ; lsp
 )
 #+end_src
 
@@ -12643,13 +12729,13 @@ client leveraging the [[https://github.com/microsoft/pyright][Pyright language s
 
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-pyright
-;    :after lsp-mode
+    ;;:after lsp-mode
     :config
         (setq lsp-pyright-python-executable-cmd psimacs/config/python-runtime-exe)
 
     :hook (python-mode . (lambda ()
                             (require 'lsp-pyright)
-                            (lsp-deferred)))  ; or lsp-deferred
+                            (lsp-deferred)))  ; or lsp
 )
 #+end_src
 
@@ -14623,7 +14709,7 @@ if the latter is bound."
 
 *** Company-auctex
 
-Package [[https://github.com/alexeyr/company-auctex][company-auctex]] provides a group of backends for 
+Package [[https://github.com/alexeyr/company-auctex][company-auctex]] provides a group of backends for
 [[https://company-mode.github.io/][company]] providing auto-completion for AUCTeX.
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
@@ -14633,7 +14719,7 @@ Package [[https://github.com/alexeyr/company-auctex][company-auctex]] provides a
 )
 #+end_src
 
-Package [[https://github.com/vspinu/company-math][company-math]] defines three company-mode backends: 
+Package [[https://github.com/vspinu/company-math][company-math]] defines three company-mode backends:
 =company-math-symbols-latex, =company-math-symbols-unicode= and =company-latex-commands=.
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
@@ -16709,9 +16795,25 @@ Additional key bindings for *Psimacs*:
 * Byte compile configuration
 
 #+begin_src emacs-lisp :tangle yes
+;;
+;; Byte compile the configuration
+;;
 (when psimacs/config/byte-compile-config-folder
     (byte-recompile-directory psimacs/config/config-dir 0)
 )
+#+end_src
+
+* Disable Debug on Error
+
+It is inconvenient to enter the debugger each time commands signal Lisp errors when invoked inappropriately.
+
+Reference: [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Debugging.html][Entering the Debugger on an Error]]
+
+#+begin_src emacs-lisp :tangle yes
+;;
+;; Disable entering the debugger for inappropriately invoked Lisp commands
+;;
+(setq debug-on-error  nil)
 #+end_src
 
 * Overview of Psimacs key bindings
@@ -16779,6 +16881,7 @@ by the various packages nor by *Emacs* itself.
 | =C-c C-S-r=         | =M-x ivy-resume=                                                        | Resumes the last Ivy-based completion.                                                                                                                                                                                                                                                           |
 | =M-y=               | =M-x ivy-next-line=                                                     | In minibuffer, Move cursor vertically down.                                                                                                                                                                                                                                                      |
 | =C-'=               | =M-x ivy-avy=                                                           | Uses avy to select one of the candidates on the current candidate page.                                                                                                                                                                                                                          |
+| =H-w=               | =M-x ivy-avy=                                                           | Uses avy to select one of the candidates on the current candidate page.                                                                                                                                                                                                                          |
 | =M-x=               | =M-x counsel-M-x=                                                       | Ivy version of =execute-extended-command=.                                                                                                                                                                                                                                                       |
 | =C-M-i=             | =M-x counsel-imenu=                                                     | Jump to a buffer position indexed by =imenu=.                                                                                                                                                                                                                                                    |
 | =C-x C-f=           | =M-x counsel-find-file=                                                 | Counsel, forward to =find-file=.                                                                                                                                                                                                                                                                 |
