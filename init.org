@@ -373,11 +373,22 @@ you can find some useful commands and settings for debugging with [[https://www.
   A simple way to do this is to first move point into the definition of a function or macro and then do
   =C-u C-M-x=.
 
-Embedding a breakpoint into source code: =(edebug)=
+- Embedding a breakpoint into source code: =(edebug)=
+
+References:
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugging.html][Debugging]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html][Edebug]]
+- [[https://endlessparentheses.com/debugging-emacs-lisp-part-1-earn-your-independence.html][Debugging Elisp Part 1: Earn your independence]]
+- [[https://endlessparentheses.com/debugging-elisp-part-2-advanced-topics.html][Debugging Elisp Part 2: Advanced topics]]
+- [[http://blog.binchen.org/posts/my-work-flow-to-debug-emacs-plugin.html][My work flow to debug emacs plugin from Chen Bin]]
+- [[https://www.youtube.com/watch?v=odkYXXYOxpo][Debugging basics]]
 
 | Keybinding        | Command                                 | Description                                                                                                                                                                                  |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-u C-M-x=       | =M-x eval-defun=                        | Instrument the Lisp code at point. Any call to the function activates Edebug.                                                                                                                |
+| =H-m C-h C-f=     | =M-x find-function=                     | Find the definition of function near point                                                                                                                                                   |
+|-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-u C-M-x=       | =M-x edebug-defun=                      | Instrument the Lisp code at point. Any call to the function activates Edebug.                                                                                                                |
+| =C-M-x=           | =M-x eval-defun=                        | Undo instrumentation.                                                                                                                                                                        |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =h=               | =M-x edebug-goto-here=                  | Proceed to the stop point near where point is.                                                                                                                                               |
 | =f=               | =M-x edebug-forward-sexp=               | Run the program for one expression.                                                                                                                                                          |
@@ -16753,6 +16764,8 @@ Additional key bindings for *Psimacs*:
 | =H-m C-f C-a j=   | =M-x find-file <Journal.org>=                                  | Find journal file in agenda directory.                                                            |
 | =H-m C-f C-a l=   | =M-x find-file <TimeLog.org>=                                  | Find time log file in agenda directory.                                                           |
 |-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =H-m C-h C-f=     | =M-x find-function=                                            | Find the definition of function near point                                                        |
+|-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
 | =H-m C-e C-m v=   | =M-x visual-line-mode=                                         | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                              |
 | =H-m C-p C-b=     | =M-x psimacs/pair/bounce-sexp=                                 | Will bounce between matching parens.                                                              |
 | =H-m C-x s b=     | =M-x psimacs/convenience/bind-f6-to-last-command=              | Bind function key F6 to the last command used.                                                    |
@@ -16760,7 +16773,6 @@ Additional key bindings for *Psimacs*:
 | =H-x C-c C-e s h= | =M-x psimacs/sphinx/org-sphinx-build=                          | Run the sphinx-build tool for the current org buffer.                                             |
 | =H-x C-c C-e s H= | =M-x psimacs/sphinx/build=                                     | Run the sphinx-build tool for the given file.                                                     |
 |-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
-
 
 #+begin_src emacs-lisp :tangle config/init-keybindings.el :var file-description="Key bindings setup"
 ;;
@@ -16790,6 +16802,8 @@ Additional key bindings for *Psimacs*:
 
 (define-key psimacs/config/global-key-map/execute (kbd "C-c C-e s h") 'psimacs/sphinx/org-sphinx-build)
 (define-key psimacs/config/global-key-map/execute (kbd "C-c C-e s H") 'psimacs/sphinx/build)
+
+(define-key psimacs/config/global-key-map/special (kbd "C-h C-f") 'find-function)
 #+end_src
 
 * Byte compile configuration
@@ -17040,6 +17054,8 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-f C-a d=     | =M-x find-file <Diary.org>=                                             | Find diary file in agenda directory.                                                                                                                                                                                                                                                             |
 | =H-m C-f C-a j=     | =M-x find-file <Journal.org>=                                           | Find journal file in agenda directory.                                                                                                                                                                                                                                                           |
 | =H-m C-f C-a l=     | =M-x find-file <TimeLog.org>=                                           | Find time log file in agenda directory.                                                                                                                                                                                                                                                          |
+|---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-h C-f=       | =M-x find-function=                                                     | Find the definition of function near point                                                                                                                                                                                                                                                       |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-l b=         | =M-x langtool-check-buffer=                                             | To check current buffer and show warnings. With prefix =C-u= check with different language.                                                                                                                                                                                                      |
 | =H-m C-l p=         | =M-x langtool-goto-previous-error=                                      | Goto previous error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                   |
