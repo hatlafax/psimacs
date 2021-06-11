@@ -385,7 +385,7 @@ References:
 
 | Keybinding        | Command                                 | Description                                                                                                                                                                                  |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-h C-f=     | =M-x find-function=                     | Find the definition of function near point                                                                                                                                                   |
+| =H-m C-f C-f=     | =M-x find-function=                     | Find the definition of function near point                                                                                                                                                   |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-u C-M-x=       | =M-x edebug-defun=                      | Instrument the Lisp code at point. Any call to the function activates Edebug.                                                                                                                |
 | =C-M-x=           | =M-x eval-defun=                        | Undo instrumentation.                                                                                                                                                                        |
@@ -706,6 +706,9 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
+
+(defconst psimacs/config/work-lisp-folder "work-lisp"
+  "The psimacs work-lisp directory.")
 
 (defconst psimacs/config/straight-version-folder "straight/versions"
   "The psimacs straight versions directory.")
@@ -1458,6 +1461,10 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/site-lisp-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/site-lisp-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/work-lisp-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/work-lisp-folder))))
 
         ;;
         ;; Create missing dropbox emacs directory
@@ -1980,7 +1987,7 @@ programs are installed.
   "The psimacs personal site-lisp directory.")
 
 (defconst psimacs/config/work-lisp-dir
-  (psimacs/file-system/concat-directory user-emacs-directory "work-lisp")
+  (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/work-lisp-folder)
   "The psimacs personal work-lisp directory for hacking.")
 
 (defconst psimacs/config/session-dir
@@ -10130,6 +10137,20 @@ Lexicographically, single characters are sorted alphabetically.")
 )
 #+end_src
 
+*** Selectrum
+
+The package [[https://github.com/raxod502/selectrum][selectrum]] aims to provide a better completion UI using standard Emacs APIs.
+It is an alternative to *Psimacs* default [[https://github.com/abo-abo/swiper][Ivy/Counsel/Swiper]] completion.
+
+The package is installed by *Psimacs* but not activated.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-swiper-key.el :var file-description="Advanced Selectrum setup"
+;;
+;; Configure the selectrum completion package.
+;;
+(use-package selectrum)
+#+end_src
+
 *** Swiper / Ivy / Counsel
 
 [[https://github.com/abo-abo/swiper][Swiper]] gives us a really efficient incremental search
@@ -11682,14 +11703,14 @@ See also:
     :diminish (else-mode else-template-mode)
     ;straight nil
     :straight (else :host github :repo "hatlafax/ELSE" :build (:not compile))
-    ;:straight (else :host github :repo "peter-milliken/ELSE")
+    ;:straight (else :host github :repo "peter-milliken/ELSE" :branch "beforeafter" :build (:not compile))
     :commands (else-mode
                else-template-mode
                else-template-compile-buffer
                else-extract-placeholder
                else-extract-all
                else-show-placeholder-names)
-    :mode ("\\.lse\\'" . else-template-mode)
+    ;;:mode ("\\.lse\\'" . else-template-mode)
     :init
         ;; avoid messing up key bindings C-c /...
         (setq else-mode-key-map nil)
@@ -11704,7 +11725,17 @@ See also:
           ;;
           ;; Copy *.lse files into load path directory.
           ;;
-          (psimacs/file-system/copy-files else-src "^.*\\.lse$" psimacs/config/else-lse-pkg-dir t nil))
+          (psimacs/file-system/copy-files else-src "^.*\\.lse$" psimacs/config/else-lse-pkg-dir t nil)
+
+          ;;
+          ;; The major mode is else-template-mode => the .lse file is must currently be renamed!
+          ;;
+          ;;(when (file-exists-p (psimacs/file-system/concat-file psimacs/config/else-lse-pkg-dir "Template.lse"))
+          ;;  (rename-file (psimacs/file-system/concat-file psimacs/config/else-lse-pkg-dir "Template.lse") (psimacs/file-system/concat-file psimacs/config/else-lse-pkg-dir "ELSE-Template.lse")))
+          ;;
+          ;;(when (file-exists-p (psimacs/file-system/concat-file psimacs/config/else-lse-pkg-dir "Template-cust.lse"))
+          ;;  (rename-file (psimacs/file-system/concat-file psimacs/config/else-lse-pkg-dir "Template-cust.lse") (psimacs/file-system/concat-file psimacs/config/else-lse-pkg-dir "ELSE-Template-cust.lse")))
+        )
 
         (when (file-directory-p psimacs/config/else-lse-dir)
           (add-to-list 'load-path psimacs/config/else-lse-dir))
@@ -11726,8 +11757,8 @@ See also:
 BINDINGS is a list of mode names and templates names for convenience, like so:
 
     (psimacs/config/add-else-template-mappings
-        \"Elisp\" \"Emacs-Lisp\"
-        \"Shell-script\" \"Shell\")
+       \"Elisp\" \"Emacs-Lisp\"
+       \"Shell-script\" \"Shell\")
 
 Returns `else-Alternate-Mode-Names'."
           (while mode-name
@@ -11745,20 +11776,19 @@ Returns `else-Alternate-Mode-Names'."
           (else-kill 'force))
 
         (psimacs/config/add-else-template-mappings
-                "Lisp Interaction" "Emacs-Lisp"
-                "Elisp"            "Emacs-Lisp"
-                "ELSE-Template"    "Template"
-                "Shell-script"     "Shell"
-                "C++//"            "C++"
-                "C/*"              "C"
-                "LaTeX/MP"         "LaTeX"
-                "LaTeX/MPS"        "LaTeX"
+            "lisp-interaction" "Emacs-Lisp"
         )
 
         (define-key else-menu-mode-map (kbd "C-n") 'popup-next)
         (define-key else-menu-mode-map (kbd "C-p") 'popup-previous)
 
         (require 'else-template-mode)
+
+        (when (and (file-directory-p psimacs/config/work-lisp-dir)
+                   (file-exists-p (psimacs/file-system/concat-file psimacs/config/work-lisp-dir "else-test-functions.el"))
+              )
+            (require 'else-test-functions)
+        )
 
     :after hydra
 
@@ -16764,7 +16794,7 @@ Additional key bindings for *Psimacs*:
 | =H-m C-f C-a j=   | =M-x find-file <Journal.org>=                                  | Find journal file in agenda directory.                                                            |
 | =H-m C-f C-a l=   | =M-x find-file <TimeLog.org>=                                  | Find time log file in agenda directory.                                                           |
 |-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
-| =H-m C-h C-f=     | =M-x find-function=                                            | Find the definition of function near point                                                        |
+| =H-m C-f C-f=     | =M-x find-function=                                            | Find the definition of function near point                                                        |
 |-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
 | =H-m C-e C-m v=   | =M-x visual-line-mode=                                         | Line wrapping. See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html][Visual Line Mode]].                                                              |
 | =H-m C-p C-b=     | =M-x psimacs/pair/bounce-sexp=                                 | Will bounce between matching parens.                                                              |
@@ -16803,7 +16833,7 @@ Additional key bindings for *Psimacs*:
 (define-key psimacs/config/global-key-map/execute (kbd "C-c C-e s h") 'psimacs/sphinx/org-sphinx-build)
 (define-key psimacs/config/global-key-map/execute (kbd "C-c C-e s H") 'psimacs/sphinx/build)
 
-(define-key psimacs/config/global-key-map/special (kbd "C-h C-f") 'find-function)
+(define-key psimacs/config/global-key-map/special (kbd "C-f C-f") 'find-function)
 #+end_src
 
 * Byte compile configuration
@@ -17055,7 +17085,7 @@ by the various packages nor by *Emacs* itself.
 | =H-m C-f C-a j=     | =M-x find-file <Journal.org>=                                           | Find journal file in agenda directory.                                                                                                                                                                                                                                                           |
 | =H-m C-f C-a l=     | =M-x find-file <TimeLog.org>=                                           | Find time log file in agenda directory.                                                                                                                                                                                                                                                          |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-h C-f=       | =M-x find-function=                                                     | Find the definition of function near point                                                                                                                                                                                                                                                       |
+| =H-m C-f C-f=       | =M-x find-function=                                                     | Find the definition of function near point                                                                                                                                                                                                                                                       |
 |---------------------+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-l b=         | =M-x langtool-check-buffer=                                             | To check current buffer and show warnings. With prefix =C-u= check with different language.                                                                                                                                                                                                      |
 | =H-m C-l p=         | =M-x langtool-goto-previous-error=                                      | Goto previous error. Obsoleted function. Should use =langtool-correct-buffer=.                                                                                                                                                                                                                   |
