@@ -190,25 +190,6 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER YYYY
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER YYYY
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /BEFORE=test-before
-    /AFTER=test-after
-    /TRANSFORM=test-transform
-    /TYPE=NONTERMINAL
-
-    "Please enter a valid date"
-
-END DEFINE
-
-;;------------------------------------------------------------------------------
-
 DELETE PLACEHOLDER LICENSER
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER LICENSER
@@ -222,6 +203,23 @@ DEFINE PLACEHOLDER LICENSER
     "Johannes Brunen <hatlafax@gmx.de>"
     "DataSolid GmbH, Mönchengladbach <csons@datasolid.de>"
     "{text}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER YYYY
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER YYYY
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-year
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid year: YYYY"
 
 END DEFINE
 
@@ -1581,3 +1579,40 @@ DEFINE PLACEHOLDER CLASSDEF
     ""
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
+;;- Testing --------------------------------------------------------------------
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TEST-BEFORE-AFTER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST-BEFORE-AFTER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /BEFORE=test-before
+    /AFTER=test-after
+    /TRANSFORM=test-transform
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid date"
+
+END DEFINE
+
+DELETE PLACEHOLDER TEST-TRANSFORM
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST-TRANSFORM
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=test-transform
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid date"
+
+END DEFINE
+
