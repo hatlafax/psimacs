@@ -1,0 +1,2960 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-06-28 Mo 18:53 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Psimacs Emacs keybindings</title>
+<meta name="author" content="Johannes Brunen" />
+<meta name="description" content="Overview of the Psimacs keybindings" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<style type="text/css">
+.styledtable col:nth-of-type(1) { width: 15% }
+.styledtable col:nth-of-type(2) { width: 30% }
+.styledtable col:nth-of-type(3) { width: 55% }
+</style>
+<link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
+<style type="text/css">
+ pre.src {background-color: #1a1a1a; color: #AAB0AB;}</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Psimacs Emacs keybindings</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org76b1c78">1. Overview of Psimacs key bindings</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org76b1c78" class="outline-2">
+<h2 id="org76b1c78"><span class="section-number-2">1.</span> Overview of Psimacs key bindings</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The following tables summarizes the key bindings added explicitly by <b>Psimacs</b>. Neither shown are the bindings provided
+by the various packages nor by <b>Emacs</b> itself.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Prefix command</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>H-SPC</code> <code>s-SPC</code></td>
+<td class="org-left">Hydras</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h</code> <code>s-h</code></td>
+<td class="org-left">Help</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-c</code> <code>s-c</code></td>
+<td class="org-left">common user commands</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x</code> <code>s-x</code></td>
+<td class="org-left">common execution commands</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m</code> <code>H-,</code> <code>s-m</code> <code>s-,</code></td>
+<td class="org-left">special user commands</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="styledtable">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Key binding</th>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>C-TAB</code></td>
+<td class="org-left"><code>M-x psimacs/buffer/next-user-buffer</code></td>
+<td class="org-left">Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-S-TAB</code></td>
+<td class="org-left"><code>M-x psimacs/buffer/previous-user-buffer</code></td>
+<td class="org-left">Switch to the previous user buffer. Buffer name starts with *, it's not considered a user buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-TAB</code></td>
+<td class="org-left"><code>M-x psimacs/buffer/next-emacs-buffer</code></td>
+<td class="org-left">Switch to the next emacs buffer, i.e. that starts with *.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-S-TAB</code></td>
+<td class="org-left"><code>M-x psimacs/buffer/previous-emacs-buffer</code></td>
+<td class="org-left">Switch to the previous emacs buffer, i.e. that starts with *.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-x &lt;right&gt;</code></td>
+<td class="org-left"><code>M-x next-buffer</code></td>
+<td class="org-left">Switch to the next buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-x &lt;left&gt;</code></td>
+<td class="org-left"><code>M-x previous-buffer</code></td>
+<td class="org-left">Switch to the previous buffer.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>M-&lt;f4&gt;</code></td>
+<td class="org-left"><code>M-x psimacs/config/delete-frame</code></td>
+<td class="org-left">Delete current frame.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>&lt;f2&gt;</code></td>
+<td class="org-left"><code>M-x bm-next</code></td>
+<td class="org-left">Jump to the next bookmark.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>S-&lt;f2&gt;</code></td>
+<td class="org-left"><code>M-x bm-previous</code></td>
+<td class="org-left">Jump to the previous bookmark.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-&lt;f2&gt;</code></td>
+<td class="org-left"><code>M-x bm-toggle</code></td>
+<td class="org-left">Set or unset bookmark.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-S-&lt;f2&gt;</code></td>
+<td class="org-left"><code>M-x bm-remove-all-current-buffer</code></td>
+<td class="org-left">Remove all bookmarks of the current buffer.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>&lt;f8&gt;</code></td>
+<td class="org-left"><code>M-x prettify-symbols-mode</code></td>
+<td class="org-left">Toggle <code>prettify-symbols-mode</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>M-&lt;f8&gt;</code></td>
+<td class="org-left"><code>M-x global-prettify-symbols-mode</code></td>
+<td class="org-left">Toggle <code>prettify-symbols-mode</code> globally.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-&lt;f8&gt;</code></td>
+<td class="org-left"><code>M-x psimacs/dashboard/open-dashboard</code></td>
+<td class="org-left">Open the dashboard.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-TAB</code></td>
+<td class="org-left"><code>M-x company-try-hard</code></td>
+<td class="org-left">Try hard to find a completion. If none of the current completions look good, call the command again to try the next backend.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c &lt;left&gt;</code></td>
+<td class="org-left"><code>M-x winner-undo</code></td>
+<td class="org-left">Switch back to an earlier window configuration saved by Winner mode.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c &lt;right&gt;</code></td>
+<td class="org-left"><code>M-x winner-redo</code></td>
+<td class="org-left">Restore a more recent window configuration saved by Winner mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c / /</code></td>
+<td class="org-left"><code>M-x rxt-explain</code></td>
+<td class="org-left">Pop up a buffer with pretty-printed `rx' syntax for the regex at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / c</code></td>
+<td class="org-left"><code>M-x rxt-convert-syntax</code></td>
+<td class="org-left">Convert regex at point to other kind of syntax, depending on major mode.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / x</code></td>
+<td class="org-left"><code>M-x rxt-convert-to-rx</code></td>
+<td class="org-left">Convert regex at point to RX syntax. Chooses Emacs or PCRE syntax by major mode.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / '</code></td>
+<td class="org-left"><code>M-x rxt-convert-to-strings</code></td>
+<td class="org-left">Convert regex at point to RX syntax. Chooses Emacs or PCRE syntax by major mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c / p e</code></td>
+<td class="org-left"><code>M-x rxt-pcre-to-elisp</code></td>
+<td class="org-left">Translate PCRE, a regexp in Perl-compatible syntax, to Emacs Lisp.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / %</code></td>
+<td class="org-left"><code>M-x pcre-query-replace-regexp</code></td>
+<td class="org-left">Perform <code>query-replace-regexp</code> using PCRE syntax.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / p x</code></td>
+<td class="org-left"><code>M-x rxt-pcre-to-rx</code></td>
+<td class="org-left">Translate PCRE, a regexp in Perl-compatible syntax, to `rx' syntax.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / p '</code></td>
+<td class="org-left"><code>M-x rxt-pcre-to-strings</code></td>
+<td class="org-left">Return a list of all strings matched by PCRE, a Perl-compatible regexp.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / p /</code></td>
+<td class="org-left"><code>M-x rxt-explain-pcre</code></td>
+<td class="org-left">Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c / e /</code></td>
+<td class="org-left"><code>M-x rxt-explain-elisp</code></td>
+<td class="org-left">Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / e p</code></td>
+<td class="org-left"><code>M-x rxt-elisp-to-pcre</code></td>
+<td class="org-left">Translate REGEXP, a regexp in Emacs Lisp syntax, to Perl-compatible syntax.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / e x</code></td>
+<td class="org-left"><code>M-x rxt-elisp-to-rx</code></td>
+<td class="org-left">Translate REGEXP, a regexp in Emacs Lisp syntax, to `rx' syntax.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / e '</code></td>
+<td class="org-left"><code>M-x rxt-elisp-to-strings</code></td>
+<td class="org-left">Return a list of all strings matched by REGEXP, an Emacs Lisp regexp.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / e t</code></td>
+<td class="org-left"><code>M-x rxt-toggle-elisp-rx</code></td>
+<td class="org-left">Toggle the regexp near point between Elisp string and rx syntax.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c / t</code></td>
+<td class="org-left"><code>M-x rxt-toggle-elisp-rx</code></td>
+<td class="org-left">Toggle the regexp near point between Elisp string and rx syntax.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-r</code></td>
+<td class="org-left"><code>M-x swiper</code></td>
+<td class="org-left">Incrementally search with an overview.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c v</code></td>
+<td class="org-left"><code>M-x ivy-push-view</code></td>
+<td class="org-left">Push the current window tree on <code>ivy-views</code></td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c V</code></td>
+<td class="org-left"><code>M-x ivy-pop-view</code></td>
+<td class="org-left">Delete a view to delete from <code>ivy-views</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-x b</code></td>
+<td class="org-left"><code>M-x ivy-switch-buffer</code></td>
+<td class="org-left">Switch to another buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c C-S-r</code></td>
+<td class="org-left"><code>M-x ivy-resume</code></td>
+<td class="org-left">Resumes the last Ivy-based completion.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>M-y</code></td>
+<td class="org-left"><code>M-x ivy-next-line</code></td>
+<td class="org-left">In minibuffer, Move cursor vertically down.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-'</code></td>
+<td class="org-left"><code>M-x ivy-avy</code></td>
+<td class="org-left">Uses avy to select one of the candidates on the current candidate page.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-w</code></td>
+<td class="org-left"><code>M-x ivy-avy</code></td>
+<td class="org-left">Uses avy to select one of the candidates on the current candidate page.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>M-x</code></td>
+<td class="org-left"><code>M-x counsel-M-x</code></td>
+<td class="org-left">Ivy version of <code>execute-extended-command</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-M-i</code></td>
+<td class="org-left"><code>M-x counsel-imenu</code></td>
+<td class="org-left">Jump to a buffer position indexed by <code>imenu</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-x C-f</code></td>
+<td class="org-left"><code>M-x counsel-find-file</code></td>
+<td class="org-left">Counsel, forward to <code>find-file</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c b</code></td>
+<td class="org-left"><code>M-x counsel-bookmark</code></td>
+<td class="org-left">Forward to <code>bookmark-jump</code> or <code>bookmark-set</code> if bookmark does not exist.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c c</code></td>
+<td class="org-left"><code>M-x counsel-compile</code></td>
+<td class="org-left">Call <code>compile</code> completing with smart suggestions, optionally for DIR.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c d</code></td>
+<td class="org-left"><code>M-x counsel-dired-jump</code></td>
+<td class="org-left">Jump to a directory below the current directory.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c F</code></td>
+<td class="org-left"><code>M-x counsel-org-file</code></td>
+<td class="org-left">Browse all attachments for current Org file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c g</code></td>
+<td class="org-left"><code>M-x counsel-git</code></td>
+<td class="org-left">Find file in the current git repository.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c j</code></td>
+<td class="org-left"><code>M-x counsel-git-grep</code></td>
+<td class="org-left">Grep for a string in the current Git repository.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c L</code></td>
+<td class="org-left"><code>M-x counsel-git-log</code></td>
+<td class="org-left">Call the <code>git log --grep</code> shell command.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c J</code></td>
+<td class="org-left"><code>M-x counsel-file-jump</code></td>
+<td class="org-left">Jump to a file below the current directory..</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c k</code></td>
+<td class="org-left"><code>M-x counsel-ag</code></td>
+<td class="org-left">Grep for a string in a root directory using <code>ag</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l</code></td>
+<td class="org-left"><code>M-x counsel-locate</code></td>
+<td class="org-left">Call a "locate" style shell command.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>M-y</code></td>
+<td class="org-left"><code>M-x counsel-yank-pop</code></td>
+<td class="org-left">Ivy replacement for <code>yank-pop</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-h f</code></td>
+<td class="org-left"><code>M-x counsel-describe-function</code></td>
+<td class="org-left">Forward to <code>describe-function</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-h i</code></td>
+<td class="org-left"><code>M-x counsel-info-lookup-symbol</code></td>
+<td class="org-left">Forward SYMBOL to <code>info-lookup-symbol</code> with ivy completion.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-h j</code></td>
+<td class="org-left"><code>M-x counsel-set-variable</code></td>
+<td class="org-left">Set a variable SYM with completion.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-h l</code></td>
+<td class="org-left"><code>M-x counsel-find-library</code></td>
+<td class="org-left">Find Emacs Lisp source. Forward to <code>find-library</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-h u</code></td>
+<td class="org-left"><code>M-x counsel-unicode-char</code></td>
+<td class="org-left">Insert COUNT copies of a unicode char at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-h v</code></td>
+<td class="org-left"><code>M-x counsel-describe-variable</code></td>
+<td class="org-left">Forward to <code>describe-function</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-r</code></td>
+<td class="org-left"><code>M-x counsel-minibuffer-history</code></td>
+<td class="org-left">Browse minibuffer history.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-r</code></td>
+<td class="org-left"><code>M-x counsel-expression-history</code></td>
+<td class="org-left">In <code>read-expression-map</code></td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-x p i</code></td>
+<td class="org-left"><code>M-x org-cliplink</code></td>
+<td class="org-left">Insert <a href="https://orgmode.org">org-mode</a> links from the clipboard.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-z</code></td>
+<td class="org-left"><code>M-x undo-fu-only-undo</code></td>
+<td class="org-left">Undo the last action.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-S-z</code></td>
+<td class="org-left"><code>M-x undo-fu-only-redo</code></td>
+<td class="org-left">Redo an action until the initial undo action.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-z</code></td>
+<td class="org-left"><code>M-x undo-fu-only-redo-all</code></td>
+<td class="org-left">Redo all actions until the initial undo step.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>s-p</code></td>
+<td class="org-left"><code>M-x centaur-tabs-backward</code></td>
+<td class="org-left">Select the previous available tab.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>s-n</code></td>
+<td class="org-left"><code>M-x centaur-tabs-forward</code></td>
+<td class="org-left">Select the next available tab.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-&lt;up&gt;</code></td>
+<td class="org-left"><code>M-x psimacs/movement/move-text-up</code></td>
+<td class="org-left">Move region or line up.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-&lt;down&gt;</code></td>
+<td class="org-left"><code>M-x psimacs/movement/move-text-down</code></td>
+<td class="org-left">Move region or line down.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-;</code></td>
+<td class="org-left"><code>M-x iedit-mode</code></td>
+<td class="org-left">Toggle <a href="https://github.com/victorhge/iedit">iedit-mode</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-b</code></td>
+<td class="org-left"><code>M-x frog-jump-buffer</code></td>
+<td class="org-left">Presents a <i>frog-menu</i> for jumping to an open buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-B</code></td>
+<td class="org-left"><code>M-x frog-jump-buffer-other-window</code></td>
+<td class="org-left">Presents a <i>frog-menu</i> for jumping to an open buffer in other window.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-c C-e</code></td>
+<td class="org-left"><code>M-x edit-indirect-region</code></td>
+<td class="org-left">Edit region in separate buffer <b>edit-indirect buffer</b></td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-c r</code></td>
+<td class="org-left"><code>M-x vr/replace</code></td>
+<td class="org-left"><code>replace-reg-exp</code> with live visual feedback.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-c q</code></td>
+<td class="org-left"><code>M-x vr/query-replace</code></td>
+<td class="org-left"><code>query-replace-regexp</code> with live visual feedback.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-c m</code></td>
+<td class="org-left"><code>M-x vr/mc-mark</code></td>
+<td class="org-left">Convert regexp selection to multiple cursors.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-c s</code></td>
+<td class="org-left"><code>M-x vr/isearch-forward</code></td>
+<td class="org-left">Like <code>isearch-forward</code> but with a <a href="https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions">PCRE</a> regular expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-c p</code></td>
+<td class="org-left"><code>M-x vr/isearch-backward</code></td>
+<td class="org-left">Like <code>isearch-backward</code> but with a <a href="https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions">PCRE</a> regular expression.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-g</code></td>
+<td class="org-left"><code>M-x keyboard-escape-quit</code></td>
+<td class="org-left">Quit or abort.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-h f</code></td>
+<td class="org-left"><code>M-x helpful-callable</code></td>
+<td class="org-left">Show help for function, macro or special form named SYMBOL.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h F</code></td>
+<td class="org-left"><code>M-x helpful-function</code></td>
+<td class="org-left">Show help for function named SYMBOL.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h M</code></td>
+<td class="org-left"><code>M-x helpful-macro</code></td>
+<td class="org-left">Show help for macro named SYMBOL.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h c</code></td>
+<td class="org-left"><code>M-x helpful-command</code></td>
+<td class="org-left">Show help for interactive function named SYMBOL.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h k</code></td>
+<td class="org-left"><code>M-x helpful-key</code></td>
+<td class="org-left">Show help for interactive command bound to KEY-SEQUENCE.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h v</code></td>
+<td class="org-left"><code>M-x helpful-variable</code></td>
+<td class="org-left">Show help for variable named SYMBOL.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h p</code></td>
+<td class="org-left"><code>M-x helpful-at-point</code></td>
+<td class="org-left">Show help for the symbol at point.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-h C-d m</code></td>
+<td class="org-left"><code>M-x discover-my-major</code></td>
+<td class="org-left">Create a listing of all major-mode keys with their description.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-h C-d M</code></td>
+<td class="org-left"><code>M-x discover-my-mode</code></td>
+<td class="org-left">Create a listing of all MODE keys with their description.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-h H-h b</code></td>
+<td class="org-left"><code>M-x helm-descbinds</code></td>
+<td class="org-left">Create a listing of all key bindings of current major mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-h H-h m</code></td>
+<td class="org-left"><code>M-x helm-describe-modes</code></td>
+<td class="org-left">Create a listing of all modes of current major mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-SPC H-SPC</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/hydra/body</code></td>
+<td class="org-left">Hydra&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC SPC</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/toggle/body</code></td>
+<td class="org-left">Toggles&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC a</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/apropos/body</code></td>
+<td class="org-left">Apropos&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC d</code></td>
+<td class="org-left"><code>M-x dap-hydra</code></td>
+<td class="org-left">DAP-Mode hydra&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC h</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/help/body</code></td>
+<td class="org-left">Help&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC H</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/helpful/body</code></td>
+<td class="org-left">Helpful&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC i</code></td>
+<td class="org-left"><code>M-x hydra-ivy/body</code></td>
+<td class="org-left">Ivy&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC l</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/lsp/body</code></td>
+<td class="org-left">LSP Mode hydra&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC m</code></td>
+<td class="org-left"><code>M-x major-mode-hydra</code></td>
+<td class="org-left">Major Mode's hydra&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC p</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/projectile/body</code></td>
+<td class="org-left">Projectile&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC t</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/avy/body</code></td>
+<td class="org-left">Fast Jumping in Text&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC T</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/transpose/body</code></td>
+<td class="org-left">Transposing&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC w</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/window/body</code></td>
+<td class="org-left">Window&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC y</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/yasnippet/body</code></td>
+<td class="org-left">YASnippet&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-c</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/multiple-cursors/body</code></td>
+<td class="org-left">Multiple Cursors&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-f</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/flycheck/body</code></td>
+<td class="org-left">Flycheck&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-i</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/image+/body</code></td>
+<td class="org-left">Image&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-l</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/vlf-large-files/body</code></td>
+<td class="org-left">Large Files&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-m</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/word-modes/body</code></td>
+<td class="org-left">CamelCase&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-o</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/org/body</code></td>
+<td class="org-left">Org-Mode&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-p</code></td>
+<td class="org-left"><code>M-x hydra-projectile-cmake/body</code></td>
+<td class="org-left">Projectile CMake&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-r</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/rectangle/body</code></td>
+<td class="org-left">Rectangle&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-SPC C-s</code></td>
+<td class="org-left"><code>M-x psimacs/hydra/straight/body</code></td>
+<td class="org-left">Straight&#x2026;</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m (</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-paren</code></td>
+<td class="org-left">Insert paranthesis <code>(▮)</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m [</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-bracket</code></td>
+<td class="org-left">Insert brackets <code>[▮]</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m {</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-brace</code></td>
+<td class="org-left">Insert braces <code>{▮}</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m "</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-ascii-double-quote</code></td>
+<td class="org-left">Insert ascii double quotes <code>"▮"</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m '</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-ascii-single-quote</code></td>
+<td class="org-left">Insert ascii single quotes <code>'▮'</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m e</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-emacs-quote</code></td>
+<td class="org-left">Insert emacs quotes <code>`▮'</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m =</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-equal</code></td>
+<td class="org-left">Insert equality signs <code>=▮=</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m *</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-star</code></td>
+<td class="org-left">Insert stars <code>*▮*</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m /</code></td>
+<td class="org-left"><code>M-x psimacs/pair/insert-slash</code></td>
+<td class="org-left">Insert slashes <code>/▮/</code>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>&lt;f12&gt;</code></td>
+<td class="org-left"><code>M-x cua-mode</code></td>
+<td class="org-left">Toggle CUA mode.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m c</code></td>
+<td class="org-left"><code>M-x cua-mode</code></td>
+<td class="org-left">Toggle CUA mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-c g s</code></td>
+<td class="org-left"><code>M-x magit-status</code></td>
+<td class="org-left">Run git status command.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-c C-h</code></td>
+<td class="org-left"><code>M-x (find-file-read-only history-file)</code></td>
+<td class="org-left">Open the history file in read-only mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-e</code></td>
+<td class="org-left"><code>M-x else-expand</code></td>
+<td class="org-left">Expand the placeholder or any preceeding abbreviation at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-E</code></td>
+<td class="org-left"><code>M-x else-expand-or-next-expand</code></td>
+<td class="org-left">Expand if possible else move to next and expand this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-n</code></td>
+<td class="org-left"><code>M-x else-next</code></td>
+<td class="org-left">Move 'point' to the 'next' placeholder.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p</code></td>
+<td class="org-left"><code>M-x else-previous</code></td>
+<td class="org-left">Move `point' to the (nth) previous placeholder.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-N</code></td>
+<td class="org-left"><code>M-x else-expand-or-next-expand</code></td>
+<td class="org-left">Expand if possible else move to next and expand this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-P</code></td>
+<td class="org-left"><code>M-x else-expand-or-previous-expand</code></td>
+<td class="org-left">Expand if possible else move to previous and expand this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-C-n</code></td>
+<td class="org-left"><code>M-x else-kill-or-next-kill</code></td>
+<td class="org-left">Kill if possible else move to next and kill this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-C-p</code></td>
+<td class="org-left"><code>M-x else-kill-or-previous-kill</code></td>
+<td class="org-left">Kill if possible else move to previous and kill this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-k</code></td>
+<td class="org-left"><code>M-x else-kill</code></td>
+<td class="org-left">Kill the placeholder at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-K</code></td>
+<td class="org-left"><code>M-x psimacs/else/kill-always</code></td>
+<td class="org-left">Like <code>else-kill</code> but kills required placeholders without prompting.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-c m</code></td>
+<td class="org-left"><code>M-x else-mode</code></td>
+<td class="org-left">Enable/disable <code>else-mode</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c e</code></td>
+<td class="org-left"><code>M-x else-expand</code></td>
+<td class="org-left">Expand the placeholder or any preceeding abbreviation at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c E</code></td>
+<td class="org-left"><code>M-x else-expand-or-next-expand</code></td>
+<td class="org-left">Expand if possible else move to next and expand this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c n</code></td>
+<td class="org-left"><code>M-x else-next</code></td>
+<td class="org-left">Move 'point' to the 'next' placeholder.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c p</code></td>
+<td class="org-left"><code>M-x else-previous</code></td>
+<td class="org-left">Move `point' to the (nth) previous placeholder.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c N</code></td>
+<td class="org-left"><code>M-x else-expand-or-next-expand</code></td>
+<td class="org-left">Expand if possible else move to next and expand this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c P</code></td>
+<td class="org-left"><code>M-x else-expand-or-previous-expand</code></td>
+<td class="org-left">Expand if possible else move to previous and expand this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c C-n</code></td>
+<td class="org-left"><code>M-x else-kill-or-next-kill</code></td>
+<td class="org-left">Kill if possible else move to next and kill this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c C-p</code></td>
+<td class="org-left"><code>M-x else-kill-or-previous-kill</code></td>
+<td class="org-left">Kill if possible else move to previous and kill this one.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c k</code></td>
+<td class="org-left"><code>M-x else-kill</code></td>
+<td class="org-left">Kill the placeholder at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c K</code></td>
+<td class="org-left"><code>M-x psimacs/else/kill-always</code></td>
+<td class="org-left">Like <code>else-kill</code> but kills required placeholders without prompting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-c C-c</code></td>
+<td class="org-left"><code>M-x else-template-compile-buffer</code></td>
+<td class="org-left">Compile the whole current buffer.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-e C-m v</code></td>
+<td class="org-left"><code>M-x visual-line-mode</code></td>
+<td class="org-left">Line wrapping. See <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Visual-Line-Mode.html">Visual Line Mode</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-f m</code></td>
+<td class="org-left"><code>M-x flyspell-mode</code></td>
+<td class="org-left">Minor mode performing on-the-fly spelling checking.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f M</code></td>
+<td class="org-left"><code>M-x flyspell-prog-mode</code></td>
+<td class="org-left">Turn on <a href="http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html">flyspell-mode</a> for comments and strings.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-f r</code></td>
+<td class="org-left"><code>M-x flyspell-region</code></td>
+<td class="org-left">Checks all words inside a region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f b</code></td>
+<td class="org-left"><code>M-x flyspell-buffer</code></td>
+<td class="org-left">Checks the whole buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f w</code></td>
+<td class="org-left"><code>M-x flyspell-word</code></td>
+<td class="org-left">Spell check a word.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-,</code></td>
+<td class="org-left"><code>M-x flyspell-goto-next-error</code></td>
+<td class="org-left">Go to the next detected error.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-.</code></td>
+<td class="org-left"><code>M-x flyspell-auto-correct-word</code></td>
+<td class="org-left">Automatically Correct the current word. This command proposes various successive corrections for the current word.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-:</code></td>
+<td class="org-left"><code>M-x flyspell-auto-correct-previous-word</code></td>
+<td class="org-left">Auto correct the first mispelled word that occurs before point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-;</code></td>
+<td class="org-left"><code>M-x flyspell-correct-wrapper</code></td>
+<td class="org-left">By default jumps to the first misspelled word before the point and prompts for correction and gets you back. Calling it with <code>C-u</code> gives ability to correct multiple misspelled words in one run. <code>C-u C-u</code> changes direction. <code>C-u C-u C-u</code> changes direction and enables multiple corrections.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f a</code></td>
+<td class="org-left"><code>M-x flyspell-correct-at-point</code></td>
+<td class="org-left">To correct word at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f p</code></td>
+<td class="org-left"><code>M-x flyspell-correct-previous</code></td>
+<td class="org-left">To correct any visible word before the point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f n</code></td>
+<td class="org-left"><code>M-x flyspell-correct-next</code></td>
+<td class="org-left">To correct any visible word after the point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f c</code></td>
+<td class="org-left"><code>M-x flyspell-check-previous-highlighted-word</code></td>
+<td class="org-left">Correct the closer misspelled word.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-f d</code></td>
+<td class="org-left"><code>M-x psimac/spell/add-word-to-dict</code></td>
+<td class="org-left">Add the word at the current location to the private dictionary without question.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-f g</code></td>
+<td class="org-left"><code>M-x psimac/spell/switch-to-german</code></td>
+<td class="org-left">Change to german language dictionary.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f e</code></td>
+<td class="org-left"><code>M-x psimac/spell/switch-to-english</code></td>
+<td class="org-left">Change to english language dictionary.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f t</code></td>
+<td class="org-left"><code>M-x psimac/spell/toggle-language</code></td>
+<td class="org-left">Toggle german and english language dictionaries.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-f C-a c</code></td>
+<td class="org-left"><code>M-x find-file &lt;psimacs/config/org-capture-coding-diary-file&gt;</code></td>
+<td class="org-left">Find coding diary file in agenda directory.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f C-a d</code></td>
+<td class="org-left"><code>M-x find-file &lt;Diary.org&gt;</code></td>
+<td class="org-left">Find diary file in agenda directory.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f C-a j</code></td>
+<td class="org-left"><code>M-x find-file &lt;Journal.org&gt;</code></td>
+<td class="org-left">Find journal file in agenda directory.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-f C-a l</code></td>
+<td class="org-left"><code>M-x find-file &lt;TimeLog.org&gt;</code></td>
+<td class="org-left">Find time log file in agenda directory.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-f C-f</code></td>
+<td class="org-left"><code>M-x find-function</code></td>
+<td class="org-left">Find the definition of function near point</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-l b</code></td>
+<td class="org-left"><code>M-x langtool-check-buffer</code></td>
+<td class="org-left">To check current buffer and show warnings. With prefix <code>C-u</code> check with different language.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l p</code></td>
+<td class="org-left"><code>M-x langtool-goto-previous-error</code></td>
+<td class="org-left">Goto previous error. Obsoleted function. Should use <code>langtool-correct-buffer</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l n</code></td>
+<td class="org-left"><code>M-x langtool-goto-next-error</code></td>
+<td class="org-left">Goto next error. Obsoleted function. Should use <code>langtool-correct-buffer</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l ;</code></td>
+<td class="org-left"><code>M-x langtool-correct-buffer</code></td>
+<td class="org-left">Execute interactive correction after <code>langtool-check-buffer</code>. To correct marker follow LanguageTool suggestions.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l t</code></td>
+<td class="org-left"><code>M-x langtool-switch-default-language</code></td>
+<td class="org-left">Switch ‘langtool-default-language’ to LANG</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l m</code></td>
+<td class="org-left"><code>M-x langtool-show-brief-message-at-point</code></td>
+<td class="org-left">Show error brief message at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l M</code></td>
+<td class="org-left"><code>M-x langtool-show-message-at-point</code></td>
+<td class="org-left">Show error details at point..</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-l B</code></td>
+<td class="org-left"><code>M-x langtool-check-done</code></td>
+<td class="org-left">Finish LanguageTool process and cleanup existing colorized texts.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-m C-v w</code></td>
+<td class="org-left"><code>M-x whitespace-mode</code></td>
+<td class="org-left">Toggle  <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html">whitespace-mode</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-m C-v f</code></td>
+<td class="org-left"><code>M-x global-display-fill-column-indicator-mode</code></td>
+<td class="org-left">Toggle the display of the fill column indicator.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-p C-b</code></td>
+<td class="org-left"><code>M-x psimacs/pair/bounce-sexp</code></td>
+<td class="org-left">Will bounce between matching parens.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-p C-f p</code></td>
+<td class="org-left"><code>M-x ps-print-buffer-with-faces</code></td>
+<td class="org-left">Color print buffer via Ghostscript</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-p C-f r</code></td>
+<td class="org-left"><code>M-x ps-print-region-with-faces</code></td>
+<td class="org-left">Color print region via Ghosts</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-p C-p b</code></td>
+<td class="org-left"><code>M-x print-buffer</code></td>
+<td class="org-left">B/W print hardcopy of buffer on default printer</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-p C-p r</code></td>
+<td class="org-left"><code>M-x print-region</code></td>
+<td class="org-left">B/W print hardcopy of region on default printer</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-p C-q p</code></td>
+<td class="org-left"><code>M-x ps-print-buffer</code></td>
+<td class="org-left">B/W print buffer via Ghostscript</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-p C-q r</code></td>
+<td class="org-left"><code>M-x ps-print-region</code></td>
+<td class="org-left">B/W print region via Ghostscript</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-p C-r C-p</code></td>
+<td class="org-left"><code>M-x psimacs/pair/rainbow-toggle-sized-delimiters</code></td>
+<td class="org-left">Toggle the size of the rainbow-delimiters.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-p C-r M-C-p</code></td>
+<td class="org-left"><code>M-x psimacs/pair/rainbow-sized-delimiters</code></td>
+<td class="org-left">All rainbow delimiters have various heights.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-p C-r S-C-p</code></td>
+<td class="org-left"><code>M-x psimacs/pair/rainbow-non-sized-delimiters</code></td>
+<td class="org-left">All rainbow delimiters have the same height. This is the default.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-s C-a c</code></td>
+<td class="org-left"><code>M-x avy-goto-char</code></td>
+<td class="org-left">Input one char, jump to it with a tree.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-a C</code></td>
+<td class="org-left"><code>M-x avy-goto-char-2</code></td>
+<td class="org-left">Input two consecutive chars, jump to the first one with a tree.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-a t</code></td>
+<td class="org-left"><code>M-x avy-goto-char-timer</code></td>
+<td class="org-left">Input an arbitrary amount of consecutive chars, jump to the first one with a tree.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-a T</code></td>
+<td class="org-left"><code>M-x avy-org-goto-heading-timer</code></td>
+<td class="org-left">Type part of an Org heading. When you stop typing it will be jumped to; if more than one matches, you can jump to a heading with Avy.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-a l</code></td>
+<td class="org-left"><code>M-x avy-goto-line</code></td>
+<td class="org-left">Input zero chars, jump to a line start with a tree.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-a w</code></td>
+<td class="org-left"><code>M-x avy-goto-word-1</code></td>
+<td class="org-left">Input one char at word start, jump to a word start with a tree.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-a W</code></td>
+<td class="org-left"><code>M-x avy-goto-word-0</code></td>
+<td class="org-left">Input zero chars, jump to a word start with a tree.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-s a</code></td>
+<td class="org-left"><code>M-x swiper-all</code></td>
+<td class="org-left">Incrementally search in all open buffers.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s s</code></td>
+<td class="org-left"><code>M-x isearch-forward</code></td>
+<td class="org-left">Incrementally search forward.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s r</code></td>
+<td class="org-left"><code>M-x isearch-backward</code></td>
+<td class="org-left">Incrementally search backward.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-t ;</code></td>
+<td class="org-left"><code>M-x google-translate-smooth-translate</code></td>
+<td class="org-left">Translate a text using translation directions. Make a prompt in minibuffer for a text to translate. Default text is word at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-t o</code></td>
+<td class="org-left"><code>M-x psimacs/spell/google-tanslate/toggle-output-destination</code></td>
+<td class="org-left">Toggle output desination between 'current buffer' and 'translation buffer'.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-u C-w t</code></td>
+<td class="org-left"><code>M-x psimacs/which-key/toggle-sort-order</code></td>
+<td class="org-left">Toggle the which-key-mode sort order.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-u C-w c</code></td>
+<td class="org-left"><code>M-x psimacs/which-key/cycle-sort-order</code></td>
+<td class="org-left">Cycle through the which-key-mode sort orders.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-v C-o</code></td>
+<td class="org-left"><code>M-x psimacs/shell/open-file-in-visual-studio</code></td>
+<td class="org-left">Open the given file argument in the MS Visual Studion session.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-v C-i</code></td>
+<td class="org-left"><code>M-x psimacs/shell/import-file-in-visual-studio</code></td>
+<td class="org-left">Import the given file argument in the MS Visual Studion session.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-x o</code></td>
+<td class="org-left"><code>M-x ace-window</code></td>
+<td class="org-left">Either <code>other-window</code> or easy switching by first character of window label. Swap window with prefix <code>C-u</code> and delete selected window with double prefix <code>C-u C-u</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-x O</code></td>
+<td class="org-left"><code>M-x other-frame</code></td>
+<td class="org-left">Switch to the next frame in ring.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-w C-x s</code></td>
+<td class="org-left"><code>M-x psimacs/config/toggle-ace-scope</code></td>
+<td class="org-left">Toggle scope of <a href="https://github.com/abo-abo/ace-window">ace-window</a> between 'global' and 'frame' scope.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-w C-x 5 l</code></td>
+<td class="org-left"><code>M-x psimacs/window/set-frame-creation-strategy-layout</code></td>
+<td class="org-left">Place and size new frames left and right to the main frame. This is the default strategy.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-w C-x 5 m</code></td>
+<td class="org-left"><code>M-x psimacs/window/set-frame-creation-strategy-main</code></td>
+<td class="org-left">Always use the same placement and size as the initial main frame.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-w C-x 5 s</code></td>
+<td class="org-left"><code>M-x psimacs/window/set-frame-creation-strategy-system</code></td>
+<td class="org-left">Let Emacs and the operating system decide.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-w C-s s</code></td>
+<td class="org-left"><code>M-x smooth-scrolling-mode</code></td>
+<td class="org-left">Enable or disable the smooth scrolling mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-w C-r</code></td>
+<td class="org-left"><code>M-x golden-ratio-mode</code></td>
+<td class="org-left">Toggle automatic window resizing with golden ratio.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-w +</code></td>
+<td class="org-left"><code>M-x zoom</code></td>
+<td class="org-left">Zoom the current window and balance the others according to <code>zoom-size</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-w C-z</code></td>
+<td class="org-left"><code>M-x zoom-mode</code></td>
+<td class="org-left">Toggle automatic window resizing with zoom.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x C RET</code></td>
+<td class="org-left"><code>M-x counsel-search</code></td>
+<td class="org-left">Shows search suggestions as you type and visit page in your default browser on <code>RET</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x C s</code></td>
+<td class="org-left"><code>M-x counsel-web-suggest</code></td>
+<td class="org-left">Shows search suggestions as you type. Press <code>RET</code> to accept the suggestion and send it to <code>counsel-web-search</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x C w</code></td>
+<td class="org-left"><code>M-x counsel-web-search</code></td>
+<td class="org-left">Searches and presents the results in the ivy minibuffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x C p</code></td>
+<td class="org-left"><code>M-x counsel-web-thing-at-point</code></td>
+<td class="org-left">Interactively search the web for the THING at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x C t</code></td>
+<td class="org-left"><code>M-x psimacs/web/toggle-search-engine</code></td>
+<td class="org-left">Toggle the search engine of <a href="https://github.com/abo-abo/swiper">counsel</a> and  <a href="https://github.com/mnewt/counsel-web">counsel-web</a> between 'duckduckgo' and 'goole'.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x G SPC</code></td>
+<td class="org-left"><code>M-x google-this-region</code></td>
+<td class="org-left">Google the current region. PREFIX determines quoting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G a</code></td>
+<td class="org-left"><code>M-x google-this-ray</code></td>
+<td class="org-left">Google text between the point and end of the line. If there is a selected region, googles the region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G c</code></td>
+<td class="org-left"><code>M-x google-this-translate-query-or-region</code></td>
+<td class="org-left">If region is active <code>google-translate-at-point</code>, otherwise <code>google-translate-query-translate</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G e</code></td>
+<td class="org-left"><code>M-x google-this-error</code></td>
+<td class="org-left">Google the current error in the compilation buffer. PREFIX determines quoting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G f</code></td>
+<td class="org-left"><code>M-x google-this-forecast</code></td>
+<td class="org-left">Search google for "weather". With PREFIX, ask for location.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G g</code></td>
+<td class="org-left"><code>M-x google-this-lucky-search</code></td>
+<td class="org-left">Exactly like <code>google-this-search</code>, but use the "I’m feeling lucky" option. PREFIX determines quoting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G i</code></td>
+<td class="org-left"><code>M-x google-this-lucky-and-insert-url</code></td>
+<td class="org-left">Fetch the url that would be visited by ‘google-this-lucky’.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G l</code></td>
+<td class="org-left"><code>M-x google-this-line</code></td>
+<td class="org-left">Google the current line. PREFIX determines quoting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G m</code></td>
+<td class="org-left"><code>M-x google-maps</code></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G n</code></td>
+<td class="org-left"><code>M-x google-this-noconfirm</code></td>
+<td class="org-left">Decide what the user wants to google and go without confirmation. Exactly like <code>google-this</code> or <code>google-this-search</code>, but don’t ask for confirmation.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G r</code></td>
+<td class="org-left"><code>M-x google-this-cpp-reference</code></td>
+<td class="org-left">Visit the most probable cppreference.com page for this word.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G s</code></td>
+<td class="org-left"><code>M-x google-this-symbol</code></td>
+<td class="org-left">Google the current symbol.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G t</code></td>
+<td class="org-left"><code>M-x google-this</code></td>
+<td class="org-left">Decide what the user wants to google (always something under point). Unlike <code>google-this-search</code> (which presents an empty prompt with "this" as the default value), this function inserts the query in the minibuffer to be edited.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G w</code></td>
+<td class="org-left"><code>M-x google-this-word</code></td>
+<td class="org-left">Google the current word.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x G RET</code></td>
+<td class="org-left"><code>M-x google-this-search</code></td>
+<td class="org-left">Write and do a google search.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x s b</code></td>
+<td class="org-left"><code>M-x psimacs/convenience/bind-f6-to-last-command</code></td>
+<td class="org-left">Bind function key F6 to the last command used.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x S RET</code></td>
+<td class="org-left"><code>M-x sx-tab-all-questions</code></td>
+<td class="org-left">Display a list of All-Questions questions for SITE.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x S s</code></td>
+<td class="org-left"><code>M-x sx-search</code></td>
+<td class="org-left">Display search on SITE for question titles containing QUERY.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x S r</code></td>
+<td class="org-left"><code>M-x sx-question-list-refresh</code></td>
+<td class="org-left">Update the list of questions.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x C-t</code></td>
+<td class="org-left"><code>M-x treemacs</code></td>
+<td class="org-left">Open <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x t t</code></td>
+<td class="org-left"><code>M-x treemacs-select-window</code></td>
+<td class="org-left">Select the <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a> window.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x t 1</code></td>
+<td class="org-left"><code>M-x treemacs-delete-other-windows</code></td>
+<td class="org-left">Same as <code>delete-other-window</code> but does not delete the <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a> window.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x t B</code></td>
+<td class="org-left"><code>M-x treemacs-bookmark</code></td>
+<td class="org-left">Find a bookmark in <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x t C-t</code></td>
+<td class="org-left"><code>M-x treemacs-find-file</code></td>
+<td class="org-left">Find and focus the current file in the current <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a> window.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x t M-t</code></td>
+<td class="org-left"><code>M-x treemacs-find-tag</code></td>
+<td class="org-left">Find and move the point to the tag at point in the <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a> view.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-x t p</code></td>
+<td class="org-left"><code>M-x treemacs-projectile</code></td>
+<td class="org-left">Add one of <code>projectile-known-projects</code> to the <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a> workspace.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x C-n</code></td>
+<td class="org-left"><code>M-x neotree-toggle</code></td>
+<td class="org-left">Open <a href="https://github.com/jaypei/emacs-neotree">Neotree</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-x C-a</code></td>
+<td class="org-left"><code>M-x abbrev-mode</code></td>
+<td class="org-left">Enable/Disable abbreviation mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m H-c e l</code></td>
+<td class="org-left"><code>M-x mc/edit-lines</code></td>
+<td class="org-left">Add one cursor to each line of the active region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c e C-a</code></td>
+<td class="org-left"><code>M-x mc/edit-beginnings-of-lines</code></td>
+<td class="org-left">Add one cursor to the beginning of each line in the active region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c e C-e</code></td>
+<td class="org-left"><code>M-x mc/edit-ends-of-lines</code></td>
+<td class="org-left">Add one cursor to the end of each line in the active region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c i n</code></td>
+<td class="org-left"><code>M-x mc/insert-numbers</code></td>
+<td class="org-left">Insert increasing numbers for each cursor, starting at 0.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c m n</code></td>
+<td class="org-left"><code>M-x mc/mark-next-like-this</code></td>
+<td class="org-left">Find and mark the next part of the buffer matching the currently active region</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c m p</code></td>
+<td class="org-left"><code>M-x mc/mark-previous-like-this</code></td>
+<td class="org-left">Find and mark the prev part of the buffer matching the currently active region</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c m a</code></td>
+<td class="org-left"><code>M-x mc/mark-all-like-this</code></td>
+<td class="org-left">Find and mark all the parts of the buffer matching the currently active region</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c m d</code></td>
+<td class="org-left"><code>M-x mc/mark-all-symbols-like-this-in-defun</code></td>
+<td class="org-left">Mark all symbols like this in defun.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c u n</code></td>
+<td class="org-left"><code>M-x mc/unmark-next-like-this</code></td>
+<td class="org-left">Deselect next part of the buffer matching the currently active region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c u p</code></td>
+<td class="org-left"><code>M-x mc/unmark-previous-like-this</code></td>
+<td class="org-left">Deselect prev part of the buffer matching the currently active region.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c r r</code></td>
+<td class="org-left"><code>M-x mc/reverse-regions</code></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c r s</code></td>
+<td class="org-left"><code>M-x mc/sort-regions</code></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-c h m</code></td>
+<td class="org-left"><code>M-x mc-hide-unmatched-lines-mode</code></td>
+<td class="org-left">Minor mode when enabled hides all lines where no cursors is.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m H-x x</code></td>
+<td class="org-left"><code>M-x amx-major-mode-commands</code></td>
+<td class="org-left">Runs <a href="https://github.com/DarwinAwardWinner/amx">Amx</a>, limited to commands that are relevant to the active major mode.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-x m</code></td>
+<td class="org-left"><code>M-x amx-mode</code></td>
+<td class="org-left">Toggle <a href="https://github.com/DarwinAwardWinner/amx">amx-mode</a>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m H-x u</code></td>
+<td class="org-left"><code>M-x amx-show-unbound-commands</code></td>
+<td class="org-left">Shows frequently used commands that have no key bindings.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-p C-s t</code></td>
+<td class="org-left"><code>M-x psimacs/activate/toggle-smartparens-paren-mode</code></td>
+<td class="org-left">Toggle between  <a href="https://github.com/Fuco1/smartparens">smartparens-mode</a> and <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching">show-paren-mode</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-p C-f</code></td>
+<td class="org-left"><code>M-x sp-forward-sexp</code></td>
+<td class="org-left">Move forward across one balanced expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-b</code></td>
+<td class="org-left"><code>M-x sp-backward-sexp</code></td>
+<td class="org-left">Move backward across one balanced expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-F</code></td>
+<td class="org-left"><code>M-x sp-forward-symbol</code></td>
+<td class="org-left">Move point to the next position that is the end of a symbol.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-B</code></td>
+<td class="org-left"><code>M-x sp-backward-symbol</code></td>
+<td class="org-left">Move point to the next position that is the beginning of a symbol.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-n</code></td>
+<td class="org-left"><code>M-x sp-next-sexp</code></td>
+<td class="org-left">Move forward to the beginning of next balanced expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-p</code></td>
+<td class="org-left"><code>M-x sp-previous-sexp</code></td>
+<td class="org-left">Move backward to the end of previous balanced expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-u</code></td>
+<td class="org-left"><code>M-x sp-up-sexp</code></td>
+<td class="org-left">Move forward out of one level of parentheses.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-d</code></td>
+<td class="org-left"><code>M-x sp-down-sexp</code></td>
+<td class="org-left">Move forward down one level of sexp.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-u</code></td>
+<td class="org-left"><code>M-x sp-backward-up-sexp</code></td>
+<td class="org-left">Move backward out of one level of parentheses.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-d</code></td>
+<td class="org-left"><code>M-x sp-backward-down-sexp</code></td>
+<td class="org-left">Move backward down one level of sexp.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-a</code></td>
+<td class="org-left"><code>M-x sp-beginning-of-sexp</code></td>
+<td class="org-left">Jump to beginning of the sexp the point is in.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-e</code></td>
+<td class="org-left"><code>M-x sp-end-of-sexp</code></td>
+<td class="org-left">Jump to end of the sexp the point is in.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-a</code></td>
+<td class="org-left"><code>M-x sp-beginning-of-next-sexp</code></td>
+<td class="org-left">Jump to beginning of the next sexp on the same depth.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-e</code></td>
+<td class="org-left"><code>M-x sp-beginning-of-previous-sexp</code></td>
+<td class="org-left">Jump to beginning of the previous sexp on the same depth.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-t</code></td>
+<td class="org-left"><code>M-x sp-transpose-sexp</code></td>
+<td class="org-left">Transpose the expressions around point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-t</code></td>
+<td class="org-left"><code>M-x sp-transpose-hybrid-sexp</code></td>
+<td class="org-left">Transpose the hybrid sexps around point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-j</code></td>
+<td class="org-left"><code>M-x sp-join-sexp</code></td>
+<td class="org-left">Join the sexp before and after point if they are of the same depth.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-v</code></td>
+<td class="org-left"><code>M-x sp-convolute-sexp</code></td>
+<td class="org-left">Convolute balanced expressions.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-i</code></td>
+<td class="org-left"><code>M-x sp-indent-defun</code></td>
+<td class="org-left">Reindent the current defun.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-m</code></td>
+<td class="org-left"><code>M-x sp-mark-sexp</code></td>
+<td class="org-left">Set mark <i>ARG</i> balanced expressions from point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-k</code></td>
+<td class="org-left"><code>M-x sp-kill-sexp</code></td>
+<td class="org-left">Kill the balanced expression following point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-w</code></td>
+<td class="org-left"><code>M-x sp-copy-sexp</code></td>
+<td class="org-left">Copy the following ARG expressions to the kill-ring.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-DEL</code></td>
+<td class="org-left"><code>M-x sp-unwrap-sexp</code></td>
+<td class="org-left">Unwrap the following expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-BCK</code></td>
+<td class="org-left"><code>M-x sp-backward-unwrap-sexp</code></td>
+<td class="org-left">Unwrap the previous expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-&lt;right&gt;</code></td>
+<td class="org-left"><code>M-x sp-forward-slurp-sexp</code></td>
+<td class="org-left">Add sexp following the current list in it by moving the closing delimiter.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-&lt;left&gt;</code></td>
+<td class="org-left"><code>M-x sp-backward-slurp-sexp</code></td>
+<td class="org-left">Add the sexp preceding the current list in it by moving the opening delimiter</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-&lt;right&gt;</code></td>
+<td class="org-left"><code>M-x sp-forward-barf-sexp</code></td>
+<td class="org-left">Remove the last sexp in the current list by moving the closing delimiter.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-&lt;left&gt;</code></td>
+<td class="org-left"><code>M-x sp-backward-barf-sexp</code></td>
+<td class="org-left">This is exactly like calling ‘sp-forward-barf-sexp’ with minus ARG.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-D</code></td>
+<td class="org-left"><code>M-x sp-splice-sexp</code></td>
+<td class="org-left">Unwrap the current list.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-M-DEL</code></td>
+<td class="org-left"><code>M-x sp-splice-sexp-killing-forward</code></td>
+<td class="org-left">Unwrap the current list and kill all the expressions between.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-M-BCK</code></td>
+<td class="org-left"><code>M-x sp-splice-sexp-killing-backward</code></td>
+<td class="org-left">Unwrap the current list and kill all the expressions.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-S-BCK</code></td>
+<td class="org-left"><code>M-x sp-splice-sexp-killing-around</code></td>
+<td class="org-left">Unwrap the current list and kill everything inside except next expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-s N</code></td>
+<td class="org-left"><code>M-x sp-select-next-thing-exchange</code></td>
+<td class="org-left">Just like <code>sp-select-next-thing</code> but run <code>exchange-point-and-mark</code> afterwards.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-s n</code></td>
+<td class="org-left"><code>M-x sp-select-next-thing</code></td>
+<td class="org-left">Set active region over next thing as recognized by 'sp-get-thing'.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-s p</code></td>
+<td class="org-left"><code>M-x sp-select-previous-thing</code></td>
+<td class="org-left">Set active region over ARG previous things as recognized by 'sp-get-thing'.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p C-c i</code></td>
+<td class="org-left"><code>M-x sp-change-inner</code></td>
+<td class="org-left">Change the inside of the next expression.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-p M-c e</code></td>
+<td class="org-left"><code>M-x sp-change-enclosing</code></td>
+<td class="org-left">Change the inside of the enclosing expression.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x C-RET</code></td>
+<td class="org-left"><code>M-x cua-set-rectangle-mark</code></td>
+<td class="org-left">Start a rectangle.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x r</code></td>
+<td class="org-left"><code>M-x recentf-open-files</code></td>
+<td class="org-left">Show a dialog to open a recent file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-r</code></td>
+<td class="org-left"><code>M-x recentf-open-more-files</code></td>
+<td class="org-left">Show a dialog to open a recent file that is not in the menu.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x e</code></td>
+<td class="org-left"><code>M-x er/expand-region</code></td>
+<td class="org-left">Expand region intelligently.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x f</code></td>
+<td class="org-left"><code>M-x counsel-recentf</code></td>
+<td class="org-left">Find a file on recent file list.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-f</code></td>
+<td class="org-left"><code>M-x counsel-buffer-or-recentf</code></td>
+<td class="org-left">Find a buffer visiting a file or file on recent file list.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x l</code></td>
+<td class="org-left"><code>M-x org-store-link</code></td>
+<td class="org-left">Store a link to the current location.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x a</code></td>
+<td class="org-left"><code>M-x org-agenda</code></td>
+<td class="org-left">Dispatch agenda commands to collect entries to the agenda buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x c</code></td>
+<td class="org-left"><code>M-x org-capture</code></td>
+<td class="org-left">Capture something</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x C-c C-e s h</code></td>
+<td class="org-left"><code>M-x psimacs/sphinx/org-sphinx-build</code></td>
+<td class="org-left">Run the sphinx-build tool for the current org buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-c C-e s H</code></td>
+<td class="org-left"><code>M-x psimacs/sphinx/build</code></td>
+<td class="org-left">Run the sphinx-build tool for the given file.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-M-b</code></td>
+<td class="org-left"><code>M-x python-nav-backward-block</code></td>
+<td class="org-left">Moves to the previous python block.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-M-f</code></td>
+<td class="org-left"><code>M-x python-nav-forward-block</code></td>
+<td class="org-left">Moves to the next python block.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x C-c r</code></td>
+<td class="org-left"><code>M-x psimacs/python/remove-unused-imports</code></td>
+<td class="org-left">Removes unused imports and unused variables with <a href="https://github.com/myint/autoflake">autoflake</a>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-c R</code></td>
+<td class="org-left"><code>M-x psimacs/python/blacken</code></td>
+<td class="org-left">Reformat buffer with tool <a href="https://github.com/psf/black">black</a>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-c R</code></td>
+<td class="org-left"><code>M-x psimacs/cmake/format-buffer</code></td>
+<td class="org-left">Reformat buffer with tool <a href="https://github.com/cheshirekow/cmake_format">cmake-format</a>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-c Y</code></td>
+<td class="org-left"><code>M-x psimacs/python/yapify</code></td>
+<td class="org-left">Reformat buffer with tool <a href="https://github.com/google/yapf">yapf</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x p</code></td>
+<td class="org-left"><code>M-x pop-to-mark-command</code></td>
+<td class="org-left">Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x q</code></td>
+<td class="org-left"><code>M-x pop-global-mark</code></td>
+<td class="org-left">Jump to a mark off the global mark ring.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x x</code></td>
+<td class="org-left"><code>M-x yas-insert-snippet</code></td>
+<td class="org-left">Choose a snippet to expand, popup a list of choices according.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x C c</code></td>
+<td class="org-left"><code>M-x recentf-cleanup</code></td>
+<td class="org-left">Cleanup the recent file list.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C C-c</code></td>
+<td class="org-left"><code>M-x psimacs/config/recentf-cleanup-directory-files</code></td>
+<td class="org-left">Remove all files of DIR from recent file list.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x C-w d</code></td>
+<td class="org-left"><code>M-x psimacs/whitespace/delete-trailing-whitespace</code></td>
+<td class="org-left">Delete trailing white spaces.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-w t</code></td>
+<td class="org-left"><code>M-x psimacs/whitespace/toggle-auto-delete-trailing-whitespace-on-save</code></td>
+<td class="org-left">Toggle auto deletion of white spaces on buffer save.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x H-f h</code></td>
+<td class="org-left"><code>M-x yafolding-hide-element</code></td>
+<td class="org-left">Hide element.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f s</code></td>
+<td class="org-left"><code>M-x yafolding-show-element</code></td>
+<td class="org-left">Show element.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f t</code></td>
+<td class="org-left"><code>M-x yafolding-toggle-element</code></td>
+<td class="org-left">Toggle element.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f H</code></td>
+<td class="org-left"><code>M-x yafolding-hide-all</code></td>
+<td class="org-left">Hide all elements.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f S</code></td>
+<td class="org-left"><code>M-x yafolding-show-all</code></td>
+<td class="org-left">Show all elements.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f T</code></td>
+<td class="org-left"><code>M-x yafolding-toggle-all</code></td>
+<td class="org-left">Toggle all elements.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f p</code></td>
+<td class="org-left"><code>M-x yafolding-go-parent-element</code></td>
+<td class="org-left">Go to parent element.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f P</code></td>
+<td class="org-left"><code>M-x yafolding-hide-parent-element</code></td>
+<td class="org-left">Hide parent element.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-f m</code></td>
+<td class="org-left"><code>M-x yafolding-mode</code></td>
+<td class="org-left">Toggle <a href="https://github.com/zenozeng/yafolding.el">yafolding-mode</a>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x H-x C-c o</code></td>
+<td class="org-left"><code>M-x crux-open-with</code></td>
+<td class="org-left">Open the currently visited file with an external program.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-k</code></td>
+<td class="org-left"><code>M-x crux-smart-kill-line</code></td>
+<td class="org-left">First kill to end of line, then kill the whole line.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-S-RET</code></td>
+<td class="org-left"><code>M-x crux-smart-open-line-above</code></td>
+<td class="org-left">Insert an empty line above the current line and indent it properly.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x S-RET</code></td>
+<td class="org-left"><code>M-x crux-smart-open-line</code></td>
+<td class="org-left">Insert an empty line and indent it properly (as in most IDEs).</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c n</code></td>
+<td class="org-left"><code>M-x crux-cleanup-buffer-or-region</code></td>
+<td class="org-left">Fix indentation in buffer and strip whitespace.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c f</code></td>
+<td class="org-left"><code>M-x crux-recentf-find-file</code></td>
+<td class="org-left">Open recently visited file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c u</code></td>
+<td class="org-left"><code>M-x crux-view-url</code></td>
+<td class="org-left">Open a new buffer containing the contents of URL.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c e</code></td>
+<td class="org-left"><code>M-x crux-eval-and-replace</code></td>
+<td class="org-left">Eval a bit of Emacs Lisp code and replace it with its result.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-x 4 t</code></td>
+<td class="org-left"><code>M-x crux-transpose-windows</code></td>
+<td class="org-left">Transpose the buffers between two windows.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c D</code></td>
+<td class="org-left"><code>M-x crux-delete-file-and-buffer</code></td>
+<td class="org-left">Delete current file and buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c c</code></td>
+<td class="org-left"><code>M-x crux-copy-file-preserve-attributes</code></td>
+<td class="org-left">Copy current file with file attributes preserved</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c d</code></td>
+<td class="org-left"><code>M-x crux-duplicate-current-line-or-region</code></td>
+<td class="org-left">Duplicate the current line (or region).</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c M-d</code></td>
+<td class="org-left"><code>M-x crux-duplicate-and-comment-current-line-or-region</code></td>
+<td class="org-left">Duplicate and comment the current line (or region).</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c r</code></td>
+<td class="org-left"><code>M-x crux-rename-file-and-buffer</code></td>
+<td class="org-left">Rename the current buffer and its visiting file if any.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c t</code></td>
+<td class="org-left"><code>M-x crux-visit-term-buffer</code></td>
+<td class="org-left">Open a terminal emulator (ansi-term).</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c k</code></td>
+<td class="org-left"><code>M-x crux-kill-other-buffers</code></td>
+<td class="org-left">Kill all open buffers except the one you're currently in.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-M z</code></td>
+<td class="org-left"><code>M-x crux-indent-defun</code></td>
+<td class="org-left">Indent the definition at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c TAB</code></td>
+<td class="org-left"><code>M-x crux-indent-rigidly-and-copy-to-clipboard</code></td>
+<td class="org-left">Indent and copy region to clipboard</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c I</code></td>
+<td class="org-left"><code>M-x crux-find-user-init-file</code></td>
+<td class="org-left">Open user's init file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c ,</code></td>
+<td class="org-left"><code>M-x crux-find-user-custom-file</code></td>
+<td class="org-left">Open user's custom file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c S</code></td>
+<td class="org-left"><code>M-x crux-find-shell-init-file</code></td>
+<td class="org-left">Open shell's init file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-j</code></td>
+<td class="org-left"><code>M-x crux-top-join-line</code></td>
+<td class="org-left">Join lines</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-K</code></td>
+<td class="org-left"><code>M-x crux-kill-whole-line</code></td>
+<td class="org-left">Kill whole line</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-BCK</code></td>
+<td class="org-left"><code>M-x crux-kill-line-backwards</code></td>
+<td class="org-left">Kill line backwards</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-S-BCK</code></td>
+<td class="org-left"><code>M-x crux-kill-and-join-forward</code></td>
+<td class="org-left">If at end of line, join with following; otherwise kill line.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c P</code></td>
+<td class="org-left"><code>M-x crux-kill-buffer-truename</code></td>
+<td class="org-left">Kill absolute path of file visited in current buffer.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-c i</code></td>
+<td class="org-left"><code>M-x crux-ispell-word-then-abbrev</code></td>
+<td class="org-left">Fix word using ispell and then save to abbrev.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-x C-u</code></td>
+<td class="org-left"><code>M-x crux-upcase-region</code></td>
+<td class="org-left">Upcase-region when transient-mark-mode is on and region is active.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-x C-l</code></td>
+<td class="org-left"><code>M-x crux-downcase-region</code></td>
+<td class="org-left">Downcase-region when transient-mark-mode is on and region is active.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x C-x M-c</code></td>
+<td class="org-left"><code>M-x crux-capitalize-region</code></td>
+<td class="org-left">Capitalize-region when transient-mark-mode is on and region is active.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-x M-o</code></td>
+<td class="org-left"><code>M-x crux-other-window-or-switch-buffer</code></td>
+<td class="org-left">Select other window, or switch to most recent buffer if only one windows.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>&lt;f5&gt;</code></td>
+<td class="org-left"><code>M-x dap-debug</code></td>
+<td class="org-left">Create and run new configuration using the available templates.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>S-&lt;f5&gt;</code></td>
+<td class="org-left"><code>M-x dap-disconnect</code></td>
+<td class="org-left">Cancel current debug session.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>M-&lt;f5&gt;</code></td>
+<td class="org-left"><code>M-x dap-debug-last</code></td>
+<td class="org-left">Debug previous configuration.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-M-&lt;f5&gt;</code></td>
+<td class="org-left"><code>M-x dap-debug-recent</code></td>
+<td class="org-left">Select configuration to run from the previously started command.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-S-&lt;f5&gt;</code></td>
+<td class="org-left"><code>M-x dap-debug-restart</code></td>
+<td class="org-left">Restarts current frame.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>&lt;f6&gt;</code></td>
+<td class="org-left"><code>M-x dap-continue</code></td>
+<td class="org-left">Debug continue.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>S-&lt;f6&gt;</code></td>
+<td class="org-left"><code>M-x dap-restart-frame</code></td>
+<td class="org-left">Restarts current frame.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>&lt;f7&gt;</code></td>
+<td class="org-left"><code>M-x dap-hydra</code></td>
+<td class="org-left">Opens a <a href="https://emacs-lsp.github.io/dap-mode/">dap-mode</a> hydra.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-toggle</code></td>
+<td class="org-left">Toggle breakpoint at line.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-add</code></td>
+<td class="org-left">Add breakpoint at line.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>S-&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-delete</code></td>
+<td class="org-left">Delete breakpoint at line.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-S-&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-delete-all</code></td>
+<td class="org-left">Delete all breakpoints.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>M-&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-condition</code></td>
+<td class="org-left">Set/unset breakpoint condition.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-M-&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-hit-condition</code></td>
+<td class="org-left">Set/unset breakpoint hit condition.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>S-M-&lt;f9&gt;</code></td>
+<td class="org-left"><code>M-x dap-breakpoint-log-message</code></td>
+<td class="org-left">Set/unset breakpoint log message.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>&lt;f10&gt;</code></td>
+<td class="org-left"><code>M-x dap-next</code></td>
+<td class="org-left">Debug next.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-&lt;f10&gt;</code></td>
+<td class="org-left"><code>M-x psimacs/dap/run-to-cursor</code></td>
+<td class="org-left">Add breakpoint at point and continue.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>&lt;f11&gt;</code></td>
+<td class="org-left"><code>M-x dap-step-in</code></td>
+<td class="org-left">Debug step in.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>S-&lt;f11&gt;</code></td>
+<td class="org-left"><code>M-x dap-step-out</code></td>
+<td class="org-left">Debug step out.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c-l &lt;tab&gt;</code></td>
+<td class="org-left"><code>M-x company-indent-or-complete-common</code></td>
+<td class="org-left">Indent the current line or region, or complete the common part.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l C-c h d</code></td>
+<td class="org-left"><code>M-x dap-hydra</code></td>
+<td class="org-left">Opens a <a href="https://emacs-lsp.github.io/dap-mode/">dap-mode</a> hydra.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c l s s</code></td>
+<td class="org-left"><code>M-x lsp</code></td>
+<td class="org-left">Entry point for the server startup.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l s r</code></td>
+<td class="org-left"><code>M-x lsp-workspace-restart</code></td>
+<td class="org-left">Restart workspace and language server.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l s q</code></td>
+<td class="org-left"><code>M-x lsp-workspace-shutdown</code></td>
+<td class="org-left">Shutdown workspace and language server.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l s d</code></td>
+<td class="org-left"><code>M-x lsp-describe-session</code></td>
+<td class="org-left">Describes current session.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l s D</code></td>
+<td class="org-left"><code>M-x lsp-disconnect</code></td>
+<td class="org-left">Disconnect the buffer from the language server keeping the server running.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l = =</code></td>
+<td class="org-left"><code>M-x lsp-format-buffer</code></td>
+<td class="org-left">Ask the server to format this document.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l = r</code></td>
+<td class="org-left"><code>M-x lsp-format-region</code></td>
+<td class="org-left">Ask the server to format the region, or if none is selected, the current line.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l F a</code></td>
+<td class="org-left"><code>M-x lsp-workspace-folders-add</code></td>
+<td class="org-left">Add new project root to the list of workspace folders.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l F r</code></td>
+<td class="org-left"><code>M-x lsp-workspace-folders-remove</code></td>
+<td class="org-left">Remove project root from the list of workspace folders.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l F b</code></td>
+<td class="org-left"><code>M-x lsp-workspace-blacklist-remove</code></td>
+<td class="org-left">Remove project root from the workspace blacklist.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T a</code></td>
+<td class="org-left"><code>M-x lsp-modeline-code-actions-mode</code></td>
+<td class="org-left">Toggle code actions on modeline.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T b</code></td>
+<td class="org-left"><code>M-x lsp-headerline-breadcrumb-mode</code></td>
+<td class="org-left">Toggle breadcrumb on headerline.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T L</code></td>
+<td class="org-left"><code>M-x lsp-toggle-trace-io</code></td>
+<td class="org-left">Toggle client-server protocol logging.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T h</code></td>
+<td class="org-left"><code>M-x lsp-toggle-symbol-highlight</code></td>
+<td class="org-left">Toggle symbol highlighting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T S</code></td>
+<td class="org-left"><code>M-x lsp-ui-sideline-mode</code></td>
+<td class="org-left">Toggle minor mode for showing information for current line in sideline.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T d</code></td>
+<td class="org-left"><code>M-x lsp-ui-doc-mode</code></td>
+<td class="org-left">Toggle minor mode for showing hover information in child frame.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T s</code></td>
+<td class="org-left"><code>M-x lsp-toggle-signature-auto-activate</code></td>
+<td class="org-left">Toggle signature auto activate.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T f</code></td>
+<td class="org-left"><code>M-x lsp-toggle-on-type-formatiing</code></td>
+<td class="org-left">Toggle on type formatting.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T D</code></td>
+<td class="org-left"><code>M-x lsp-modeline-diagnostics-mode</code></td>
+<td class="org-left">Toggle diagnostics modeline.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l T T</code></td>
+<td class="org-left"><code>M-x lsp-treemacs-sync-mode</code></td>
+<td class="org-left">Toggle global minor mode for synchronizing lsp-mode workspace folders and treemacs projects.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l g g</code></td>
+<td class="org-left"><code>M-x lsp-find-definition</code></td>
+<td class="org-left">Find definitions of the symbol under point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l g r</code></td>
+<td class="org-left"><code>M-x lsp-find-references</code></td>
+<td class="org-left">Find references of the symbol under point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l g e</code></td>
+<td class="org-left"><code>M-x lsp-treemacs-errors-list</code></td>
+<td class="org-left">Display error list.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l g d</code></td>
+<td class="org-left"><code>M-x lsp-find-declaration</code></td>
+<td class="org-left">Find declarations of the symbol under point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l g h</code></td>
+<td class="org-left"><code>M-x lsp-treemacs-call-hierarchy</code></td>
+<td class="org-left">Show the incoming call hierarchy for the symbol at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l g a</code></td>
+<td class="org-left"><code>M-x xref-find-apropos</code></td>
+<td class="org-left">Find all meaningful symbols that match pattern.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l G s</code></td>
+<td class="org-left"><code>M-x lsp-ui-peak-find-workspace-symbol</code></td>
+<td class="org-left">Find symbols in the workspace.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l h h</code></td>
+<td class="org-left"><code>M-x lsp-describe-thing-at-point</code></td>
+<td class="org-left">Display the type signature and documentation of the thing at</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l h s</code></td>
+<td class="org-left"><code>M-x lsp-signature-activate</code></td>
+<td class="org-left">Activate signature help.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l h g</code></td>
+<td class="org-left"><code>M-x lsp-ui-doc-glance</code></td>
+<td class="org-left">Trigger display hover information popup and hide it on next typing.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l r r</code></td>
+<td class="org-left"><code>M-x lsp-rename</code></td>
+<td class="org-left">Rename the symbol (and all references to it).</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l r o</code></td>
+<td class="org-left"><code>M-x lsp-organize-imports</code></td>
+<td class="org-left">Perform the source.organizeImports code action, if available.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l a a</code></td>
+<td class="org-left"><code>M-x lsp-execute-code-action</code></td>
+<td class="org-left">Execute code action.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l a h</code></td>
+<td class="org-left"><code>M-x lsp-document-highlight</code></td>
+<td class="org-left">Highlight all relevant references to the symbol at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l G g</code></td>
+<td class="org-left"><code>M-x lsp-ui-peek-find-definitions</code></td>
+<td class="org-left">Peek definitions to the identifier at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l G r</code></td>
+<td class="org-left"><code>M-x lsp-ui-peek-find-references</code></td>
+<td class="org-left">Peek references to the identifier at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l G s</code></td>
+<td class="org-left"><code>M-x lsp-ui-peek-workspace-symbol</code></td>
+<td class="org-left">Peek symbols in the workspace.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>C-c l C-c i</code></td>
+<td class="org-left"><code>M-x lsp-ui-peek-find-implementation</code></td>
+<td class="org-left">Find implementation locations of the symbol at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l C-c m</code></td>
+<td class="org-left"><code>M-x lsp-ui-imenu</code></td>
+<td class="org-left">Open ui-imenu in side window.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>C-c l C-c d</code></td>
+<td class="org-left"><code>M-x psimacs/lsp-ui-mode/toggle-lsp-ui-doc</code></td>
+<td class="org-left">Minor mode for showing information in child frame.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Johannes Brunen</p>
+<p class="date">Created: 2021-06-28 Mo 18:53</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

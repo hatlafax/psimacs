@@ -629,11 +629,9 @@ DEFINE PLACEHOLDER EXPRESSION
     "single_quoted_string"/PLACEHOLDER
     "double_quoted_string"/PLACEHOLDER
 
-    "or_test"/PLACEHOLDER
     "lambda_form"/PLACEHOLDER
     "comprehension"/PLACEHOLDER
     "generator"/PLACEHOLDER
-
     "enumeration_expression"/PLACEHOLDER
     "comp_expression"/PLACEHOLDER
     "arithmetic_expression"/PLACEHOLDER
@@ -703,7 +701,6 @@ DEFINE PLACEHOLDER EXPRESSION_NOCOND
     "self.{primary}[{expression}, [expression]...]"
     "self._{primary}[{expression}, [expression]...]"
 
-    "or_test"/PLACEHOLDER
     "lambda_expr_nocond"/PLACEHOLDER
 
 END DEFINE
@@ -738,57 +735,6 @@ DEFINE PLACEHOLDER LAMBDA_FORM
     /TYPE=NONTERMINAL
 
     "lambda [parameter_list]: {expression}"
-
-END DEFINE
-
-;;------------------------------------------------------------------------------
-
-DELETE PLACEHOLDER OR_TEST
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER OR_TEST
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-
-    "and_test"/PLACEHOLDER
-    "{or_test} or {and_test}"
-
-END DEFINE
-
-;;------------------------------------------------------------------------------
-
-DELETE PLACEHOLDER AND_TEST
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER AND_TEST
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-
-    "not_test"/PLACEHOLDER
-    "{and_test} and {not_test}"
-
-END DEFINE
-
-;;------------------------------------------------------------------------------
-
-DELETE PLACEHOLDER NOT_TEST
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER NOT_TEST
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-
-    "comparision"/PLACEHOLDER
-    "not {not_test}"
 
 END DEFINE
 
@@ -854,7 +800,6 @@ DELETE PLACEHOLDER "TYPE_BOUND_DETAIL"
 DEFINE PLACEHOLDER "TYPE_BOUND_DETAIL"
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
-    /FOLLOW
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=", "
@@ -1200,7 +1145,6 @@ DELETE PLACEHOLDER ":{TYPEHINT}"
 DEFINE PLACEHOLDER ":{TYPEHINT}"
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
-    /FOLLOW
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
@@ -1616,3 +1560,19 @@ DEFINE PLACEHOLDER TEST-TRANSFORM
 
 END DEFINE
 
+
+DELETE PLACEHOLDER TEST-1
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST-1
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /BEFORE=test-before
+    /AFTER=test-after
+    /TYPE=NONTERMINAL
+
+    "[test-before-after]"
+
+END DEFINE
