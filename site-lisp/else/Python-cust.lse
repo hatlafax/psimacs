@@ -152,8 +152,29 @@ DEFINE PLACEHOLDER STATEMENT
     "exec_stmt"/PLACEHOLDER
     "comment_stmt"/PLACEHOLDER
     "if_main_stmt"/PLACEHOLDER
+    "empty_lines_stmt"/PLACEHOLDER
+
+    "expression"/PLACEHOLDER
 
 END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER EMPTY_LINES_STMT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER EMPTY_LINES_STMT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ""
+    ""
+
+END DEFINE
+
 
 ;;------------------------------------------------------------------------------
 
@@ -504,7 +525,7 @@ DEFINE PLACEHOLDER UNARY_OPERATOR
     /SEPARATOR=""
     /TYPE=MENU
 
-    "{primary}"\PLACEHOLDER
+    "{primary}"
     "-"
     "+"
     "~"
@@ -524,7 +545,7 @@ DEFINE PLACEHOLDER BINARY_OPERATOR
     /SEPARATOR=""
     /TYPE=MENU
 
-    "{primary}"\PLACEHOLDER
+    "{primary}"
     "**"
     "*"
     "@"
@@ -635,6 +656,59 @@ DEFINE PLACEHOLDER EXPRESSION
     "enumeration_expression"/PLACEHOLDER
     "comp_expression"/PLACEHOLDER
     "arithmetic_expression"/PLACEHOLDER
+    "format_expression"/PLACEHOLDER
+    "assignment_expression"/PLACEHOLDER
+
+    "statement"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ASSIGNMENT_EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ASSIGNMENT_EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=NONTERMINAL
+
+    "{expression} = {expression}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER SWAP_EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER SWAP_EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "[expression], [expression] = [expression], [expression]"
+    "[expression]... = [expression]..."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER FORMAT_EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER FORMAT_EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=NONTERMINAL
+
+    "f"{curled_expression} [curled_expression]...""
 
 END DEFINE
 
@@ -843,7 +917,8 @@ DEFINE PLACEHOLDER ASSIGNMENT_STMT
     "self.{variable_name}[{expression}, [expression]...] = {expression}..."
     "self.{variable_name}[{expression}, [expression]...] = {expression}..."
 
-    "{decl_assignment_stmt}"
+    "swap_expression"/PLACEHOLDER
+    "decl_assignment_stmt"/PLACEHOLDER
 
 END DEFINE
 
@@ -868,6 +943,8 @@ DEFINE PLACEHOLDER DECL_ASSIGNMENT_STMT
     "{variable_name} = TypeVar('{variable_name}', [type_bound_detail])"
     "{variable_name}: {type_name}[type_list] = {type_name}([argument_list])"
     "{variable_name} = {class_type}"
+
+    "assignment_stmt"/PLACEHOLDER
 
 END DEFINE
 
@@ -1423,6 +1500,7 @@ DEFINE PLACEHOLDER TYPE
     "{identifier}"
 
     ;; Deprecated since Python 3.9.0
+    "Any"
     "List[{type}]"
     "Deque[{type}]"
     "Dict[{type}, {type}]"
