@@ -11702,6 +11702,7 @@ See also:
 (use-package else-mode
     :diminish (else-mode else-template-mode)
     ;straight nil
+    ;:straight (else :host github :repo "hatlafax/ELSE" :branch "feature/fix-menu-redirection" :build (:not compile))
     :straight (else :host github :repo "hatlafax/ELSE" :build (:not compile))
     ;:straight (else :host github :repo "peter-milliken/ELSE" :branch "beforeafter" :build (:not compile))
     :commands (else-mode
@@ -11709,8 +11710,12 @@ See also:
                else-template-compile-buffer
                else-extract-placeholder
                else-extract-all
-               else-show-placeholder-names)
-    ;;:mode ("\\.lse\\'" . else-template-mode)
+               else-show-placeholder-names
+               else-expand-or-next-expand
+               else-expand-or-previous-expand
+               else-kill-or-next-kill
+               else-kill-or-previous-kill
+              )
     :init
         ;; avoid messing up key bindings C-c /...
         (setq else-mode-key-map nil)
@@ -11850,6 +11855,10 @@ Emacs Language Sensitive Editor:
           ("q" nil :color blue)
         )
 )
+#+end_src
+
+#+begin_src emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
+(use-package else-plus :straight nil :after else-mode)
 #+end_src
 
 #+begin_src emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
