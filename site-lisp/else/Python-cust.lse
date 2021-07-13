@@ -153,8 +153,26 @@ DEFINE PLACEHOLDER STATEMENT
     "comment_stmt"/PLACEHOLDER
     "if_main_stmt"/PLACEHOLDER
     "empty_lines_stmt"/PLACEHOLDER
+    "super_ctor_stmt"/PLACEHOLDER
 
     "expression"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER SUPER_CTOR_STMT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER SUPER_CTOR_STMT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "super().__init__([expression]...)"
+    "super().__init__([argument_list])"
 
 END DEFINE
 
@@ -174,7 +192,6 @@ DEFINE PLACEHOLDER EMPTY_LINES_STMT
     ""
 
 END DEFINE
-
 
 ;;------------------------------------------------------------------------------
 
@@ -452,18 +469,34 @@ DEFINE PLACEHOLDER COMPREHENSION
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
+    "{expression} for {target}... in {expression} [comp_iter]..."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LIST_COMPREHENSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER LIST_COMPREHENSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="list comprehension"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
     "[{expression} for {target}... in {expression} [comp_iter]...]"
 
 END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER GENERATOR
+DELETE PLACEHOLDER GENERATOR_EXPRESSION
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER GENERATOR
+DEFINE PLACEHOLDER GENERATOR_EXPRESSION
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="generator construct"
+    /DESCRIPTION="generator expression"
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
@@ -652,7 +685,9 @@ DEFINE PLACEHOLDER EXPRESSION
 
     "lambda_form"/PLACEHOLDER
     "comprehension"/PLACEHOLDER
-    "generator"/PLACEHOLDER
+    "list_comprehension"/PLACEHOLDER
+    "generator_expression"/PLACEHOLDER
+
     "enumeration_expression"/PLACEHOLDER
     "comp_expression"/PLACEHOLDER
     "arithmetic_expression"/PLACEHOLDER
@@ -775,7 +810,14 @@ DEFINE PLACEHOLDER EXPRESSION_NOCOND
     "self.{primary}[{expression}, [expression]...]"
     "self._{primary}[{expression}, [expression]...]"
 
+    "single_quoted_string"/PLACEHOLDER
+    "double_quoted_string"/PLACEHOLDER
+
     "lambda_expr_nocond"/PLACEHOLDER
+
+    "enumeration_expression"/PLACEHOLDER
+    "comp_expression"/PLACEHOLDER
+    "arithmetic_expression"/PLACEHOLDER
 
 END DEFINE
 
@@ -913,9 +955,12 @@ DEFINE PLACEHOLDER ASSIGNMENT_STMT
     /TYPE=MENU
 
     "{target} = {expression}..."
+    "self.{variable_name} = {expression}..."
+    "self._{variable_name} = {expression}..."
+
     "{variable_name}[{expression}, [expression]...] = {expression}..."
     "self.{variable_name}[{expression}, [expression]...] = {expression}..."
-    "self.{variable_name}[{expression}, [expression]...] = {expression}..."
+    "self._{variable_name}[{expression}, [expression]...] = {expression}..."
 
     "swap_expression"/PLACEHOLDER
     "decl_assignment_stmt"/PLACEHOLDER
@@ -935,12 +980,16 @@ DEFINE PLACEHOLDER DECL_ASSIGNMENT_STMT
     /TYPE=MENU
 
     "{variable_name}[:{typehint}] = {expression}..."
+
     "self.{variable_name}[:{typehint}] = {expression}..."
     "self._{variable_name}[:{typehint}] = {expression}..."
+
     "self.{variable_name}[:{typehint}] = {variable_name}"
     "self._{variable_name}[:{typehint}] = {variable_name}"
 
     "{variable_name} = TypeVar('{variable_name}', [type_bound_detail])"
+    "{variable_name} = NewType('{variable_name}', {type})"
+
     "{variable_name}: {type_name}[type_list] = {type_name}([argument_list])"
     "{variable_name} = {class_type}"
 
@@ -971,6 +1020,7 @@ DEFINE PLACEHOLDER TYPE_IDENTIFIER
     "IO"
     "Literal"
     "NamedTuple"
+    "NewType"
     "NoReturn"
     "Optional"
     "Protocol"
@@ -1390,6 +1440,7 @@ DEFINE PLACEHOLDER INIT_DEF
 
     "def __init__(self, [defparameter]...) -> None:"
     "  [document_string]"
+    "  [super_ctor_stmt]..."
     "  {statement}..."
 
 END DEFINE
@@ -1495,6 +1546,7 @@ DEFINE PLACEHOLDER TYPE
     "frozenset[{type}]"
     "Optional[{type}]"
     "Callable"
+    "Callable[{type_list}, [type]]"
 
     "{identifier}[{type}, [type]...]"
     "{identifier}"
@@ -1509,6 +1561,7 @@ DEFINE PLACEHOLDER TYPE
     "Tuple[{type}, [type]...]"
     "Type[{type}]"
     "Iterable[{type}]"
+    "Sequence[{type}]"
 
 END DEFINE
 
@@ -1594,8 +1647,8 @@ DEFINE PLACEHOLDER CLASSDEF
     "[@annotation_string]..."
     "class {classname}[inheritance]:"
     "  [document_string]"
+    "  [classdef]..."
     "  [class_variables]..."
-    ""
     "  [init_def]"
     ""
     "  [class_funcdef]..."
