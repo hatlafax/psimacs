@@ -10218,7 +10218,14 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
                                                 ; that use minibuffers even while the minibuffer is active. Such invocation
                                                 ; produces a recursive editing level for a new minibuffer. The outer-level
                                                 ; minibuffer is invisible while you are editing the inner one.
-        (setq ivy-height 10)                    ; number of result lines to display
+        ;;(setq ivy-height 10)                    ; number of result lines to display
+
+        (setq ivy-height-alist
+                '((t
+                    lambda (_caller)
+                    (/ (frame-height) 2)))
+        )
+
         (setq ivy-count-format "%d/%d ")        ; displays the current and total number in the collection in the prompt
         (setq ivy-initial-inputs-alist nil)     ; no regexp by default
         (setq ivy-re-builders-alist             ; configure regexp engine.

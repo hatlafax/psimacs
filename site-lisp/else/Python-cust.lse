@@ -609,6 +609,36 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER ASSIGNMENT_OPERATOR
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ASSIGNMENT_OPERATOR
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "="
+    "+="
+    "-="
+    "*="
+    "@="
+    "/="
+    "%="
+    "&="
+    "|="
+    "^="
+    "<<="
+    ">>="
+    "**="
+    "//="
+
+END DEFINE
+
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER COMP_ITER
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER COMP_ITER
@@ -679,6 +709,10 @@ DEFINE PLACEHOLDER EXPRESSION
     "{primary}[{expression}, [expression]...]"
     "self.{primary}[{expression}, [expression]...]"
     "self._{primary}[{expression}, [expression]...]"
+
+    "{primary}[array_accessor_expression]..."
+    "self.{primary}[array_accessor_expression]..."
+    "self._{primary}[array_accessor_expression]..."
 
     "single_quoted_string"/PLACEHOLDER
     "double_quoted_string"/PLACEHOLDER
@@ -788,6 +822,24 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER ARRAY_ACCESSOR_EXPRESSION
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ARRAY_ACCESSOR_EXPRESSION
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "[{expression}]"
+    "[{single_quoted_string}]"
+    "[{double_quoted_string}]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER EXPRESSION_NOCOND
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER EXPRESSION_NOCOND
@@ -809,6 +861,10 @@ DEFINE PLACEHOLDER EXPRESSION_NOCOND
     "{primary}[{expression}, [expression]...]"
     "self.{primary}[{expression}, [expression]...]"
     "self._{primary}[{expression}, [expression]...]"
+
+    "{primary}[array_accessor_expression]..."
+    "self.{primary}[array_accessor_expression]..."
+    "self._{primary}[array_accessor_expression]..."
 
     "single_quoted_string"/PLACEHOLDER
     "double_quoted_string"/PLACEHOLDER
@@ -944,6 +1000,24 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER VARIABLE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER VARIABLE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{primary}"
+    "self.{primary}"
+    "self._{primary}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER ASSIGNMENT_STMT
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER ASSIGNMENT_STMT
@@ -955,12 +1029,18 @@ DEFINE PLACEHOLDER ASSIGNMENT_STMT
     /TYPE=MENU
 
     "{target} = {expression}..."
-    "self.{variable_name} = {expression}..."
-    "self._{variable_name} = {expression}..."
+    "self.{primary} = {expression}..."
+    "self._{primary} = {expression}..."
 
-    "{variable_name}[{expression}, [expression]...] = {expression}..."
-    "self.{variable_name}[{expression}, [expression]...] = {expression}..."
-    "self._{variable_name}[{expression}, [expression]...] = {expression}..."
+    "{primary}[{expression}, [expression]...] = {expression}..."
+    "self.{primary}[{expression}, [expression]...] = {expression}..."
+    "self._{primary}[{expression}, [expression]...] = {expression}..."
+
+    "{primary}[array_accessor_expression]... = {expression}..."
+    "self.{primary}[array_accessor_expression]... = {expression}..."
+    "self._{primary}[array_accessor_expression]... = {expression}..."
+
+    "{variable} {assignment_operator} {expression}..."
 
     "swap_expression"/PLACEHOLDER
     "decl_assignment_stmt"/PLACEHOLDER
