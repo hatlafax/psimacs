@@ -1,0 +1,810 @@
+;; Copyright (C) 2021 Johannes Brunen
+;;
+;; Author: Johannes Brunen <hatlafax@gmx.de>,
+;;
+;; Keywords: language sensitive abbreviation template placeholder token
+;;
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+DELETE LANGUAGE Javascript
+DEFINE LANGUAGE Javascript
+    /INITIAL_STRING="{javascript_program}"
+    /PUNCTUATION_CHARACTERS="();.*,"
+    /VALID_IDENTIFIER_CHARACTERS="a-zA-Z_0-9-"
+    /INDENT_SIZE=2
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER JAVASCRIPT_PROGRAM
+    /LANGUAGE="Javascript" 
+DEFINE PLACEHOLDER JAVASCRIPT_PROGRAM
+    /LANGUAGE="Javascript" 
+    /NOAUTO_SUBSTITUTE 
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT 
+    /SEPARATOR="" 
+    /TYPE=NONTERMINAL 
+
+    "[hashbangline]"
+    "[license]"
+    "[sourceElements]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER HASHBANGLINE
+    /LANGUAGE="Javascript" 
+DEFINE PLACEHOLDER HASHBANGLINE
+    /LANGUAGE="Javascript" 
+    /NOAUTO_SUBSTITUTE 
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT 
+    /SEPARATOR="" 
+    /TYPE=NONTERMINAL 
+
+    "#! {text}"
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TEXT 
+    /LANGUAGE="Javascript" 
+DEFINE PLACEHOLDER TEXT 
+    /LANGUAGE="Javascript" 
+    /NOAUTO_SUBSTITUTE 
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT 
+    /SEPARATOR=", " 
+    /TYPE=TERMINAL 
+
+    ""Please enter a text valid at this code place.""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "APACHE_LICENSE_2.0"/PLACEHOLDER
+    "BOOST_LICENSE"/PLACEHOLDER
+    "MIT_LICENSE"/PLACEHOLDER
+    "BSD_2_LICENSE"/PLACEHOLDER
+    "BSD_3_LICENSE"/PLACEHOLDER
+    "LGPL_2_1_LICENSE"/PLACEHOLDER
+    "LGPL_3_0_LICENSE"/PLACEHOLDER
+    "GPL_2_0_LICENSE"/PLACEHOLDER
+    "GPL_3_0LICENSE"/PLACEHOLDER
+    "AGPL_3_0LICENSE"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER APACHE_LICENSE_2.0
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER APACHE_LICENSE_2.0
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Apache Licence v2.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the Apache License, Version 2.0."
+    "//"
+    "// Copyright (c) {yyyy} {licenser}. All rights reserved."
+    "//"
+    "// Licensed under the Apache License, Version 2.0 (the "License"); you may"
+    "// not use this file except in compliance with the License. You may obtain"
+    "// a copy of the License at"
+    "//"
+    "//     http://www.apache.org/licenses/LICENSE-2.0"
+    "//"
+    "// Unless required by applicable law or agreed to in writing, software"
+    "// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT"
+    "// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the"
+    "// License for the specific language governing permissions and limitations"
+    "// under the License."
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER MIT_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER MIT_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="MIT Licence"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the MIT License."
+    "//"
+    "// Copyright (c) {yyyy} {licenser}"
+    "//"
+    "// Permission is hereby granted, free of charge, to any person obtaining a copy"
+    "// of this software and associated documentation files (the "Software"), to deal"
+    "// in the Software without restriction, including without limitation the rights"
+    "// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell"
+    "// copies of the Software, and to permit persons to whom the Software is"
+    "// furnished to do so, subject to the following conditions:"
+    "//"
+    "// The above copyright notice and this permission notice shall be included in"
+    "// all copies or substantial portions of the Software."
+    "//"
+    "// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+    "// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+    "// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE"
+    "// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER"
+    "// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,"
+    "// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE"
+    "// SOFTWARE."
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER BSD_2_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER BSD_2_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="The 2-Clause BSD License"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the 2-Clause BSD License."
+    "//"
+    "// Copyright (c) {yyyy} {licenser}"
+    "//"
+    "// Redistribution and use in source and binary forms, with or without modification,"
+    "// are permitted provided that the following conditions are met:"
+    "//"
+    "// 1. Redistributions of source code must retain the above copyright notice,"
+    "//    this list of conditions and the following disclaimer."
+    "//"
+    "// 2. Redistributions in binary form must reproduce the above copyright notice,"
+    "//    this list of conditions and the following disclaimer in the documentation"
+    "//    and/or other materials provided with the distribution."
+    "//"
+    "// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS""
+    "// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED"
+    "// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED."
+    "// IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,"
+    "// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,"
+    "// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,"
+    "// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY"
+    "// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING"
+    "// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,"
+    "// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER BSD_3_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER BSD_3_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="The 3-Clause BSD License"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the 3-Clause BSD License."
+    "//"
+    "// Copyright (c) {yyyy} {licenser}"
+    "//"
+    "// Redistribution and use in source and binary forms, with or without modification,"
+    "// are permitted provided that the following conditions are met:"
+    "//"
+    "// 1. Redistributions of source code must retain the above copyright notice, this"
+    "//    list of conditions and the following disclaimer."
+    "//"
+    "// 2. Redistributions in binary form must reproduce the above copyright notice, this"
+    "//    list of conditions and the following disclaimer in the documentation and/or other"
+    "//    materials provided with the distribution."
+    "//"
+    "// 3. Neither the name of the copyright holder nor the names of its contributors may be"
+    "//    used to endorse or promote products derived from this software without specific"
+    "//    prior written permission."
+    "//"
+    "// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS""
+    "// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED"
+    "// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED."
+    "// IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,"
+    "// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,"
+    "// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,"
+    "// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY"
+    "// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING"
+    "// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,"
+    "// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LGPL_2_1_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER LGPL_2_1_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="LGPL Licence v2.1"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the GNU Lesser General Public License, Version 2.1 (LGPL-2.1)"
+    "// <https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html>."
+    "//"
+    "// Copyright (c) Copyright (C) 1999 Free Software Foundation, Inc. <http://fsf.org/>"
+    "//"
+    "// This library is free software; you can redistribute it and/or modify it under"
+    "// the terms of the GNU Lesser General Public License version 2.1 as published by"
+    "// the Free Software Foundation (C) 1999."
+    "//"
+    "// This library is distributed in the hope that it will be useful, but"
+    "// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY"
+    "// or FITNESS FOR A PARTICULAR PURPOSE."
+    "// See the GNU Lesser General Public License for more details."
+    "//"
+    "// You should have received a copy of the GNU Lesser General Public License along"
+    "// with this library; if not, write to the Free Software Foundation, Inc.,"
+    "// 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
+    "//"
+    "// See also: <https://tldrlegal.com/license/gnu-lesser-general-public-license-v2.1-(lgpl-2.1)>" 
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LGPL_3_0_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER LGPL_3_0_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="LGPL Licence v3.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the GNU Lesser General Public License, Version 3.0 (LGPL-3.1)"
+    "// <https://www.gnu.org/licenses/lgpl-3.0.en.html>."
+    "//"
+    "// Copyright (c) Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>"
+    "//"
+    "// This library is free software; you can redistribute it and/or modify it under"
+    "// the terms of the GNU Lesser General Public License version 3.0 as published by"
+    "// the Free Software Foundation (C) 2007."
+    "//"
+    "// This library is distributed in the hope that it will be useful, but"
+    "// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY"
+    "// or FITNESS FOR A PARTICULAR PURPOSE."
+    "// See the GNU Lesser General Public License for more details."
+    "//"
+    "// You should have received a copy of the GNU Lesser General Public License along"
+    "// with this library; if not, write to the Free Software Foundation, Inc.,"
+    "// 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
+    "//"
+    "// See also: <https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3)>"
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER GPL_2_0_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER GPL_2_0_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="GPL Licence v2.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the GNU General Public License, Version 2.0 (GPL-2.0)"
+    "// <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>."
+    "//"
+    "// Copyright (c) Copyright (C) 1989, 1991 Free Software Foundation, Inc. <http://fsf.org/>"
+    "//"
+    "// This library is free software; you can redistribute it and/or modify it under"
+    "// the terms of the GNU General Public License version 2.0 as published by"
+    "// the Free Software Foundation (C) 1989, 1991."
+    "//"
+    "// This library is distributed in the hope that it will be useful, but"
+    "// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY"
+    "// or FITNESS FOR A PARTICULAR PURPOSE."
+    "// See the GNU Lesser General Public License for more details."
+    "//"
+    "// You should have received a copy of the GNU Lesser General Public License along"
+    "// with this library; if not, write to the Free Software Foundation, Inc.,"
+    "// 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
+    "//"
+    "// See also: <https://tldrlegal.com/license/gnu-general-public-license-v2>"
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER GPL_3_0_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER GPL_3_0_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="GPL Licence v3.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the GNU General Public License, Version 3.0 (GPL-3.0)"
+    "// <https://www.gnu.org/licenses/gpl-3.0.en.html>."
+    "//"
+    "// Copyright (c) Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>"
+    "//"
+    "// This library is free software; you can redistribute it and/or modify it under"
+    "// the terms of the GNU General Public License version 2.0 as published by"
+    "// the Free Software Foundation (C) 2007."
+    "//"
+    "// This library is distributed in the hope that it will be useful, but"
+    "// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY"
+    "// or FITNESS FOR A PARTICULAR PURPOSE."
+    "// See the GNU Lesser General Public License for more details."
+    "//"
+    "// You should have received a copy of the GNU Lesser General Public License along"
+    "// with this library; if not, write to the Free Software Foundation, Inc.,"
+    "// 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
+    "//"
+    "// See also: <https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)>"
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER AGPL_3_0_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER AGPL_3_0_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="AGPL Licence v3.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the GNU Affero General Public License version 3 (AGPL-3.0)"
+    "// <https://www.gnu.org/licenses/agpl-3.0.html>."
+    "//"
+    "// Copyright (c) Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>"
+    "//"
+    "// This library is free software; you can redistribute it and/or modify it under"
+    "// the terms of the GNU Affero General Public License version 3 as published by"
+    "// the Free Software Foundation (C) 2007."
+    "//"
+    "// This library is distributed in the hope that it will be useful, but"
+    "// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY"
+    "// or FITNESS FOR A PARTICULAR PURPOSE."
+    "// See the GNU Lesser General Public License for more details."
+    "//"
+    "// You should have received a copy of the GNU Lesser General Public License along"
+    "// with this library; if not, write to the Free Software Foundation, Inc.,"
+    "// 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
+    "//"
+    "// See also: <https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)>"
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER BOOST_LICENSE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER BOOST_LICENSE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Boost Licence v1.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "// Distributed under the Boost Software License, Version 1.0."
+    "//"
+    "// Copyright (c) {yyyy} {licenser}"
+    "//"
+    "// Permission is hereby granted, free of charge, to any person or organization"
+    "// obtaining a copy of the software and accompanying documentation covered by"
+    "// this license (the "Software") to use, reproduce, display, distribute, execute,"
+    "// and transmit the Software, and to prepare derivative works of the Software, and"
+    "// to permit third-parties to whom the Software is furnished to do so, all subject"
+    "// to the following:"
+    "//"
+    "// The copyright notices in the Software and this entire statement, including the"
+    "// above license grant, this restriction and the following disclaimer, must be"
+    "// included in all copies of the Software, in whole or in part, and all derivative"
+    "// works of the Software, unless such copies or derivative works are solely in the"
+    "// form of machine-executable object code generated by a source language processor."
+    "//"
+    "// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+    "// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+    "// FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL"
+    "// THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE FOR ANY DAMAGES"
+    "// OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR"
+    "// IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    "//"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER LICENSER
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER LICENSER
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "Johannes Brunen <hatlafax@gmx.de>"
+    "DataSolid GmbH, Mönchengladbach <csons@datasolid.de>"
+    "{text}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER YYYY
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER YYYY
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-year
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid year: YYYY"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER SOURCEELEMENT
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER SOURCEELEMENT
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-year
+    /TYPE=NONTERMINAL
+
+    "statement"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER STATEMENT
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER STATEMENT
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "block"/PLACEHOLDER
+    "variableStatement"/PLACEHOLDER
+    "importStatement"/PLACEHOLDER
+    "exportStatement"/PLACEHOLDER
+    "emptyStatement"/PLACEHOLDER
+    "classDeclaration"/PLACEHOLDER
+    "expressionStatement"/PLACEHOLDER
+    "ifStatement"/PLACEHOLDER
+    "iterationStatement"/PLACEHOLDER
+    "continueStatement"/PLACEHOLDER
+    "breakStatement"/PLACEHOLDER
+    "returnStatement"/PLACEHOLDER
+    "yieldStatement"/PLACEHOLDER
+    "withStatement"/PLACEHOLDER
+    "labelledStatement"/PLACEHOLDER
+    "switchStatement"/PLACEHOLDER
+    "throwStatement"/PLACEHOLDER
+    "tryStatement"/PLACEHOLDER
+    "debuggerStatement"/PLACEHOLDER
+    "functionDeclaration"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER BLOCK
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER BLOCK
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{ [statementList] }"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER STATEMENT_LIST
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER STATEMENT_LIST
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{statement}..."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORTSTATEMENT
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IMPORTSTATEMENT
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "Import {importFromBlock}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORTFROMBLOCK
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IMPORTFROMBLOCK
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "[importDefault] {importNamespace_or_moduleItems} {importFrom};"
+    "{StringLiteral};"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORTNAMESPACE_OR_MODULEITEMS
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IMPORTNAMESPACE_OR_MODULEITEMS
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "importNamespace"/PLACEHOLDER
+    "moduleItems"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER MODULEITEMS
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER MODULEITEMS
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "{ [aliasName]...}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORTDEFAULT
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IMPORTDEFAULT
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "{aliasName}, "
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORTNAMESPACE
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IMPORTNAMESPACE
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{*_or_identifierName} [asIdentifierName]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER "*_OR_IDENTIFIERNAME"
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER "*_OR_IDENTIFIERNAME"
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "*"
+    "identifierName"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IMPORTFROM
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IMPORTFROM
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "From {StringLiteral}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ALIASNAME
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER ALIASNAME
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "{identifierName} [asIdentifierName]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ASIDENTIFIERNAME
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER ASIDENTIFIERNAME
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=" "
+    /TYPE=NONTERMINAL
+
+    "As {identifierName}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER IDENTIFIERNAME
+    /LANGUAGE="Javascript"
+DEFINE PLACEHOLDER IDENTIFIERNAME
+    /LANGUAGE="Javascript"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "identifier"/PLACEHOLDER
+    "reserved_word"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+identifier
+reserved_word
+import_from
+string_literal
+import_namespace
+module_items
+
+
+variable_stmt
+
+export_stmt
+empty_stmt
+class_decl
+expression_stmt
+if_stmt
+iteration_stmt
+continue_stmt
+break_stmt
+return_stmt
+yield_stmt
+with_stmt
+lablelled_stmt
+switch_stmt
+throw_stmt
+try_stmt
+debugger_stmt
+func_decl

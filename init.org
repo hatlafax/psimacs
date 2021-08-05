@@ -9377,7 +9377,19 @@ The package [[https://github.com/Malabarba/emacs-google-this][google-this]] prov
 )
 #+end_src
 
-*** Counsel-Web
+*** Counsel-search
+
+The [[https://github.com/abo-abo/swiper][Swiper]] package provides with counsel-search a command
+that allows you to interactively search the Web. This command is available through the following
+binding:
+
+| Key binding     | Command                                        | Description                                                                 |
+|-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
+| =H-m C-s w RET= | =M-x counsel-search=                           | Interactively search the web with counsel.                                  |
+| =H-m C-s w t=   | =M-x psimacs/web/counsel/toggle-search-engine= | Toggle the search engine of 'counsel-search' between duckduckgo and google. |
+|-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
+
+*** Counsel-Web :noexport:
 
 The package [[https://github.com/mnewt/counsel-web][counsel-web]] is an alternative to [[https://github.com/Malabarba/emacs-google-this][google-this]] for searching the Web.
 
@@ -9395,7 +9407,7 @@ to the page you were searching for.
 | =H-m C-x C s=   | =M-x counsel-web-suggest=              | Shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=. |
 | =H-m C-x C w=   | =M-x counsel-web-search=               | Searches and presents the results in the ivy minibuffer.                                                        |
 | =H-m C-x C p=   | =M-x counsel-web-thing-at-point=       | Interactively search the web for the THING at point.                                                            |
-| =H-m C-x C t=   | =M-x psimacs/web/toggle-search-engine= | Toggle the search engine of [[https://github.com/abo-abo/swiper][counsel]] and  [[https://github.com/mnewt/counsel-web][counsel-web]] between 'duckduckgo' and 'goole'.                         |
+| =H-m C-x C t=   | =M-x psimacs/web/toggle-search-engine= | Toggle the search engine of [[https://github.com/abo-abo/swiper][counsel]] and  [[https://github.com/mnewt/counsel-web][counsel-web]] between 'duckduckgo' and 'google'.                         |
 |-----------------+----------------------------------------+-----------------------------------------------------------------------------------------------------------------|
 
 | counsel-web-search key bindings | Description                              |
@@ -10161,16 +10173,19 @@ See also:
 - [[https://writequit.org/denver-emacs/presentations/2017-04-11-ivy.html][Ivy, Counsel and Swiper]],
 - [[https://oremacs.com/2015/04/09/counsel-completion/][Counsel]]
 
-| Key binding | Command                | Description                                                              |
-|-------------+------------------------+--------------------------------------------------------------------------|
-| =C-s=       | =M-x swiper-iseach=    | A =swiper= that’s not line-based. Incrementally search with an overview. |
-| =C-r=       | =M-x swiper=           | Incrementally search with an overview.                                   |
-| =C-c v=     | =M-x ivy-push-view=    | Push the current window tree on =ivy-views=                              |
-| =C-c V=     | =M-x ivy-pop-view=     | Delete a view to delete from =ivy-views=.                                |
-| =H-m C-s a= | =M-x swiper-all=       | Incrementally search in all open buffers.                                |
-| =H-m C-s s= | =M-x isearch-forward=  | Incrementally search forward.                                            |
-| =H-m C-s r= | =M-x isearch-backward= | Incrementally search backward.                                           |
-|-------------+------------------------+--------------------------------------------------------------------------|
+| Key binding     | Command                                        | Description                                                                 |
+|-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
+| =C-s=           | =M-x swiper-iseach=                            | A =swiper= that’s not line-based. Incrementally search with an overview.    |
+| =C-r=           | =M-x swiper=                                   | Incrementally search with an overview.                                      |
+| =C-c v=         | =M-x ivy-push-view=                            | Push the current window tree on =ivy-views=                                 |
+| =C-c V=         | =M-x ivy-pop-view=                             | Delete a view to delete from =ivy-views=.                                   |
+| =H-m C-s a=     | =M-x swiper-all=                               | Incrementally search in all open buffers.                                   |
+| =H-m C-s s=     | =M-x isearch-forward=                          | Incrementally search forward.                                               |
+| =H-m C-s r=     | =M-x isearch-backward=                         | Incrementally search backward.                                              |
+|-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
+| =H-m C-s w RET= | =M-x counsel-search=                           | Interactively search the web with counsel.                                  |
+| =H-m C-s w t=   | =M-x psimacs/web/counsel/toggle-search-engine= | Toggle the search engine of 'counsel-search' between duckduckgo and google. |
+|-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
 
 *** Ivy
 
@@ -10190,7 +10205,7 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-swiper-key.el :var file-description="Advanced Ivy, Counsel and Swiper setup"
 ;;
-;; First configure ivy...
+;; Configure counsel...
 ;;
 (use-package counsel
     :demand t
@@ -10208,9 +10223,11 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
             ("C-'"   . ivy-avy)
             ("H-w"   . ivy-avy)
         :map psimacs/config/global-key-map/special
-            ("C-s a" . swiper-all)
-            ("C-s s" . isearch-forward)
-            ("C-s r" . isearch-backward)
+            ("C-s a"          . swiper-all)
+            ("C-s s"          . isearch-forward)
+            ("C-s r"          . isearch-backward)
+            ("C-s w <return>" . counsel-search)
+            ("C-s w t"        . psimacs/web/counsel/toggle-search-engine)
        )
     :config
         (setq ivy-use-virtual-buffers t)        ; ﻿add recent files and/or bookmarks to ‘ivy-switch-buffer’
@@ -10245,6 +10262,26 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
 
         (setq magit-completing-read-function 'ivy-completing-read)
         (setq projectile-completion-system 'ivy)
+
+        (use-package request)
+        (setq counsel-search-engine 'google)
+
+        (defun psimacs/web/counsel/toggle-search-engine ()
+            "Toggle the search engine of 'counsel-search' between duckduckgo and google."
+            (interactive)
+            (if (eq counsel-search-engine 'google)
+                (progn
+                    (setq counsel-search-engine 'ddg)
+                    (message "Switched search engine to 'duckduckgo'")
+                )
+                ;; else
+                (progn
+                    (setq counsel-search-engine 'google)
+                    (message "Switched search engine to 'google'")
+                )
+            )
+        )
+
     :hook (
             (after-init . ivy-mode)
             (ivy-mode . counsel-mode)
@@ -10568,7 +10605,7 @@ See also:
         (setq company-selection-wrap-around t)
         (setq company-tooltip-flip-when-above t)
         (setq company-tooltip-align-annotations t)
-        (setq company-show-numbers t)
+        (setq company-show-quick-access t)
 
     :config
 
@@ -11755,31 +11792,18 @@ See also:
         (setq else-only-proceed-within-window t)
         (setq else-menu-linking-default nil)
 
-        (defun psimacs/config/add-else-template-mappings (mode-name else-template-name &rest bindings)
-          "Set up mappings from major MODE-NAME to ELSE-TEMPLATE-NAME.
-BINDINGS is a list of mode names and templates names for convenience, like so:
-
-    (psimacs/config/add-else-template-mappings
-       \"Elisp\" \"Emacs-Lisp\"
-       \"Shell-script\" \"Shell\")
-
-Returns `else-Alternate-Mode-Names'."
-          (while mode-name
-            (unless (assoc mode-name else-Alternate-Mode-Names)
-              (add-to-list 'else-Alternate-Mode-Names (cons mode-name else-template-name)))
-
-            (setq mode-name (pop bindings))
-            (setq else-template-name (pop bindings)))
-
-          else-Alternate-Mode-Names)
-
         (defun psimacs/else/kill-always ()
           "Like `else-kill' but kills required placeholders without prompting."
           (interactive)
           (else-kill 'force))
 
-        (psimacs/config/add-else-template-mappings
-            "lisp-interaction" "Emacs-Lisp"
+        (defun psimacs/else/compile-buffer (&optional start-at-point-min)
+            "Compile the language template definitions from 'point' to the end.
+
+This derivation of the else-compile-buffer function additionally saves the point.
+"
+            (interactive "P")
+            (save-excursion (else-compile-buffer start-at-point-min))
         )
 
         (define-key else-menu-mode-map (kbd "C-n") 'popup-next)
