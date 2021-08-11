@@ -7666,6 +7666,9 @@ Some usefule key bindings and commands:
 | =C-x D F=   | =M-x diredp-dired-for-files=                 | [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] in current window the file names that you entered in a [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] buffer that you name. |
 | =C-x 4 D F= | =M-x diredp-dired-for-files-other-window=    | [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] in another window the file names that you entered in a [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]] buffer that you name. |
 |-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
+|             | =M-x dired-do-find-marked-files              | Open marked files, each in separate window, by splitting window vertically.              |
+|             | =C-u M-x dired-do-find-marked-files          | Open marked files, without splitting window.                                             |
+|-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 ;;
@@ -11736,7 +11739,7 @@ See also:
 | =H-m C-c k=   | =M-x else-kill=                      | Kill the placeholder at point.                                         |
 | =H-m C-c K=   | =M-x psimacs/else/kill-always=       | Like =else-kill= but kills required placeholders without prompting.    |
 | =H-m C-c C-c= | =M-x else-template-compile-buffer=   | Compile the whole current buffer.                                      |
-|               | =M-x else-compile-buffer=            | Compile the language template definitions from 'point' to the end.     |
+|               | =M-x else-compile-buffer=            | Compile the language template definitions.                             |
 |               | =M-x else-extract-placeholder=       | Place the definition of an placeholder into the buffer at point.       |
 |               | =M-x else-extract-all=               | Extract the full language definition at point.                         |
 |               | =M-x else-show-placeholder-names=    | Display info on all Placeholders in the current language template set. |
@@ -11798,13 +11801,13 @@ See also:
           (interactive)
           (else-kill 'force))
 
-        (defun psimacs/else/compile-buffer (&optional start-at-point-min)
+        (defun psimacs/else/compile-buffer ()
             "Compile the language template definitions from 'point' to the end.
 
 This derivation of the else-compile-buffer function additionally saves the point.
 "
-            (interactive "P")
-            (save-excursion (else-compile-buffer start-at-point-min))
+            (interactive)
+            (else-compile-buffer t)
         )
 
         (define-key else-menu-mode-map (kbd "C-n") 'popup-next)
