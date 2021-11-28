@@ -42,6 +42,8 @@ frameworks that are build by a lot of talented people. So feel free to use it or
 
 The name *Psimacs* is arbitrarily. I was in search for a catchy name with just one syllable in front of the *macs*.
 
+See also: [[https://github.com/caisah/emacs.dz][A list of people with nice emacs config files]]
+
 ** Installation
 
 This configuration uses *Emacs* >= 27. Clone the git repository into your *.emcas.d* directory
@@ -2259,6 +2261,13 @@ your calendar.
 
 #+begin_src emacs-lisp :tangle config/init-constants.el
 ;;
+;; Org-Persist caching directory
+;;
+(defconst psimacs/config/org-persisit-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "org-persist")
+  "The psimacs org mode persist directory.")
+
+;;
 ;; Org-Agenda directory
 ;;
 (defconst psimacs/config/agenda-dir
@@ -2467,6 +2476,10 @@ pacman -S unzip
 pacman -S winpty
 pacman -S base-devel
 pacman -S compression
+pacman -S mingw-w64-x86_64-python
+pacman -S mingw-w64-x86_64-python-distlib
+pacman -S mingw-w64-x86_64-python-setuptools
+pacman -S mingw-w64-x86_64-python-pip
 pacman -S mingw-w64-x86_64-make
 pacman -S mingw-w64-x86_64-toolchain
 pacman -S mingw-w64-x86_64-zlib
@@ -2753,7 +2766,7 @@ are to be installed into the following directory.
 
 Installation of the following packages is recommended: autopep8, autoflake, black, certifi, cmake-language-server, flake8,
 ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
-pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy.
+pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy antlr4-python3-runtime.
 
 If using [[https://www.sphinx-doc.org/en/master/][Sphinx]] with a non default contrib theme or extension, additional =pip= installation might be necessary.
 
@@ -2773,8 +2786,38 @@ pathes. Therefore our Windows OS [[https://www.python.org/][Python]] should alwa
   (psimacs/file-system/concat-directory psimacs/config/python-tools-dir "MS-Visual-Studio")
   "The psimacs personal MS Visual Studio python directory.")
 
+(defun psimacs/config/find-python-dir ()
+    "Get a decent python installation.
+
+This is pretty ugly, but different python installation might be in use on different machines.
+"
+    (interactive)
+    (let ((py3-8   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python38"))
+          (py3-8-5 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python385"))
+          (py3-9   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python39"))
+          (py3-9-6 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python396"))
+          (py3-10  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python310"))
+          (py3-11  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python311"))
+          (py3-12  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python312"))
+          (py-dir nil)
+         )
+
+        (or (getenv "EMACS_PYTHON") 
+            (cond ((file-exists-p py3-12 ) py3-12)
+                  ((file-exists-p py3-11 ) py3-11)
+                  ((file-exists-p py3-10 ) py3-10)
+                  ((file-exists-p py3-9  ) py3-9)
+                  ((file-exists-p py3-9-6) py3-9-6)
+                  ((file-exists-p py3-8  ) py3-8)
+                  ((file-exists-p py3-8-5) py3-8-5)
+            ))
+    )
+)
+
 (defconst psimacs/config/python-runtime-dir
-  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python385")
+  (let ( (f (psimacs/config/find-python-dir)) )
+    (if f (file-name-as-directory f) nil))
+;  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python385")
   "The psimacs used python runtime directory.")
 
 (defconst psimacs/config/python-scripts-dir
@@ -9928,7 +9971,7 @@ The following [[https://github.com/emacs-helm/helm][Helm]] configuration is take
                                                        )
             helm-actions-inherit-frame-settings       t
             helm-use-frame-when-more-than-two-windows t
-            helm-use-frame-when-dedicated-window      t
+            helm-use-frame-when-no-suitable-window    t
             ;;helm-frame-background-color               "DarkSlateGray"
             helm-show-action-window-other-window      'left
             helm-allow-mouse                          t
@@ -11400,6 +11443,7 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
 ;;
 (use-package dashboard
     :demand t
+    :after page-break-lines
     :diminish dashboard-mode
     :functions (all-the-icons-faicon
                 all-the-icons-material
@@ -11413,6 +11457,8 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
     :custom-face (dashboard-heading ((t (:inherit (font-lock-string-face bold)))))
     :hook (dashboard-mode . (lambda () (setq-local frame-title-format "")))
     :config
+        (setq dashboard-page-separator "\n\f\n")
+
         (setq dashboard-projects-backend 'projectile)
         (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
@@ -11434,11 +11480,11 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
                                        ))
 
         (setq dashboard-items '(
-                                (recents   . 5)
-                                (bookmarks . 5)
-                                (projects  . 5)
-                                (agenda    . 5)
-                                (registers . 5)
+                                (recents   . 10)
+                                (bookmarks .  5)
+                                (projects  . 10)
+                                (agenda    .  5)
+                                (registers .  5)
                                ))
 
         (setq dashboard-set-navigator t)
@@ -11829,7 +11875,7 @@ This derivation of the else-compile-buffer function additionally saves the point
 
     ;; Disable automatic else-mode activation. If active, there are problems with org-mode building
     ;;:hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
-    :hook ((sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
+    :hook ((c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
     :bind (
              :map else-mode-key-map
              ("H-n"   . else-next)
@@ -13467,6 +13513,11 @@ A small number of internal helper functions used in *Psimacs's* [[https://code.o
         (add-hook 'org-shiftright-final-hook 'windmove-right)
 
         (setq org-support-shift-select t)   ;; Make shift-cursor commands select text when possible
+
+        ;;
+        ;; Do not pollute the main user directory
+        ;;
+        (setq org-persist-directory psimacs/config/org-persisit-dir)
 
         ;;
         ;; Counsel tag completion does not work properly.
