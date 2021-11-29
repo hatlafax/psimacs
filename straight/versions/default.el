@@ -139,7 +139,6 @@
  ("powerline" . "390a95fe5b71cfc20e18d034b4b35b5c159a83fc")
  ("powershell.el" . "d1b3f95669343399f199f291ef76c09a0ede5e60")
  ("projectile" . "08fcdd51269d7e3c1c41c7f688555534067daa0e")
- ("projectile-cmake" . "e6997b8687caddbccc0df860a0593fd78064a864")
  ("projectile-envrc" . "67fbb7ac2bd8654a5ad75758168a5a62903e086c")
  ("quick-peek" . "03a276086795faad46a142454fc3e28cab058b70")
  ("rainbow-delimiters" . "d576e6694ad3a3e88b2bb1363305b38fa364c149")

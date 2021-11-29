@@ -2727,13 +2727,10 @@ i.e. a directories in which [[https://github.com/bbatsov/projectile][Projectile]
 ;; Projectile search pathes
 ;;
 (defconst psimacs/config/project-search-path
-    '( ("~/projects/source"  . 3)
-       ("d:/projects/source" . 3)
+    '("~/projects/source"
+      "d:/projects/source"
       )
-    "The psimacs project search path
-
-Recursive discovery is configured by specifying the search depth in a cons cell.
-")
+    "The psimacs project search path")
 #+end_src
 
 ** Printing support
@@ -9821,6 +9818,7 @@ Select a directory with ivy.
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Choose directory: ")
          (counsel--find-file-predicate #'file-directory-p)
+         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
          (default-directory directory-to-start-in)
          (selected-directory
             (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
@@ -11374,45 +11372,59 @@ The package [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra
 
 The [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] is an extensible *Emacs* startup screen showing you what's most important.
 
-| Key binding | Command                                          | Description                  |
-|-------------+--------------------------------------------------+------------------------------|
-| =C-<f8>=    | =M-x psimacs/dashboard/open-dashboard=           | Open the dashboard.          |
-|-------------+--------------------------------------------------+------------------------------|
-| =H=         | =M-x psimacs/dashboard/homepage=                 | Open the *Psimacs* homepage. |
-| =R=         | =M-x psimacs/dashboard/restore-previous-session= | Restore previous session.    |
-| =L=         | =M-x psimacs/dashboard/restore-session=          | Restore session.             |
-| =S=         | =M-x psimacs/dashboard/open-custom-file=         | Open the =Custom.el= file.   |
-| =q=         | =M-x psimacs/dashboard/quit-dashboard=           | Quit the dashboard.          |
-| =h=         | =M-x psimacs/hydra/dashboard/body=               | Open dashboard hydra.        |
-| =?=         | =M-x psimacs/hydra/dashboard/body=               | Open dashboard hydra.        |
-|-------------+--------------------------------------------------+------------------------------|
+| Key binding   | Command                                          | Description                  |
+|---------------+--------------------------------------------------+------------------------------|
+| =C-<f8>=      | =M-x psimacs/dashboard/open-dashboard=           | Open the dashboard.          |
+|---------------+--------------------------------------------------+------------------------------|
+| =H=           | =M-x psimacs/dashboard/homepage=                 | Open the *Psimacs* homepage. |
+| =R=           | =M-x psimacs/dashboard/restore-previous-session= | Restore previous session.    |
+| =L=           | =M-x psimacs/dashboard/restore-session=          | Restore session.             |
+| =S=           | =M-x psimacs/dashboard/open-custom-file=         | Open the =Custom.el= file.   |
+| =q= =Q=       | =M-x psimacs/dashboard/quit-dashboard=           | Quit the dashboard.          |
+| =h=           | =M-x psimacs/hydra/dashboard/body=               | Open dashboard hydra.        |
+| =?=           | =M-x psimacs/hydra/dashboard/body=               | Open dashboard hydra.        |
+|---------------+--------------------------------------------------+------------------------------|
+| =r=           | =M-x psimacs/dashboard/goto-recent-files=        | Goto recent file section.    |
+| =m=           | =M-x psimacs/dashboard/goto-bookmarks=           | Goto bookmarks section.      |
+| =p=           | =M-x psimacs/dashboard/goto-projects=            | Goto projects section.       |
+| =a=           | =M-x psimacs/dashboard/goto-agendas=             | Goto agenda section.         |
+| =e=           | =M-x psimacs/dashboard/goto-registers=           | Goto register section.       |
+|---------------+--------------------------------------------------+------------------------------|
+| =<ret>=       | =M-x dashboard-return=                           | Open item.                   |
+| =<tab>= =C-i= | =M-x widget-forward=                             | Next item.                   |
+| =S-<tab>=     | =M-x widget-backward=                            | Previous item.               |
+|---------------+--------------------------------------------------+------------------------------|
+| =j= =C-n=     | =M-x dashboard-next-line=                        | Next line.                   |
+| =k= =C-p=     | =M-x dashboard-previous-line=                    | Previous line.               |
+|---------------+--------------------------------------------------+------------------------------|
 
 Dashboard hyda bindings:
 
-| Key binding | Command                                          | Description                  |
-|-------------+--------------------------------------------------+------------------------------|
-| =H=         | =M-x psimacs/dashboard/homepage=                 | Open the *Psimacs* homepage. |
-| =R=         | =M-x psimacs/dashboard/restore-previous-session= | Restore previous session.    |
-| =L=         | =M-x psimacs/dashboard/restore-session=          | Restore session.             |
-| =S=         | =M-x psimacs/dashboard/open-custom-file=         | Open the =Custom.el= file.   |
-| =q=         |                                                  | Quit hydra                   |
-|-------------+--------------------------------------------------+------------------------------|
-| =N=         | =M-x dashboard-next-section=                     | Next dashboard section.      |
-| =P=         | =M-x dashboard-previous-section=                 | Previous dashboard section.  |
-| =r=         | =M-x psimacs/dashboard/goto-recent-files=        | Goto recent file section.    |
-| =m=         | =M-x psimacs/dashboard/goto-bookmarks=           | Goto bookmarks section.      |
-| =p=         | =M-x psimacs/dashboard/goto-projects=            | Goto projects section.       |
-|-------------+--------------------------------------------------+------------------------------|
-| =<ret>=     | =M-x widget-button-press=                        | Open item.                   |
-| =<tab>=     | =M-x widget-forward=                             | Next item.                   |
-| =S-<tab>=   | =M-x widget-backward=                            | Previous item.               |
-| =C-n=       | =M-x next-line=                                  | Next line.                   |
-| =C-p=       | =M-x previous-line=                              | Previous line.               |
-|-------------+--------------------------------------------------+------------------------------|
-| =C-<f8>=    | =M-x psimacs/dashboard/open-dashboard=           | Open the dashboard.          |
-| =g=         | =M-x dashboard-refresh-buffer=                   | Refresh dashboard.           |
-| =Q=         | =M-x psimacs/dashboard/quit-dashboard=           | Quit dashboard.              |
-|-------------+--------------------------------------------------+------------------------------|
+| Key binding   | Command                                          | Description                  |
+|---------------+--------------------------------------------------+------------------------------|
+| =H=           | =M-x psimacs/dashboard/homepage=                 | Open the *Psimacs* homepage. |
+| =R=           | =M-x psimacs/dashboard/restore-previous-session= | Restore previous session.    |
+| =L=           | =M-x psimacs/dashboard/restore-session=          | Restore session.             |
+| =S=           | =M-x psimacs/dashboard/open-custom-file=         | Open the =Custom.el= file.   |
+| =q=           |                                                  | Quit hydra                   |
+|---------------+--------------------------------------------------+------------------------------|
+| =r=           | =M-x psimacs/dashboard/goto-recent-files=        | Goto recent file section.    |
+| =m=           | =M-x psimacs/dashboard/goto-bookmarks=           | Goto bookmarks section.      |
+| =p=           | =M-x psimacs/dashboard/goto-projects=            | Goto projects section.       |
+| =a=           | =M-x psimacs/dashboard/goto-agendas=             | Goto agenda section.         |
+| =e=           | =M-x psimacs/dashboard/goto-registers=           | Goto register section.       |
+|---------------+--------------------------------------------------+------------------------------|
+| =<ret>=       | =M-x dashboard-return=                           | Open item.                   |
+| =<tab>= =C-i= | =M-x widget-forward=                             | Next item.                   |
+| =S-<tab>=     | =M-x widget-backward=                            | Previous item.               |
+|---------------+--------------------------------------------------+------------------------------|
+| =j= =C-n=     | =M-x dashboard-next-line=                        | Next line.                   |
+| =k= =C-p=     | =M-x dashboard-previous-line=                    | Previous line.               |
+|---------------+--------------------------------------------------+------------------------------|
+| =C-<f8>=      | =M-x psimacs/dashboard/open-dashboard=           | Open the dashboard.          |
+| =g=           | =M-x dashboard-refresh-buffer=                   | Refresh dashboard contents.  |
+| =Q=       |    =M-x psimacs/dashboard/quit-dashboard=           | Quit dashboard.              |
+|---------------+--------------------------------------------------+------------------------------|
 
 *** Page-break lines
 
@@ -11589,6 +11601,18 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
           (let ((func (local-key-binding "m")))
             (and func (funcall func))))
 
+        (defun psimacs/dashboard/goto-registers ()
+          "Go to registers."
+          (interactive)
+          (let ((func (local-key-binding "e")))
+            (and func (funcall func))))
+
+        (defun psimacs/dashboard/goto-agendas ()
+          "Go to agendas."
+          (interactive)
+          (let ((func (local-key-binding "a")))
+            (and func (funcall func))))
+
 
         (declare-function dashboard-insert-startupify-lists "dashboard" (&optional ARG))
 
@@ -11644,26 +11668,29 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
            )
            "Section"
            (
-             ("N" dashboard-next-section        "next section")
-             ("P" dashboard-previous-section    "prev section")
              ("r" psimacs/dashboard/goto-recent-files "recent files")
              ("m" psimacs/dashboard/goto-bookmarks    "bookmarks")
              ("p" psimacs/dashboard/goto-projects     "projects")
+             ("a" psimacs/dashboard/goto-agendas      "agendas")
+             ("e" psimacs/dashboard/goto-registers    "registers")
            )
            "Item"
            (
              ("RET"     widget-button-press "open item" :exit t)
              ("<tab>"   widget-forward      "next item")
              ("S-<tab>" widget-backward     "prev item")
-             ("C-n"     next-line           "next line")
-             ("C-p"     previous-line       "prev line")
+           )
+           "Line"
+           (
+             ("j"     dashboard-next-line           "next line")
+             ("k"     dashboard-previous-line       "prev line")
            )
            "Misc"
            (
              ("C-<f8>" psimacs/dashboard/open-dashboard "open dashboard"    :exit t)
-             ("g"      dashboard-refresh-buffer   "refresh dashboard" :exit t)
+             ("g"      dashboard-refresh-buffer         "refresh dashboard" :exit t)
              ("Q"      psimacs/dashboard/quit-dashboard "quit dashboard"    :exit t)
-             ("q"      nil                        "quit hydra"        :exit t)
+             ("q"      nil                              "quit hydra"        :exit t)
            )
          )
         )
@@ -11675,6 +11702,7 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
            ("L" . psimacs/dashboard/restore-session)
            ("S" . psimacs/dashboard/open-custom-file)
            ("q" . psimacs/dashboard/quit-dashboard)
+           ("Q" . psimacs/dashboard/quit-dashboard)
            ("h" . psimacs/hydra/dashboard/body)
            ("?" . psimacs/hydra/dashboard/body)
           )
@@ -15734,6 +15762,7 @@ Convert buffer from Unix end of lines to Dos end of lines."
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Choose directory: ")
          (counsel--find-file-predicate #'file-directory-p)
+         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
          (default-directory directory-to-start-in)
          (selected-directory
             (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
