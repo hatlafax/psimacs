@@ -9818,7 +9818,6 @@ Select a directory with ivy.
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Choose directory: ")
          (counsel--find-file-predicate #'file-directory-p)
-         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
          (default-directory directory-to-start-in)
          (selected-directory
             (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
@@ -10277,6 +10276,8 @@ See also [[https://oremacs.com/swiper/][Ivy User Manual]]
             ("C-s w t"        . psimacs/web/counsel/toggle-search-engine)
        )
     :config
+        (setq ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
+
         (setq ivy-use-virtual-buffers t)        ; ﻿add recent files and/or bookmarks to ‘ivy-switch-buffer’
         (setq enable-recursive-minibuffers t)   ; if this variable is non-nil, you can invoke commands (such as find-file)
                                                 ; that use minibuffers even while the minibuffer is active. Such invocation
@@ -15762,7 +15763,6 @@ Convert buffer from Unix end of lines to Dos end of lines."
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Choose directory: ")
          (counsel--find-file-predicate #'file-directory-p)
-         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
          (default-directory directory-to-start-in)
          (selected-directory
             (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
