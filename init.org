@@ -10,6 +10,9 @@
 #+html_head: .styledtable col:nth-of-type(1) { width: 15% }
 #+html_head: .styledtable col:nth-of-type(2) { width: 30% }
 #+html_head: .styledtable col:nth-of-type(3) { width: 55% }
+#+html_head: .styledtable1 col:nth-of-type(1) { width: 20% }
+#+html_head: .styledtable1 col:nth-of-type(2) { width: 50% }
+#+html_head: .styledtable1 col:nth-of-type(3) { width: 30% }
 #+html_head: </style>
 # #+setupfile: site-lisp/org-html-themes/org/theme-readtheorg.setup
 # #+setupfile: site-lisp/org-html-themes/org/theme-bigblow.setup
@@ -385,7 +388,8 @@ References:
 - [[http://blog.binchen.org/posts/my-work-flow-to-debug-emacs-plugin.html][My work flow to debug emacs plugin from Chen Bin]]
 - [[https://www.youtube.com/watch?v=odkYXXYOxpo][Debugging basics]]
 
-| Keybinding        | Command                                 | Description                                                                                                                                                                                  |
+#+attr_html: :class styledtable1
+| Key binding       | Command                                 | Description                                                                                                                                                                                  |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f C-f=     | =M-x find-function=                     | Find the definition of function near point                                                                                                                                                   |
 |-------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1555,6 +1559,7 @@ Early up we set the *Psimacs* frame's size and position in order to avoid distra
 *Psimacs* provides three simple strategies for positioning and sizing new frames. These strategies can be activated
 by the following function which are actually defined in section [[Frame size and position][Frame size and position]].
 
+#+attr_html: :class styledtable1
 | Key binding       | Command                                                 | Description                                                                               |
 |-------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------|
 | =H-m C-w C-x 5 l= | =M-x psimacs/window/set-frame-creation-strategy-layout= | Place and size new frames left and right to the main frame. This is the default strategy. |
@@ -2523,27 +2528,26 @@ suboptions of each flag.
 Most important commands taken from
 - [[https://www.msys2.org/docs/package-management/][MSYS2 Package Management]]
 
-
-| Command                     | Description                                                                                                                                      |
-|-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| =pacman -Syu=               | Synchronizes the repository databases and updates the system's packages, excluding "local" packages that are not in the configured repositories. |
-| =pacman -Syuu=              | Synchronizes the repository databases and updates packages. Repeat this step until it says there are no packages to update.                      |
-|-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| =pacman -S <name>=          | Install package.                                                                                                                                 |
-| =pacman -R <name>=          | Uninstall package.                                                                                                                               |
-|-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| =pacman -Q --help=          | Get help about the sub options for local package database access.                                                                                |
-| =pacman -S --help=          | Get help about the sub options for sync database access.                                                                                         |
-| =pacman -F --help=          | Get help about the sub options for files database access.                                                                                        |
-|-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| =pacman -Ss <string>=       | Search for packages in the database, searching both in packages' names and descriptions.                                                         |
-| =pacman -Qs <string>=       | To search for already installed packages.                                                                                                        |
-| =pacman -F  <string>=       | To search for package file names in remote packages                                                                                              |
-|-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| =pacman -Si <package_name>= | To display extensive information about a given package.                                                                                          |
-| =pacman -Qi <package_name>= | For locally installed packages.                                                                                                                  |
-| =pacman -Ql <package_name>= | To retrieve a list of the files installed by a package.                                                                                          |
-|-----------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| Command                | Description                                                                                                                                      |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| =pacman -Syu=          | Synchronizes the repository databases and updates the system's packages, excluding "local" packages that are not in the configured repositories. |
+| =pacman -Syuu=         | Synchronizes the repository databases and updates packages. Repeat this step until it says there are no packages to update.                      |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| =pacman -S <name>=     | Install package.                                                                                                                                 |
+| =pacman -R <name>=     | Uninstall package.                                                                                                                               |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| =pacman -Q --help=     | Get help about the sub options for local package database access.                                                                                |
+| =pacman -S --help=     | Get help about the sub options for sync database access.                                                                                         |
+| =pacman -F --help=     | Get help about the sub options for files database access.                                                                                        |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| =pacman -Ss <string>=  | Search for packages in the database, searching both in packages' names and descriptions.                                                         |
+| =pacman -Qs <string>=  | To search for already installed packages.                                                                                                        |
+| =pacman -F  <string>=  | To search for package file names in remote packages                                                                                              |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| =pacman -Si <package>= | To display extensive information about a given package.                                                                                          |
+| =pacman -Qi <package>= | For locally installed packages.                                                                                                                  |
+| =pacman -Ql <package>= | To retrieve a list of the files installed by a package.                                                                                          |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 
 *** Constants
 
@@ -2802,7 +2806,7 @@ This is pretty ugly, but different python installation might be in use on differ
           (py-dir nil)
          )
 
-        (or (getenv "EMACS_PYTHON") 
+        (or (getenv "EMACS_PYTHON")
             (cond ((file-exists-p py3-12 ) py3-12)
                   ((file-exists-p py3-11 ) py3-11)
                   ((file-exists-p py3-10 ) py3-10)
@@ -4294,7 +4298,7 @@ See also:
 - [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
 - [[https://en.wikipedia.org/wiki/List_of_Unicode_characters][Wikipdia about Unicode Characters]]
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding | Command                                 | Description                                                                                                                                                                                                      |
 |-------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |             | =M-x revert-buffer-with-coding-system=  |                                                                                                                                                                                                                  |
@@ -5662,7 +5666,7 @@ defined for the Python programming mode.
 
 See also: [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][About prettify-symbols-mode]]
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding   | Command                            | Description                              |
 |---------------+------------------------------------+------------------------------------------|
 | =H-m C-x C-p= | =M-x prettify-symbols-mode=        | Toggle =prettify-symbols-mode=.          |
@@ -6866,6 +6870,7 @@ Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][sa
 across sessions on exiting *Emacs* - you can then access this list
 through the command =C-x C-r=.
 
+#+attr_html: :class styledtable1
 | Key binding | Command                                              | Description                                                  |
 |-------------+------------------------------------------------------+--------------------------------------------------------------|
 | =H-x r=     | =M-x recentf-open-files=                             | Show a dialog to open a recent file.                         |
@@ -7076,6 +7081,7 @@ After finishing the editing the command =edit-indirect-commit= replaces the orig
 the *edit-indirect buffer*. Alternatively, the command =edit-indirect-abort= drops the modification and leaves the
 region unchanged. Very useful!
 
+#+attr_html: :class styledtable1
 | Key binding | Command                    | Description                                                                                       |
 |-------------+----------------------------+---------------------------------------------------------------------------------------------------|
 | =H-c C-e=   | =M-x edit-indirect-region= | Edit region in separate buffer *edit-indirect buffer*                                             |
@@ -7395,6 +7401,7 @@ See also:
 
 *Psimacs* provides the following key bindings for active [[https://github.com/Fuco1/smartparens][smartparens-mode]]:
 
+#+attr_html: :class styledtable1
 | Key binding     | Command                                              | Description                                                                    |
 |-----------------+------------------------------------------------------+--------------------------------------------------------------------------------|
 | =H-m C-p C-s t= | =M-x psimacs/activate/toggle-smartparens-paren-mode= | Toggle between  [[https://github.com/Fuco1/smartparens][smartparens-mode]] and [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Matching.html#Matching][show-paren-mode]].                          |
@@ -7685,6 +7692,7 @@ Important bindings in a [[https://www.emacswiki.org/emacs/DiredPlus][Dired+]] bu
 
 Some usefule key bindings and commands:
 
+#+attr_html: :class styledtable1
 | Key binding | Command                                      | Description                                                                              |
 |-------------+----------------------------------------------+------------------------------------------------------------------------------------------|
 |             | =M-x diredp-dired-plus-help=                 | Describe [[https://www.emacswiki.org/emacs/DiredPlus][dired+]].                                                                         |
@@ -7755,7 +7763,7 @@ Each *Emacs* frame has a distinct list of [[https://github.com/nex3/perspective-
 Commands are all prefixed by =C-x x= by default. To change the prefix key, customize =persp-mode-prefix-key=.
 Additionally, creating a key binding for =persp-mode-map= will also activate the prefix.
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding     | Command                      | Description                                                                                         |
 |-----------------+------------------------------+-----------------------------------------------------------------------------------------------------|
 | =C-x x=         |                              | Prefix key for all perspective commands.                                                            |
@@ -7833,6 +7841,7 @@ and =M-x abbrev-edit-save-to-file=.
 
 Additionally, =M-x read-abbrev-file= and =M-x write-abbrev-file=.
 
+#+attr_html: :class styledtable1
 | Key binding      | Command                         | Description                                                           |
 |------------------+---------------------------------+-----------------------------------------------------------------------|
 | =H-m C-x C-a=    | =M-x abbrev-mode=               | Enable/Disable abbreviation mode.                                     |
@@ -8121,6 +8130,7 @@ You can make trailing whitespace at the end of a line visible by setting the buf
 =show-trailing-whitespace= to =t=.  Then Emacs displays trailing whitespace, using the face
 =trailing-whitespace=. *Psimacs* disables this feature on default.
 
+#+attr_html: :class styledtable1
 | Key binding | Command                                                                 | Description                                          |
 |-------------+-------------------------------------------------------------------------+------------------------------------------------------|
 | =H-x C-w d= | =M-x psimacs/whitespace/delete-trailing-whitespace=                     | Delete trailing white spaces.                        |
@@ -8376,7 +8386,7 @@ Note that, unlike [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]],
 of point will not be changed, i.e. the same   behavior as that of =other-window=.
 #+end_quote
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding     | Command                               | Description                                                                                                                                                        |
 |-----------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-x o=         | =M-x ace-window=                      | Either =other-window= or easy switching by first character of window label. Swap window with prefix =C-u= and delete selected window with double prefix =C-u C-u=. |
@@ -8724,7 +8734,7 @@ Just define the bookmark file in the =psimacs/config/bookmarks-dir=.
 [[https://github.com/abo-abo/avy][Avy]] is a GNU Emacs package for jumping to visible text using
 a char-based decision tree.
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding     | Command                          | Description                                                                                                                           |
 |-----------------+----------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-s C-a c= | =M-x avy-goto-char=              | Input one char, jump to it with a tree.                                                                                               |
@@ -8808,7 +8818,7 @@ See also:
 - [[http://emacsrocks.com/e13.html][Emacs Rocks: Multiple cursors]]
 - [[http://pragmaticemacs.com/emacs/multiple-cursors/][Multiple cursors]],
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding     | Command                                      | Description                                                                        |
 |-----------------+----------------------------------------------+------------------------------------------------------------------------------------|
 | =H-m H-c e l=   | =M-x mc/edit-lines=                          | Add one cursor to each line of the active region.                                  |
@@ -8893,6 +8903,7 @@ See also:
 - [[http://emacsfodder.github.io/blog/easy-regexp-generation-with-emacs/][Easy Regexp Generation With Emacs]],
 
 Do-what-I-mean" commands:
+#+attr_html: :class styledtable1
 | Key binding | Command                      | Description                                                                      |
 |-------------+------------------------------+----------------------------------------------------------------------------------|
 | =C-c / /=   | =M-x rxt-explain=            | Pop up a buffer with pretty-printed `rx' syntax for the regex at point.          |
@@ -8902,6 +8913,7 @@ Do-what-I-mean" commands:
 |-------------+------------------------------+----------------------------------------------------------------------------------|
 
 Commands that work on a PCRE regexp:
+#+attr_html: :class styledtable1
 | Key binding | Command                         | Description                                                             |
 |-------------+---------------------------------+-------------------------------------------------------------------------|
 | =C-c / p e= | =M-x rxt-pcre-to-elisp=         | Translate PCRE, a regexp in Perl-compatible syntax, to Emacs Lisp.      |
@@ -8912,6 +8924,7 @@ Commands that work on a PCRE regexp:
 |-------------+---------------------------------+-------------------------------------------------------------------------|
 
 Commands that work on an Emacs regexp:
+#+attr_html: :class styledtable1
 | Key binding | Command                    | Description                                                                 |
 |-------------+----------------------------+-----------------------------------------------------------------------------|
 | =C-c / e /= | =M-x rxt-explain-elisp=    | Insert the pretty-printed `rx' syntax for REGEXP in a new buffer.           |
@@ -9007,7 +9020,7 @@ supports both backends. You can configure which one to use with the flag variabl
 If this is set to =t= the [[http://aspell.net/][Aspell]] program will be used.
 
 The following key bindings are defined for the spell checking mode.
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding | Command                                        | Description                                                                                                                                                                                                                                                                                      |
 |-------------+------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-f m= | =M-x flyspell-mode=                            | Minor mode performing on-the-fly spelling checking.                                                                                                                                                                                                                                              |
@@ -9264,7 +9277,7 @@ Correcting misspelled words with flyspell using favourite interface. That is wha
 [[https://languagetool.org][LanguageTool]] provides a [[https://www.java.com][Java]] based spell and grammar checking tool. The [[https://github.com/mhayashi1120/Emacs-langtool][langtool.el]] package gives access to that
 tool.
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding | Command                                    | Description                                                                                                      |
 |-------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------|
 | =H-m C-l b= | =M-x langtool-check-buffer=                | To check current buffer and show warnings. With prefix =C-u= check with different language.                      |
@@ -9389,7 +9402,7 @@ Tools that are useful for searching the Web.
 
 The package [[https://github.com/Malabarba/emacs-google-this][google-this]] provides a set of functions and keybindings for launching google searches from within *Emacs*.
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding     | Command                                     | Description                                                                                                                                                                                                                                                           |
 |-----------------+---------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-m C-x G RET= | =M-x google-this-search=                    | Write and do a google search. Quote argument with PREFIX =C-u=.                                                                                                                                                                                                       |
@@ -9429,6 +9442,7 @@ The [[https://github.com/abo-abo/swiper][Swiper]] package provides with counsel-
 that allows you to interactively search the Web. This command is available through the following
 binding:
 
+#+attr_html: :class styledtable1
 | Key binding     | Command                                        | Description                                                                 |
 |-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
 | =H-m C-s w RET= | =M-x counsel-search=                           | Interactively search the web with counsel.                                  |
@@ -9446,7 +9460,7 @@ The main idea in [[https://github.com/mnewt/counsel-web][counsel-web]] is to not
 to the page you were searching for.
 #+end_quote
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding     | Command                                | Description                                                                                                     |
 |-----------------+----------------------------------------+-----------------------------------------------------------------------------------------------------------------|
 | =H-m C-x C RET= | =M-x counsel-search=                   | Shows search suggestions as you type and visit page in your default browser on =RET=.                           |
@@ -9575,7 +9589,7 @@ See also:
 - [[https://github.com/bbatsov/crux][crux]]
 - [[http://emacsredux.com/blog/2016/01/30/crux/][Emacs Redux: Crux]]
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding       | Command                                                 | Description                                                               |
 |-------------------+---------------------------------------------------------+---------------------------------------------------------------------------|
 | =H-x H-x C-c o=   | =M-x crux-open-with=                                    | Open the currently visited file with an external program.                 |
@@ -9903,6 +9917,7 @@ See also:
 
 Key bindings that related to [[https://github.com/emacs-helm/helm][Helm]]:
 
+#+attr_html: :class styledtable1
 | Key binding     | Command                               | Description                                                                  |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------|
 | =C-x c=         | =M-x helm-command-prefix=             | Prefix key for  [[https://github.com/emacs-helm/helm][Helm]] commands.                                               |
@@ -10070,6 +10085,7 @@ active minor modes, and inactive minor modes using Helm, and provides actions fo
 displays the key bindings following your currently entered incomplete command (a prefix)
 in a popup. IMHO, this package is one of the most useful packages for *Emacs*.
 
+#+attr_html: :class styledtable1
 | Key binding     | Command                                   | Description                                   |
 |-----------------+-------------------------------------------+-----------------------------------------------|
 | =H-m C-u C-w t= | =M-x psimacs/which-key/toggle-sort-order= | Toggle the which-key-mode sort order.         |
@@ -10219,6 +10235,7 @@ See also:
 - [[https://writequit.org/denver-emacs/presentations/2017-04-11-ivy.html][Ivy, Counsel and Swiper]],
 - [[https://oremacs.com/2015/04/09/counsel-completion/][Counsel]]
 
+#+attr_html: :class styledtable1
 | Key binding     | Command                                        | Description                                                                 |
 |-----------------+------------------------------------------------+-----------------------------------------------------------------------------|
 | =C-s=           | =M-x swiper-iseach=                            | A =swiper= that’s not line-based. Incrementally search with an overview.    |
@@ -10416,6 +10433,7 @@ uses [[https://github.com/abo-abo/swiper][ivy]] for completion.
 Counsel takes this further, providing versions of common *Emacs* commands that are customised to make
 the best use of [[https://github.com/abo-abo/swiper][ivy]].
 
+#+attr_html: :class styledtable1
 | Key binding | Command                          | Description                                                              |
 |-------------+----------------------------------+--------------------------------------------------------------------------|
 | =M-x=       | =M-x counsel-M-x=                | Ivy version of =execute-extended-command=.                               |
@@ -10492,6 +10510,7 @@ the best use of [[https://github.com/abo-abo/swiper][ivy]].
 It provides several enhancements over the ordinary =execute-extended-command=, such as prioritizing
 your most-used commands in the completion list and showing keyboard shortcuts.
 
+#+attr_html: :class styledtable1
 | Key binding | Command                         | Description                                                               |
 |-------------+---------------------------------+---------------------------------------------------------------------------|
 | =H-m H-x x= | =M-x amx-major-mode-commands=   | Runs [[https://github.com/DarwinAwardWinner/amx][Amx]], limited to commands that are relevant to the active major mode. |
@@ -10826,6 +10845,7 @@ See also:
 - [[http://www.howardism.org/Technical/Emacs/templates-tutorial.html][Having Emacs Type for You]]
 - [[https://arjanvandergaag.nl/blog/using-yasnippet-in-emacs.html][Using YASnippet in Emacs]]
 
+#+attr_html: :class styledtable1
 | Key binding | Command                                 | Description                                                                                                                                                                                                           |
 |-------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x x=     | =M-x yas-insert-snippet=                | Choose a snippet to expand, popup a list of choices according.                                                                                                                                                        |
@@ -10943,6 +10963,7 @@ YASnippets:
 | =q=          | Quit [[https://github.com/Alexander-Miller/treemacs][treemacs]].               |
 |--------------+------------------------------|
 
+#+attr_html: :class styledtable1
 | Key binding     | Command                             | Description                                                            |
 |-----------------+-------------------------------------+------------------------------------------------------------------------|
 | =H-m C-x C-t=   | =M-x treemacs=                      | Open [[https://github.com/Alexander-Miller/treemacs][treemacs]].                                                         |
@@ -11043,6 +11064,7 @@ See also:
 - [[https://docs.projectile.mx/projectile][Docs]]
 
 Only the basic commands:
+#+attr_html: :class styledtable1
 | Key binding | Command                         | Description                                   |
 |-------------+---------------------------------+-----------------------------------------------|
 | =C-c p f=   | =M-x projectile-find-file=      | Find file in current project                  |
@@ -11053,74 +11075,81 @@ Only the basic commands:
 |-------------+---------------------------------+-----------------------------------------------|
 
 All bound commands:
-| Key binding     | Command                                                        | Description                                                                                                                    |
-|-----------------+----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
-| =C-c p f=       | =M-x projectile-find-file=                                     | Display a list of all files in the project. With a prefix argument it will clear the cache first.Find file in current project. |
-| =C-c p F=       | =M-x projectile-find-file-in-known-projects=                   | Display a list of all files in all known projects.                                                                             |
-| =C-c p g=       | =M-x projectile-find-file-dwim=                                | Display a list of all files at point in the project. With a prefix argument it will clear the cache first.                     |
-| =C-c p 4 f=     | =M-x projectile-find-file-other-window=                        | Jump to a project's file using completion and show it in another window.                                                       |
-| =C-c p 4 g=     | =M-x projectile-find-file-dwim-other-window=                   | Jump to a project's file based on context at point and show it in another window.                                              |
-| =C-c p 5 f=     | =M-x projectile-find-file-other-frame=                         | Jump to a project's file using completion and show it in another frame.                                                        |
-| =C-c p 5 g=     | =M-x projectile-find-file-dwim-other-frame=                    | Jump to a project's file based on context at point and show it in another frame.                                               |
-| =C-c p a=       | =M-x projectile-find-other-file=                               | Switch between files with the same name but different extensions.                                                              |
-| =C-c p 4 a=     | =M-x projectile-find-other-file-other-window=                  | Switch between files with the same name but different extensions in other window.                                              |
-| =C-c p 5 a=     | =M-x projectile-find-other-file-other-frame=                   | Switch between files with the same name but different extensions in other frame.                                               |
-| =C-c p l=       | =M-x projectile-find-file-in-directory=                        | Display a list of all files in a directory (that's not necessarily a project).                                                 |
-| =C-c p e=       | =M-x projectile-recentf=                                       | Shows a list of recently visited project files.                                                                                |
-| =C-c p d=       | =M-x projectile-find-dir=                                      | Display a list of all directories in the project. With a prefix argument it will clear the cache first.                        |
-| =C-c p 4 d=     | =M-x projectile-find-dir-other-window=                         | Switch to a project directory and show it in another window.                                                                   |
-| =C-c p 5 d=     | =M-x projectile-find-dir-other-frame=                          | Switch to a project directory and show it in another frame.                                                                    |
-| =C-c p D=       | =M-x projectile-dired=                                         | Opens the root of the project in dired.                                                                                        |
-| =C-c p 4 D=     | =M-x projectile-dired-other-window=                            | Opens the root of the project in dired in another window.                                                                      |
-| =C-c p 5 D=     | =M-x projectile-dired-other-frame=                             | Opens the root of the project in dired in another frame.                                                                       |
-| =C-c p j=       | =M-x projectile-find-tag=                                      | Find tag in project.                                                                                                           |
-| =C-c p T=       | =M-x projectile-find-test-file=                                | Display a list of all test files(specs, features, etc) in the project.                                                         |
-| =C-c p s g=     | =M-x projectile-grep=                                          | Run grep on the files in the project.                                                                                          |
-| =M-- C-c p s g= |                                                                | Run grep on projectile-grep-default-files in the project.                                                                      |
-| =C-c p v=       | =M-x projectile-vc=                                            | Run vc-dir on the root directory of the project.                                                                               |
-| =C-c p V=       | =M-x projectile-browse-dirty-projects=                         | Browse dirty version controlled projects.                                                                                      |
-| =C-c p I=       | =M-x projectile-ibuffer=                                       | Open an IBuffer window showing all buffers in the current project.                                                             |
-| =C-c p b=       | =M-x projectile-switch-to-buffer=                              | Display a list of all project buffers currently open.                                                                          |
-| =C-c p 4 b=     | =M-x projectile-switch-to-buffer-other-window=                 | Switch to a project buffer and show it in another window.                                                                      |
-| =C-c p 5 b=     | =M-x projectile-switch-to-buffer-other-frame=                  | Switch to a project buffer and show it in another frame.                                                                       |
-| =C-c p 4 C-o=   | =M-x projectile-display-buffer=                                | Display a project buffer in another window without selecting it.                                                               |
-| =C-c p k=       | =M-x projectile-kill-buffer=                                   | Kills all project buffers.                                                                                                     |
-| =C-c p o=       | =M-x projectile-multi-occur=                                   | Runs multi-occur on all project buffers currently open.                                                                        |
-| =C-c p r=       | =M-x projectile-replace=                                       | Runs interactive query-replace on all files in the projects.                                                                   |
-| =C-c p R=       | =M-x projectile-regenerate-tags=                               | Regenerate the project's tags.                                                                                                 |
-| =C-c p s r=     | =M-x projectile-ripgrep=                                       | Run a Ripgrep search with 'SEARCH-TERM' at current root.                                                                       |
-| =C-c p i=       | =M-x projectile-invalidate-cache=                              | Invalidates the project cache (if existing).                                                                                   |
-| =C-c p p=       | =M-x projectile-switch-project=                                | Display a list of known projects you can switch to.                                                                            |
-| =C-c p S=       | =M-x projectile-save-project-buffers=                          | Save all project buffers.                                                                                                      |
-| =C-c p <left>=  | =M-x projectile-previous-project-buffer=                       | Switch to the previous project buffer.                                                                                         |
-| =C-c p <right>= | =M-x projectile-next-project-buffer=                           | Switch to the next project buffer.                                                                                             |
-| =C-c p q=       | =M-x projectile-switch-open-project=                           | Switch to a project we have currently opened.                                                                                  |
-| =C-c p ESC=     | =M-x projectile-project-buffers-other-buffer=                  | Switch to the most recently selected Projectile buffer.                                                                        |
-| =C-c p E=       | =M-x projectile-edit-dir-locals=                               | Opens the root dir-locals-file of the project.                                                                                 |
-| =C-c p s s=     | =M-x projectile-ag=                                            | Runs ag on the project, performing a literal search.                                                                           |
-| =C-c p !=       | =M-x projectile-run-shell-command-in-root=                     | Runs shell-command in the root directory of the project.                                                                       |
-| =C-c p x s=     | =M-x projectile-run-shell=                                     | Invoke 'shell' in the project's root.                                                                                          |
-| =C-c p x v=     | =M-x projectile-run-vterm=                                     | Invoke 'vterm' in the project's root.                                                                                          |
-| =C-c p x e=     | =M-x projectile-run-eshell=                                    | Invoke 'eshell' in the project's root.                                                                                         |
-| =C-c p u=       | =M-x projectile-run-project=                                   | Run project run command.                                                                                                       |
-| =C-c p P=       | =M-x projectile-test-project=                                  | Run project test command.                                                                                                      |
-| =C-c p x g=     | =M-x projectile-run-gdb=                                       | Invoke 'gdb' in the project root.                                                                                              |
-| =C-c p &=       | =M-x projectile-run-async-shell-command-in-root=               | Runs async-shell-command in the root directory of the project.                                                                 |
-| =C-c p C=       | =M-x projectile-configure-project=                             | Runs a standard configure command for your type of project.                                                                    |
-| =C-c p c=       | =M-x projectile-compile-project=                               | Runs a standard compilation command for your type of project.                                                                  |
-| =C-c p L=       | =M-x projectile-install-project=                               | Run project install command.                                                                                                   |
-| =C-c p K=       | =M-x projectile-package-project=                               | Run project package command.                                                                                                   |
-| =C-c p t=       | =M-x projectile-toggle-between-implementation-and-test=       | Toggle between an implementation file and its test file.                                                                       |
-| =C-c p 4 t=     | =M-x projectile-find-implementation-or-test-other-window=      | Jump to implementation or test file in other window.                                                                           |
-| =C-c p 5 t=     | =M-x projectile-find-implementation-or-test-other-frame=       | Jump to implementation or test file in other frame.                                                                            |
-| =C-c p z=       | =M-x projectile-cache-current-file=                            | Adds the currently visited file to the cache.                                                                                  |
-| =C-c p m=       | =M-x projectile-commander=                                     | Execute a Projectile command with a single letter.                                                                             |
-|-----------------+----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
-| =C-c p C-e e c= | =M-x psimacs/projectile/create-projectile-envrc-emscripten=    | Write a =.projectile-envrc= file for [[https://emscripten.org/][Emscripten]] support into the current projectile project root. |
-| =C-c p C-e e d= | =M-x psimacs/projectile/destroy-projectile-envrc-emscripten=   | Remove the .projectile-envrc file for [[https://emscripten.org/][Emscripten]] from the current projectile project root.        |
-|-----------------+----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+#+attr_html: :class styledtable1
+| Key binding     | Command                                                      | Description                                                                                                                    |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p f=       | =M-x projectile-find-file=                                   | Display a list of all files in the project. With a prefix argument it will clear the cache first.Find file in current project. |
+| =C-c p F=       | =M-x projectile-find-file-in-known-projects=                 | Display a list of all files in all known projects.                                                                             |
+| =C-c p g=       | =M-x projectile-find-file-dwim=                              | Display a list of all files at point in the project. With a prefix argument it will clear the cache first.                     |
+| =C-c p 4 f=     | =M-x projectile-find-file-other-window=                      | Jump to a project's file using completion and show it in another window.                                                       |
+| =C-c p 4 g=     | =M-x projectile-find-file-dwim-other-window=                 | Jump to a project's file based on context at point and show it in another window.                                              |
+| =C-c p 5 f=     | =M-x projectile-find-file-other-frame=                       | Jump to a project's file using completion and show it in another frame.                                                        |
+| =C-c p 5 g=     | =M-x projectile-find-file-dwim-other-frame=                  | Jump to a project's file based on context at point and show it in another frame.                                               |
+| =C-c p a=       | =M-x projectile-find-other-file=                             | Switch between files with the same name but different extensions.                                                              |
+| =C-c p 4 a=     | =M-x projectile-find-other-file-other-window=                | Switch between files with the same name but different extensions in other window.                                              |
+| =C-c p 5 a=     | =M-x projectile-find-other-file-other-frame=                 | Switch between files with the same name but different extensions in other frame.                                               |
+| =C-c p l=       | =M-x projectile-find-file-in-directory=                      | Display a list of all files in a directory (that's not necessarily a project).                                                 |
+| =C-c p e=       | =M-x projectile-recentf=                                     | Shows a list of recently visited project files.                                                                                |
+| =C-c p d=       | =M-x projectile-find-dir=                                    | Display a list of all directories in the project. With a prefix argument it will clear the cache first.                        |
+| =C-c p 4 d=     | =M-x projectile-find-dir-other-window=                       | Switch to a project directory and show it in another window.                                                                   |
+| =C-c p 5 d=     | =M-x projectile-find-dir-other-frame=                        | Switch to a project directory and show it in another frame.                                                                    |
+| =C-c p D=       | =M-x projectile-dired=                                       | Opens the root of the project in dired.                                                                                        |
+| =C-c p 4 D=     | =M-x projectile-dired-other-window=                          | Opens the root of the project in dired in another window.                                                                      |
+| =C-c p 5 D=     | =M-x projectile-dired-other-frame=                           | Opens the root of the project in dired in another frame.                                                                       |
+| =C-c p j=       | =M-x projectile-find-tag=                                    | Find tag in project.                                                                                                           |
+| =C-c p T=       | =M-x projectile-find-test-file=                              | Display a list of all test files(specs, features, etc) in the project.                                                         |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p s g=     | =M-x projectile-grep=                                        | Run grep on the files in the project.                                                                                          |
+| =M-- C-c p s g= |                                                              | Run grep on projectile-grep-default-files in the project.                                                                      |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p v=       | =M-x projectile-vc=                                          | Run vc-dir on the root directory of the project.                                                                               |
+| =C-c p V=       | =M-x projectile-browse-dirty-projects=                       | Browse dirty version controlled projects.                                                                                      |
+| =C-c p I=       | =M-x projectile-ibuffer=                                     | Open an IBuffer window showing all buffers in the current project.                                                             |
+| =C-c p b=       | =M-x projectile-switch-to-buffer=                            | Display a list of all project buffers currently open.                                                                          |
+| =C-c p 4 b=     | =M-x projectile-switch-to-buffer-other-window=               | Switch to a project buffer and show it in another window.                                                                      |
+| =C-c p 5 b=     | =M-x projectile-switch-to-buffer-other-frame=                | Switch to a project buffer and show it in another frame.                                                                       |
+| =C-c p 4 C-o=   | =M-x projectile-display-buffer=                              | Display a project buffer in another window without selecting it.                                                               |
+| =C-c p k=       | =M-x projectile-kill-buffer=                                 | Kills all project buffers.                                                                                                     |
+| =C-c p o=       | =M-x projectile-multi-occur=                                 | Runs multi-occur on all project buffers currently open.                                                                        |
+| =C-c p r=       | =M-x projectile-replace=                                     | Runs interactive query-replace on all files in the projects.                                                                   |
+| =C-c p R=       | =M-x projectile-regenerate-tags=                             | Regenerate the project's tags.                                                                                                 |
+| =C-c p s r=     | =M-x projectile-ripgrep=                                     | Run a Ripgrep search with 'SEARCH-TERM' at current root.                                                                       |
+| =C-c p i=       | =M-x projectile-invalidate-cache=                            | Invalidates the project cache (if existing).                                                                                   |
+| =C-c p p=       | =M-x projectile-switch-project=                              | Display a list of known projects you can switch to.                                                                            |
+| =C-c p S=       | =M-x projectile-save-project-buffers=                        | Save all project buffers.                                                                                                      |
+| =C-c p <left>=  | =M-x projectile-previous-project-buffer=                     | Switch to the previous project buffer.                                                                                         |
+| =C-c p <right>= | =M-x projectile-next-project-buffer=                         | Switch to the next project buffer.                                                                                             |
+| =C-c p q=       | =M-x projectile-switch-open-project=                         | Switch to a project we have currently opened.                                                                                  |
+| =C-c p ESC=     | =M-x projectile-project-buffers-other-buffer=                | Switch to the most recently selected Projectile buffer.                                                                        |
+| =C-c p E=       | =M-x projectile-edit-dir-locals=                             | Opens the root dir-locals-file of the project.                                                                                 |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p s s=     | =M-x projectile-ag=                                          | Runs ag on the project, performing a literal search.                                                                           |
+| =C-c p !=       | =M-x projectile-run-shell-command-in-root=                   | Runs shell-command in the root directory of the project.                                                                       |
+| =C-c p x s=     | =M-x projectile-run-shell=                                   | Invoke 'shell' in the project's root.                                                                                          |
+| =C-c p x v=     | =M-x projectile-run-vterm=                                   | Invoke 'vterm' in the project's root.                                                                                          |
+| =C-c p x e=     | =M-x projectile-run-eshell=                                  | Invoke 'eshell' in the project's root.                                                                                         |
+| =C-c p u=       | =M-x projectile-run-project=                                 | Run project run command.                                                                                                       |
+| =C-c p P=       | =M-x projectile-test-project=                                | Run project test command.                                                                                                      |
+| =C-c p x g=     | =M-x projectile-run-gdb=                                     | Invoke 'gdb' in the project root.                                                                                              |
+| =C-c p &=       | =M-x projectile-run-async-shell-command-in-root=             | Runs async-shell-command in the root directory of the project.                                                                 |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p C=       | =M-x projectile-configure-project=                           | Runs a standard configure command for your type of project.                                                                    |
+| =C-c p c=       | =M-x projectile-compile-project=                             | Runs a standard compilation command for your type of project.                                                                  |
+| =C-c p L=       | =M-x projectile-install-project=                             | Run project install command.                                                                                                   |
+| =C-c p K=       | =M-x projectile-package-project=                             | Run project package command.                                                                                                   |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p t=       | =M-x projectile-toggle-between-implementation-and-test=      | Toggle between an implementation file and its test file.                                                                       |
+| =C-c p 4 t=     | =M-x projectile-find-implementation-or-test-other-window=    | Jump to implementation or test file in other window.                                                                           |
+| =C-c p 5 t=     | =M-x projectile-find-implementation-or-test-other-frame=     | Jump to implementation or test file in other frame.                                                                            |
+| =C-c p z=       | =M-x projectile-cache-current-file=                          | Adds the currently visited file to the cache.                                                                                  |
+| =C-c p m=       | =M-x projectile-commander=                                   | Execute a Projectile command with a single letter.                                                                             |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
+| =C-c p C-e e c= | =M-x psimacs/projectile/create-projectile-envrc-emscripten=  | Write a =.projectile-envrc= file for [[https://emscripten.org/][Emscripten]] support into the current projectile project root.                              |
+| =C-c p C-e e d= | =M-x psimacs/projectile/destroy-projectile-envrc-emscripten= | Remove the .projectile-envrc file for [[https://emscripten.org/][Emscripten]] from the current projectile project root.                                     |
+|-----------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------|
 
 Special global commands:
+#+attr_html: :class styledtable1
 | Key binding | Command                                               | Description                                             |
 |-------------+-------------------------------------------------------+---------------------------------------------------------|
 | =C-c p C-n= | =M-x psimacs/projectile/create-empty-projectile-file= | Choose diretory and create an empty '.projectile' file. |
@@ -11238,7 +11267,7 @@ The file is only created if it does not already exist."
 **** projectile-envrc
 
 The package [[https://github.com/hatlafax/projectile-envrc][projectile-envrc]] allows setting, modifying and removing of
-process environment variables from simple 'projectile-envrc' description file that resides in the projectile project
+process environment variables from a simple '.projectile-envrc' description file that resides in the projectile project
 root directory.
 
 The file format for '.projectile-envrc' is quite simple:
@@ -11253,7 +11282,7 @@ considered. Everything else is ignored.
 | =:*=      | Append to the process environment variable.   |
 |-----------------------------------------------------------|
 
-Example:
+Example '.projectile-envrc' file:
 
 #+begin_example
     #
@@ -11277,8 +11306,7 @@ Example:
     ;:straight nil
     :after projectile
     :config
-        (setq projectile-envrc-silenced nil
-              projectile-envrc-verbose  nil)
+        (setq projectile-envrc-silenced nil)
 )
 #+end_src
 
@@ -11286,24 +11314,26 @@ Example:
 
 The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] gives fine grained support of [[https://cmake.org/][CMake]] with Emacs projectile.
 
-#+attr_html: :class styledtable
-| Key binding     | Command                                                        | Description                                                                 |
-|-----------------+----------------------------------------------------------------+-----------------------------------------------------------------------------|
-| =C-c C-p s d=   | =M-x projectile-cmake-select-build-dir=                        | Select the current project build dir.                                       |
-| =C-c C-p s t=   | =M-x projectile-cmake-select-build-type=                       | Select the current project build type.                                      |
-| =C-c C-p s g=   | =M-x projectile-cmake-select-generator=                        | Select the current project configuration generator.                         |
-| =C-c C-p s a=   | =M-x projectile-cmake-select-architecture=                     | Select the current project configuration architecture.                      |
-| =C-c C-p s s=   | =M-x projectile-cmake-select-toolset=                          | Select the current project configuration toolset.                           |
-| =C-c C-p s c=   | =M-x projectile-cmake-select-toolchain=                        | Select the current project configuration toolchain.                         |
-| =C-c C-p s r g= | =M-x projectile-cmake-select-run-file=                         | Select the file that should be run for the project.                         |
-| =C-c C-p s r d= | =M-x projectile-cmake-select-run-file-debug=                   | Select the file that should be run for the debug project.                   |
-| =C-c C-p s r r= | =M-x projectile-cmake-select-run-file-release=                 | Select the file that should be run for the release project.                 |
-| =C-c C-p s r i= | =M-x projectile-cmake-select-run-file-release-with-debug-info= | Select the file that should be run for the release with debug info project. |
-| =C-c C-p s r m= | =M-x projectile-cmake-select-run-file-minimal-size-release=    | Select the file that should be run for the minimal size release project.    |
-| =C-c C-p t d=   | =M-x projectile-cmake-toggle-run-in-build-dir=                 | Toggle the run in build directory flag variable.                            |
-|-----------------+----------------------------------------------------------------+-----------------------------------------------------------------------------|
-| =C-c C-p h=     | =M-x hydra-projectile-cmake/body=                              | Hydra for projectile-cmake.                                                 |
-|-----------------+----------------------------------------------------------------+-----------------------------------------------------------------------------|
+#+attr_html: :class styledtable1
+| Key binding     | Command                                                        | Description                                                                                 |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------|
+| =C-c C-p s C=   | =M-x projectile-cmake-select-configuration=                    | Select the cmake configuration data. Convenience function calling other /select/ functions. |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------|
+| =C-c C-p s d=   | =M-x projectile-cmake-select-build-dir=                        | Select the current project build dir.                                                       |
+| =C-c C-p s t=   | =M-x projectile-cmake-select-build-type=                       | Select the current project build type.                                                      |
+| =C-c C-p s g=   | =M-x projectile-cmake-select-generator=                        | Select the current project configuration generator.                                         |
+| =C-c C-p s a=   | =M-x projectile-cmake-select-architecture=                     | Select the current project configuration architecture.                                      |
+| =C-c C-p s s=   | =M-x projectile-cmake-select-toolset=                          | Select the current project configuration toolset.                                           |
+| =C-c C-p s c=   | =M-x projectile-cmake-select-toolchain=                        | Select the current project configuration toolchain.                                         |
+| =C-c C-p s r g= | =M-x projectile-cmake-select-run-file=                         | Select the file that should be run for the project.                                         |
+| =C-c C-p s r d= | =M-x projectile-cmake-select-run-file-debug=                   | Select the file that should be run for the debug project.                                   |
+| =C-c C-p s r r= | =M-x projectile-cmake-select-run-file-release=                 | Select the file that should be run for the release project.                                 |
+| =C-c C-p s r i= | =M-x projectile-cmake-select-run-file-release-with-debug-info= | Select the file that should be run for the release with debug info project.                 |
+| =C-c C-p s r m= | =M-x projectile-cmake-select-run-file-minimal-size-release=    | Select the file that should be run for the minimal size release project.                    |
+| =C-c C-p t d=   | =M-x projectile-cmake-toggle-run-in-build-dir=                 | Toggle the run in build directory flag variable.                                            |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------|
+| =C-c C-p h=     | =M-x hydra-projectile-cmake/body=                              | Hydra for projectile-cmake.                                                                 |
+|-----------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-projectile.el
 ;;
@@ -11792,6 +11822,7 @@ See also:
 - [[http://www.winpaw.com/Else/][Additional Emacs Language Sensitive Editor (ELSE) templates]]
 - [[https://github.com/peter-milliken/ELSE/blob/master/else.pdf][Else Documentation]]
 
+#+attr_html: :class styledtable1
 | Key binding   | Command                              | Description                                                            |
 |---------------+--------------------------------------+------------------------------------------------------------------------|
 | =H-e=         | =M-x else-expand=                    | Expand the placeholder or any preceeding abbreviation at point.        |
@@ -14384,10 +14415,10 @@ If its assigned to a key it saves you marking the text and copying to the killri
 )
 #+end_src
 
-**** Functions for generating /Keybinding, Command, Description/ tables.
+**** Functions for generating /Key binding, Command, Description/ tables.
 
 In order to document the keybindings used in this configuration tables are used that
-have three columns, namely =Keybinding=, =Command= and =Description=.
+have three columns, namely =Key binding=, =Command= and =Description=.
 
 Function =psimacs/org/table-create-preamble-keybinding-command-description= starts a new tabel of
 that kind.
@@ -14410,11 +14441,11 @@ but always appends to the end of the table.
         ;; Support for writing this configuration file.
         ;;
         (defun psimacs/org/table-create-preamble-keybinding-command-description ()
-          "This function creates a three column table with header 'Keybinding', 'Command' and 'Description'."
+          "This function creates a three column table with header 'Key binding', 'Command' and 'Description'."
           (interactive)
           (with-current-buffer (current-buffer)
-            (insert "| Keybinding | Command | Description |\n")
-            (insert "|------------+---------+-------------|\n")))
+            (insert "| Key binding | Command | Description |\n")
+            (insert "|-------------+---------+-------------|\n")))
 
         (defun psimacs/org/table-insert-row-keybinding-command-description (&optional arg)
           "This function inserts a three column row template above the current line into the table.
@@ -14469,13 +14500,13 @@ The current table is the active table or the last table above point.
 )
 #+end_src
 
-**** Keybindings used for org mode.
+**** Key bindings used for org mode.
 
 In this section the keybinds for the *Psimacs* [[https://code.orgmode.org/bzg/org-mode][org-mode]] configuration are defined.
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
-;; Keybindings for org-mode
+;; Key bindings for org-mode
 ;;
 (use-package org
     :straight nil
@@ -14555,10 +14586,10 @@ of a page found by the URL into the current buffer.
 
 See also: [[https://github.com/rexim/org-cliplink][org-cliplink]]
 
-| Keybinding | Command            | Description                               |
-|------------+--------------------+-------------------------------------------|
-| =C-x p i=  | =M-x org-cliplink= | Insert [[https://orgmode.org][org-mode]] links from the clipboard. |
-|------------+--------------------+-------------------------------------------|
+| Key binding | Command            | Description                               |
+|-------------+--------------------+-------------------------------------------|
+| =C-x p i=   | =M-x org-cliplink= | Insert [[https://orgmode.org][org-mode]] links from the clipboard. |
+|-------------+--------------------+-------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
@@ -14592,19 +14623,19 @@ to =M-<TAB>=.
 
 [[https://orgmode.org/manual/Structure-Templates.html][Org tempo]] reimplements completions of structure template before point.
 
-| Keybinding | Description                             |
-|------------+-----------------------------------------|
-| =<﻿a <tab>= | =#+begin_export ascii ... #+end_export= |
-| =<c <tab>= | =#+begin_center ... #+end_center=       |
-| =<C <tab>= | =#+begin_comment ... #+end_comment=     |
-| =<e <tab>= | =#+begin_example ... #+end_example=     |
-| =<E <tab>= | =#+begin_export ... #+end_export=       |
-| =<h <tab>= | =#+begin_export html ... #+end_export=  |
-| =<l <tab>= | =#+begin_export latex ... #+end_export= |
-| =<q <tab>= | =#+begin_quote ... #+end_quote=         |
-| =<s <tab>= | =#+begin_src ... #+end_src=             |
-| =<v <tab>= | =#+begin_verse ... #+end_verse=         |
-|------------+-----------------------------------------|
+| Key binding | Description                             |
+|-------------+-----------------------------------------|
+| =<﻿a <tab>=  | =#+begin_export ascii ... #+end_export= |
+| =<c <tab>=  | =#+begin_center ... #+end_center=       |
+| =<C <tab>=  | =#+begin_comment ... #+end_comment=     |
+| =<e <tab>=  | =#+begin_example ... #+end_example=     |
+| =<E <tab>=  | =#+begin_export ... #+end_export=       |
+| =<h <tab>=  | =#+begin_export html ... #+end_export=  |
+| =<l <tab>=  | =#+begin_export latex ... #+end_export= |
+| =<q <tab>=  | =#+begin_quote ... #+end_quote=         |
+| =<s <tab>=  | =#+begin_src ... #+end_src=             |
+| =<v <tab>=  | =#+begin_verse ... #+end_verse=         |
+|-------------+-----------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
 (use-package org-tempo
@@ -16907,7 +16938,7 @@ _q_: quit_
 
 Additional key bindings for *Psimacs*:
 
-#+attr_html: :class styledtable
+#+attr_html: :class styledtable1
 | Key binding       | Command                                                        | Description                                                                                       |
 |-------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------|
 | =C-TAB=           | =M-x psimacs/buffer/next-user-buffer=                          | Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.     |
