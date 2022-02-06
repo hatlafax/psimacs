@@ -2554,7 +2554,7 @@ Most important commands taken from
 
 *** Installed msys2/mingw64 packages
 
-The following is the list of my currently installed packages. It is generated with the command =pacman -Qe=. 
+The following is the list of my currently installed packages. It is generated with the command =pacman -Qe=.
 I will update this list from time to time.
 
 #+begin_example
@@ -2913,6 +2913,7 @@ This is pretty ugly, but different python installation might be in use on differ
           (py3-8-5 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python385"))
           (py3-9   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python39"))
           (py3-9-6 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python396"))
+          (py3-9-9 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python399"))
           (py3-10  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python310"))
           (py3-11  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python311"))
           (py3-12  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python312"))
@@ -2925,6 +2926,7 @@ This is pretty ugly, but different python installation might be in use on differ
                   ((file-exists-p py3-10 ) py3-10)
                   ((file-exists-p py3-9  ) py3-9)
                   ((file-exists-p py3-9-6) py3-9-6)
+                  ((file-exists-p py3-9-9) py3-9-9)
                   ((file-exists-p py3-8  ) py3-8)
                   ((file-exists-p py3-8-5) py3-8-5)
             ))
@@ -3237,6 +3239,32 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
   "The psimacs used cmake-format runtime.")
 #+end_src
 
+** B2 - Boost Build
+
+[[https://www.bfgroup.xyz/b2/][B2]] makes it easy to build C++ projects, everywhere.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; B2 tool configuration constants
+;;
+(defconst psimacs/config/b2-root-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "b2")
+  "The psimacs b2 root directory.")
+
+(defconst psimacs/config/b2-runtime-dir
+  (psimacs/file-system/concat-directory psimacs/config/b2-root-dir "bin")
+  "The psimacs b2 runtime directory.")
+
+(defconst psimacs/config/b2-runtime-exe
+  (psimacs/file-system/concat-file psimacs/config/b2-runtime-dir "b2.exe")
+  "The psimacs b2 runtime file.")
+2
+(defconst psimacs/config/b2-share-dir
+  (psimacs/file-system/concat-directory psimacs/config/b2-root-dir "share")
+  "The psimacs b2 share directory.")
+#+end_src
+
+
 ** Clang/LLVM
 
 [[https://clang.llvm.org/][Clang]] can be used for compiling and linking [[https://en.wikipedia.org/wiki/C%2B%2B][C++]] programs.
@@ -3346,7 +3374,7 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 
 #+begin_src emacs-lisp :tangle config/init-constants.el
 ;;
-;; CMake tool configuration constants
+;; Projectile tool configuration constants
 ;;
 (defconst psimacs/config/projectile-dir
   psimacs/config/session-dir
@@ -3496,7 +3524,7 @@ trust on TLS connections.
 (setq tls-checktrust t)
 #+end_src
 
-*Emacs* is now no able to fetch HTTPS anymore! Emacs does not distribute trust root certificates.
+*Emacs* is now not able to fetch HTTPS anymore! Emacs does not distribute trust root certificates.
 We have to solve this problem. The [[https://www.python.org/][Python]] package [[https://pypi.org/project/certifi/][certifi]] /provides Mozilla's carefully curated collection of
 Root Certificates for validating the trustworthiness of SSL certificates while verifying the identity of TLS hosts./
 The [[https://www.python.org/][Python]] package [[https://pypi.org/project/certifi/][certifi]] should be installed by =pip install certifi=. The following [[https://gitlab.com/DiegoVicente/my-emacs/-/tree/master/][code snippet from Diego Vicente]]
@@ -9951,6 +9979,33 @@ The user will be prompted to choose a directory starting with 'directory-to-star
           ))
         selected-directory)
 )
+
+(defun psimacs/file-system/choose-directory-with-create (directory-to-start-in)
+    "Return a directory chosen by the user.
+The user will be prompted to choose a directory starting with 'directory-to-start-in'.
+Choosen direcetories that do not already exists are created.
+"
+    (let* ((ivy-read-prompt "Choose directory: ")
+         (counsel--find-file-predicate #'file-directory-p)
+         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
+         (default-directory directory-to-start-in)
+         (selected-directory
+            (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
+          ))
+        selected-directory)
+)
+
+(defun psimacs/file-system/find-file (directory-to-start-in)
+    "Return a file chosen by the user.
+The user will be prompted to choose a directory starting with 'directory-to-start-in'"
+    (let* ((ivy-read-prompt "Find file: ")
+         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
+         (default-directory directory-to-start-in)
+         (selected-file
+          (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
+          ))
+        selected-file)
+)
 #+end_src
 
 *** Rename file and buffer
@@ -11470,6 +11525,36 @@ The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] g
         (setq projectile-emcmake-executable         psimacs/config/emscripten-emcmake-exe)
         (setq projectile-cmake-clang-c-executable   psimacs/config/clang-c-compiler-runtime-exe)
         (setq projectile-cmake-clang-c++-executable psimacs/config/clang-c++-compiler-runtime-exe)
+)
+#+end_src
+
+**** projectile-b2
+
+The package [[https://github.com/hatlafax/projectile-b2][projectile-b2]] gives fine grained support of [[https://www.bfgroup.xyz/b2/][B2]] with Emacs projectile.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-projectile.el
+;;
+;; Configure the projectile-cmake package
+;;
+(use-package projectile-b2
+    :diminish projectile-b2-mode
+    ;:straight (projectile-b2 :host github :repo "hatlafax/projectile-b2")
+    :straight nil
+    :bind (
+            :map projectile-b2-mode-map
+                ("C-c C-p" . projectile-b2-command-map)
+            :map projectile-b2-command-map
+                ("h" . hydra-projectile-b2/body)
+            :map psimacs/config/global-key-map/hydra
+                ("C-p" . hydra-projectile-b2/body)
+          )
+    :hook (projectile-mode . projectile-b2-global-mode)
+    :init
+        (setq projectile-b2-boost-build (psimacs/file-system/concat-directory psimacs/config/b2-share-dir "boost-build/src/kernel"))
+        (setq projectile-b2-place-site-config-into-home t)
+        ;(setq projectile-b2-root-file "Jamroot.jam")
+        ;(setq projectile-b2-jamfile "Jamfile.jam")
+        (setq projectile-b2-executable psimacs/config/b2-runtime-exe)
 )
 #+end_src
 
@@ -15866,7 +15951,6 @@ Easy way to duplicate a line and, optionally, comment-out the first one."
 #+end_src
 
 ** Convert
-
 *** dos -> unix
 
 #+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
@@ -15897,28 +15981,7 @@ Convert buffer from Unix end of lines to Dos end of lines."
 )
 #+end_src
 
-*** File system
-
-**** Choose directory
-
-#+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
-;;
-;; File system functions
-;;
-(defun psimacs/file-system/choose-directory (directory-to-start-in)
-    "Return a directory chosen by the user.
-The user will be prompted to choose a directory starting with 'directory-to-start-in'"
-    (let* ((ivy-read-prompt "Choose directory: ")
-         (counsel--find-file-predicate #'file-directory-p)
-         (default-directory directory-to-start-in)
-         (selected-directory
-            (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
-          ))
-        selected-directory)
-)
-#+end_src
-
-*** dir-locals
+** dir-locals
 
 #+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
 (defun psimacs/dir-locals/reload-for-current-buffer ()
@@ -15943,7 +16006,7 @@ The user will be prompted to choose a directory starting with 'directory-to-star
 )
 #+end_src
 
-*** Miscellaneous
+** Miscellaneous
 
 **** Count words
 
@@ -16261,6 +16324,36 @@ psimacs/config/sphinx/builder and psimacs/config/sphinx/html-theme.
       (psimacs/sphinx/build (concat (file-name-sans-extension (buffer-file-name)) ".rst"))
     )
 )
+#+end_src
+
+** Processes
+Some convenience functions for calling extern processes.
+
+*** Run Python Code
+
+Call Python script and insert result into current buffer at point.
+
+#+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+;;
+;; Run a python script
+;;
+(defun psimacs/python/run-script (py-script &rest args)
+  "Exexute the given python script and insert the result in the active buffer at point.
+
+The given python script is not found on the file system it is expected to be given relative
+to the site-lisp directory.
+
+Any number of arguments can be provided in addition to the script path.
+
+The printed result of script execution is inserted at point of the currently active buffer.
+"
+  (let ((script py-script))
+    (unless (file-exists-p script)
+      (setq script (psimacs/file-system/concat-file psimacs/config/site-lisp-dir script)))
+
+    (when (file-exists-p script)
+      (apply #'call-process psimacs/config/python-runtime-exe nil t t script args)
+      )))
 #+end_src
 
 * Hydras

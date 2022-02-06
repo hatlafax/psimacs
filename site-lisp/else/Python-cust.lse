@@ -1,4 +1,4 @@
-;; Copyright (C) 2020-2021 Johannes Brunen
+1;; Copyright (C) 2020-2021 Johannes Brunen
 ;;
 ;; Author: Johannes Brunen <hatlafax@gmx.de>
 ;;
@@ -42,6 +42,57 @@ DEFINE PLACEHOLDER ", IDENTIFIER"
   /TYPE=NONTERMINAL
 
   ", {identifier}"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TEST_FUNCTION_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST_FUNCTION_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=10
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid function name for the test. Prefix test is automatically added."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TEST_MODULE_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST_MODULE_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=10
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a module name to test."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER TEST_CLASS_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST_CLASS_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=10
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a class name to test."
 
 END DEFINE
 
@@ -98,6 +149,76 @@ END DEFINE
 DELETE PLACEHOLDER COMPILATION_UNIT
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER COMPILATION_UNIT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "module_compilation_unit"/PLACEHOLDER
+    "unittest_compilation_unit"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER UNITTEST_COMPILATION_UNIT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER UNITTEST_COMPILATION_UNIT
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[hashbang_line]"
+    "[license]"
+    """"Unit test for module {test_module_name}."
+
+    "[text]..."
+    """""
+    ""
+    "import unittest"
+    "from {test_module_name} import {test_class_name}"
+    "[import_stmt]..."
+    ""
+    "class {test_class_name}Test(unittest.TestCase):"
+    "  """Unit test of class {test_class_name} from module {test_module_name}."
+
+    "  [text]..."
+    "  """"
+    "  [classdef]..."
+    "  __verbose: bool = False"
+    "  [class_variables]..."
+    "  [init_def]"
+    ""
+    "  def setUp(self) -> None:"
+    "    [document_string]"
+    "    if self.__verbose: print("running setUp of {test_class_name}Test ...")"
+    "    [statement]..."
+    ""
+    "  def tearDown(self) -> None:"
+    "    [document_string]"
+    "    if self.__verbose: print("running tearDown of {test_class_name}Test ...")"
+    "    [statement]..."
+    ""
+    "  [unittest_funcdef]..."
+    "  [class_funcdef]..."
+    ""
+    "[statement]..."
+    ""
+    "if __name__ == '__main__':"
+    "  unittest.main()"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER MODULE_COMPILATION_UNIT
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER MODULE_COMPILATION_UNIT
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -1798,7 +1919,34 @@ DEFINE PLACEHOLDER CLASS_FUNCDEF
     "def {identifier}(self, [defparameter]...)[ -> {type_hint}]:"
     "  [document_string]"
     "  {statement}..."
-    " "
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER UNITTEST_FUNCDEF
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER UNITTEST_FUNCDEF
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Function definition when within a class"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "def test_{test_function_name}(self) -> None:"
+    "  [document_string]"
+    "  if self.__verbose: print("running unit test {test_function_name} ...")"
+    "  [statement]..."
+    ""
+    "  self.addCleanup(self.clean_test_{test_function_name}, [parameter]...)"
+    ""
+    "def clean_test_{test_function_name}(self, [defparameter]...) -> None:"
+    "  [document_string]"
+    "  if self.__verbose: print("running clean_test_{test_function_name} added by unit test {test_function_name} ...")"
+    "  [statement]..."
+    ""
 
 END DEFINE
 
@@ -2030,125 +2178,6 @@ DEFINE PLACEHOLDER TEST-TRANSFORM
 END DEFINE
 
 
-DELETE PLACEHOLDER TEST-1
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER TEST-1
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /BEFORE=test-before
-    /AFTER=test-after
-    /TYPE=NONTERMINAL
-
-    "[test-before-after]"
-
-END DEFINE
-
-
-        DELETE PLACEHOLDER HTMLCONTENT
-            /LANGUAGE="Python"
-        DEFINE PLACEHOLDER HTMLCONTENT
-            /LANGUAGE="Python"
-            /NOAUTO_SUBSTITUTE
-            /DESCRIPTION=""
-            /DUPLICATION=CONTEXT_DEPENDENT
-            /SEPARATOR=" "
-            /TYPE=NONTERMINAL
-
-            "[htmlChardata] [HTMLCONTENT_GROUP_1]..."
-
-        END DEFINE
-
-        DELETE PLACEHOLDER HTMLCONTENT_GROUP_1
-            /LANGUAGE="Python"
-        DEFINE PLACEHOLDER HTMLCONTENT_GROUP_1
-            /LANGUAGE="Python"
-            /NOAUTO_SUBSTITUTE
-            /DESCRIPTION=" "
-            /DUPLICATION=CONTEXT_DEPENDENT
-            /SEPARATOR=" "
-            /TYPE=NONTERMINAL
-
-            "{htmlcontent_group_2} [htmlChardata]"
-
-        END DEFINE
-
-        DELETE PLACEHOLDER HTMLCONTENT_GROUP_2
-            /LANGUAGE="Python"
-        DEFINE PLACEHOLDER HTMLCONTENT_GROUP_2
-            /LANGUAGE="Python"
-            /NOAUTO_SUBSTITUTE
-            /DESCRIPTION=" "
-            /DUPLICATION=CONTEXT_DEPENDENT
-            /SEPARATOR=" "
-            /TYPE=MENU
-
-            "htmlElement"/PLACEHOLDER
-            "{xhtmlCDATA}"
-            "htmlComment"/PLACEHOLDER
-
-        END DEFINE
-
-DELETE PLACEHOLDER HTMLCHARDATA
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER HTMLCHARDATA
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=" "
-    /TYPE=TERMINAL
-
-    "Enter a valid htmlChardata"
-
-END DEFINE
-
-DELETE PLACEHOLDER HTMLELEMENT
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER HTMLELEMENT
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=" "
-    /TYPE=TERMINAL
-
-    "Enter a valid htmlElement"
-
-END DEFINE
-
-DELETE PLACEHOLDER XHTMLCDATA
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER XHTMLCDATA
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=" "
-    /TYPE=TERMINAL
-
-    "Enter a valid xHTMLCDATA"
-
-END DEFINE
-
-DELETE PLACEHOLDER HTMLComment
-    /LANGUAGE="Python"
-DEFINE PLACEHOLDER HTMLComment
-    /LANGUAGE="Python"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=" "
-    /TYPE=TERMINAL
-
-    "Enter a valid htmlComment"
-
-END DEFINE
-
-
-
 DELETE PLACEHOLDER TEST1
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER TEST1
@@ -2157,9 +2186,74 @@ DEFINE PLACEHOLDER TEST1
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
+    /BEFORE=test-before
+    /AFTER=test-after
     /TYPE=NONTERMINAL
 
-    "{(','variableDeclaration)}..."
+    "Hello Joe"
+
+END DEFINE
+
+DELETE PLACEHOLDER TEST2
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST2
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /AFTER=test-after-with-char-removal
+    /TYPE=NONTERMINAL
+
+    ;; In case for solely inserttion of generated text by the /AFTER function
+    ;; it will not work to give an empty terminal string. This leads to reinsertion
+    ;; of the placeholder and is typically not what you want to achieve.
+    ;; For that reason we provide a dummy terminal character  and delete that character
+    ;; in the /AFTER functino. Not perfect but should work.
+
+    "-"
+
+END DEFINE
+
+DELETE PLACEHOLDER TEST3
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST3
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /AFTER=run-python-script-test3
+    /TYPE=NONTERMINAL
+
+    ;; In case for solely inserttion of generated text by the /AFTER function
+    ;; it will not work to give an empty terminal string. This leads to reinsertion
+    ;; of the placeholder and is typically not what you want to achieve.
+    ;; For that reason we provide a dummy terminal character  and delete that character
+    ;; in the /AFTER functino. Not perfect but should work.
+
+    "-"
+
+END DEFINE
+
+DELETE PLACEHOLDER TEST4
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER TEST4
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /AFTER=run-python-script-test4
+    /TYPE=NONTERMINAL
+
+    ;; In case for solely inserttion of generated text by the /AFTER function
+    ;; it will not work to give an empty terminal string. This leads to reinsertion
+    ;; of the placeholder and is typically not what you want to achieve.
+    ;; For that reason we provide a dummy terminal character  and delete that character
+    ;; in the /AFTER functino. Not perfect but should work.
+
+    "-"
 
 END DEFINE
 
