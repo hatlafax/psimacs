@@ -9980,26 +9980,10 @@ The user will be prompted to choose a directory starting with 'directory-to-star
         selected-directory)
 )
 
-(defun psimacs/file-system/choose-directory-with-create (directory-to-start-in)
-    "Return a directory chosen by the user.
-The user will be prompted to choose a directory starting with 'directory-to-start-in'.
-Choosen direcetories that do not already exists are created.
-"
-    (let* ((ivy-read-prompt "Choose directory: ")
-         (counsel--find-file-predicate #'file-directory-p)
-         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
-         (default-directory directory-to-start-in)
-         (selected-directory
-            (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
-          ))
-        selected-directory)
-)
-
 (defun psimacs/file-system/find-file (directory-to-start-in)
     "Return a file chosen by the user.
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Find file: ")
-         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
          (default-directory directory-to-start-in)
          (selected-file
           (ivy-read ivy-read-prompt #'read-file-name-internal :matcher #'counsel--find-file-matcher)
