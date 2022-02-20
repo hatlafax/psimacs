@@ -173,7 +173,7 @@ def Generate(cache_dir, template_dirs, python_module = False, pickle_file = None
         print(f"Input data {data_copy} are invalid.")
         exit(1)
 
-    print(container)
+    #print(container)
 
     generate_files(lookup, container)
 

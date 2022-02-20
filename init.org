@@ -2202,6 +2202,18 @@ Template =.lse=-files of the [[https://github.com/peter-milliken/ELSE][Emacs Lan
 (defconst psimacs/config/else-esl-dir
   (psimacs/file-system/concat-directory psimacs/config/session-dir "else")
   "The psimacs else esl directory.")
+
+(defconst psimacs/config/else-extension-dir
+  (psimacs/file-system/concat-directory psimacs/config/else-lse-dir "extensions")
+  "The psimacs else extension directory.")
+
+(defconst psimacs/config/else-python-dir
+  (psimacs/file-system/concat-directory psimacs/config/else-lse-dir "python")
+  "The psimacs else python directory.")
+
+(defconst psimacs/config/else-mako-template-dir
+  (psimacs/file-system/concat-directory psimacs/config/else-python-dir "mako")
+  "The psimacs else python mako template directory.")
 #+end_src
 
 ** Emacs client/server
@@ -2942,6 +2954,14 @@ This is pretty ugly, but different python installation might be in use on differ
 (defconst psimacs/config/python-scripts-dir
   (psimacs/file-system/concat-directory psimacs/config/python-runtime-dir "Scripts")
   "The psimacs used python scripts directory.")
+
+(defconst psimacs/config/python-extensions-dir
+  (psimacs/file-system/concat-directory psimacs/config/site-lisp-dir "python")
+  "The psimacs python exctensions scripts directory.")
+
+(defconst psimacs/config/python-mako-cache-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "mako-cache")
+  "The python mako template cache directory used by psimacs.")
 
 (defconst psimacs/config/python-runtime-exe
   (psimacs/file-system/concat-file psimacs/config/python-runtime-dir "python.exe")
@@ -9923,13 +9943,13 @@ from a given list of items.
 ;;
 ;; User interface functions
 ;;
-(defun psimacs/ui/internal/select-from-item-list (prompt given-list &optional index)
+(defun psimacs/ui/internal/select-from-item-list (prompt given-list &optional index require-match)
     "Select item from list GIVEN-LIST.
 This function simply delegates to ivy-read.
 "
     (if (= 1 (length given-list))
         (car given-list)
-        (ivy-read prompt given-list :require-match t :preselect index)
+        (ivy-read prompt given-list :require-match require-match :preselect index)
     )
 )
 #+end_src
@@ -12039,7 +12059,7 @@ See also:
 #+begin_src emacs-lisp :tangle config/init-advanced-else-mode.el :var file-description="Advanced else-mode setup"
 (use-package else-mode
     :diminish (else-mode else-template-mode)
-    ;straight nil
+    ;:straight nil
     ;:straight (else :host github :repo "hatlafax/ELSE" :branch "feature/fix-menu-redirection" :build (:not compile))
     :straight (else :host github :repo "hatlafax/ELSE" :build (:not compile))
     ;:straight (else :host github :repo "peter-milliken/ELSE" :branch "beforeafter" :build (:not compile))
@@ -12078,6 +12098,9 @@ See also:
         (when (file-directory-p psimacs/config/else-lse-pkg-dir)
           (add-to-list 'load-path psimacs/config/else-lse-pkg-dir))
 
+        (when (file-directory-p psimacs/config/else-extension-dir)
+          (add-to-list 'load-path psimacs/config/else-extension-dir))
+
     :config
         (unless (file-directory-p psimacs/config/else-esl-dir)
           (make-directory psimacs/config/else-esl-dir t))
@@ -12105,6 +12128,12 @@ This derivation of the else-compile-buffer function additionally saves the point
         (define-key else-menu-mode-map (kbd "C-p") 'popup-previous)
 
         (require 'else-template-mode)
+
+        (when (and (file-directory-p psimacs/config/else-extension-dir)
+                   (file-exists-p (psimacs/file-system/concat-file psimacs/config/else-extension-dir "else-placeholder-extensions.el"))
+              )
+            (require 'else-placeholder-extensions)
+        )
 
         (when (and (file-directory-p psimacs/config/work-lisp-dir)
                    (file-exists-p (psimacs/file-system/concat-file psimacs/config/work-lisp-dir "else-test-functions.el"))
@@ -16333,9 +16362,15 @@ The printed result of script execution is inserted at point of the currently act
 "
   (let ((script py-script))
     (unless (file-exists-p script)
-      (setq script (psimacs/file-system/concat-file psimacs/config/site-lisp-dir script)))
+        (setq script (psimacs/file-system/concat-file psimacs/config/python-extensions-dir script))
+
+        (unless (file-exists-p script)
+            (setq script (psimacs/file-system/concat-file psimacs/config/site-lisp-dir script))
+        )
+    )
 
     (when (file-exists-p script)
+      (message script args)
       (apply #'call-process psimacs/config/python-runtime-exe nil t t script args)
       )))
 #+end_src
