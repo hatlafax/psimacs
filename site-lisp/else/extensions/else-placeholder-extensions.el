@@ -35,6 +35,7 @@
                                                                      ) 2 t))
            (python-module  (read-string "Enter the python module to be tested: " ))
            (python-class   (read-string (format "Enter the class name of module %s: " python-module) ))
+           (python-function(read-string "Optionally, enter the comma or space separated list of test function names: " ))
            (comment-str    "##")
 
            ;;
@@ -54,6 +55,7 @@
                                                        :copyright_license  ,copyright-license
                                                        :python_module      ,python-module
                                                        :python_class       ,python-class
+                                                       :python_function    ,(split-string python-function "\\s-*,\\s-*\\|\\s-+" t)
                                                        :comment_str        ,comment-str
                                                       )
                                       )
