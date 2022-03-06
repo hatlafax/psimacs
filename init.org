@@ -2895,7 +2895,7 @@ are to be installed into the following directory.
 
 Installation of the following packages is recommended: autopep8, autoflake, black, certifi, cmake-language-server, flake8,
 ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
-pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy antlr4-python3-runtime.
+pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy antlr4-python3-runtime, pyqt5, PyQtWebEngine, epc.
 
 If using [[https://www.sphinx-doc.org/en/master/][Sphinx]] with a non default contrib theme or extension, additional =pip= installation might be necessary.
 
@@ -4545,6 +4545,16 @@ References:
 ** Look and feel
 
 Explicit user interface setup, like look and feel or theming.
+
+
+*** Killing processes and leaving Emacs
+
+Avoid annoying confirmation queries about killing running processes on exiting Emacs.
+
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el :var file-description="Basic user interface setup"
+(setq confirm-kill-processes nil)
+#+end_src
 
 *** Basic user interface
 
@@ -12060,9 +12070,16 @@ See also:
 (use-package else-mode
     :diminish (else-mode else-template-mode)
     ;:straight nil
+    ;:load-path "./work-lisp/ELSE"
     ;:straight (else :host github :repo "hatlafax/ELSE" :branch "feature/fix-menu-redirection" :build (:not compile))
     :straight (else :host github :repo "hatlafax/ELSE" :build (:not compile))
     ;:straight (else :host github :repo "peter-milliken/ELSE" :branch "beforeafter" :build (:not compile))
+    :defines (else-fast-load-directory
+              else-kill-proceed-to-next-placeholder
+              else-only-proceed-within-window
+              else-menu-linking-default
+              else-menu-mode-map
+             )
     :commands (else-mode
                else-compile-buffer
                else-template-mode
@@ -12263,6 +12280,130 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
             ("l" imagex-sticky-rotate-left      "rotate left" :column "Rotate")
             ("q" nil "quit" :color blue :column "Save")
         )
+)
+#+end_src
+
+** Emacs Application Framework
+
+The package [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] provides a free/libre and open-source extensible framework that
+revolutionizes the graphical capabilities of Emacs, the key to ultimately Live in Emacs.
+
+#+begin_quote
+The vision of the Emacs Application Framework (EAF) project is that, while fully retaining
+the rich history, culture and ecosystem of Emacs and Emacs Lisp, to open up completely new
+doors to the ecosystems of Python, Qt5, and even JavaScript. EAF extends Emacs to the
+world of modern graphics, but still preserving the extensibility and customizability of
+Emacs, it will be the key to ultimately Live in Emacs.
+#+end_quote
+
+
+#+begin_src emacs-lisp :tangle config/init-advanced-image+-mode.el :var file-description="Advanced eaf-mode setup"
+(defun my-eaf-install-deps(app-dir)
+  "Install deps from dependencies.json."
+  (let* ((deps-dict (with-temp-buffer
+                      (insert-file-contents (expand-file-name "dependencies.json" app-dir))
+                      (json-parse-string (buffer-string))))
+         (pip-deps    (gethash "win32" (or (gethash "pip" deps-dict) (make-hash-table))))
+         (vue-install (gethash "vue_install" deps-dict))
+         (npm-install (gethash "npm_install" deps-dict))
+         (npm-rebuild (gethash "npm_rebuild" deps-dict))
+         (npm-cmd (if (memq system-type '(cygwin windows-nt ms-dos)) "npm.cmd" "npm")))
+    (when pip-deps
+      (dolist (pkg (append pip-deps nil))
+        (message "%s" (shell-command-to-string (format "pip install %s" pkg)))))
+    (when vue-install
+      (let ((default-directory app-dir))
+        (message "%s" (shell-command-to-string (format "%s install" npm-cmd)))
+        (message "%s" (shell-command-to-string (format "%s run build" npm-cmd)))))
+    (when npm-install
+      (let ((default-directory app-dir))
+        (message "%s" (shell-command-to-string (format "%s install" npm-cmd)))))
+    (when npm-rebuild
+      (let ((default-directory app-dir))
+        (message "%s" (shell-command-to-string (format "%s rebuild" npm-cmd)))))))
+
+(use-package eaf
+  :straight (eaf :type git :host github :repo "emacs-eaf/emacs-application-framework"
+                 :files ("*")
+                 :post-build '(psimacs/config/python-runtime-exe "install-eaf.py" "--install-core-deps"))
+  :config (when psimacs/system/is-windows-nt-flag
+            (setq eaf-python-command psimacs/config/python-runtime-exe)
+            (setq eaf-wm-name "windows")
+          )
+)
+
+(use-package eaf-demo
+  :after (eaf)
+  :straight (eaf-demo :type git
+                      :host github
+                      :repo "emacs-eaf/eaf-demo"
+                      :files ("*")
+            )
+)
+
+(use-package eaf-browser
+  :after (eaf)
+  :straight (eaf-browser :type git
+                         :host github
+                         :repo "emacs-eaf/eaf-browser"
+                         :files ("*")
+                         :post-build (my-eaf-install-deps (straight--build-dir "eaf-browser"))
+            )
+  :custom (eaf-browser-continue-where-left-off t)
+          (eaf-browser-enable-adblocker t)
+          (browse-url-browser-function 'eaf-open-browser)
+
+  :config (defalias 'browse-web #'eaf-open-browser)
+          ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
+          ;(eaf-bind-key nil "M-q" eaf-browser-keybinding)
+          (setq eaf-browser-remember-history nil)
+          ;(setq eaf-browser-default-search-engine "duckduckgo")
+          ;(setq eaf-browse-blank-page-url "https://duckduckgo.com")
+          ;(setq eaf-browser-default-zoom 1.25)
+          ;(setq eaf-browser-enable-plugin nil)
+          ;(setq eaf-browser-enable-javascript nil)
+          ;(setq eaf-camera-save-path "new/path/")
+)
+
+(use-package eaf-pdf-viewer
+  :after (eaf)
+  :straight (eaf-pdf-viewer :type git
+                            :host github
+                            :repo "emacs-eaf/eaf-pdf-viewer"
+                            :files ("*")
+                            :post-build (my-eaf-install-deps (straight--build-dir "eaf-pdf-viewer"))
+            )
+  :config (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+          (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+)
+
+(use-package eaf-markdown-previewer
+  :after (eaf)
+  :straight (eaf-markdown-previewer :type git
+                                    :host github
+                                    :repo "emacs-eaf/eaf-markdown-previewer" :files ("*")
+                                    :post-build (my-eaf-install-deps (straight--build-dir "eaf-markdown-previewer"))
+            )
+)
+
+(use-package eaf-camera
+  :after (eaf)
+  :straight (eaf-camera :type git
+                        :host github
+                        :repo "emacs-eaf/eaf-camera"
+                        :files ("*")
+                        ;:post-build (my-eaf-install-deps (straight--build-dir "eaf-camera"))
+            )
+)
+
+(use-package eaf-terminal
+  :after (eaf)
+  :straight (eaf-terminal :type git
+                          :host github
+                          :repo "emacs-eaf/eaf-terminal"
+                          :files ("*")
+                          ;:post-build (my-eaf-install-deps (straight--build-dir "eaf-terminal"))
+            )
 )
 #+end_src
 

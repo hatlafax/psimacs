@@ -158,7 +158,7 @@ DEFINE PLACEHOLDER COMPILATION_UNIT
 
     "module_compilation_unit"/PLACEHOLDER
     "unittest_compilation_unit"/PLACEHOLDER
-    "unittest_compilation_unit_mako"/PLACEHOLDER
+    "unittest_compilation_unit_query"/PLACEHOLDER
 
 END DEFINE
 
@@ -217,9 +217,9 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER UNITTEST_COMPILATION_UNIT_MAKO
+DELETE PLACEHOLDER UNITTEST_COMPILATION_UNIT_QUERY
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER UNITTEST_COMPILATION_UNIT_MAKO
+DEFINE PLACEHOLDER UNITTEST_COMPILATION_UNIT_QUERY
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -2091,6 +2091,24 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER ATTRIBUTE_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTRIBUTE_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=10
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid attribute name"
+
+END DEFINE
+
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER "TYPE_BOUND_DETAIL"
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER "TYPE_BOUND_DETAIL"
@@ -2646,6 +2664,8 @@ DEFINE PLACEHOLDER INIT_DEF
     "  [function_document_string]"
     "  [super_ctor_stmt]..."
     "  {statement}..."
+    ""
+    "[attr_accessor_menu]"
 
 END DEFINE
 
@@ -2758,6 +2778,55 @@ DEFINE PLACEHOLDER TYPE
     /DESCRIPTION=""
     /DUPLICATION=HORIZONTAL
     /SEPARATOR=", "
+    /TYPE=MENU
+
+    "None"
+    "bool"
+    "int"
+    "long"
+    "float"
+    "complex"
+    "str"
+    "byte"
+    "file"
+    "tuple[{type}, [type]...]"
+    "list[{type}]"
+    "deque[{type}]"
+    "dict[{type}, {type}]"
+    "set[{type}]"
+    "frozenset[{type}]"
+    "Optional[{type}]"
+    "Callable"
+    "Callable[{type_list}, [type]]"
+
+    "{identifier}[{type}, [type]...]"
+    "{identifier}"
+
+    ;; Deprecated since Python 3.9.0
+    "Any"
+    "List[{type}]"
+    "Deque[{type}]"
+    "Dict[{type}, {type}]"
+    "Set[{type}]"
+    "FrozenSet[{type}]"
+    "Tuple[{type}, [type]...]"
+    "Type[{type}]"
+    "Iterable[{type}]"
+    "Sequence[{type}]"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ATTRIBUTE_TYPE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTRIBUTE_TYPE
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=2
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
     /TYPE=MENU
 
     "None"
@@ -2969,6 +3038,122 @@ DEFINE PLACEHOLDER CLASSDEF
 END DEFINE
 
 ;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ATTR_ACCESSOR_MENU
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTR_ACCESSOR_MENU
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "attr_reader"/PLACEHOLDER
+    "attr_writer"/PLACEHOLDER
+    "attr_accessor"/PLACEHOLDER
+    "attr_accessor_query"/PLACEHOLDER
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ATTR_ACCESSOR_QUERY
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTR_ACCESSOR_QUERY
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /AFTER=psimacs/else/python/placeholder/attr-accessor-query
+    /TYPE=NONTERMINAL
+
+    ;; In case for solely inserttion of generated text by the /AFTER function
+    ;; it will not work to give an empty terminal string. This leads to reinsertion
+    ;; of the placeholder and is typically not what you want to achieve.
+    ;; For that reason we provide a dummy terminal character  and delete that character
+    ;; in the /AFTER functino. Not perfect but should work.
+
+    "-"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ATTR_READER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTR_READER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "@@@@self._{attribute_name}: {attribute_type} = {attribute_name}"
+    "[attr_accessor_menu]"
+    ""
+    "\@property"
+    "def {attribute_name}(self) -> {attribute_type}:"
+    "  [document_string]"
+    "  return self._{attribute_name}"
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ATTR_WRITER
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTR_WRITER
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "@@@@self._{attribute_name}: {attribute_type} = {attribute_name}"
+    "[attr_accessor_menu]"
+    ""
+    "\@{attribute_name}.setter"
+    "def {attribute_name}(self, value: {attribute_type}) -> None:"
+    "  [document_string]"
+    "  self._{attribute_name} = value"
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ATTR_ACCESSOR
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ATTR_ACCESSOR
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "@@@@self._{attribute_name}: {attribute_type} = {attribute_name}"
+    "[attr_accessor_menu]"
+    ""
+    "\@property"
+    "def {attribute_name}(self) -> {attribute_type}:"
+    "  [document_string]"
+    "  return self._{attribute_name}"
+    ""
+    "\@{attribute_name}.setter"
+    "def {attribute_name}(self, value: {attribute_type}) -> None:"
+    "  [document_string]"
+    "  self._{attribute_name} = value"
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
 ;;- Testing --------------------------------------------------------------------
 ;;------------------------------------------------------------------------------
 
@@ -3154,5 +3339,21 @@ DEFINE PLACEHOLDER TEST_MENU
     "test1"/PLACEHOLDER
     "test-before-after"/PLACEHOLDER
     "test6"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER SUBSTITUTE_MENU1
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER SUBSTITUTE_MENU1
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "substitute_problem_item1"/PLACEHOLDER
+    "substitute_problem_item2"/PLACEHOLDER
 
 END DEFINE
