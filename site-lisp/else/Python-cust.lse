@@ -47,6 +47,23 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER FUNCTION_NAME
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER FUNCTION_NAME
+    /LANGUAGE="Python"
+    /AUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=4
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid function name."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER TEST_FUNCTION_NAME
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER TEST_FUNCTION_NAME
@@ -2035,6 +2052,8 @@ DEFINE PLACEHOLDER DEFPARAMETER
     "{parameter}"
     "*{identifier}"
     "**{identifier}"
+    "*args"
+    "**kwargs"
 
 END DEFINE
 
@@ -2117,9 +2136,10 @@ DEFINE PLACEHOLDER "TYPE_BOUND_DETAIL"
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=", "
-    /TYPE=NONTERMINAL
+    /TYPE=MENU
 
     "bound = '{identifier}'"
+    "bound = Callable[..., Any]"
 
 END DEFINE
 
@@ -2236,7 +2256,9 @@ DEFINE PLACEHOLDER TYPE_IDENTIFIER
     "Any"
     "AnyStr"
     "BinaryIO"
+    "Callable"
     "ClassVar"
+    "Concatenate"
     "Final"
     "Generic"
     "IO"
@@ -2245,6 +2267,7 @@ DEFINE PLACEHOLDER TYPE_IDENTIFIER
     "NewType"
     "NoReturn"
     "Optional"
+    "ParamSpec"
     "Protocol"
     "Text"
     "TextIO"
@@ -2261,7 +2284,6 @@ DEFINE PLACEHOLDER TYPE_IDENTIFIER
     "AsyncIterator"
     "Awaitable"
     "ByteString"
-    "Callable"
     "ChainMap"
     "Collection"
     "Container"
@@ -2532,6 +2554,8 @@ DEFINE PLACEHOLDER IMPORT_STMT
     "from typing import TypeVar, Iterator, Iterable, Sequence, Generic, List, Tuple, Callable, Set, Deque, Dict, Any, Optional"
     "from typing import Protocol"
 
+    "from functools import wraps"
+
     "from __future__ import annotations"
     "from dataclasses import dataclass"
     "from abc import ABC, abstractmethod"
@@ -2685,6 +2709,33 @@ DEFINE PLACEHOLDER CLASS_FUNCDEF
     "def {identifier}(self, [defparameter]...)[ -> {type_hint}]:"
     "  [function_document_string]"
     "  {statement}..."
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER CLASS_FUNC_DECORATOR
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER CLASS_FUNC_DECORATOR
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Decorator definition when within a class"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "def {identifier}({function_name}: {type_name}) -> {type_name}:"
+    "  [document_string]"
+    ""
+    "  \@wraps({function_name})"
+    "  def wrapper(*args, **kwargs):"
+    "    [document_string]"
+    "    {statement}..."
+    "    result = {function_name}(*args, **kwargs)"
+    "    {statement}..."
+    "    return result"
+    "  return cast({type_name}, wrapper)"
     ""
 
 END DEFINE
@@ -3149,6 +3200,92 @@ DEFINE PLACEHOLDER ATTR_ACCESSOR
     "def {attribute_name}(self, value: {attribute_type}) -> None:"
     "  [document_string]"
     "  self._{attribute_name} = value"
+    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+;;
+;; See https://adamj.eu/tech/2021/07/04/python-type-hints-how-to-type-a-context-manager/
+;;
+DELETE PLACEHOLDER WITH_PROTOCOL_IMPORTS
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER WITH_PROTOCOL_IMPORTS
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "from contextlib import contextmanager"
+    "from collections.abc import Generator"
+    "from typing import overload"
+    "from types import TracebackType"
+
+END DEFINE
+
+DELETE PLACEHOLDER WITH_CLASS_PROTOCOL
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER WITH_CLASS_PROTOCOL
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "def __enter__(self)[ -> {type_hint}]:"
+    "  [document_string]"
+    "  {statement}..."
+    "  [return_stmt]"
+    ""
+    "\@overload"
+    "def __exit__("
+    "    self,"
+    "    exc_type: None,"
+    "    exc_val: None,"
+    "    exc_tb: None)[ -> {type_hint}]:"
+    "  ..."
+    ""
+    "\@overload"
+    "def __exit__("
+    "    self,"
+    "    exc_type: type[BaseException],"
+    "    exc_val: BaseException,"
+    "    exc_tb: TracebackType)[ -> {type_hint}]:"
+    "  ..."
+    ""
+    "def __exit__("
+    "    self,"
+    "    exc_type: type[BaseException] | None,"
+    "    exc_val: BaseException | None,"
+    "    exc_tb: TracebackType | None)[ -> {type_hint}]:"
+    "  [document_string]"
+    "  {statement}..."
+    "  [return_stmt]"
+    ""
+
+END DEFINE
+
+DELETE PLACEHOLDER WITH_FUNC_PROTOCOL
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER WITH_FUNC_PROTOCOL
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "\@contextmanager"
+    "def {identifier}([defparameter]...) -> Generator[{type}, None, None]:"
+    "  [function_document_string]"
+    "  try:"
+    "    {statement}..."
+    "    yield [expression]"
+    "  finally:"
+    "    {statement}..."
     ""
 
 END DEFINE

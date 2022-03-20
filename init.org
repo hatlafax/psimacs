@@ -3610,6 +3610,14 @@ To get running at all, the [[https://github.com/raxod502/straight.el][Straight]]
 /Getting Started/ section.
 
 #+begin_src emacs-lisp :tangle config/init-package-manager.el :var file-description="Package manager"
+
+;;
+;; Packages will only be rebuilt when metadata (e.g. the recipe or the Emacs version) changes, 
+;; or when you manually invoke M-x straight-rebuild-package or M-x straight-rebuild-all.
+;; https://www.reddit.com/r/emacs/comments/tb6vvt/decrease_emacs_launch_time_when_using_straightel/
+;;
+(setq straight-check-for-modifications nil)
+
 ;;
 ;; bootstrap package straight.el
 ;;
@@ -13143,6 +13151,48 @@ References:
             (warn "python-mode: Cannot find yapf executable."))
         )
 
+        (defun psimacs/python/mypy-strict()
+          "Strict static type checking with mypy."
+          (interactive)
+          (if (executable-find psimacs/config/mypy-runtime-exe)
+              (progn
+                (save-buffer)
+                (shell-command (format "%s --strict %s"
+                                       psimacs/config/mypy-runtime-exe
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "python-mode: Cannot find mypy executable."))
+        )
+
+        (defun psimacs/python/mypy()
+          "Static type checking with mypy."
+          (interactive)
+          (if (executable-find psimacs/config/mypy-runtime-exe)
+              (progn
+                (save-buffer)
+                (shell-command (format "%s %s"
+                                       psimacs/config/mypy-runtime-exe
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "python-mode: Cannot find mypy executable."))
+        )
+
+        (defun psimacs/python/pylint()
+          "Lint checking with pylint."
+          (interactive)
+          (if (executable-find psimacs/config/pylint-runtime-exe)
+              (progn
+                (save-buffer)
+                (shell-command (format "%s %s"
+                                       psimacs/config/pylint-runtime-exe
+                                       (shell-quote-argument (buffer-file-name))))
+                (revert-buffer t t t))
+            ;; else
+            (warn "python-mode: Cannot find pylint executable."))
+        )
+
     :bind (
               :map python-mode-map
               ("H-M-b" . python-nav-backward-block)
@@ -13151,6 +13201,11 @@ References:
               ("H-x C-c r" . psimacs/python/remove-unused-imports)
               ("H-x C-c R" . psimacs/python/blacken)
               ("H-x C-c Y" . psimacs/python/yapify)
+
+              ("H-x C-c m" . psimacs/python/mypy)
+              ("H-x C-c M" . psimacs/python/mypy-strict)
+
+              ("H-x C-c l" . psimacs/python/pylint)
           )
 )
 #+end_src
