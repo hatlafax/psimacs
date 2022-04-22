@@ -95,14 +95,8 @@ Do not change it here!!!
 (defconst psimacs/config/custom-file-name "custom.el"
   "The psimacs custom elips file.")
 
-(defconst psimacs/config/agenda-folder "agenda"
-  "The psimacs agenda directory.")
-
-(defconst psimacs/config/org-folder "org"
-  "The psimacs org directory.")
-
-(defconst psimacs/config/latex-folder "latex"
-  "The psimacs latex directory.")
+(defconst psimacs/config/content-folder "content"
+  "The psimacs top level content directory.")
 
 (defconst psimacs/config/assets-folder "assets"
   "The psimacs assets directory.")
@@ -579,8 +573,8 @@ After this function is finished the two directories are identical.
 ;;   the dropbox emacs folder into the emacs home directory. If the main config
 ;;   file in the emacs home directory is newer than the file in the dropbox folder
 ;;   we update that one with the newer local one.
-;;   The agenda files are worked on the dropbox directly, but a local copy is made
-;;   for backup purpose.
+;;   The agenda  and the roam-notes files are worked on the dropbox directly, but
+;;   a local copy is made for backup purpose.
 ;;
 (defun psimacs/config/find-dropbox-folder ()
   "Get the current dropbox folder on the running machine. Otherwise nil"
@@ -657,17 +651,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                      psimacs/config/custom-file-name)
                                              (concat db-dir psimacs/config/custom-file-name)))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/agenda-folder))
+                                                                             psimacs/config/content-folder))
                                              (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/agenda-folder))))
-        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/org-folder))
-                                             (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/org-folder))))
-        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
-                                                                             psimacs/config/latex-folder))
-                                             (file-name-as-directory (concat db-dir
-                                                                             psimacs/config/latex-folder))))
+                                                                             psimacs/config/content-folder))))
         (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
                                                                              psimacs/config/assets-folder))
                                              (file-name-as-directory (concat db-dir
