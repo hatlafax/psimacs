@@ -589,6 +589,40 @@ itself at startup.
 
 ** Some basic constants
 
+*** Timing of the Emacs load time
+
+*Psimacs* allows the timing of the complete startup procedure.
+
+#+begin_src emacs-lisp :tangle early-init.el
+(defconst psimacs/config/startup-timing t
+  "Enables the timing of the startup procedure.")
+
+(defvar psimacs/config/last-time-point before-init-time
+  "This time point is updated for each feature timing.")
+
+(defun psimacs/config/load-feature-timing (feature)
+    "Prints the load time of the feature.
+This function prints the time since beginning of the startup procedure and
+also the time since it is was called the last time."
+    (when psimacs/config/startup-timing
+        (let ((ct (current-time) ))
+            (message "Feature %s loaded in %s from startup and took %s." 
+                feature
+                (format "%.2f seconds"
+                       (float-time
+                       (time-subtract ct before-init-time))
+                )
+                (format "%.3f seconds"
+                       (float-time
+                       (time-subtract ct psimacs/config/last-time-point))
+                )
+            )
+        )
+        (setq psimacs/config/last-time-point (current-time))
+    )
+)
+#+end_src
+
 *** Tangle anything at startup
 
 *Psimacs* allows the tangling of the configuration source code at startup time. The following flag allows to suppresses
@@ -686,6 +720,9 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 (defconst psimacs/config/main-html-file-name "init.html"
   "The psimacs htmlized initialization file.")
 
+(defconst psimacs/config/keybindings-html-file-name "keybindings.html"
+  "The psimacs htmlized initialization file.")
+
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
 
@@ -715,6 +752,14 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 
 (defconst psimacs/config/config-folder "config"
   "The psimacs config directory.")
+
+(defconst psimacs/config/session-dir
+  (expand-file-name (file-name-as-directory (concat (file-name-as-directory user-emacs-directory) "session")))
+  "The psimacs session directory used for storing various session information.")
+
+(defconst psimacs/config/native-comp-dir
+  (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "eln-cache")))
+  "The psimacs native compilation eln directory.")
 #+end_src
 
 *** Copyright and author information
@@ -751,6 +796,22 @@ It is the fraction of the current heap size."
 #+end_src
 
 ** Some early optimization settings
+
+- Support for native compilation
+
+As of /Emacs 28/ navtive elisp compilation is supported. The following code
+set the directory where the compiled files are stored.
+
+#+begin_src emacs-lisp :tangle early-init.el :var file-description="Secure Emacs"
+(when (featurep 'native-compile)
+    (setq native-comp-async-report-warnings-errors nil
+          native-comp-deferred-compilation t)
+    ;;
+    ;; Don't store eln files in ~/.emacs.d/eln-cache
+    ;;
+    (add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
+)
+#+end_src
 
 - Lexical Scope and binding
 
@@ -810,6 +871,44 @@ is because it breaks some old (badly written) code.
 ;; is done.
 ;;
 (setq frame-inhibit-implied-resize t)
+#+end_src
+
+Premature redisplays can substantially affect startup times and produce
+ugly flashes of unstyled Emacs.
+
+#+begin_src emacs-lisp :tangle early-init.el
+(unless (or (daemonp) noninteractive)
+    ;;
+    ;; Premature redisplays can substantially affect startup times and produce
+    ;; ugly flashes of unstyled Emacs.
+    ;;
+    (setq-default inhibit-redisplay t
+                  inhibit-message t)
+
+    (add-hook 'window-setup-hook
+        (lambda ()
+            (setq-default inhibit-redisplay nil
+                          inhibit-message nil)
+            (redisplay)
+        )
+    )
+
+    ;;
+    ;; Site files tend to use `load-file', which emits "Loading X..." messages in
+    ;; the echo area, which in turn triggers a redisplay. Redisplays can have a
+    ;; substantial effect on startup times and in this case happens so early that
+    ;; Emacs may flash white while starting up.
+    ;;
+    (define-advice load-file (:override (file) silence)
+        (load file nil 'nomessage))
+
+    ;;
+    ;; Undo our `load-file' advice above, to limit the scope of any edge cases it
+    ;; may introduce down the road.
+    ;;
+    (define-advice startup--load-user-init-file (:before (&rest _) init-emacs)
+        (advice-remove #'load-file #'load-file@silence))
+)
 #+end_src
 
 - Never use the menu-bar, the tool-bar or the scroll-bar:
@@ -1208,7 +1307,8 @@ Source code blocks that tangle to early-init.el are handled differently. In this
              (package-name (file-name-sans-extension (file-name-nondirectory file))))
 
         (unless (equal package-name "early-init")
-          (with-temp-buffer (insert (format "(provide '%s)\n" package-name))
+          (with-temp-buffer (insert (format "(psimacs/config/load-feature-timing \"%s\")\n" package-name))
+                            (insert (format "(provide '%s)\n" package-name))
                             (write-region (point-min)
                                           (point-max) file t)))))
     (with-temp-file elfile
@@ -1425,6 +1525,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/main-html-file-name)
                                              (concat db-dir psimacs/config/main-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/keybindings-html-file-name)
+                                             (concat db-dir psimacs/config/keybindings-html-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
@@ -1498,7 +1601,9 @@ This starts the synchronization between the user *Psimacs* configuration and the
 ;; Synchronize with dropbox
 ;;
 (when psimacs/config/synchronize-at-startup
-  (psimacs/config/sync-with-dropbox))
+  (psimacs/config/sync-with-dropbox)
+  (psimacs/config/load-feature-timing "early-init.el: sync-with-dropbox")
+)
 #+end_src
 
 ** Tangling the main /init.org/ file.
@@ -1512,6 +1617,8 @@ This starts the processing of this org file (=init.org=), resulting in tbe final
 ;;
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
                                                                   psimacs/config/main-org-file-name)))
+
+(psimacs/config/load-feature-timing "early-init.el: load-configuration-file")
 #+end_src
 
 * Preamble to the /init.el/ file
@@ -1987,10 +2094,6 @@ programs are installed.
 (defconst psimacs/config/work-lisp-dir
   (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/work-lisp-folder)
   "The psimacs personal work-lisp directory for hacking.")
-
-(defconst psimacs/config/session-dir
-  (psimacs/file-system/concat-directory user-emacs-directory "session")
-  "The psimacs session directory used for storing various session information.")
 
 (defconst psimacs/config/assets-dir
   (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/assets-folder)
@@ -4974,6 +5077,11 @@ the command =revert-buffer= to load the new content of the file into *Psimacs*. 
 ;; Avoid handy revert-buffer calls
 ;;
 (global-auto-revert-mode t)
+
+;;
+;; Revert Dired and other buffers
+;;
+(setq global-auto-revert-non-file-buffers t)
 #+end_src
 
 *** Delete seleted text when typing.
@@ -7264,6 +7372,7 @@ through the command =C-x C-r=.
                   `(
                     ,(concat "^" (regexp-quote (expand-file-name psimacs/config/session-dir)) ".*$")
                     ,(concat "^" (regexp-quote (expand-file-name psimacs/config/straight-dir)) ".*$")
+                    ,(concat "^" (regexp-quote (expand-file-name psimacs/config/native-comp-dir)) ".*$")
                     ,(regexp-quote (expand-file-name psimacs/config/custom-file))
                     "^.*/\\.dir-locals.el$"
                     "^.*/\\.projectile$"
@@ -8169,6 +8278,7 @@ Perspective-aware buffer switcher.
          ("C-x b" . persp-switch-to-buffer*)
          ("C-x k" . persp-kill-buffer*)
          )
+  :init (setq-default persp-keymap-prefix (kbd "C-x x"))
   :config
       (setq persp-save-dir psimacs/config/persp-save-dir)
       (setq persp-auto-save-fname psimacs/config/persp-auto-save-file)

@@ -32,6 +32,34 @@
 ;; before package and UI initialization happens.
 ;;
 
+(defconst psimacs/config/startup-timing t
+  "Enables the timing of the startup procedure.")
+
+(defvar psimacs/config/last-time-point before-init-time
+  "This time point is updated for each feature timing.")
+
+(defun psimacs/config/load-feature-timing (feature)
+    "Prints the load time of the feature.
+This function prints the time since beginning of the startup procedure and
+also the time since it is was called the last time."
+    (when psimacs/config/startup-timing
+        (let ((ct (current-time) ))
+            (message "Feature %s loaded in %s from startup and took %s." 
+                feature
+                (format "%.2f seconds"
+                       (float-time
+                       (time-subtract ct before-init-time))
+                )
+                (format "%.3f seconds"
+                       (float-time
+                       (time-subtract ct psimacs/config/last-time-point))
+                )
+            )
+        )
+        (setq psimacs/config/last-time-point (current-time))
+    )
+)
+
 ;;
 ;; Tangling procedure constants.
 ;;
@@ -86,6 +114,9 @@ Do not change it here!!!
 (defconst psimacs/config/main-html-file-name "init.html"
   "The psimacs htmlized initialization file.")
 
+(defconst psimacs/config/keybindings-html-file-name "keybindings.html"
+  "The psimacs htmlized initialization file.")
+
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
 
@@ -116,6 +147,14 @@ Do not change it here!!!
 (defconst psimacs/config/config-folder "config"
   "The psimacs config directory.")
 
+(defconst psimacs/config/session-dir
+  (expand-file-name (file-name-as-directory (concat (file-name-as-directory user-emacs-directory) "session")))
+  "The psimacs session directory used for storing various session information.")
+
+(defconst psimacs/config/native-comp-dir
+  (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "eln-cache")))
+  "The psimacs native compilation eln directory.")
+
 (defconst psimacs/config/copyright/year       "2020-2021")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
@@ -137,6 +176,15 @@ increase this.")
 It is the fraction of the current heap size."
 )
 
+(when (featurep 'native-compile)
+    (setq native-comp-async-report-warnings-errors nil
+          native-comp-deferred-compilation t)
+    ;;
+    ;; Don't store eln files in ~/.emacs.d/eln-cache
+    ;;
+    (add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
+)
+
 ;;
 ;; Use lexical binding instead of dynamic binding.
 ;;
@@ -154,6 +202,39 @@ It is the fraction of the current heap size."
 ;; is done.
 ;;
 (setq frame-inhibit-implied-resize t)
+
+(unless (or (daemonp) noninteractive)
+    ;;
+    ;; Premature redisplays can substantially affect startup times and produce
+    ;; ugly flashes of unstyled Emacs.
+    ;;
+    (setq-default inhibit-redisplay t
+                  inhibit-message t)
+
+    (add-hook 'window-setup-hook
+        (lambda ()
+            (setq-default inhibit-redisplay nil
+                          inhibit-message nil)
+            (redisplay)
+        )
+    )
+
+    ;;
+    ;; Site files tend to use `load-file', which emits "Loading X..." messages in
+    ;; the echo area, which in turn triggers a redisplay. Redisplays can have a
+    ;; substantial effect on startup times and in this case happens so early that
+    ;; Emacs may flash white while starting up.
+    ;;
+    (define-advice load-file (:override (file) silence)
+        (load file nil 'nomessage))
+
+    ;;
+    ;; Undo our `load-file' advice above, to limit the scope of any edge cases it
+    ;; may introduce down the road.
+    ;;
+    (define-advice startup--load-user-init-file (:before (&rest _) init-emacs)
+        (advice-remove #'load-file #'load-file@silence))
+)
 
 ;;
 ;; Beautify Emacs
@@ -476,7 +557,8 @@ Source code blocks that tangle to early-init.el are handled differently. In this
              (package-name (file-name-sans-extension (file-name-nondirectory file))))
 
         (unless (equal package-name "early-init")
-          (with-temp-buffer (insert (format "(provide '%s)\n" package-name))
+          (with-temp-buffer (insert (format "(psimacs/config/load-feature-timing \"%s\")\n" package-name))
+                            (insert (format "(provide '%s)\n" package-name))
                             (write-region (point-min)
                                           (point-max) file t)))))
     (with-temp-file elfile
@@ -642,6 +724,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/main-html-file-name)
                                              (concat db-dir psimacs/config/main-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/keybindings-html-file-name)
+                                             (concat db-dir psimacs/config/keybindings-html-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
@@ -709,7 +794,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
 ;; Synchronize with dropbox
 ;;
 (when psimacs/config/synchronize-at-startup
-  (psimacs/config/sync-with-dropbox))
+  (psimacs/config/sync-with-dropbox)
+  (psimacs/config/load-feature-timing "early-init.el: sync-with-dropbox")
+)
 
 ;;
 ;; Extract elisp code from org files if necessary and load that code into
@@ -717,4 +804,6 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
 ;;
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
                                                                   psimacs/config/main-org-file-name)))
+
+(psimacs/config/load-feature-timing "early-init.el: load-configuration-file")
 
