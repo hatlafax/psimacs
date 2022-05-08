@@ -38,23 +38,21 @@
 (defvar psimacs/config/last-time-point before-init-time
   "This time point is updated for each feature timing.")
 
+(defvar psimacs/config/startup-timing-result '()
+  "Collects the result of the timing measurements")
+
 (defun psimacs/config/load-feature-timing (feature)
     "Prints the load time of the feature.
 This function prints the time since beginning of the startup procedure and
 also the time since it is was called the last time."
     (when psimacs/config/startup-timing
-        (let ((ct (current-time) ))
-            (message "Feature %s loaded in %s from startup and took %s." 
-                feature
-                (format "%.2f seconds"
-                       (float-time
-                       (time-subtract ct before-init-time))
-                )
-                (format "%.3f seconds"
-                       (float-time
-                       (time-subtract ct psimacs/config/last-time-point))
-                )
-            )
+        (let* ((ct  (current-time) )
+               (msg (format "It took %s and %s from startup to load feature %s."
+                    (format "%6.3f seconds" (float-time (time-subtract ct psimacs/config/last-time-point)))
+                    (format "%6.2f seconds" (float-time (time-subtract ct before-init-time)))
+                    feature
+                    )))
+            (push msg psimacs/config/startup-timing-result)
         )
         (setq psimacs/config/last-time-point (current-time))
     )
