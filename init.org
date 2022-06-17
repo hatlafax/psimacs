@@ -800,7 +800,7 @@ It is the fraction of the current heap size."
 As of /Emacs 28/ navtive elisp compilation is supported. The following code
 set the directory where the compiled files are stored.
 
-#+begin_src emacs-lisp :tangle early-init.el :var file-description="Secure Emacs"
+#+begin_src emacs-lisp :tangle early-init.el
 (when (featurep 'native-compile)
     (setq native-comp-async-report-warnings-errors nil
           native-comp-deferred-compilation t)
@@ -1043,7 +1043,7 @@ FILE        : el file that get generated
 ORG-FILE    : org mode file that is prints
 DESCRIPTION : short description text"
   (let (
-        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8 -*- lexical-binding: t -*-\n" (file-name-nondirectory file) description)
+        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8; lexical-binding: t; -*-\n" (file-name-nondirectory file) description)
                                   ";;\n"
                           (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
                                   ";;\n"
@@ -1185,7 +1185,7 @@ For these files extra header and footer are written. In this case, also an addit
 
 Shortly, all tangled source code blocks for file foo.el are written to one file 'foo.el' that look like
 
-;; foo.el --- text -*- coding: utf-8 -*- lexical-binding: t -*-
+;; foo.el --- text -*- coding: utf-8; lexical-binding: t; -*-
 ;;
 ;; Don't edit this file, edit file.org instead ...
 ;;
@@ -1850,7 +1850,7 @@ Supported strategies are:
 ;; Prepare for the next frame creation
 ;;
 (add-hook 'after-make-frame-functions
-            #'(lambda (frame)
+            (lambda (frame)
                 (let* ( (primary-monitor (car (display-monitor-attributes-list)))
                         (geometry        (assoc 'geometry primary-monitor))
                         (left            0)
@@ -1901,7 +1901,7 @@ Supported strategies are:
                       ))))
 
 (add-hook 'after-delete-frame-functions
-            #'(lambda (frame)
+            (lambda (frame)
                 (let* ( (primary-monitor (car (display-monitor-attributes-list)))
                         (geometry        (assoc 'geometry primary-monitor))
                         (left            0)
@@ -2399,10 +2399,13 @@ your calendar.
     "The psimacs org roam-notes directory.")
 
 (psimacs/file-system/make-directory psimacs/config/roam-notes-dir)
-(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "references"))
+
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "articles"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "cortex"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "dailies"))
-(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "articles"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "faq"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "references"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "research"))
 
 (defconst psimacs/config/roam-templates-dir
     (psimacs/file-system/concat-directory psimacs/config/site-lisp-dir "roam-templates")
@@ -2684,6 +2687,7 @@ pacman -S mingw-w64-x86_64-tk
 pacman -S mingw-w64-x86_64-ntldd-git
 pacman -S mingw-w64-clang-x86_64-ntldd-git
 pacman -S mingw-w64-x86_64-hugo
+pacman -S mingw-w64-x86_64-emacs-pdf-tools-server
 #+end_example
 
 Some of the packages are not really required but I use them and I would like to memorize my installation procedure
@@ -3260,6 +3264,17 @@ This is pretty ugly, but different python installation might be in use on differ
   "The psimacs used python pyls runtime.")
 #+end_src
 
+** BibTex
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; bibtex configuration constans
+;;
+(defconst psimacs/config/isbn-meta-exe
+  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "isbn_meta.exe")
+  "The psimacs used python runtime.")
+#+end_src
+
 ** Sphinx
 
 [[https://www.sphinx-doc.org/en/master/][Sphinx]] is a tool that makes it easy to create intelligent and beautiful documentation.
@@ -3436,7 +3451,7 @@ The portable [[https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0df
 
 ** Git
 
-[[https://git-scm.com/][Git]] is a very important external tool to be installed. *Psimacs* uses the [[https://github.com/raxod502/straight.el][Straight]] package manager which relies on a
+[[https://git-scm.com/][Git]] is a very important external tool to be installed. *Psimacs* uses the [[https://github.com/radian-software/straight.el][Straight]] package manager which relies on a
 properly installed [[https://git-scm.com/][Git]] program. A portable version is available at from their [[https://git-scm.com/download/win][download site]].
 
 #+begin_src emacs-lisp :tangle config/init-constants.el
@@ -3889,11 +3904,11 @@ The following function allows us to check if this setup is properly done. Thanks
 
 ** Straight package manager
 
-*Psimacs* uses the [[https://github.com/raxod502/straight.el][Straight]] package manager. Note that this package manager depends on [[https://git-scm.com/][Git]].
+*Psimacs* uses the [[https://github.com/radian-software/straight.el][Straight]] package manager. Note that this package manager depends on [[https://git-scm.com/][Git]].
 
 *** Bootstrap straight.el
 
-To get running at all, the [[https://github.com/raxod502/straight.el][Straight]] package must be installed itself. The code is taken from the [[https://github.com/raxod502/straight.el][Straight]]
+To get running at all, the [[https://github.com/radian-software/straight.el][Straight]] package must be installed itself. The code is taken from the [[https://github.com/radian-software/straight.el][Straight]]
 /Getting Started/ section.
 
 #+begin_src emacs-lisp :tangle config/init-package-manager.el :var file-description="Package manager"
@@ -3909,31 +3924,44 @@ To get running at all, the [[https://github.com/raxod502/straight.el][Straight]]
 ;; bootstrap package straight.el
 ;;
 (defvar bootstrap-version)
-(let (
-        (bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5)
-    )
-    (unless (file-exists-p bootstrap-file)
-        (with-current-buffer
-            (url-retrieve-synchronously
-                "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-                'silent 'inhibit-cookies
-            )
-            (goto-char (point-max))
-            (eval-print-last-sexp)
-        )
-    )
-    (load bootstrap-file nil 'nomessage)
-)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;(defvar bootstrap-version)
+;(let (
+;        (bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+;        (bootstrap-version 5)
+;    )
+;    (unless (file-exists-p bootstrap-file)
+;        (with-current-buffer
+;            (url-retrieve-synchronously
+;                "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+;                'silent 'inhibit-cookies
+;            )
+;            (goto-char (point-max))
+;            (eval-print-last-sexp)
+;        )
+;    )
+;    (load bootstrap-file nil 'nomessage)
+;)
 #+end_src
 
 *** use-package
 
 [[https://github.com/jwiegley/use-package][use-package]] is a macro that provides convenient syntactic sugar for many common tasks
 related to installing and configuring *Emacs* packages. Of course, it does not actually
-install the packages, but instead defers to a package manager, like [[https://github.com/raxod502/straight.el][Straight]].
+install the packages, but instead defers to a package manager, like [[https://github.com/radian-software/straight.el][Straight]].
 
-To use use-package, first install it with [[https://github.com/raxod502/straight.el][Straight]]:
+To use use-package, first install it with [[https://github.com/radian-software/straight.el][Straight]]:
 
 #+begin_src emacs-lisp :tangle config/init-package-manager.el
 ;;
@@ -3942,7 +3970,7 @@ To use use-package, first install it with [[https://github.com/raxod502/straight
 (straight-use-package 'use-package)
 #+end_src
 
-Now =use-package= will use [[https://github.com/raxod502/straight.el][Straight]] to automatically install missing packages if you provide =:straight t=.
+Now =use-package= will use [[https://github.com/radian-software/straight.el][Straight]] to automatically install missing packages if you provide =:straight t=.
 
 Customize =straight-use-package-by-default= to make it so that =:straight t= is assumed unless you explicitly
 override it with =:straight nil=.
@@ -3959,7 +3987,7 @@ Specifying =:straight t= is unnecessary if you set =straight-use-package-by-defa
 Any code that relates to /[[https://wikemacs.org/wiki/Package.el][package.el]]/ should be removed; for example, references to =package-initialize=,
 =package-archives=, and (if you're using =use-package=) =:ensure= or =use-package-always-ensure=.
 
-While it is technically possible to use both  /[[https://wikemacs.org/wiki/Package.el][package.el]]/ and [[https://github.com/raxod502/straight.el][Straight]] at the same time, there is no real
+While it is technically possible to use both  /[[https://wikemacs.org/wiki/Package.el][package.el]]/ and [[https://github.com/radian-software/straight.el][Straight]] at the same time, there is no real
 reason to, and it might result in oddities like packages getting loaded more than once.
 
 Out of the box, you can install any package listed on [[https://melpa.org/#/][MELPA]], [[https://elpa.gnu.org/][GNU ELPA]], or [[https://github.com/emacsmirror][Emacsmirror]], which is to say any
@@ -4418,6 +4446,7 @@ mouse binding, and update the displayed information once another command is invo
 ;;
 (use-package keycast
     :commands keycast-mode
+    :hook (after-init . keycast-mode)
     :config
         (define-minor-mode keycast-mode
           "Show current command and its key binding in the mode line."
@@ -4425,9 +4454,9 @@ mouse binding, and update the displayed information once another command is invo
           (if keycast-mode
               (progn
                 (add-hook 'pre-command-hook 'keycast--update t)
-                (add-to-list 'global-mode-string '("" mode-line-keycast "    ")))
+                (add-to-list 'global-mode-string '("" keycast-mode-line "    ")))
             (remove-hook 'pre-command-hook 'keycast--update)
-            (setq global-mode-string (remove '("" mode-line-keycast "   ") global-mode-string))))
+            (setq global-mode-string (remove '("" keycast-mode-line "   ") global-mode-string))))
 
         (custom-set-faces
          '(keycast-command ((t (:inherit doom-modeline-debug :height 0.9))))
@@ -4549,7 +4578,7 @@ They provide the following functions for defining hydras:
 (use-package major-mode-hydra
     :demand t
     :config (setq major-mode-hydra-title-generator
-                  '(lambda (mode)
+                   '(lambda (mode)
                      (s-concat "\n"
                                (s-repeat 10 " ")
                                (all-the-icons-icon-for-mode mode :v-adjust 0.05)
@@ -4701,6 +4730,17 @@ Basically it provides a modern API for working with files and directories in *Em
 ;; A file system library
 ;;
 (use-package f)
+#+end_src
+
+*** A Queue data structure library
+
+[[https://www.dr-qubit.org/predictive/queue.el][Queue]] is part of the [[https://www.dr-qubit.org/emacs_data-structures.html][Emacs data structure packages]].
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; A queue data structure library for emacs
+;;
+(use-package queue)
 #+end_src
 
 *** Alert an alternative notification interface
@@ -5595,6 +5635,7 @@ variable for that information.
 ;;
 (defvar psimacs/config/default-theme "nimbus"
     "The theme that should be loaded on default.
+
 afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
 ample, ample-zen, dracula, flatland, gandalf, github-modern, gruvbox-dark-medium, gruvbox-dark-soft,
 gruvbox-dark-hard, gruvbox-light-medium, gruvbox-light-soft, gruvbox-light-hard, pastelmac, moe-dark,
@@ -6166,6 +6207,7 @@ See also: [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][About prettify-
 
         (defun psimacs/config/prettify-symbols-compose-p (start end _match)
           "Return true iff the symbol MATCH should be composed.
+
 The symbol starts at position START and ends at position END.
 This is the default for `prettify-symbols-compose-predicate'
 which is suitable for most programming languages such as C or Lisp.
@@ -7396,7 +7438,7 @@ through the command =C-x C-r=.
         (recentf-mode t)
 
         (run-with-idle-timer 60 t
-                '(lambda ()
+                (lambda ()
                     (let ((save-silently t))
                         (recentf-save-list))))
 
@@ -8245,28 +8287,28 @@ are available (by default).
 
 Each *Emacs* frame has a distinct list of [[https://github.com/nex3/perspective-el][perspectives]].
 
-Commands are all prefixed by =C-x x= by default. To change the prefix key, customize =persp-mode-prefix-key=.
+Commands are all prefixed by =C-x M-p= by default. To change the prefix key, customize =persp-mode-prefix-key=.
 Additionally, creating a key binding for =persp-mode-map= will also activate the prefix.
 
 #+attr_html: :class styledtable1
-| Key binding     | Command                      | Description                                                                                         |
-|-----------------+------------------------------+-----------------------------------------------------------------------------------------------------|
-| =C-x x=         |                              | Prefix key for all perspective commands.                                                            |
-| =C-x x s=       | =M-x persp-switch=           | Query a perspective to switch to, or create                                                         |
-| =C-x x k=       | =M-x persp-remove-buffer=    | Query a buffer to remove from current perspective                                                   |
-| =C-x x c=       | =M-x persp-kill=             | Query a perspective to kill                                                                         |
-| =C-x x r=       | =M-x persp-rename=           | Rename current perspective                                                                          |
-| =C-x x a=       | =M-x persp-add-buffer=       | Query an open buffer to add to current perspective                                                  |
-| =C-x x A=       | =M-x persp-set-buffer=       | Add buffer to current perspective and remove it from all others                                     |
-| =C-x x b=       | =M-x persp-switch-to-buffer= | Like switch-to-buffer; includes all buffers from all perspectives; changes perspective if necessary |
-| =C-x x i=       | =M-x persp-import=           | Import a given perspective from another frame.                                                      |
-| =C-x x n=       | =M-x persp-next=             | Switch to next perspective                                                                          |
-| =C-x x p=       | =M-x persp-prev=             | Switch to previous perspective                                                                      |
-| =C-x x <right>= | =M-x persp-next=             | Switch to next perspective                                                                          |
-| =C-x x <left>=  | =M-x persp-prev=             | Switch to previous perspective                                                                      |
-| =C-x x C-s=     | =M-x persp-state-save=       | Save all perspectives in all frames to a file                                                       |
-| =C-x x C-l=     | =M-x persp-state-load=       | Load all perspectives from a file                                                                   |
-|-----------------+------------------------------+-----------------------------------------------------------------------------------------------------|
+| Key binding       | Command                      | Description                                                                                         |
+|-------------------+------------------------------+-----------------------------------------------------------------------------------------------------|
+| =C-x M-p=         |                              | Prefix key for all perspective commands.                                                            |
+| =C-x M-p s=       | =M-x persp-switch=           | Query a perspective to switch to, or create                                                         |
+| =C-x M-p k=       | =M-x persp-remove-buffer=    | Query a buffer to remove from current perspective                                                   |
+| =C-x M-p c=       | =M-x persp-kill=             | Query a perspective to kill                                                                         |
+| =C-x M-p r=       | =M-x persp-rename=           | Rename current perspective                                                                          |
+| =C-x M-p a=       | =M-x persp-add-buffer=       | Query an open buffer to add to current perspective                                                  |
+| =C-x M-p A=       | =M-x persp-set-buffer=       | Add buffer to current perspective and remove it from all others                                     |
+| =C-x M-p b=       | =M-x persp-switch-to-buffer= | Like switch-to-buffer; includes all buffers from all perspectives; changes perspective if necessary |
+| =C-x M-p i=       | =M-x persp-import=           | Import a given perspective from another frame.                                                      |
+| =C-x M-p n=       | =M-x persp-next=             | Switch to next perspective                                                                          |
+| =C-x M-p p=       | =M-x persp-prev=             | Switch to previous perspective                                                                      |
+| =C-x M-p <right>= | =M-x persp-next=             | Switch to next perspective                                                                          |
+| =C-x M-p <left>=  | =M-x persp-prev=             | Switch to previous perspective                                                                      |
+| =C-x M-p C-s=     | =M-x persp-state-save=       | Save all perspectives in all frames to a file                                                       |
+| =C-x M-p C-l=     | =M-x persp-state-load=       | Load all perspectives from a file                                                                   |
+|-------------------+------------------------------+-----------------------------------------------------------------------------------------------------|
 
 Since [[https://github.com/nex3/perspective-el][perspective]]  maintains distinct buffer lists for each [[https://github.com/nex3/perspective-el][perspective]], it helps to use a
 Perspective-aware buffer switcher.
@@ -8285,13 +8327,13 @@ Perspective-aware buffer switcher.
   :bind (
          ("C-x b" . persp-switch-to-buffer*)
          ("C-x k" . persp-kill-buffer*)
-         )
-  :init (setq-default persp-keymap-prefix (kbd "C-x x"))
+        )
+  :custom (persp-mode-prefix-key (kbd "C-x M-p"))
+  ;:init
+  ;    (persp-mode)
   :config
       (setq persp-save-dir psimacs/config/persp-save-dir)
       (setq persp-auto-save-fname psimacs/config/persp-auto-save-file)
-
-      (persp-mode)
 )
 #+end_src
 
@@ -9172,7 +9214,7 @@ See also:
 
         ;(add-hook 'after-init-hook   #'bm-repository-load)
         ;(add-hook 'kill-buffer-hook  #'bm-buffer-save)
-        ;(add-hook 'kill-emacs-hook   #'(lambda nil
+        ;(add-hook 'kill-emacs-hook   (lambda nil
         ;                                 (bm-buffer-save-all)
         ;                                 (bm-repository-save)))
         ;
@@ -10315,6 +10357,7 @@ Select a directory with ivy.
 ;;
 (defun psimacs/file-system/choose-directory (directory-to-start-in)
     "Return a directory chosen by the user.
+
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Choose directory: ")
          (counsel--find-file-predicate #'file-directory-p)
@@ -10327,6 +10370,7 @@ The user will be prompted to choose a directory starting with 'directory-to-star
 
 (defun psimacs/file-system/find-file (directory-to-start-in)
     "Return a file chosen by the user.
+
 The user will be prompted to choose a directory starting with 'directory-to-start-in'"
     (let* ((ivy-read-prompt "Find file: ")
          (default-directory directory-to-start-in)
@@ -11658,6 +11702,7 @@ Special global commands:
 ;;
 (defun psimacs/projectile/create-empty-projectile-file ()
     "Choose diretory and create an empty '.projectile' file.
+
 The file is only created if it does not already exist."
     (interactive)
     (let* ((file (concat (psimacs/file-system/choose-directory default-directory) ".projectile")))
@@ -12188,15 +12233,24 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
 
           (delete-other-windows)
 
-          ;; Refresh dashboard buffer
-          (when (get-buffer dashboard-buffer-name)
-            (kill-buffer dashboard-buffer-name))
-
-          (dashboard-insert-startupify-lists)
           (switch-to-buffer dashboard-buffer-name)
+          (dashboard-mode)
+          (dashboard-insert-startupify-lists)
+          (dashboard-refresh-buffer)
 
           ;; Jump to the first section
-          (psimacs/dashboard/goto-recent-files))
+          (psimacs/dashboard/goto-recent-files)
+
+          ;; Refresh dashboard buffer
+          ;(when (get-buffer dashboard-buffer-name)
+          ;  (kill-buffer dashboard-buffer-name))
+
+          ;(dashboard-insert-startupify-lists)
+          ;(switch-to-buffer dashboard-buffer-name)
+
+          ;; Jump to the first section
+          ;(psimacs/dashboard/goto-recent-files)
+        )
 
         (defun psimacs/dashboard/quit-dashboard ()
           "Quit dashboard window."
@@ -12604,7 +12658,7 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
 )
 #+end_src
 
-** Emacs Application Framework
+** Emacs Application Framework :noexport:
 
 The package [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] provides a free/libre and open-source extensible framework that
 revolutionizes the graphical capabilities of Emacs, the key to ultimately Live in Emacs.
@@ -12622,7 +12676,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
 ;;
 ;; Emacs Application Framework
 ;;
-(defun my-eaf-install-deps(app-dir)
+(defun psimacs/config/eaf-install-deps(app-dir)
   "Install deps from dependencies.json."
   (let* ((deps-dict (with-temp-buffer
                       (insert-file-contents (expand-file-name "dependencies.json" app-dir))
@@ -12672,7 +12726,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
                          :host github
                          :repo "emacs-eaf/eaf-browser"
                          :files ("*")
-                         :post-build (my-eaf-install-deps (straight--build-dir "eaf-browser"))
+                         :post-build (psimacs/config/eaf-install-deps (straight--build-dir "eaf-browser"))
             )
   :custom (eaf-browser-continue-where-left-off t)
           (eaf-browser-enable-adblocker t)
@@ -12698,7 +12752,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
                             :host github
                             :repo "emacs-eaf/eaf-pdf-viewer"
                             :files ("*")
-                            :post-build (my-eaf-install-deps (straight--build-dir "eaf-pdf-viewer"))
+                            :post-build (psimacs/config/eaf-install-deps (straight--build-dir "eaf-pdf-viewer"))
             )
   :config (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
           (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
@@ -12709,7 +12763,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
   :straight (eaf-markdown-previewer :type git
                                     :host github
                                     :repo "emacs-eaf/eaf-markdown-previewer" :files ("*")
-                                    :post-build (my-eaf-install-deps (straight--build-dir "eaf-markdown-previewer"))
+                                    :post-build (psimacs/config/eaf-install-deps (straight--build-dir "eaf-markdown-previewer"))
             )
 )
 
@@ -12719,7 +12773,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
                         :host github
                         :repo "emacs-eaf/eaf-camera"
                         :files ("*")
-                        ;:post-build (my-eaf-install-deps (straight--build-dir "eaf-camera"))
+                        ;:post-build (psimacs/config/eaf-install-deps (straight--build-dir "eaf-camera"))
             )
 )
 
@@ -12729,7 +12783,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
                           :host github
                           :repo "emacs-eaf/eaf-terminal"
                           :files ("*")
-                          ;:post-build (my-eaf-install-deps (straight--build-dir "eaf-terminal"))
+                          ;:post-build (psimacs/config/eaf-install-deps (straight--build-dir "eaf-terminal"))
             )
 )
 #+end_src
@@ -14166,11 +14220,15 @@ usual tasks such as creating new files and saving files.
   :config
       (setq deft-directory  psimacs/config/roam-notes-dir)
       (setq deft-recursive t)
+      (setq deft-default-extension "org")
       (setq deft-extensions '("org" "md" "txt"))
       (setq deft-strip-summary-regexp ":PROPERTIES:\n\\(.+\n\\)+:END:\n")
       (setq deft-use-filename-as-title t)
+      ;;(setq deft-use-filename-as-title nil)
+      (setq deft-use-filter-string-for-filename t)
+      (setq deft-auto-save-interval -1.0)
       (setq deft-file-naming-rules
-            '((noslash . "-")
+            '((noslash  . "-")
               (nospace . "-")
               (case-fn . downcase)))
       (setq deft-org-mode-title-prefix t)
@@ -14208,17 +14266,38 @@ A typical entry for a book will look like this:
 
 See also: [[https://lucidmanager.org/productivity/emacs-bibtex-mode/][Manage your literature with Emacs BibTeX Mode]]
 
-#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
+#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el :var file-description="Major Modes - latex-mode setup"
 (use-package bibtex
     :straight nil
     :hook (bibtex-mode . flyspell-mode)
-    :config
+    :init
         (setq bibtex-user-optional-fields '(
                                             ("keywords" "Keywords to describe the entry" "")
                                             ("file" "Link to document file." ":")
                                            ))
         (setq bibtex-align-at-equal-sign t)
         (setq bibtex-dialect 'biblatex)
+        (setq bibtex-text-indentation 20)
+
+        (setq bibtex-autokey-year-length 4
+              bibtex-autokey-name-year-separator "-"
+              bibtex-autokey-year-title-separator "-"
+              bibtex-autokey-titleword-separator "-"
+              bibtex-autokey-titlewords 2
+              bibtex-autokey-titlewords-stretch 1
+              bibtex-autokey-titleword-length 5)
+
+        (defun psimacs/bibtex/isbn-to-bibtex ()
+          "Get the bibtex entry from the ISBN number."
+          (interactive)
+          (let (
+                 (isbn (read-string "Enter ISBN number: "))
+                 (service (psimacs/ui/internal/select-from-item-list "Service: " '("goob" "openl" "wiki")))
+               )
+            (setq isbn (replace-regexp-in-string "[^0-9-]*" "" isbn))
+            (apply #'call-process psimacs/config/isbn-meta-exe nil t t `(,isbn ,service "bibtex"))
+          )
+        )
 )
 #+end_src
 
@@ -14231,29 +14310,26 @@ and tight integration into your Emacs workflows.
 #+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
 (use-package ivy-bibtex
     :bind ("C-c i b" . ivy-bibtex)
-    :config
+    :init
         (setq bib-files-directory (directory-files psimacs/config/bibliography-dir t "^[A-Z|a-z].+.bib$"))
         (setq pdf-files-directory (psimacs/file-system/concat-directory psimacs/config/bibliography-dir "pdf"))
 
         (setq bibtex-completion-bibliography bib-files-directory)
         (setq bibtex-completion-library-path pdf-files-directory)
-        (setq bibtex-completion-pdf-field "File")
         (setq bibtex-completion-notes-path (psimacs/file-system/concat-directory psimacs/config/bibliography-dir "notes"))
-        (setq bibtex-completion-additional-search-fields '(keywords))
         (setq bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n")
-        (setq bibtex-completion-display-formats
-	                '(
-                        (article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
-	                    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
-	                    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
-	                    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
-	                    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
-                     ))
-	    (setq bibtex-completion-pdf-open-function
-	                (lambda (fpath)
-	                  (call-process "open" nil 0 nil fpath)))
 
         (setq bibtex-completion-additional-search-fields '(keywords abstract))
+        (setq bibtex-completion-display-formats
+                '(
+                    (article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
+                    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
+                    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+                    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+                    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
+             ))
+
+        (setq bibtex-completion-pdf-field "File")
         (setq bibtex-completion-pdf-open-function
             (lambda (fpath)
                 (call-process (concat psimacs/config/pdf-viewer-runtime " -reuse-instance") nil 0 nil fpath)))
@@ -14314,7 +14390,14 @@ Following an unsorted list if references:
 - [[https://www.ctan.org/?lang=en][CTAN]]
 - [[https://www.golatex.de/wiki/KOMA-Script][KOMA-Script]]
 
-#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el :var file-description="Major Modes - latex-mode setup"
+#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
+;;
+;; pdf-tools configuration
+;;
+(use-package pdf-tools)
+#+end_src
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
 ;;
 ;; RefTex configuration
 ;;
@@ -14342,6 +14425,53 @@ Following an unsorted list if references:
                 LaTeX-math-mode
               )
     :defines (TeX-save-query preview-image-type)
+    :init
+        (defun psimacs/config/use-external-pdf-viewer ()
+            "Use the external PDF viewer."
+            (interactive)
+            (setq TeX-view-program-list
+              `(
+                ;; SumatraPDF viewer
+                (,psimacs/config/pdf-viewer-name (
+                                                  ,(concat psimacs/config/pdf-viewer-runtime " -reuse-instance")
+                                                  (mode-io-correlate " -forward-search \"%b\" %n ") " %o"
+                                                 ))
+               ))
+
+            (setq TeX-view-program-selection `(
+                                               (output-pdf ,psimacs/config/pdf-viewer-name)
+                                               (output-dvi "Yap")
+                                               ((output-dvi style-pstricks) "dvips and start")
+                                               (output-html "start")
+                                              ))
+        )
+
+        (defun psimacs/config/use-internal-pdf-viewer ()
+            "Use the internal PDF viewer."
+            (interactive)
+            (add-hook 'LaTeX-mode-hook 'pdf-tools-install)
+
+            (setq TeX-view-program-list
+                  '(
+                    ("pdf-tools" "TeX-pdf-tools-sync-view")
+                   ))
+
+            (setq TeX-view-program-selection '(
+                                               (output-pdf "pdf-tools")
+                                              ))
+            (setq TeX-source-correlate-start-server t)
+        )
+
+        (defun psimacs/config/select-current-pdf-viewer ()
+            "Select the currently active pdf viewer"
+            (interactive)
+            (let* (( result (psimacs/ui/internal/select-from-item-list "Choose PDF viewr: " `(,psimacs/config/pdf-viewer-name "pdf-tools"))))
+                (if (equal result "pdf-tools")
+                    (psimacs/config/use-internal-pdf-viewer)
+                  (psimacs/config/use-external-pdf-viewer))
+            )
+        )
+
     :config
         (setq TeX-auto-save t)
         (setq TeX-parse-self t)
@@ -14443,47 +14573,10 @@ if the latter is bound."
                 ;(setq LaTeX-math-menu-unicode t)
                 ;(setq font-latex-fontify-sectioning 1.3)
 
+                (psimacs/config/use-external-pdf-viewer)
 
-                ;;
-                ;; Use emacs internal pdf viewer
-                ;;
                 ;; Update PDF buffers after successful LaTeX runs
                 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
-
-                ;;
-                ;; Using external Sumatra PDF viewer
-                ;;
-                (setq TeX-view-program-list
-                  `(
-                    ;; SumatraPDF viewer
-                    (,psimacs/config/pdf-viewer-name (
-                                                      ,(concat psimacs/config/pdf-viewer-runtime " -reuse-instance")
-                                                      (mode-io-correlate " -forward-search \"%b\" %n ") " %o"
-                                                     ))
-                   ))
-
-                (setq TeX-view-program-selection `(
-                                                   (output-pdf ,psimacs/config/pdf-viewer-name)
-                                                   (output-dvi "Yap")
-                                                   ((output-dvi style-pstricks) "dvips and start")
-                                                   (output-html "start")
-                                                  ))
-
-                ;;
-                ;; Using internal pdf-tools PDF viewer: This does currently not work for me!!!
-                ;;
-                ;;(add-hook 'LaTeX-mode-hook 'pdf-tools-instal)
-                ;;
-                ;;(setq TeX-view-program-list
-                ;;      '(
-                ;;        ("pdf-tools" "TeX-pdf-tools-sync-view")
-                ;;       ))
-                ;;
-                ;;(setq TeX-view-program-selection '(
-                ;;                                   (output-pdf "pdf-tools")
-                ;;                                  )
-                ;;      TeX-source-correlate-start-server t
-                ;;      )
     ))
 )
 #+end_src
@@ -14551,7 +14644,7 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 - [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
 - [[https://mmmyddd.github.io/wiki/emacs/org-mode.html][Org-Mode by Justin]]
 
-*** Remove build-in org from load-path
+*** Remove build-in org from load-path :noexport:
 
 *Psimacs* uses the [[https://orgmode.org/worg/org-contrib/][org-mode contributed packages]] which are
 not part of the *Emacs* build-in [[https://orgmode.org][org-mode]] installation.
@@ -14577,7 +14670,7 @@ In order to avoid inconsistencies with of build-in org package, we just remove i
 The configuration is long and gets longer with time. Therefore it is split
 into multiple chunks of code.
 
-**** Fixing missing org-loaddefs.el
+**** Fixing missing org-loaddefs.el :noexport:
 
 The problem is that *Psimacs* uses currently an =org-plus-contrib= version taken directly from
 the [[https://code.orgmode.org/bzg/org-mode.git][org-mode git]] repository. In order to install that version compatible =make= needs to be
@@ -14621,7 +14714,7 @@ that basically calls fixing functionality provided by [[https://orgmode.org][org
 (add-hook 'straight-use-package-pre-build-functions #'psimacs/config/fix-org-autoload-function)
 #+end_src
 
-**** Org-Mode package installation
+**** Org-Mode package installation :noexport:
 
 If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be replaced by the =:straight nil= statement.
 
@@ -14630,7 +14723,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 ;; The main org-mode configuration
 ;;
 (use-package org
-    ;; :straight nil
+    ;;:straight nil
     :straight (org-plus-contrib
                 :repo "https://code.orgmode.org/bzg/org-mode.git"
                 :local-repo "org"
@@ -14652,6 +14745,48 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
               )
     :defines org-agenda-mode-map
 )
+#+end_src
+
+**** Org-Mode package installation
+
+For now use the default *Emacs* build-in org-mode.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; The main org-mode configuration
+;;
+(use-package org
+    :straight nil
+    ;;:straight (org-plus-contrib
+    ;;            :repo "https://code.orgmode.org/bzg/org-mode.git"
+    ;;            :local-repo "org"
+    ;;            :files (:defaults "contrib/lisp/*.el")
+    ;;         )
+    :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
+
+    ;;
+    ;; The following code lines are only necessary because of the config files byte-compiling feature of Psimacs.
+    ;; Probably a better way exists for this.
+    ;;
+    :commands ( org-transpose-element
+                org-transpose-words
+                org-table-transpose-table-at-point
+                org-forward-heading-same-level
+                org-backward-heading-same-level
+                org-agenda-show
+                org-agenda-goto
+              )
+    :defines org-agenda-mode-map
+)
+#+end_src
+
+**** Org-Contrib package installation
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; The main org-mode configuration
+;;
+(use-package org-contrib)
 #+end_src
 
 **** Helper functions for Org-Mode
@@ -14691,7 +14826,7 @@ A small number of internal helper functions used in *Psimacs's* [[https://code.o
 (use-package org
     :straight nil
     :config
-
+        (setq org-export-backends '(ascii html icalendar latex beamer md odt org-ref pandoc))
 
         ;; Make windmove work in Org mode
         (add-hook 'org-shiftup-final-hook    'windmove-up)
@@ -15435,6 +15570,33 @@ Provide some support for the [[https://en.wikipedia.org/wiki/OpenDocument][OpenD
 )
 #+end_src
 
+**** LaTeX export support
+
+References:
+    - [[https://jonathanabennett.github.io/blog/2019/05/29/writing-academic-papers-with-org-mode/][Jonathan Bennett's Blog: Writing Academic Papers with Org-mode]]
+    - [[http://www.wouterspekkink.org/academia/writing/tool/doom-emacs/2021/02/27/writing-academic-papers-with-org-mode.html][Wouter Spekkink: Writing academic papers with org-mode]]
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+;;
+;; LaTeX support for export
+;;
+(use-package org
+    :straight nil
+    :config
+        (add-to-list 'org-latex-classes
+               '(
+                    "apa6"
+                    "\\documentclass{apa6}"
+                    ("\\section{%s}" . "\\section*{%s}")
+                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+                )
+        )
+)
+#+end_src
+
 **** Generally useful functions for Org-Mode
 
 This section contains a number of useful functions for working with [[https://code.orgmode.org/bzg/org-mode][org-mode]] files.
@@ -15668,8 +15830,76 @@ clickable to access functions like opening a pdf, notes or url associated with t
 Each link also can be exported to LaTeX to build a PDF.
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; Org-ref configuration
+;;
 (use-package org-ref
+    ;;:straight nil
     :after org
+    :init
+        (require 'org-ref-utils)
+        (require 'org-ref-ivy)
+        (require 'org-ref-arxiv)
+        (require 'org-ref-scopus)
+        (require 'org-ref-wos)
+        (require 'queue)
+
+        (defun psimacs/config/citeproc-bt--process-brackets (fn &rest args)
+          "Advice for the citeproc-bt--process-brackets allowing resuing of embedded LaTeX math."
+          ;(message "Entry: %S" args)
+
+          (let* ((result (car args))
+                 (lhb    (nth 1 args))
+                 (rhb    (nth 2 args))
+                 (formular-rx (rx "\\(" (group (*? anything)) "\\)"))
+	               (match t)
+                 (value nil)
+                 (q (make-queue)))
+
+            (while match
+              (cond ((string-match formular-rx result)
+                     (queue-enqueue q (match-string 0 result))
+	                   (setq result (replace-match "<<QUEUED-MATCH>>" t t result)
+		                 match t))
+	                  (t (setq match nil))))
+
+            ;(message "result1: %S" result)
+            (setq result (apply fn `(,result ,lhb ,rhb)))
+            ;(message "result2: %S" result)
+
+            (setq match t)
+            (while match
+              (cond ((string-match "<<QUEUED-MATCH>>" result)
+                     (setq value (queue-dequeue q)
+	                         result (replace-match (concat lhb value rhb) t t result)
+                           match t))
+       	          (t (setq match nil))))
+             ;(message "result3: %S" result)
+             result)
+        )
+
+        (advice-add 'citeproc-bt--process-brackets :around #'psimacs/config/citeproc-bt--process-brackets)
+
+    :bind (
+        :map bibtex-mode-map
+            ("H-SPC b" . org-ref-bibtex-hydra/body)
+        :map org-mode-map
+            ("H-x C-c C-c l" . org-ref-insert-link)
+            ("H-x C-c C-c L" . org-ref-insert-link-hydra/body)
+    )
+)
+
+(use-package org-ref-ivy
+    :straight nil
+    :init
+        (setq org-ref-insert-link-function      'org-ref-insert-link-hydra/body
+	      org-ref-insert-cite-function      'org-ref-cite-insert-ivy
+	      org-ref-insert-label-function     'org-ref-insert-label-link
+	      org-ref-insert-ref-function       'org-ref-insert-ref-link
+	      org-ref-cite-onclick-function     (lambda (_) (org-ref-citation-hydra/body))
+              org-ref-completion-library        'org-ref-ivy-cite
+              org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+        )
 )
 #+end_src
 
@@ -15850,6 +16080,16 @@ For a gentle introduction read this [[https://www.kengrimes.com/ox-hugo-tutorial
 (use-package ox-hugo :after ox)
 #+end_src
 
+*** Exporting to Pandoc
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; ox-pandoc org exporter
+;;
+(use-package ox-pandoc :after ox)
+#+end_src
+
+
 *** Lower case org keywords
 
 Replace [[https://orgmode.org][org-mode]] keywords to lowercase in accordance to [[https://orgmode.org][org-mode]] 9.2
@@ -15935,7 +16175,7 @@ Brains:
                 org-roam-dailies-caputure-templates
              )
     :hook
-         (before-save-hook . time-stamp)
+         (before-save . time-stamp)
     ;    (after-init . org-roam-db-autosync-mode)
     :init
         (setq org-roam-v2-ack t)
@@ -15982,97 +16222,130 @@ Brains:
                 )
                 (
                     "c" "cortex" plain
-                    "%?"
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "CortexTemplate.org"))
                     :if-new (
-                                file+head "cortex/%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n\n"
+                                file "cortex/%<%Y-%m-%d>-${slug}.org"
                             )
-                    :immediate-finish t
                     :unnarrowed t
                 )
                 (
                     "a" "article" plain
-                    "%?"
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ArticleTemplate.org"))
                     :if-new (
-                                file+head "articles/%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n\n"
+                                file "articles/%<%Y-%m-%d>-${slug}.org"
                             )
-                    :immediate-finish t
+                    :unnarrowed t
+                )
+                (
+                    "f" "faq" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "FAQTemplate.org"))
+                    :if-new (
+                                file "faq/%<%Y-%m-%d>-${slug}.org"
+                            )
                     :unnarrowed t
                 )
                 (
                     "r" "reference" plain
-                    "%?"
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ReferenceTemplate.org"))
                     :if-new (
-                                file+head "references/%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n\n"
+                                file "references/%<%Y-%m-%d>-${slug}.org"
                             )
-                    :immediate-finish t
-                    :unnarrowed t
-                )
-
-
-
-
-                (
-                    "l" "programming language" plain
-                    "* Characteristics\n\n- Family: %?\n-Inspired by:\n\n* Reference \n\n"
-                    :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n\n")
                     :unnarrowed t
                 )
                 (
-                    "b" "book notes" plain
+                    "b" "book note" plain
                     (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "BookNoteTemplate.org"))
                     :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n\n"
+                                file+head "references/%<%Y-%m-%d>-${slug}.org"
                             )
                     :unnarrowed t
                 )
                 (
-                    "B" "book notes" plain
-                    "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+                    "x" "research" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ResearchTemplate.org"))
                     :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n\n"
+                                file "research/%<%Y-%m-%d>-${slug}.org"
                             )
                     :unnarrowed t
                 )
-                (
-                    "p" "project" plain
-                    "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-                    :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}\n#+lastmod: \n#+category: ${title}\n#+filetags Project\n\n"
-                            )
-                    :unnarrowed t
-                )
-                (
-                    "P" "private" plain
-                    "%?"
-                    :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}-private.org"
-                                "#+title: ${title}\n#+lastmod: \n\n"
-                            )
-                    :unnarrowed t
-                )
-                (
-                    "t" "temporary" plain
-                    "%?"
-                    :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}-temp.org"
-                                "#+title: ${title}\n#+lastmod: \n#+hugo_lastmod: Time-stamp: <>\n\n"
-                            )
-                    :unnarrowed t
-                )
+
+                ; (
+                    ; "a" "article" plain
+                    ; "%?"
+                    ; :if-new (
+                                ; file+head "articles/%<%Y-%m-%d>-${slug}.org"
+                                ; "#+title: ${title}\n#+lastmod: \n\n"
+                            ; )
+                    ; :immediate-finish t
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "r" "reference" plain
+                    ; "%?"
+                    ; :if-new (
+                                ; file+head "references/%<%Y-%m-%d>-${slug}.org"
+                                ; "#+title: ${title}\n#+lastmod: \n\n"
+                            ; )
+                    ; :immediate-finish t
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "l" "programming language" plain
+                    ; "* Characteristics\n\n- Family: %?\n-Inspired by:\n\n* Reference \n\n"
+                    ; :if-new (
+                                ; file+head
+                                ; "%<%Y-%m-%d>-${slug}.org"
+                                ; "#+title: ${title}\n#+lastmod: \n\n")
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "b" "book notes" plain
+                    ; (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "BookNoteTemplate.org"))
+                    ; :if-new (
+                                ; file+head "references/%<%Y-%m-%d>-${slug}.org"
+                            ; )
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "B" "book notes" plain
+                    ; "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+                    ; :if-new (
+                                ; file+head
+                                ; "%<%Y-%m-%d>-${slug}.org"
+                                ; "#+title: ${title}\n#+lastmod: \n\n"
+                            ; )
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "p" "project" plain
+                    ; "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
+                    ; :if-new (
+                                ; file+head
+                                ; "%<%Y-%m-%d>-${slug}.org"
+                                ; "#+title: ${title}\n#+lastmod: \n#+category: ${title}\n#+filetags Project\n\n"
+                            ; )
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "P" "private" plain
+                    ; "%?"
+                    ; :if-new (
+                                ; file+head
+                                ; "%<%Y-%m-%d>-${slug}-private.org"
+                                ; "#+title: ${title}\n#+lastmod: \n\n"
+                            ; )
+                    ; :unnarrowed t
+                ; )
+                ; (
+                    ; "t" "temporary" plain
+                    ; "%?"
+                    ; :if-new (
+                                ; file+head
+                                ; "%<%Y-%m-%d>-${slug}-temp.org"
+                                ; "#+title: ${title}\n#+lastmod: \n#+hugo_lastmod: Time-stamp: <>\n\n"
+                            ; )
+                    ; :unnarrowed t
+                ; )
             )
         )
 
@@ -16090,7 +16363,11 @@ Brains:
             )
         )
 
-        (setq time-stamp-start "#\\+lastmod: [\t]*")
+        (setq time-stamp-active t
+              time-stamp-start "#\\+lastmod:[ \t]*"
+              time-stamp-end "$"
+              time-stamp-format "%04Y-%02m-%02d"
+        )
 
         ;;
         ;; See https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/ for explanations
@@ -16823,8 +17100,9 @@ user buffer is determined by psimacs/buffer/user-buffer-q."
     "Return t if current buffer is a user buffer, else nil.
 
 Typically, if buffer name starts with *, it's not considered a user buffer.
-This function is used by buffer switching command and close buffer command, so that next buffer shown is a user buffer.
-You can override this function to get your idea of user buffer."
+This function is used by buffer switching command and close buffer command,
+so that next buffer shown is a user buffer. You can override this function
+to get your idea of user buffer."
 
     (interactive)
     (if (string-equal "*" (substring (buffer-name) 0 1))
@@ -18204,7 +18482,7 @@ _j_ _l_: ◄ ►  ^ ^                 _y_: yank rect
 
 ** Straight
 
-The following hydra should help in working with the [[https://github.com/raxod502/straight.el][Straight]] package manager.
+The following hydra should help in working with the [[https://github.com/radian-software/straight.el][Straight]] package manager.
 
 #+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
 ;;

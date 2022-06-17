@@ -1,4 +1,4 @@
-;;; early-init.el --- Early initialization -*- coding: utf-8 -*- lexical-binding: t -*-
+;;; early-init.el --- Early initialization -*- coding: utf-8; lexical-binding: t; -*-
 ;;
 ;; Don't edit this file, edit init.org instead ...
 ;;
@@ -310,7 +310,7 @@ FILE        : el file that get generated
 ORG-FILE    : org mode file that is prints
 DESCRIPTION : short description text"
   (let (
-        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8 -*- lexical-binding: t -*-\n" (file-name-nondirectory file) description)
+        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8; lexical-binding: t; -*-\n" (file-name-nondirectory file) description)
                                   ";;\n"
                           (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
                                   ";;\n"
@@ -435,7 +435,7 @@ For these files extra header and footer are written. In this case, also an addit
 
 Shortly, all tangled source code blocks for file foo.el are written to one file 'foo.el' that look like
 
-;; foo.el --- text -*- coding: utf-8 -*- lexical-binding: t -*-
+;; foo.el --- text -*- coding: utf-8; lexical-binding: t; -*-
 ;;
 ;; Don't edit this file, edit file.org instead ...
 ;;
