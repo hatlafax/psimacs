@@ -2458,7 +2458,6 @@ your calendar.
 
 (defconst psimacs/config/libre-office-exe "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
     "The otd to docx converter of the LibreOffice suite.")
-
 #+end_src
 
 ** Bibliopgraphy directory
@@ -2476,6 +2475,13 @@ The place, preferably on [[https://www.dropbox.com/][Dropbox]], where my bibliog
 (psimacs/file-system/make-directory psimacs/config/bibliography-dir)
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/bibliography-dir "pdf"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/bibliography-dir "notes"))
+
+;;
+;; Citation Style Language direcotry
+;;
+(defconst psimacs/config/org-cite-csl-styles-dir
+  (psimacs/file-system/concat-directory psimacs/config/bibliography-dir "csl")
+  "The psimacs org mode cite csl style directory.")
 #+end_src
 
 ** Recent files
@@ -3936,24 +3942,6 @@ To get running at all, the [[https://github.com/radian-software/straight.el][Str
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-
-;(defvar bootstrap-version)
-;(let (
-;        (bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-;        (bootstrap-version 5)
-;    )
-;    (unless (file-exists-p bootstrap-file)
-;        (with-current-buffer
-;            (url-retrieve-synchronously
-;                "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-;                'silent 'inhibit-cookies
-;            )
-;            (goto-char (point-max))
-;            (eval-print-last-sexp)
-;        )
-;    )
-;    (load bootstrap-file nil 'nomessage)
-;)
 #+end_src
 
 *** use-package
@@ -14320,15 +14308,21 @@ and tight integration into your Emacs workflows.
         (setq bibtex-completion-notes-path (psimacs/file-system/concat-directory psimacs/config/bibliography-dir "notes"))
         (setq bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n")
 
-        (setq bibtex-completion-additional-search-fields '(keywords abstract))
+        (setq bibtex-completion-additional-search-fields '(keywords tags url journal booktitle))
+
         (setq bibtex-completion-display-formats
                 '(
                     (article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
                     (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
                     (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
                     (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+                    (online        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${url:40}")
+                    (misc          . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
                     (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
              ))
+
+        (setq bibtex-completion-pdf-symbol "⌘")
+        (setq bibtex-completion-notes-symbol "✎")
 
         (setq bibtex-completion-pdf-field "File")
         (setq bibtex-completion-pdf-open-function
@@ -14336,28 +14330,6 @@ and tight integration into your Emacs workflows.
                 (call-process (concat psimacs/config/pdf-viewer-runtime " -reuse-instance") nil 0 nil fpath)))
 
         (setq ivy-bibtex-default-action 'bibtex-completion-insert-citation)
-
-
-        (defun psimacs/config/org-ref-ivy-bibtex-display-transformer (candidate)
-          "Prepare bib entry CANDIDATE for display.
-This transformer allows org syntax in the candidate strings."
-          (let* ((width (- (frame-width) 2))
-	         (idx (get-text-property 1 'idx candidate))
-	         (entry (cdr (nth idx (ivy-state-collection ivy-last))))
-	         (fill-column (- width 7)))
-            (with-temp-buffer
-              (insert
-               (s-concat
-	        (if (s-starts-with-p ivy-mark-prefix candidate)
-	            ivy-mark-prefix "")
-	        (bibtex-completion-format-entry entry nil)))
-              (fill-region (point-min) (point-max))
-              (goto-char (point-min))
-              (forward-line)
-              (indent-region (point) (point-max) 7)
-              (buffer-string))))
-
-        (ivy-configure 'org-ref-cite-insert-ivy :display-transformer-fn 'psimacs/config/org-ref-ivy-bibtex-display-transformer)
 )
 #+end_src
 
@@ -14715,7 +14687,7 @@ that basically calls fixing functionality provided by [[https://orgmode.org][org
 (add-hook 'straight-use-package-pre-build-functions #'psimacs/config/fix-org-autoload-function)
 #+end_src
 
-**** Org-Mode package installation :noexport:
+**** Org-Mode package installation
 
 If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be replaced by the =:straight nil= statement.
 
@@ -14748,7 +14720,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 )
 #+end_src
 
-**** Org-Mode package installation
+**** Org-Mode package installation :noexport:
 
 For now use the default *Emacs* build-in org-mode.
 
@@ -14757,12 +14729,7 @@ For now use the default *Emacs* build-in org-mode.
 ;; The main org-mode configuration
 ;;
 (use-package org
-    :straight nil
-    ;;:straight (org-plus-contrib
-    ;;            :repo "https://code.orgmode.org/bzg/org-mode.git"
-    ;;            :local-repo "org"
-    ;;            :files (:defaults "contrib/lisp/*.el")
-    ;;         )
+    :straight (:type built-in)
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
 
     ;;
@@ -14828,6 +14795,7 @@ A small number of internal helper functions used in *Psimacs's* [[https://code.o
     :straight nil
     :config
         (setq org-export-backends '(ascii html icalendar latex beamer md odt org-ref pandoc))
+        (setq org-cite-csl-styles-dir psimacs/config/org-cite-csl-styles-dir)
 
         ;; Make windmove work in Org mode
         (add-hook 'org-shiftup-final-hook    'windmove-up)
@@ -15586,8 +15554,8 @@ References:
     :config
         (add-to-list 'org-latex-classes
                '(
-                    "apa6"
-                    "\\documentclass{apa6}"
+                    "apa7"
+                    "\\documentclass{apa7}"
                     ("\\section{%s}" . "\\section*{%s}")
                     ("\\subsection{%s}" . "\\subsection*{%s}")
                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -15881,6 +15849,88 @@ Each link also can be exported to LaTeX to build a PDF.
 
         (advice-add 'citeproc-bt--process-brackets :around #'psimacs/config/citeproc-bt--process-brackets)
 
+        (defun psimacs/config/ivy-bibtex-display-transformer (candidate)
+          (let* ((width (- (frame-width) 2))
+                 (idx (get-text-property 1 'idx candidate))
+                 (entry (cdr (nth idx (ivy-state-collection ivy-last))))
+                 (fill-column (- width 7)))
+            (with-temp-buffer
+              (insert
+               (mapconcat (lambda (x)
+                            (apply
+                             #'propertize
+                             (s-format (car x)
+                                       (lambda (key data)
+                                         (pcase key
+                                           ("=has-pdf="  (or (cdr (assoc key data)) "  "))
+                                           ("=has-note=" (or (cdr (assoc key data)) "  "))
+                                           ("keywords" (let ((keys (cdr (assoc key data))))
+                                                         (if (stringp keys)
+                                                             (format ", (%s)" keys)
+                                                           "")))
+                                           (_ (or (cdr (assoc key data)) "")))
+                                         )
+                                       entry)
+                             (cdr x)))
+                          '(("${=has-pdf=}${=has-note=} ${year} ")
+                            ("${author}" face (:foreground "DodgerBlue3"))
+                            (", ")
+                            ("${title}" face italic)
+                            (", ")
+                            ("${journal}")
+                            ("${keywords}" face bold))
+                          ""))
+              (fill-region (point-min) (point-max))
+              (goto-char (point-min))
+              (cond
+               ((looking-at bibtex-completion-pdf-symbol)
+                nil)
+               ((looking-at " ?")
+                nil)
+               (t
+                (skip-chars-forward " ")
+                (setf (buffer-substring (point-min) (point)) "  ")))
+              (forward-line)
+              (indent-region (point) (point-max) 7)
+
+              (buffer-string))))
+
+        (ivy-configure 'org-ref-cite-insert-ivy :display-transformer-fn #'psimacs/config/ivy-bibtex-display-transformer)
+
+        (defun psimacs/config/ivy-bibtex-display-transformer-1 (candidate)
+          "Prepare bib entry CANDIDATE for display."
+          (let* ((width (- (frame-width) 2))
+                 (idx (get-text-property 1 'idx candidate))
+                 (entry (cdr (nth idx (ivy-state-collection ivy-last)))))
+            (s-concat (if (s-starts-with-p ivy-mark-prefix candidate) ivy-mark-prefix "")
+                      (bibtex-completion-format-entry entry width)
+                      )
+            )
+          )
+
+        (defun psimacs/config/ivy-bibtex-display-transformer-2 (candidate)
+          "Prepare bib entry CANDIDATE for display.
+This transformer allows org syntax in the candidate strings."
+          (let* ((width (- (frame-width) 2))
+	         (idx (get-text-property 1 'idx candidate))
+	         (entry (cdr (nth idx (ivy-state-collection ivy-last))))
+           (message entry)
+	         (fill-column (- width 7)))
+            (with-temp-buffer
+              (insert
+               (s-concat
+	        (if (s-starts-with-p ivy-mark-prefix candidate)
+	            ivy-mark-prefix "")
+	        (bibtex-completion-format-entry entry nil)))
+              (fill-region (point-min) (point-max))
+              (goto-char (point-min))
+              (forward-line)
+              (indent-region (point) (point-max) 7)
+              (buffer-string))))
+
+        ;;(ivy-configure 'org-ref-cite-insert-ivy :display-transformer-fn #'psimacs/config/ivy-bibtex-display-transformer-1)
+        ;;(ivy-configure 'org-ref-cite-insert-ivy :display-transformer-fn #'psimacs/config/ivy-bibtex-display-transformer-2)
+
     :bind (
         :map bibtex-mode-map
             ("H-SPC b" . org-ref-bibtex-hydra/body)
@@ -16089,7 +16139,6 @@ For a gentle introduction read this [[https://www.kengrimes.com/ox-hugo-tutorial
 ;;
 (use-package ox-pandoc :after ox)
 #+end_src
-
 
 *** Lower case org keywords
 
