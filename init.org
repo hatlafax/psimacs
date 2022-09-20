@@ -3160,6 +3160,12 @@ ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isor
 pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy antlr4-python3-runtime, pyqt6, PyQt6-WebEngine, PyGetWindow, epc,
 isbntools.
 
+A /python pip/ =requirements.txt= file can be found in the =site-lisp/python= directory for convenience:
+
+#+begin_example
+pip install -r requirements.txt
+#+end_example
+
 If using [[https://www.sphinx-doc.org/en/master/][Sphinx]] with a non default contrib theme or extension, additional =pip= installation might be necessary.
 
 *Psimacs* installation does reference the python tools explicitly. Nevertheless, the Windows OS [[https://www.python.org/][Python]] runtime directory
@@ -3172,7 +3178,7 @@ pathes. Therefore our Windows OS [[https://www.python.org/][Python]] should alwa
 ;;
 (defconst psimacs/config/python-tools-dir
   (psimacs/file-system/concat-directory psimacs/config/tools-dir "py-tools")
-  "The psimacs personal python-tools directory.")6
+  "The psimacs personal python-tools directory.")
 
 (defconst psimacs/config/python-vc-visual-studio-dir
   (psimacs/file-system/concat-directory psimacs/config/python-tools-dir "MS-Visual-Studio")
@@ -3208,14 +3214,19 @@ This is pretty ugly, but different python installation might be in use on differ
     )
 )
 
-(defconst psimacs/config/python-runtime-dir
+(defconst psimacs/config/python-install-dir
   (let ( (f (psimacs/config/find-python-dir)) )
     (if f (file-name-as-directory f) nil))
-;  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python385")
+  "The psimacs used python installation directory.")
+
+(defconst psimacs/config/python-runtime-dir
+  (if (getenv "VIRTUAL_ENV")
+    (psimacs/file-system/concat-directory psimacs/config/python-install-dir "Scripts")
+    psimacs/config/python-install-dir)
   "The psimacs used python runtime directory.")
 
 (defconst psimacs/config/python-scripts-dir
-  (psimacs/file-system/concat-directory psimacs/config/python-runtime-dir "Scripts")
+  (psimacs/file-system/concat-directory psimacs/config/python-install-dir "Scripts")
   "The psimacs used python scripts directory.")
 
 (defconst psimacs/config/python-extensions-dir
@@ -15006,6 +15017,9 @@ A list of useful tags is predefined by *Psimacs*.
 
                 ;; Common unspecied tags
                 ("noexport"     . (:foreground "gold1"))
+                ("noexportL0"   . (:foreground "gold1"))
+                ("noexportL1"   . (:foreground "gold1"))
+                ("noexportL2"   . (:foreground "gold1"))
                 ("faq"          . (:foreground "gold1"))
                 ("question"     . (:foreground "gold1"))
                 ("note"         . (:foreground "gold1"))
@@ -15023,8 +15037,8 @@ A list of useful tags is predefined by *Psimacs*.
         )
 
         ;; Available key shortcuts for further tags.
-        ;; h j k u y z
-        ;; G M N Q U Y
+        ;; h j k u
+        ;; G M N Q U
         ;; 0
 
         (setq org-tag-persistent-alist
@@ -15107,6 +15121,9 @@ A list of useful tags is predefined by *Psimacs*.
 
                 ;; Common unspecied tags
                 ("noexport"     . ?x)
+                ("noexportL0"   . ?y)
+                ("noexportL1"   . ?Y)
+                ("noexportL2"   . ?z)
                 ("faq"          . ??)
                 ("question"     . ?&)
                 ("note"         . ?n)
@@ -15119,7 +15136,7 @@ A list of useful tags is predefined by *Psimacs*.
                 ("appointment"  . ?N)
 
                 ;; property tags
-                ("ordered"  . ?Z)
+                ("ordered"      . ?Z)
             )
         )
 
