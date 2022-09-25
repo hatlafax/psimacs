@@ -49,7 +49,8 @@ See also: [[https://github.com/caisah/emacs.dz][A list of people with nice emacs
 
 ** Installation
 
-This configuration uses *Emacs* >= 27. Clone the git repository into your *.emcas.d* directory
+This configuration uses *Emacs* >= 27 and is tested with  *Emacs* = 28.2. Clone the git repository into your *.emcas.d*
+directory
 
 #+begin_example
 mv ~/.emacs.d ~/.emacs.d.bak
@@ -2694,6 +2695,8 @@ pacman -S mingw-w64-x86_64-ntldd-git
 pacman -S mingw-w64-clang-x86_64-ntldd-git
 pacman -S mingw-w64-x86_64-hugo
 pacman -S mingw-w64-x86_64-emacs-pdf-tools-server
+pacman -S mingw-w64-x86_64-ripgrep
+pacman -S mingw-w64-x86_64-fd
 #+end_example
 
 Some of the packages are not really required but I use them and I would like to memorize my installation procedure
@@ -2734,7 +2737,7 @@ The following is the list of my currently installed packages. It is generated wi
 I will update this list from time to time.
 
 #+begin_example
-asciidoc 9.1.1-1
+asciidoc 9.1.1-2
 autoconf-wrapper 15-1
 autoconf2.13 2.13-5
 autogen 5.18.16-3
@@ -2745,23 +2748,23 @@ automake1.12 1.12.6-6
 automake1.13 1.13.4-7
 automake1.14 1.14.1-6
 automake1.15 1.15.1-4
-automake1.16 1.16.3-3
+automake1.16 1.16.5-1
 automake1.6 1.6.3-3
 automake1.7 1.7.9-3
 automake1.8 1.8.5-4
 automake1.9 1.9.6-3
-base 2020.12-1
-bison 3.8.2-2
+base 2022.06-1
+bison 3.8.2-3
 btyacc 20210619-2
 diffstat 1.64-1
-diffutils 3.8-2
-dos2unix 7.4.2-1
+diffutils 3.8-3
+dos2unix 7.4.3-1
 flex 2.6.4-2
-gdb 11.1-1
-gettext-devel 0.21-1
-git 2.35.1-3
-gperf 3.1-3
-groff 1.22.4-2
+gdb 11.1-2
+gettext-devel 0.21-2
+git 2.37.3-1
+gperf 3.1-4
+groff 1.22.4-3
 help2man 1.48.5-1
 intltool 0.51.0-2
 liblzo2 2.10-2
@@ -2771,143 +2774,146 @@ libunrar-devel 6.1.4-1
 lzop 1.04-1
 m4 1.4.19-2
 make 4.3-3
-man-db 2.10.2-1
-mercurial 6.0-1
-mingw-w64-clang-x86_64-boost 1.78.0-3
-mingw-w64-clang-x86_64-cgal 5.3-3
-mingw-w64-clang-x86_64-clang 13.0.1-3
-mingw-w64-clang-x86_64-clang-analyzer 13.0.1-3
-mingw-w64-clang-x86_64-clang-tools-extra 13.0.1-3
-mingw-w64-clang-x86_64-compiler-rt 13.0.1-3
-mingw-w64-clang-x86_64-crt-git 9.0.0.6454.b4445ee52-1
+man-db 2.10.2-2
+mercurial 6.2.1-1
+mingw-w64-clang-x86_64-boost 1.80.0-2
+mingw-w64-clang-x86_64-cgal 5.5-2
+mingw-w64-clang-x86_64-clang 15.0.0-3
+mingw-w64-clang-x86_64-clang-analyzer 15.0.0-3
+mingw-w64-clang-x86_64-clang-tools-extra 15.0.0-3
+mingw-w64-clang-x86_64-compiler-rt 15.0.0-3
+mingw-w64-clang-x86_64-crt-git 10.0.0.r72.g1dd2a4993-1
 mingw-w64-clang-x86_64-fox 1.6.57-2
 mingw-w64-clang-x86_64-git-repo 0.4.20-1
-mingw-w64-clang-x86_64-glfw 3.3.6-2
+mingw-w64-clang-x86_64-glfw 3.3.8-2
 mingw-w64-clang-x86_64-glm 0.9.9.8-1
-mingw-w64-clang-x86_64-headers-git 9.0.0.6454.b4445ee52-1
-mingw-w64-clang-x86_64-libc++abi 13.0.1-1
-mingw-w64-clang-x86_64-libmangle-git 9.0.0.6454.b4445ee52-1
-mingw-w64-clang-x86_64-libwinpthread-git 9.0.0.6454.b4445ee52-1
-mingw-w64-clang-x86_64-lld 13.0.1-3
-mingw-w64-clang-x86_64-lldb 13.0.1-1
-mingw-w64-clang-x86_64-llvm 13.0.1-3
+mingw-w64-clang-x86_64-headers-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-libmangle-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-libwinpthread-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-lld 15.0.0-3
+mingw-w64-clang-x86_64-lldb 15.0.0-1
+mingw-w64-clang-x86_64-llvm 15.0.0-3
 mingw-w64-clang-x86_64-make 4.3-1
-mingw-w64-clang-x86_64-mlir 13.0.1-1
+mingw-w64-clang-x86_64-mlir 15.0.0-1
 mingw-w64-clang-x86_64-ntldd-git r19.7fb9365-2
-mingw-w64-clang-x86_64-openmp 13.0.1-1
+mingw-w64-clang-x86_64-openmp 15.0.0-1
 mingw-w64-clang-x86_64-pkgconf 1.8.0-2
-mingw-w64-clang-x86_64-polly 13.0.1-1
-mingw-w64-clang-x86_64-qt6-3d 6.2.4-2
-mingw-w64-clang-x86_64-qt6-3d-debug 6.2.4-2
-mingw-w64-clang-x86_64-qt6-5compat 6.2.4-1
-mingw-w64-clang-x86_64-qt6-5compat-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-activeqt 6.2.4-1
-mingw-w64-clang-x86_64-qt6-activeqt-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-base 6.2.4-1
-mingw-w64-clang-x86_64-qt6-base-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-charts 6.2.4-1
-mingw-w64-clang-x86_64-qt6-charts-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-connectivity 6.2.4-1
-mingw-w64-clang-x86_64-qt6-connectivity-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-datavis3d 6.2.4-1
-mingw-w64-clang-x86_64-qt6-datavis3d-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-declarative 6.2.4-1
-mingw-w64-clang-x86_64-qt6-declarative-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-doc 6.2.1-1
-mingw-w64-clang-x86_64-qt6-imageformats 6.2.4-1
-mingw-w64-clang-x86_64-qt6-imageformats-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-lottie 6.2.4-1
-mingw-w64-clang-x86_64-qt6-lottie-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-multimedia 6.2.4-1
-mingw-w64-clang-x86_64-qt6-multimedia-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-networkauth 6.2.4-1
-mingw-w64-clang-x86_64-qt6-networkauth-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-positioning 6.2.4-1
-mingw-w64-clang-x86_64-qt6-positioning-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-quick3d 6.2.4-1
-mingw-w64-clang-x86_64-qt6-quick3d-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-quicktimeline 6.2.4-1
-mingw-w64-clang-x86_64-qt6-quicktimeline-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-remoteobjects 6.2.4-1
-mingw-w64-clang-x86_64-qt6-remoteobjects-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-scxml 6.2.4-1
-mingw-w64-clang-x86_64-qt6-scxml-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-sensors 6.2.4-1
-mingw-w64-clang-x86_64-qt6-sensors-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-serialbus 6.2.4-1
-mingw-w64-clang-x86_64-qt6-serialbus-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-serialport 6.2.4-1
-mingw-w64-clang-x86_64-qt6-serialport-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-shadertools 6.2.4-1
-mingw-w64-clang-x86_64-qt6-shadertools-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-svg 6.2.4-1
-mingw-w64-clang-x86_64-qt6-svg-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-tools 6.2.4-1
-mingw-w64-clang-x86_64-qt6-tools-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-translations 6.2.4-1
-mingw-w64-clang-x86_64-qt6-virtualkeyboard 6.2.4-1
-mingw-w64-clang-x86_64-qt6-virtualkeyboard-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-webchannel 6.2.4-1
-mingw-w64-clang-x86_64-qt6-webchannel-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-websockets 6.2.4-1
-mingw-w64-clang-x86_64-qt6-websockets-debug 6.2.4-1
-mingw-w64-clang-x86_64-qt6-webview 6.2.4-1
-mingw-w64-clang-x86_64-qt6-webview-debug 6.2.4-1
-mingw-w64-clang-x86_64-spirv-headers 1~1.3.204.1-1
-mingw-w64-clang-x86_64-spirv-tools 2022.1-1
-mingw-w64-clang-x86_64-tools-git 9.0.0.6454.b4445ee52-1
-mingw-w64-clang-x86_64-vulkan-headers 1.3.207-1
-mingw-w64-clang-x86_64-vulkan-loader 1.3.207-1
-mingw-w64-clang-x86_64-vulkan-validation-layers 1.3.206-1
-mingw-w64-clang-x86_64-winpthreads-git 9.0.0.6454.b4445ee52-1
-mingw-w64-clang-x86_64-winstorecompat-git 9.0.0.6454.b4445ee52-1
+mingw-w64-clang-x86_64-polly 15.0.0-1
+mingw-w64-clang-x86_64-qt6-3d 6.3.2-1
+mingw-w64-clang-x86_64-qt6-3d-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-5compat 6.3.2-1
+mingw-w64-clang-x86_64-qt6-5compat-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-activeqt 6.3.2-1
+mingw-w64-clang-x86_64-qt6-activeqt-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-base 6.3.2-1
+mingw-w64-clang-x86_64-qt6-base-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-charts 6.3.2-1
+mingw-w64-clang-x86_64-qt6-charts-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-connectivity 6.3.2-1
+mingw-w64-clang-x86_64-qt6-connectivity-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-datavis3d 6.3.2-1
+mingw-w64-clang-x86_64-qt6-datavis3d-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-declarative 6.3.2-1
+mingw-w64-clang-x86_64-qt6-declarative-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-doc 6.3.1-1
+mingw-w64-clang-x86_64-qt6-imageformats 6.3.2-1
+mingw-w64-clang-x86_64-qt6-imageformats-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-lottie 6.3.2-1
+mingw-w64-clang-x86_64-qt6-lottie-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-multimedia 6.3.2-1
+mingw-w64-clang-x86_64-qt6-multimedia-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-networkauth 6.3.2-1
+mingw-w64-clang-x86_64-qt6-networkauth-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-positioning 6.3.2-1
+mingw-w64-clang-x86_64-qt6-positioning-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-quick3d 6.3.2-1
+mingw-w64-clang-x86_64-qt6-quick3d-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-quicktimeline 6.3.2-1
+mingw-w64-clang-x86_64-qt6-quicktimeline-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-remoteobjects 6.3.2-1
+mingw-w64-clang-x86_64-qt6-remoteobjects-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-scxml 6.3.2-1
+mingw-w64-clang-x86_64-qt6-scxml-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-sensors 6.3.2-1
+mingw-w64-clang-x86_64-qt6-sensors-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-serialbus 6.3.2-1
+mingw-w64-clang-x86_64-qt6-serialbus-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-serialport 6.3.2-1
+mingw-w64-clang-x86_64-qt6-serialport-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-shadertools 6.3.2-1
+mingw-w64-clang-x86_64-qt6-shadertools-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-svg 6.3.2-1
+mingw-w64-clang-x86_64-qt6-svg-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-tools 6.3.2-1
+mingw-w64-clang-x86_64-qt6-tools-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-translations 6.3.2-1
+mingw-w64-clang-x86_64-qt6-virtualkeyboard 6.3.2-1
+mingw-w64-clang-x86_64-qt6-virtualkeyboard-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-webchannel 6.3.2-1
+mingw-w64-clang-x86_64-qt6-webchannel-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-websockets 6.3.2-1
+mingw-w64-clang-x86_64-qt6-websockets-debug 6.3.2-1
+mingw-w64-clang-x86_64-qt6-webview 6.3.2-1
+mingw-w64-clang-x86_64-qt6-webview-debug 6.3.2-1
+mingw-w64-clang-x86_64-spirv-headers 1~1.3.224.1-1
+mingw-w64-clang-x86_64-spirv-tools 2022.3-1
+mingw-w64-clang-x86_64-tools-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-vulkan-headers 1.3.228-1
+mingw-w64-clang-x86_64-vulkan-loader 1.3.228-1
+mingw-w64-clang-x86_64-vulkan-validation-layers 1.3.225-1
+mingw-w64-clang-x86_64-winpthreads-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-winstorecompat-git 10.0.0.r72.g1dd2a4993-1
 mingw-w64-x86_64-aspell 0.60.8-2
 mingw-w64-x86_64-aspell-de 20161207-2
 mingw-w64-x86_64-aspell-en 2020.12.07-1
-mingw-w64-x86_64-binutils 2.38-2
-mingw-w64-x86_64-boost 1.78.0-3
-mingw-w64-x86_64-cgal 5.3-3
-mingw-w64-x86_64-clang 13.0.1-3
-mingw-w64-x86_64-clang-analyzer 13.0.1-3
-mingw-w64-x86_64-clang-tools-extra 13.0.1-3
-mingw-w64-x86_64-cmake 3.23.0-1
-mingw-w64-x86_64-compiler-rt 13.0.1-3
-mingw-w64-x86_64-crt-git 9.0.0.6454.b4445ee52-1
-mingw-w64-x86_64-doxygen 1.9.3-2
+mingw-w64-x86_64-binutils 2.39-2
+mingw-w64-x86_64-boost 1.80.0-2
+mingw-w64-x86_64-cgal 5.5-2
+mingw-w64-x86_64-clang 15.0.0-3
+mingw-w64-x86_64-clang-analyzer 15.0.0-3
+mingw-w64-x86_64-clang-tools-extra 15.0.0-3
+mingw-w64-x86_64-cmake 3.24.2-1
+mingw-w64-x86_64-compiler-rt 15.0.0-3
+mingw-w64-x86_64-crt-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-x86_64-doxygen 1.9.5-1
 mingw-w64-x86_64-eigen3 3.4.0-1
-mingw-w64-x86_64-gcc 11.2.0-10
-mingw-w64-x86_64-gcc-ada 11.2.0-10
-mingw-w64-x86_64-gcc-fortran 11.2.0-10
-mingw-w64-x86_64-gcc-libgfortran 11.2.0-10
-mingw-w64-x86_64-gcc-objc 11.2.0-10
-mingw-w64-x86_64-gdb 11.2-2
-mingw-w64-x86_64-gdb-multiarch 11.2-2
-mingw-w64-x86_64-glfw 3.3.6-2
+mingw-w64-x86_64-emacs-pdf-tools-server 0.91-2
+mingw-w64-x86_64-fd 8.4.0-1
+mingw-w64-x86_64-gcc 12.2.0-1
+mingw-w64-x86_64-gcc-ada 12.2.0-1
+mingw-w64-x86_64-gcc-fortran 12.2.0-1
+mingw-w64-x86_64-gcc-libgfortran 12.2.0-1
+mingw-w64-x86_64-gcc-objc 12.2.0-1
+mingw-w64-x86_64-gdb 12.1-3
+mingw-w64-x86_64-gdb-multiarch 12.1-3
+mingw-w64-x86_64-glfw 3.3.8-2
 mingw-w64-x86_64-glm 0.9.9.8-1
-mingw-w64-x86_64-gnutls 3.7.4-1
-mingw-w64-x86_64-graphviz 2.44.1-9
-mingw-w64-x86_64-headers-git 9.0.0.6454.b4445ee52-1
-mingw-w64-x86_64-hugo 0.93.2-3
-mingw-w64-x86_64-hunspell 1.7.0-7
+mingw-w64-x86_64-gnutls 3.7.7-2
+mingw-w64-x86_64-graphviz 2.44.1-12
+mingw-w64-x86_64-headers-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-x86_64-hugo 0.103.1-1
+mingw-w64-x86_64-hunspell 1.7.1-1
 mingw-w64-x86_64-hunspell-en 2020.12.07-1
-mingw-w64-x86_64-imagemagick 7.1.0.29-1
-mingw-w64-x86_64-inkscape 1.1.2-3
+mingw-w64-x86_64-imagemagick 7.1.0.39-3
+mingw-w64-x86_64-inkscape 1.2.1-4
 mingw-w64-x86_64-libblocksruntime 0.4.1-1
-mingw-w64-x86_64-libgccjit 11.2.0-10
-mingw-w64-x86_64-libmangle-git 9.0.0.6454.b4445ee52-1
+mingw-w64-x86_64-libgccjit 12.2.0-1
+mingw-w64-x86_64-libmangle-git 10.0.0.r72.g1dd2a4993-1
 mingw-w64-x86_64-make 4.3-1
-mingw-w64-x86_64-ninja 1.10.2-3
+mingw-w64-x86_64-meld3 3.22.0-1
+mingw-w64-x86_64-ninja 1.11.1-1
 mingw-w64-x86_64-ntldd-git r19.7fb9365-2
-mingw-w64-x86_64-openblas 0.3.20-2
-mingw-w64-x86_64-python-pip 21.3.1-1
-mingw-w64-x86_64-qt5 5.15.2-15
-mingw-w64-x86_64-quazip 0.9.1-2
-mingw-w64-x86_64-spirv-headers 1~1.3.204.1-1
-mingw-w64-x86_64-spirv-tools 2022.1-1
-mingw-w64-x86_64-tools-git 9.0.0.6454.b4445ee52-1
-mingw-w64-x86_64-vulkan-validation-layers 1.3.206-1
-mingw-w64-x86_64-winpthreads-git 9.0.0.6454.b4445ee52-1
-mingw-w64-x86_64-winstorecompat-git 9.0.0.6454.b4445ee52-1
+mingw-w64-x86_64-openblas 0.3.21-4
+mingw-w64-x86_64-python-pip 22.2.2-1
+mingw-w64-x86_64-qt5 5.15.3-1
+mingw-w64-x86_64-quazip-qt5 1.3-1
+mingw-w64-x86_64-ripgrep 13.0.0-1
+mingw-w64-x86_64-spirv-headers 1~1.3.224.1-1
+mingw-w64-x86_64-spirv-tools 2022.3-1
+mingw-w64-x86_64-tools-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-x86_64-vulkan-validation-layers 1.3.225-1
+mingw-w64-x86_64-winpthreads-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-x86_64-winstorecompat-git 10.0.0.r72.g1dd2a4993-1
 mingw-w64-x86_64-zeromq 4.3.4-1
 p7zip 17.04-1
 pactoys r55.8860e1f-1
@@ -2917,10 +2923,10 @@ pkgconf 1.8.0-1
 pkgfile 21-2
 quilt 0.66-3
 reflex 20210510-2
-scons 3.1.2-7
+scons 3.1.2-8
 swig 4.0.2-2
-texinfo 6.8-3
-texinfo-tex 6.8-3
+texinfo 6.8-4
+texinfo-tex 6.8-4
 ttyrec 1.0.8-2
 unrar 6.1.4-1
 unzip 6.0-2
@@ -4610,6 +4616,7 @@ for i in *info*; do install-info.exe $i dir; done
 ;;
 ;; Extend Emacs info system with the msys2 info material
 ;;
+(require 'info)
 (add-to-list 'Info-additional-directory-list psimacs/config/msys-info-dir)
 (add-to-list 'Info-additional-directory-list psimacs/config/mingw-info-dir)
 #+end_src
@@ -12378,10 +12385,15 @@ See also:
 The following utility allows us to =M-x git-timemachine= on a file and use =p=/=n=/=g=/=q= to look
 at previous, next, goto arbitrary historic versions, or quit.
 
-See also: [[https://github.com/emacsmirror/git-timemachine][git-timemachine]]
+See also:
+    - [[https://github.com/emacsmirror/git-timemachine][emacsmirror/git-timemachine]]
+    - [[https://codeberg.org/pidu/git-timemachine][pidu/git-timemachine]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-magit.el
-(use-package git-timemachine)
+(use-package git-timemachine
+    :after magit
+    :straight (git-timemachine :host gitlab :repo "pidu/git-timemachine")
+)
 #+end_src
 
 ** Else Mode
@@ -14374,6 +14386,20 @@ Following an unsorted list if references:
 - [[https://www.ctan.org/?lang=en][CTAN]]
 - [[https://www.golatex.de/wiki/KOMA-Script][KOMA-Script]]
 
+Remark:
+- I used to have some problems with the MikTeX installation. I got error messages on running pdflatex.
+  The follwing two commands worked for me running in a Windows console:
+
+  #+begin_example
+cd c:\Utils\MiKTeX\miktex\bin\x64
+updmap.exe
+initexmf --mkmaps
+  #+end_example
+
+  Reference:
+  - [[https://tex.stackexchange.com/questions/154998/miktex-makepk-pk-font-alegreya-regular-lf-t1-base-could-not-be-created][miktex-makepk: PK font Alegreya-Regular-lf-t1--base could not be created]]
+  - [[https://comp.text.tex.narkive.com/EHoYEqh7/pdflatex-can-t-find-font][pdflatex can't find font]]
+
 #+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
 ;;
 ;; pdf-tools configuration
@@ -15497,7 +15523,7 @@ code to whatever theme I'm using's background."
             )
         )
 
-        (add-hook 'org-export-before-processing-hook 'psimacs/internal/org-inline-css-hook)
+        (add-hook 'org-export-before-processing-functions 'psimacs/internal/org-inline-css-hook)
 )
 #+end_src
 
