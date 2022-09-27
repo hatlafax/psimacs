@@ -2697,6 +2697,7 @@ pacman -S mingw-w64-x86_64-hugo
 pacman -S mingw-w64-x86_64-emacs-pdf-tools-server
 pacman -S mingw-w64-x86_64-ripgrep
 pacman -S mingw-w64-x86_64-fd
+pacman -S mingw-w64-x86_64-ffmpeg
 #+end_example
 
 Some of the packages are not really required but I use them and I would like to memorize my installation procedure
@@ -2734,7 +2735,8 @@ Most important commands taken from
 *** Installed msys2/mingw64 packages
 
 The following is the list of my currently installed packages. It is generated with the command =pacman -Qe=.
-I will update this list from time to time.
+I will update this list from time to time. However, not all of these installed packages are related to *Psimacs*.
+This list just what is currently installed on my system.
 
 #+begin_example
 asciidoc 9.1.1-2
@@ -2879,6 +2881,7 @@ mingw-w64-x86_64-doxygen 1.9.5-1
 mingw-w64-x86_64-eigen3 3.4.0-1
 mingw-w64-x86_64-emacs-pdf-tools-server 0.91-2
 mingw-w64-x86_64-fd 8.4.0-1
+mingw-w64-x86_64-ffmpeg 4.4.2-6
 mingw-w64-x86_64-gcc 12.2.0-1
 mingw-w64-x86_64-gcc-ada 12.2.0-1
 mingw-w64-x86_64-gcc-fortran 12.2.0-1
@@ -12884,13 +12887,9 @@ GNU Emacs, intended as replacement for the older Flymake extension which is part
         (flycheck-display-errors-delay .3)
 
         (flycheck-python-flake8-executable      psimacs/config/flake8-runtime-exe)
-        (flycheck-python-pycompile-executable   psimacs/config/python-runtime-exe)
         (flycheck-python-pylint-executable      psimacs/config/pylint-runtime-exe)
-
-;psimacs/config/flake8-runtime-exe
-;psimacs/config/pylint-runtime-exe
-;psimacs/config/mypy-runtime-exe
-;psimacs/config/pyflakes-runtime-exe
+        (flycheck-python-pycompile-executable   psimacs/config/python-runtime-exe)
+        (flycheck-python-mypy-executable        psimacs/config/mypy-runtime-exe)
 
         ;; Disable for emacs-lisp because of error:
         ;;      Suspicious state from syntax checker emacs-lisp: Flycheck checker emacs-lisp
@@ -12902,6 +12901,8 @@ GNU Emacs, intended as replacement for the older Flymake extension which is part
         ;; Test with the next emacs version in the near future. flycheck for emacs-lisp is
         ;; absolut desirable.
         (flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc))
+
+        (flycheck-disabled-checkers '(python-pyright))
 
     :bind (
         :map psimacs/config/global-key-map/hydra ("C-f" . psimacs/hydra/flycheck/body)
@@ -12978,9 +12979,11 @@ the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protoco
 | =M-<f9>=        | =M-x dap-breakpoint-condition=          | Set/unset breakpoint condition.                                  |
 | =C-M-<f9>=      | =M-x dap-breakpoint-hit-condition=      | Set/unset breakpoint hit condition.                              |
 | =S-M-<f9>=      | =M-x dap-breakpoint-log-message=        | Set/unset breakpoint log message.                                |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
 |                 | =M-x dap-eval=                          | Eval string.                                                     |
 |                 | =M-x dap-eval-region=                   | Eval region string.                                              |
 |                 | =M-x dap-eval-thing-at-point=           | Eval symbol at point.                                            |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
 | =<f10>=         | =M-x dap-next=                          | Debug next.                                                      |
 | =C-<f10>=       | =M-x psimacs/dap/run-to-cursor=         | Add breakpoint at point and continue.                            |
 | =<f11>=         | =M-x dap-step-in=                       | Debug step in.                                                   |
@@ -12992,11 +12995,13 @@ the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protoco
 |                 | =M-x dap-switch-stack-frame=            | Switch active stack frame.                                       |
 |                 | =M-x dap-switch-thread=                 | Switch active thread.                                            |
 |                 | =M-x dap-switch-session=                | Switch active session.                                           |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
 |                 | =M-x dap-debug-edit-template=           | Generate run command.                                            |
 | =<f5>=          | =M-x dap-debug=                         | Create and run new configuration using the available templates.  |
 | =M-<f5>=        | =M-x dap-debug-last=                    | Debug previous configuration.                                    |
 | =C-M-<f5>=      | =M-x dap-debug-recent=                  | Select configuration to run from the previously started command. |
 | =C-S-<f5>=      | =M-x dap-debug-restart=                 | Restarts current frame.                                          |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
 |                 | =M-x dap-go-to-output-buffer=           | Go output buffer.                                                |
 |-----------------+-----------------------------------------+------------------------------------------------------------------|
 |                 | =M-x dap-ui-sessions=                   | Show active/terminated sessions view.                            |
@@ -13004,6 +13009,11 @@ the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protoco
 |                 | =M-x dap-ui-expressions=                | Show expressions view.                                           |
 |                 | =M-x dap-ui-breakpoints=                | Show breakpoints view.                                           |
 |                 | =M-x dap-ui-repl=                       | DAP UI REPL.                                                     |
+|-----------------+-----------------------------------------+------------------------------------------------------------------|
+|                 | =M-x dap-ui-mode=                       | Display the DAP visuals.                                         |
+|                 | =M-x dap-ui-any-windows-mode=           | Show/Hide the windows from =dap-auto-configure-features=.        |
+|                 | =M-x dap-ui-show-many-windows=          | Show auto configured feature windows.                            |
+|                 | =M-x dap-ui-hide-many-windows=          | Hide auto configured feature windows.                            |
 |-----------------+-----------------------------------------+------------------------------------------------------------------|
 |                 | =M-x dap-tm-loaded-sources=             | Loaded sources can be viewed by invoking this command.           |
 |-----------------+-----------------------------------------+------------------------------------------------------------------|
@@ -13031,7 +13041,81 @@ needs to be done is to add a =launch.json= file at the project root and to run =
 All configurations stored in the =launch.json= will automatically show up in the selection.
 =launch.json= files in [[https://emacs-lsp.github.io/dap-mode/][dap-mode]] are just like in *VSCode* and even support variables.
 
-Remark: Running =M-x dap-cpptools-setup= is necessary at least once.
+Remarks:
+  - Running =M-x dap-cpptools-setup= is necessary at least once.
+  - Running =M-x dap-debug-edit-template= shows a function template to edit for a particular configuration. It looks like
+    the following examples.
+
+    #+begin_src emacs-lisp :tangle no
+(dap-register-debug-template "My App"
+  (list :type "python"
+        :args "-i"
+        :cwd nil
+        :env '(("DEBUG" . "1"))
+        :target-module (expand-file-name "~/src/myapp/.env/bin/myapp")
+        :request "launch"
+        :name "My App"))
+    #+end_src
+
+    #+begin_src emacs-lisp :tangle no
+(dap-register-debug-template
+  "Python :: Run file (buffer)"
+  (list :type "python"
+        :args ""
+        :cwd nil
+        :module nil
+        :program nil
+        :request "launch"
+        :name "Python :: Run file (buffer)"))
+    #+end_src
+
+    #+begin_src emacs-lisp :tangle no
+(dap-register-debug-template
+  "Python :: Run file from project directory"
+  (list :name "Python :: Run file from project directory"
+        :type "python"
+        :args ""
+        :cwd "${workspaceFolder}"
+        :module nil
+        :program nil
+        :request "launch"))
+    #+end_src
+
+    #+begin_src emacs-lisp :tangle no
+(dap-register-debug-template
+  "Python :: Run pytest (buffer)"
+  (list :type "python"
+        :args ""
+        :cwd nil
+        :program nil
+        :module "pytest"
+        :request "launch"
+        :name "Python :: Run pytest (buffer)"))
+    #+end_src
+
+    #+begin_src emacs-lisp :tangle no
+(dap-register-debug-template
+  "cpptools::Run Configuration"
+  (list :type "cppdbg"
+        :request "launch"
+        :name "cpptools::Run Configuration"
+        :MIMode "gdb"
+        :program "${workspaceFolder}/ replace with your binary"
+        :cwd "${workspaceFolder}"))
+    #+end_src
+
+    #+begin_src emacs-lisp :tangle no
+(dap-register-debug-template
+  "Debug Server"
+  (list :type "node"
+        :request "launch"
+        :name "Debug Server"
+        :program "${workspaceFolder}/src/server/index.ts"
+        :outfiles ["${workspaceFolder}/public/src/server/**/*.js"]
+    #+end_src
+
+    It might be a good idea to store such a configuration into a project local =Debug.el= file for
+    future usage.
 
 See also:
 - [[https://code.visualstudio.com/docs/editor/debugging][launch.json]]
