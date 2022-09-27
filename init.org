@@ -469,12 +469,12 @@ In summary, the general rules are:
     - =C-c letter= are reserved for users. In practice most third-party packages don't give a hoot
       and will gladly stuff their own key binds in there.
 - Don't rebind =C-g=, =C-h= and =ESC=.
-- =hyper= and =super= are two prefix keys reserved to you. They are remnants from ancient keyboards used in the 80s,
-  but live on today in Emacs. Most PC-compatible  keyboards won't have a =super= or =hyper= key so we rebind
-  the =<lwindow>= and =<rwindow>= /Windows/ keys and the =<apps> /Application Context/ key to be the =super=
-  and =hyper= prefix keys instead.
+- =<hyper>= and =<super>= are two prefix keys reserved to you. They are remnants from ancient keyboards used in the 80s,
+  but live on today in Emacs. Most PC-compatible  keyboards won't have a =<super>= or =<hyper>= key so we rebind
+  the =<lwindow>= and =<rwindow>= /Windows/ keys and the =<apps>= /Application Context/ key to be the =<super>=
+  and =<hyper>= prefix keys instead.
 
-*Psimacs* uses the =super= and =hyper= key prefixes for all of its own key bindings.
+*Psimacs* uses the =<supe>r= and =<hyper>= key prefixes for all of its own key bindings.
 
 Worth readings about *Emacs* keybindings:
 - [[https://karl-voit.at/2018/07/08/emacs-key-bindings/][UOMF: My Emacs Key Binding Strategy]]
@@ -497,7 +497,7 @@ Also the =Print Screen= (often abbreviated =Print Scrn=, =Prnt Scrn=, =Prt Scrn=
 or screenshot, to their clipboard or comparable storage area. In my whole life time, I actually never used
 this key.
 
-Therefore I remap my =Left-Ctrl= also to the =Capslock= key and the =Capslock= key to the =Prnt Scrn= key.
+Therefore I remap the =Left-Ctrl= to the =Capslock= key and the original =Capslock= key to the =Prnt Scrn= key.
 This way I lose the original =Prnt Scrn= functionality, but I don't bother. The reason that I do not simply
 exchange the =Left-Ctrl= and =Capslock= keys is that after years I'm used to the =Left-Ctrl= key and I still
 press this key often automatically. This however, is disruptive when I have changed the meaning of the =Left-Ctrl=
@@ -526,9 +526,9 @@ Edit -> New -> Binary Value -> "Scancode Map"
 | =Prnt Scrn= | 37 e0    |
 |-------------+----------|
 
-In case of a minimal Lenovo ThinkPad keyboad that does not have a =Menu (Hyper)= key, but that have the =Prnt-Scrn= key positioned between
-the =Alt Gr= and the =Right-Ctrl= keys the following layout might be an alternative, provided one can relinquish on the =Capslock= and the
-=Prnt-Scrn= keys. In this layout, the =Left-Ctrl= key is mapped to the =Capslock= key and the =Menu (Hyper)= key is mapped to the =Prnt-Scrn=
+In case of a minimal Lenovo ThinkPad keyboad that does not have a =<Menu>=, i.e. =<Hyper>= key, but that have the =<Prnt-Scrn>= key positioned between
+the =<Alt Gr>= and the =<Right-Ctrl>= keys the following layout might be an alternative, provided one can relinquish on the =<Capslock>= and the
+=<Prnt-Scrn>= keys. In this layout, the =<Left-Ctrl>= key is mapped to the =<Capslock>= key and the =<Menu>=, i.e. =<Hyper>= key is mapped to the =<Prnt-Scrn>=
 key.
 
 | Key           | Scancode |
@@ -638,8 +638,9 @@ This flag allows to only use the 'init-*.el' files of the framework.")
 
 *** Tangle early-init.el at startup
 
-*Psimacs* allows the tangling of the =early-init.el= file itself at startup. The following flag suppresses
-this feature.
+*Psimacs* allows the tangling of the =early-init.el= file itself at startup. However, the tangled =early-init.el=
+is used only with the following *Psimacs* startup. Tangling of the =early-init.el= can be suppresseed completely
+with the following variable.
 
 #+begin_src emacs-lisp :tangle early-init.el
 (defconst psimacs/config/tangle-early-init-file t
@@ -694,13 +695,31 @@ some size constants early.
 ;;
 ;; Conveniency byte size constants
 ;;
-(defconst   1MB (* 1024 1024))
+(defconst   1KB 1024)
+(defconst   1MB (* 1024 1KB))
+(defconst   1GB (* 1024 1MB))
+
+(defconst   2MB (*   2 1MB))
 (defconst   4MB (*   4 1MB))
-(defconst  20MB (*  20 1MB))
-(defconst  30MB (*  30 1MB))
-(defconst  50MB (*  50 1MB))
+(defconst   8MB (*   8 1MB))
+(defconst  16MB (*  16 1MB))
+(defconst  24MB (*  24 1MB))
+(defconst  32MB (*  32 1MB))
 (defconst  64MB (*  64 1MB))
 (defconst 128MB (* 128 1MB))
+(defconst 256MB (* 256 1MB))
+(defconst 512MB (* 512 1MB))
+
+(defconst   2GB (*   2 1GB))
+(defconst   4GB (*   4 1GB))
+(defconst   8GB (*   8 1GB))
+(defconst  16GB (*  16 1GB))
+(defconst  24GB (*  24 1GB))
+(defconst  32GB (*  32 1GB))
+(defconst  64GB (*  64 1GB))
+(defconst 128GB (* 128 1GB))
+(defconst 256GB (* 256 1GB))
+(defconst 512GB (* 512 1GB))
 #+end_src
 
 *** Primary initalization files and directories
@@ -766,7 +785,7 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 Copyright information that should be inserted into all tangled code.
 
 #+begin_src emacs-lisp :tangle early-init.el
-(defconst psimacs/config/copyright/year       "2020-2021")
+(defconst psimacs/config/copyright/year       "2020-2022")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
 (defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
@@ -4229,6 +4248,8 @@ The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hac
 (use-package gcmh
     :diminish gcmh-mode
     :init (gcmh-mode 1)
+    :config
+        (setq gcmh-low-cons-threshold psimacs/config/gc-cons-threshold)
 )
 #+end_src
 
@@ -4281,7 +4302,7 @@ Solutions:
 *** Base configuration of the keyboard
 
 Basically, we stay with the default *Emacs* keyboard configuration. We swallow the =<lwindow>=, =<rwindow>= and =<apps>=
-keys as far as possible. We will use them for =super= and =<hyper>= prefix keys for *Psimacs* own key bindings.
+keys as far as possible. We will use them for =<super>= and =<hyper>= prefix keys for *Psimacs* own key bindings.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
 ;;
@@ -4321,7 +4342,7 @@ keys as far as possible. We will use them for =super= and =<hyper>= prefix keys 
 
 *** Hyper and Super prefix keys
 
-*Psimacs* uses the =super= and =hyper= key prefixes for all of its own key bindings.
+*Psimacs* uses the =<super>= and =<hyper>= key prefixes for all of its own key bindings.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
 ;;
