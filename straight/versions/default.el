@@ -86,7 +86,6 @@
  ("frog-menu" . "e4f404af19d8427f4540e55b1854ba569b66399e")
  ("gandalf-theme-emacs" . "4e472fc851431458537d458d09c1f5895e338536")
  ("gcmh" . "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
- ("git-timemachine" . "6df7f435de78440f8fa84cde99c7853bf0c57661")
  ("gntp.el" . "767571135e2c0985944017dc59b0be79af222ef5")
  ("gnu-elpa-mirror" . "8894843ed04708877163c3a3b8cbd19624894ed7")
  ("golden-ratio.el" . "007911d8a431b72670f5fe5f0e5b4380c2777a31")
