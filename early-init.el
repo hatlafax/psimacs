@@ -3,7 +3,7 @@
 ;; Don't edit this file, edit init.org instead ...
 ;;
 
-;; Copyright (C) 2020-2021 Johannes Brunen (hatlafax)
+;; Copyright (C) 2020-2022 Johannes Brunen (hatlafax)
 
 ;; Author:  Johannes Brunen <hatlafax@gmx.de>
 ;; URL:     https://github.com/hatlafax/psimacs
@@ -95,13 +95,31 @@ Do not change it here!!!
 ;;
 ;; Conveniency byte size constants
 ;;
-(defconst   1MB (* 1024 1024))
+(defconst   1KB 1024)
+(defconst   1MB (* 1024 1KB))
+(defconst   1GB (* 1024 1MB))
+
+(defconst   2MB (*   2 1MB))
 (defconst   4MB (*   4 1MB))
-(defconst  20MB (*  20 1MB))
-(defconst  30MB (*  30 1MB))
-(defconst  50MB (*  50 1MB))
+(defconst   8MB (*   8 1MB))
+(defconst  16MB (*  16 1MB))
+(defconst  24MB (*  24 1MB))
+(defconst  32MB (*  32 1MB))
 (defconst  64MB (*  64 1MB))
 (defconst 128MB (* 128 1MB))
+(defconst 256MB (* 256 1MB))
+(defconst 512MB (* 512 1MB))
+
+(defconst   2GB (*   2 1GB))
+(defconst   4GB (*   4 1GB))
+(defconst   8GB (*   8 1GB))
+(defconst  16GB (*  16 1GB))
+(defconst  24GB (*  24 1GB))
+(defconst  32GB (*  32 1GB))
+(defconst  64GB (*  64 1GB))
+(defconst 128GB (* 128 1GB))
+(defconst 256GB (* 256 1GB))
+(defconst 512GB (* 512 1GB))
 
 ;;
 ;; Primary Psimacs file and directory constants use for tangling and synchronization
@@ -153,7 +171,7 @@ Do not change it here!!!
   (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "eln-cache")))
   "The psimacs native compilation eln directory.")
 
-(defconst psimacs/config/copyright/year       "2020-2021")
+(defconst psimacs/config/copyright/year       "2020-2022")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
 (defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
@@ -300,6 +318,12 @@ It is the fraction of the current heap size."
       message-log-max t                 ; Specifies how many lines to keep in the *Messages* buffer.
                                         ; The value t means there is no limit on how many lines to keep.
 )
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq debug-on-error nil
+                  eval-expression-debug-on-error nil)
+            ))
 
 ;;
 ;; Preamble support

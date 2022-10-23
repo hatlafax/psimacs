@@ -316,79 +316,109 @@ Inside *Info* the following commands are useful:
 |               | =C-u M-x info-display-manual= | Show the *Info* manual by name, but limits the completion alternatives to currently visited info files.                    |
 |---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
 
-** Debugging ELisp with EDebug
 
-[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]] is a source-level debugger for Emacs Lisp programs that is very useful developing /Lisp/ code. In the following
-you can find some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+** Debugging ELisp with Debug and EDebug
 
-- Using  [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
-  To debug a Lisp program with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]], you must first instrument the Lisp code that you want to debug.
-  A simple way to do this is to first move point into the definition of a function or macro and then do
-  =C-u C-M-x=.
+*Emacs* has two [[https://www.gnu.org/software/emacs/manual/html_node/eintr/debug.html][debuggers]],
+[[https://www.gnu.org/software/emacs/manual/html_node/eintr/debug.html][Debug]] and
+[[https://www.gnu.org/software/emacs/manual/html_node/eintr/edebug.html][Edebug]].
+The first is built into the internals of Emacs and is always with you; the second requires that you instrument a function before you can use it.
 
-- Embedding a breakpoint into source code: =(edebug)=
+- Debug
 
-References:
-- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugging.html][Debugging]]
-- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html][Edebug]]
-- [[https://endlessparentheses.com/debugging-emacs-lisp-part-1-earn-your-independence.html][Debugging Elisp Part 1: Earn your independence]]
-- [[https://endlessparentheses.com/debugging-elisp-part-2-advanced-topics.html][Debugging Elisp Part 2: Advanced topics]]
-- [[http://blog.binchen.org/posts/my-work-flow-to-debug-emacs-plugin.html][My work flow to debug emacs plugin from Chen Bin]]
-- [[https://www.youtube.com/watch?v=odkYXXYOxpo][Debugging basics]]
+    You can enter the debugger when you call the function by calling =debug-on-entry=, e.g. =M-x debug-on-entry RET my-function RET=.
+    To cancel the effect of =debug-on-entry=, call =cancel-debug-on-entry= with the same function name.
 
-#+attr_html: :class styledtable1
-| Key binding     | Command                               | Description                                                                                                                                                                                  |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-f C-f=     | =M-x find-function=                     | Find the definition of function near point                                                                                                                                                   |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-u C-M-x=       | =M-x edebug-defun=                      | Instrument the Lisp code at point. Any call to the function activates Edebug.                                                                                                                |
-| =C-M-x=           | =M-x eval-defun=                        | Undo instrumentation.                                                                                                                                                                        |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =h=               | =M-x edebug-goto-here=                  | Proceed to the stop point near where point is.                                                                                                                                               |
-| =f=               | =M-x edebug-forward-sexp=               | Run the program for one expression.                                                                                                                                                          |
-| =o=               | =M-x edebug-step-out=                   | Run the program until the end of the containing sexp.                                                                                                                                        |
-| =i=               | =M-x edebug-step-in=                    | Step into the function or macro called by the form after point.                                                                                                                              |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =b=               | =M-x edebug-set-breakpoint=             | Set a breakpoint at the stop point at or after point. If you use a prefix argument, the breakpoint is temporary -- it turns off the first time it stops the program.                         |
-| =u=               | =M-x edebug-unset-breakpoint=           | Unset the breakpoint (if any) at the stop point at or after point.                                                                                                                           |
-| =U=               | =M-x edebug-unset-breakpoints=          | Unset any breakpoints in the current form.                                                                                                                                                   |
-| =D=               | =M-x edebug-toggle-disable-breakpoint=  | Toggle whether to disable the breakpoint near point.                                                                                                                                         |
-| =x= /condition/ =RET= | =M-x edebug-set-conditional-breakpoint= | Set a conditional breakpoint which stops the program only if evaluating condition produces a non-nil value.                                                                                  |
-| =B=               | =M-x edebug-next-breakpoint=            | Move point to the next breakpoint in the current definition.                                                                                                                                 |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =S=               | =M-x edebug-stop=                       | Stop: don't execute any more of the program, but wait for more Edebug commands                                                                                                               |
-| =SPC=             | =M-x edebug-step-mode=                  | Step: stop at the next stop point encountered.                                                                                                                                               |
-| =n=               | =M-x edebug-next-mode=                  | Next: stop at the next stop point encountered after an expression.                                                                                                                           |
-| =t=               | =M-x edebug-trace-mode=                 | Trace: pause (normally one second) at each Edebug stop point.                                                                                                                                |
-| =T=               | =M-x edebug-Trace-fast-mode=            | Rapid trace: update the display at each stop point, but don't actually pause.                                                                                                                |
-| =g=               | =M-x edebug-go-mode=                    | Go: run until the next breakpoint.                                                                                                                                                           |
-| =c=               | =M-x edebug-continue-mode=              | Continue: pause one second at each breakpoint, and then continue.                                                                                                                            |
-| =C=               | =M-x edebug-Continue-fast-mode=         | Rapid continue: move point to each breakpoint, but don't pause.                                                                                                                              |
-| =G=               | =M-x edebug-Go-nonstop-mode=            | Go non-stop: ignore breakpoints. You can still stop the program by typing S, or any editing command.                                                                                         |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =?=               | =M-x edebug-help=                       | Display the help message for Edebug.                                                                                                                                                         |
-| =C-]=             | =M-x abort-recursive-edit=              | Abort one level back to the previous command level                                                                                                                                           |
-| =q=               | =M-x top-level=                         | Return to the top level editor command loop. This exits all recursive editing levels, including all levels of Edebug activity.                                                               |
-| =Q=               | =M-x edebug-top-level-nonstop=          | Like q, but don't stop even for protected code. Like q, but don't stop even for protected code.                                                                                              |
-| =r=               | =M-x edebug-previous-result=            | Redisplay the most recently known expression result in the echo area.                                                                                                                        |
-| =d=               | =M-x edebug-pop-to-backtrace=           | Display the current backtrace in a backtrace-mode window                                                                                                                                     |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =v=               | =M-x edebug-view-outside=               | Switch to viewing the outside window configuration.  Type =C-x X w= to return to Edebug.                                                                                                       |
-| =p=               | =M-x edebug-bounce-point=               | Temporarily display the outside current buffer with point at its outside position, pausing for one second before returning to Edebug. With a prefix argument n, pause for n seconds instead. |
-| =w=               | =M-x edebug-where=                      | Move point back to the current stop point in the source code buffer.                                                                                                                         |
-| =W=               | =M-x edebug-toggle-save-windows=        | Toggle whether Edebug saves and restores the outside window configuration.                                                                                                                   |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =e exp RET=       | =M-x edebug-eval-expression=            | Evaluate expression exp in the context outside of Edebug. That is, Edebug tries to minimize its interference with the evaluation.                                                            |
-| =M-: exp RET=     | =M-x eval-expression=                   | Evaluate expression exp in the context of Edebug itself.                                                                                                                                     |
-| =C-x C-e=         | =M-x edebug-eval-last-sexp=             | Evaluate the expression before point, in the context outside of Edebug.                                                                                                                      |
-| =C-u 0 C-x C-e=   | =C-u 0 M-x edebug-eval-last-sexp=       | Dito, but don't shorten long items (like strings and lists).                                                                                                                                 |
-| =E=               | =M-x edebug-visit-eval-list=            | Switch to the evaluation list buffer *edebug*                                                                                                                                                  |
-| =C-j=             | =M-x edebug-eval-print-last-sexp=       | Evaluate the expression before point, in the outside context, and insert the value in the buffer.                                                                                            |
-| =C-u 0 C-j=       | =C-u 0 M-x edebug-eval-print-last-sexp= | Dito, but don't shorten long items (like strings and lists).                                                                                                                                 |
-| =C-c C-u=         | =M-x edebug-update-eval-list=           | Build a new evaluation list from the contents of the buffer.                                                                                                                                 |
-| =C-c C-d=         | =M-x edebug-delete-eval-item=           | Delete the evaluation list group that point is in.                                                                                                                                           |
-| =C-c C-w=         | =M-x edebug-where=                      | Switch back to the source code buffer at the current stop point.                                                                                                                             |
-|-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    Since a break is a /recursive edit/, all the usual editing facilities of Emacs are available;
+    you can even run programs that will enter the debugger recursively.
+
+    If you want errors to enter the debugger, set the variable =debug-on-error= to =non-nil=. However, if variable
+    =eval-expression-debug-on-error= is =non-nil=, then =debug-on-error= is set to =t= in case of running command =eval-expression=.
+
+    The most used commads are the following. For more detail see [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugger-Commands.html][Debugger Commands]].
+
+    | Key binding | Description                                                                                                                                                  |
+    |-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =c=         | Exit the debugger and continue execution.                                                                                                                    |
+    | =q=         | Terminate the program being debugged; return to top-level Emacs command execution.                                                                           |
+    | =d=         | Continue execution, but enter the debugger the next time any Lisp function is called.                                                                        |
+    | =l=         | Display a list of functions that will invoke the debugger when called. This is a list of functions that are set to break on entry by means of debug-on-entry.|
+    | =e=         | Read a Lisp expression in the minibuffer, evaluate it.                                                                                                       |
+    |-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+- EDebug
+
+    [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]] is a source-level debugger for Emacs Lisp programs that is very useful developing /Lisp/ code. In the following
+    you can find some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+
+    - Using  [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
+      To debug a Lisp program with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]], you must first instrument the Lisp code that you want to debug.
+      A simple way to do this is to first move point into the definition of a function or macro and then do
+      =C-u C-M-x=.
+
+    - Embedding a breakpoint into source code: =(edebug)=
+
+    References:
+    - [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugging.html][Debugging]]
+    - [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html][Edebug]]
+    - [[https://endlessparentheses.com/debugging-emacs-lisp-part-1-earn-your-independence.html][Debugging Elisp Part 1: Earn your independence]]
+    - [[https://endlessparentheses.com/debugging-elisp-part-2-advanced-topics.html][Debugging Elisp Part 2: Advanced topics]]
+    - [[http://blog.binchen.org/posts/my-work-flow-to-debug-emacs-plugin.html][My work flow to debug emacs plugin from Chen Bin]]
+    - [[https://www.youtube.com/watch?v=odkYXXYOxpo][Debugging basics]]
+
+    #+attr_html: :class styledtable1
+    | Key binding     | Command                               | Description                                                                                                                                                                                  |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =H-m C-f C-f=     | =M-x find-function=                     | Find the definition of function near point                                                                                                                                                   |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =C-u C-M-x=       | =M-x edebug-defun=                      | Instrument the Lisp code at point. Any call to the function activates Edebug.                                                                                                                |
+    | =C-M-x=           | =M-x eval-defun=                        | Undo instrumentation.                                                                                                                                                                        |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =h=               | =M-x edebug-goto-here=                  | Proceed to the stop point near where point is.                                                                                                                                               |
+    | =f=               | =M-x edebug-forward-sexp=               | Run the program for one expression.                                                                                                                                                          |
+    | =o=               | =M-x edebug-step-out=                   | Run the program until the end of the containing sexp.                                                                                                                                        |
+    | =i=               | =M-x edebug-step-in=                    | Step into the function or macro called by the form after point.                                                                                                                              |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =b=               | =M-x edebug-set-breakpoint=             | Set a breakpoint at the stop point at or after point. If you use a prefix argument, the breakpoint is temporary -- it turns off the first time it stops the program.                         |
+    | =u=               | =M-x edebug-unset-breakpoint=           | Unset the breakpoint (if any) at the stop point at or after point.                                                                                                                           |
+    | =U=               | =M-x edebug-unset-breakpoints=          | Unset any breakpoints in the current form.                                                                                                                                                   |
+    | =D=               | =M-x edebug-toggle-disable-breakpoint=  | Toggle whether to disable the breakpoint near point.                                                                                                                                         |
+    | =x= /condition/ =RET= | =M-x edebug-set-conditional-breakpoint= | Set a conditional breakpoint which stops the program only if evaluating condition produces a non-nil value.                                                                                  |
+    | =B=               | =M-x edebug-next-breakpoint=            | Move point to the next breakpoint in the current definition.                                                                                                                                 |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =S=               | =M-x edebug-stop=                       | Stop: don't execute any more of the program, but wait for more Edebug commands                                                                                                               |
+    | =SPC=             | =M-x edebug-step-mode=                  | Step: stop at the next stop point encountered.                                                                                                                                               |
+    | =n=               | =M-x edebug-next-mode=                  | Next: stop at the next stop point encountered after an expression.                                                                                                                           |
+    | =t=               | =M-x edebug-trace-mode=                 | Trace: pause (normally one second) at each Edebug stop point.                                                                                                                                |
+    | =T=               | =M-x edebug-Trace-fast-mode=            | Rapid trace: update the display at each stop point, but don't actually pause.                                                                                                                |
+    | =g=               | =M-x edebug-go-mode=                    | Go: run until the next breakpoint.                                                                                                                                                           |
+    | =c=               | =M-x edebug-continue-mode=              | Continue: pause one second at each breakpoint, and then continue.                                                                                                                            |
+    | =C=               | =M-x edebug-Continue-fast-mode=         | Rapid continue: move point to each breakpoint, but don't pause.                                                                                                                              |
+    | =G=               | =M-x edebug-Go-nonstop-mode=            | Go non-stop: ignore breakpoints. You can still stop the program by typing S, or any editing command.                                                                                         |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =?=               | =M-x edebug-help=                       | Display the help message for Edebug.                                                                                                                                                         |
+    | =C-]=             | =M-x abort-recursive-edit=              | Abort one level back to the previous command level                                                                                                                                           |
+    | =q=               | =M-x top-level=                         | Return to the top level editor command loop. This exits all recursive editing levels, including all levels of Edebug activity.                                                               |
+    | =Q=               | =M-x edebug-top-level-nonstop=          | Like q, but don't stop even for protected code. Like q, but don't stop even for protected code.                                                                                              |
+    | =r=               | =M-x edebug-previous-result=            | Redisplay the most recently known expression result in the echo area.                                                                                                                        |
+    | =d=               | =M-x edebug-pop-to-backtrace=           | Display the current backtrace in a backtrace-mode window                                                                                                                                     |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =v=               | =M-x edebug-view-outside=               | Switch to viewing the outside window configuration.  Type =C-x X w= to return to Edebug.                                                                                                       |
+    | =p=               | =M-x edebug-bounce-point=               | Temporarily display the outside current buffer with point at its outside position, pausing for one second before returning to Edebug. With a prefix argument n, pause for n seconds instead. |
+    | =w=               | =M-x edebug-where=                      | Move point back to the current stop point in the source code buffer.                                                                                                                         |
+    | =W=               | =M-x edebug-toggle-save-windows=        | Toggle whether Edebug saves and restores the outside window configuration.                                                                                                                   |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =e exp RET=       | =M-x edebug-eval-expression=            | Evaluate expression exp in the context outside of Edebug. That is, Edebug tries to minimize its interference with the evaluation.                                                            |
+    | =M-: exp RET=     | =M-x eval-expression=                   | Evaluate expression exp in the context of Edebug itself.                                                                                                                                     |
+    | =C-x C-e=         | =M-x edebug-eval-last-sexp=             | Evaluate the expression before point, in the context outside of Edebug.                                                                                                                      |
+    | =C-u 0 C-x C-e=   | =C-u 0 M-x edebug-eval-last-sexp=       | Dito, but don't shorten long items (like strings and lists).                                                                                                                                 |
+    | =E=               | =M-x edebug-visit-eval-list=            | Switch to the evaluation list buffer *edebug*                                                                                                                                                  |
+    | =C-j=             | =M-x edebug-eval-print-last-sexp=       | Evaluate the expression before point, in the outside context, and insert the value in the buffer.                                                                                            |
+    | =C-u 0 C-j=       | =C-u 0 M-x edebug-eval-print-last-sexp= | Dito, but don't shorten long items (like strings and lists).                                                                                                                                 |
+    | =C-c C-u=         | =M-x edebug-update-eval-list=           | Build a new evaluation list from the contents of the buffer.                                                                                                                                 |
+    | =C-c C-d=         | =M-x edebug-delete-eval-item=           | Delete the evaluation list group that point is in.                                                                                                                                           |
+    | =C-c C-w=         | =M-x edebug-where=                      | Switch back to the source code buffer at the current stop point.                                                                                                                             |
+    |-----------------+---------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Startup frame size and position
 
@@ -2648,6 +2678,108 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 | =H-x c=           | =M-x org-capture=                                                      | Capture something.                                                                                 |
 | =H-x &=           | =M-x org-mark-ring-goto=                                               | Jump to the previous position in the mark ring.                                                    |
 |-----------------+----------------------------------------------------------------------+----------------------------------------------------------------------------------------------------|
+
+** Org-roam
+
+[[https://www.orgroam.com/][Org-roam]] allows for effortless non-hierarchical note-taking: with Org-roam, notes flow naturally,
+making note-taking fun and easy. Org-roam augments the Org-mode syntax, and will work for anyone
+already using [[https://orgmode.org][org-mode]] for their personal wiki.
+
+The goal of org-roam is to create a web of notes linked between each other.
+By linking notes in a non-hierarchical way, one can make connections between topics and remember
+them without going through the hassle of creating a hierarchical tag system where
+it’s never clear if a note should belong to tag *A* or its parent *B*, etc.
+
+References:
+- [[https://hugocisneros.com/blog/my-org-roam-notes-workflow/][My Org Roam Notes Workflow - Hugo Cisneros]]
+- [[https://seds.nl/notes/ox_hugo_export_all_roam_to_hugo/][Ox-hugo export all roam to Hugo]]
+- [[https://seds.nl/notes/export_org_roam_backlinks_with_gohugo/][Export org-roam backlinks with Gohugo]]
+- [[https://blog.jethro.dev/posts/introducing_org_roam/][Introducing Org Roam by Jethro]]
+- [[https://github.com/jethrokuan/braindump][Jethro's Braindump]]
+- [[https://github.com/jethrokuan/dots/blob/0064ea2aab667f115a14ce48292731db46302c53/.doom.d/config.el#L488][Jethro's Braindump dotfile]]
+- [[https://www.dailyemacs.com/posts/automatically_adding_org_roam_tags_to_hugo/][Automatically Adding Org Roam Tags To Hugo]]
+- [[https://jasbrg.com/notes/2021-12-01-org_roam_post/][Org Roam Post by λx.jasbrg]]
+- [[https://rgoswami.me/posts/org-note-workflow/][An Orgmode Note Workflow]]
+- [[https://keido.site/notes/20211204183600/][Keido site]]
+
+Brains:
+- [[https://braindump.jethro.dev/][Jethro's Braindump]]
+- [[https://braindump.badykov.com/about/][Ayrat's Braindump]]
+
+
+#+attr_html: :class styledtable1
+| Key binding | Command                                            | Description                                                                  |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n A=     | =M-x psimacs/org-roam/refresh-agenda-list=           | Let be the org-agenda files the ones that have tag <Project>.                |
+| =C-c n D=     | =M-x deft=                                           | Switch to *Deft* buffer and load files.                                        |
+| =C-c n R=     | =M-x org-roam-node-random=                           | Find and open a random Org-roam node.                                        |
+| =C-c n c=     | =M-x org-roam-capture=                               | Launches an ‘org-capture’ process for a new or existing node.                |
+| =C-c n f=     | =M-x org-roam-node-find=                             | Find and open an Org-roam node by its title or alias.                        |
+| =C-c n i=     | =M-x org-roam-node-insert=                           | Find an Org-roam node and insert (where the point is) an "id:" link to it.   |
+| =C-c n j=     | =M-x org-roam-dailies-capture-today=                 | Create an entry in the daily-note for today.                                 |
+| =C-c n o=     | =M-x org-id-get-create=                              | Create an ID for the current entry and return it.                            |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n p f=   | =M-x psimacs/org-roam/find-project=                  | Find org roam node files which have tag <Project>.                           |
+| =C-c n p n=   | =M-x psimacs/org-roam/project-capture-note=          | Select or create project node and capture note.                              |
+| =C-c n p r=   | =M-x psimacs/org-roam/project-capture-reference=     | Select or create project node and capture reference.                         |
+| =C-c n p s=   | =M-x psimacs/org-roam/project-capture-resource=      | Select or create project node and capture resource.                          |
+| =C-c n p t=   | =M-x psimacs/org-roam/project-capture-task=          | Select or create project node and capture task.                              |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n x i=   | =M-x psimacs/org-roam/capture-inbox=                 | Create a inbox capture node.                                                 |
+| =C-c n r f=   | =M-x org-roam-ref-find=                              | Find and open an Org-roam node that’s dedicated to a specific ref.           |
+| =C-c n a a=   | =M-x org-roam-alias-add=                             | Add ALIAS to the node at point.                                              |
+| =C-c n a r=   | =M-x org-roam-ref-add=                               | Add REF to the node at point.                                                |
+| =C-c n a t=   | =M-x org-roam-tag-add=                               | Add TAGS to the node at point.                                               |
+| =C-c n I D=   | =M-x psimacs/org-roam/node-insert-immediate-default= | Immediate node insertion using the default capture template.                 |
+| =C-c n I I=   | =M-x psimacs/org-roam/node-insert-immediate=         | Immediate node insertion but let you choose the capture template.            |
+| =C-c n g g=   | =M-x org-roam-graph=                                 | Build and possibly display a graph for NODE.                                 |
+| =C-c n g u=   | =M-x org-roam-ui-mode=                               | Enable org-roam-ui.                                                          |
+| =C-c n b d=   | =M-x org-roam-buffer-display-dedicated=              | Launch NODE dedicated Org-roam buffer.                                       |
+| =C-c n b t=   | =M-x org-roam-buffer-toggle=                         | Toggle display of the persistent ‘org-roam-buffer’.                          |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n d f=   | =M-x org-roam-dailies-find-directory=                | Find and open ‘org-roam-dailies-directory’.                                  |
+| =C-c n d c=   | =M-x org-roam-dailies-goto-date=                     | Find the daily-note for a date using the calendar, creating it if necessary. |
+| =C-c n d C=   | =M-x org-roam-dailies-capture-date=                  | Create an entry in the daily-note for a date using the calendar.             |
+| =C-c n d d=   | =M-x org-roam-dailies-goto-today=                    | Find the daily-note for today, creating it if necessary.                     |
+| =C-c n d D=   | =M-x org-roam-dailies-capture-today=                 | Create an entry in the daily-note for today.                                 |
+| =C-c n d n=   | =M-x org-roam-dailies-goto-next-note=                | Find next daily-note.                                                        |
+| =C-c n d p=   | =M-x org-roam-dailies-goto-previous-note=            | Find previous daily-note.                                                    |
+| =C-c n d t=   | =M-x org-roam-dailies-goto-tomorrow=                 | Find the daily-note for tomorrow, creating it if necessary.                  |
+| =C-c n d T=   | =M-x org-roam-dailies-capture-tomorrow=              | Create an entry in the daily-note for tomorrow.                              |
+| =C-c n d y=   | =M-x org-roam-dailies-goto-yesterday=                | Find the daily-note for yesterday, creating it if necessary.                 |
+| =C-c n d Y=   | =M-x org-roam-dailies-capture-yesterday=             | Create an entry in the daily-note for yesteday.                              |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+
+** Deft
+
+[[https://github.com/jrblevin/deft][Deft]] is an Emacs mode for quickly browsing, filtering, and editing directories
+of plain text notes, inspired by Notational Velocity. It was designed for
+increased productivity when writing and taking notes by making it fast and
+simple to find the right file at the right time and by automating many of the
+usual tasks such as creating new files and saving files.
+
+#+attr_html: :class styledtable
+| Key binding | Command                             | Description                                                             |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c n D=     | =M-x deft=                            | Switch to *Deft* buffer and load files.                                   |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =<Ret>=       | =M-x deft-complete=                   | Open file.                                                              |
+| =C-o=         | =M-x deft-open-file-other-window=     | Open file at point in other window.                                     |
+| =C-u C-o=     | =C-u M-x deft-open-file-other-window= | Open file at point in other window and switch to window.                |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c C-c=     | =M-x deft-filter-clear=               | Clear the current filter string and refresh the file browser.           |
+| =C-c C-q=     | =M-x quit-window=                     | Close Deft window.                                                      |
+| =C-c C-g=     | =M-x deft-refresh=                    | Update the file cache, reapply the filter, and refresh the *Deft* buffer. |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c C-t=     | =M-x deft-toggle-incremental-search=  | Toggle the ‘deft-incremental-search’ setting.                           |
+| =C-c C-l=     | =M-x deft-filter=                     | Update the filter with STR and update the file browser.                 |
+| =C-c C-s=     | =M-x deft-toggle-sort-method=         | Toggle file sorting method defined in ‘deft-current-sort-method’        |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c C-n=     | =M-X deft-new-file=                   | Create a new file quickly.                                              |
+| =C-c C-d=     | =M-x deft-delete-file=                | Delete the file represented by the button at the point.                 |
+| =C-c C-r=     | =M-x deft-rename-file=                | Rename the file represented by the button at the point.                 |
+| =C-c C-a=     | =M-x deft-archive-file=               | Archive the file represented by the button at the point.                |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
 
 ** Insert links from the clipboard
 

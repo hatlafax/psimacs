@@ -369,7 +369,36 @@ The following links might be useful for diving deeper into [[http://orgmode.org/
 
 This section gives some basic help with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] and debugging of [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code.
 
-** Debugging ELisp with EDebug
+** Debugging ELisp with Debug and EDebug
+
+*Emacs* has two [[https://www.gnu.org/software/emacs/manual/html_node/eintr/debug.html][debuggers]],
+[[https://www.gnu.org/software/emacs/manual/html_node/eintr/debug.html][Debug]] and
+[[https://www.gnu.org/software/emacs/manual/html_node/eintr/edebug.html][Edebug]].
+The first is built into the internals of Emacs and is always with you; the second requires that you instrument a function before you can use it.
+
+*** Debug
+
+You can enter the debugger when you call the function by calling =debug-on-entry=, e.g. =M-x debug-on-entry RET my-function RET=.
+To cancel the effect of =debug-on-entry=, call =cancel-debug-on-entry= with the same function name.
+
+Since a break is a /recursive edit/, all the usual editing facilities of Emacs are available;
+you can even run programs that will enter the debugger recursively.
+
+If you want errors to enter the debugger, set the variable =debug-on-error= to =non-nil=. However, if variable
+=eval-expression-debug-on-error= is =non-nil=, then =debug-on-error= is set to =t= in case of running command =eval-expression=.
+
+The most used commads are the following. For more detail see [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugger-Commands.html][Debugger Commands]].
+
+| Key binding | Description                                                                                                                                                  |
+|-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =c=         | Exit the debugger and continue execution.                                                                                                                    |
+| =q=         | Terminate the program being debugged; return to top-level Emacs command execution.                                                                           |
+| =d=         | Continue execution, but enter the debugger the next time any Lisp function is called.                                                                        |
+| =l=         | Display a list of functions that will invoke the debugger when called. This is a list of functions that are set to break on entry by means of debug-on-entry.|
+| =e=         | Read a Lisp expression in the minibuffer, evaluate it.                                                                                                       |
+|-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+*** Edebug
 
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]] is a source-level debugger for Emacs Lisp programs that is very useful developing /Lisp/ code. In the following
 you can find some useful commands and settings for debugging with [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][Edebug]]:
@@ -747,7 +776,10 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
   "The psimacs htmlized initialization file.")
 
 (defconst psimacs/config/keybindings-html-file-name "keybindings.html"
-  "The psimacs htmlized initialization file.")
+  "The psimacs htmlized keybindings file.")
+
+(defconst psimacs/config/sorted-keybindings-html-file-name "sortedKeyBindings.html"
+  "The psimacs htmlized sorted keybindings file.")
 
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
@@ -1055,6 +1087,12 @@ ugly flashes of unstyled Emacs.
       message-log-max t                 ; Specifies how many lines to keep in the *Messages* buffer.
                                         ; The value t means there is no limit on how many lines to keep.
 )
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq debug-on-error nil
+                  eval-expression-debug-on-error nil)
+            ))
 #+end_src
 
 ** Preamble for any /.el/ file
@@ -1554,6 +1592,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/keybindings-html-file-name)
                                              (concat db-dir psimacs/config/keybindings-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/sorted-keybindings-html-file-name)
+                                             (concat db-dir psimacs/config/sorted-keybindings-html-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
@@ -2432,6 +2473,7 @@ your calendar.
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "cortex"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "dailies"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "faq"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "projects"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "references"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "research"))
 
@@ -3191,9 +3233,9 @@ are to be installed into the following directory.
 
 [[https://www.python.org/][Python]] is one of my favorite languages. I use the Windows OS [[https://www.python.org/][Python]] installer and not the [[https://www.msys2.org/][MSYS2]] python package.
 
-Installation of the following packages is recommended: autopep8, autoflake, black, certifi, cmake-language-server, flake8,
+Installation of the following packages is recommended: autopep8, autoflake, black, certifi, cmake-language-server, cmake-format, flake8,
 ipython, jupyter, mypy, mypy-extensions, pyflakes, pylint, pyls-black, pyls-isort, pyls-mypy, ptvsd, pycodestyle,
-pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy antlr4-python3-runtime, pyqt6, PyQt6-WebEngine, PyGetWindow, epc,
+pycparser, pydocstyle, pywin32, pywinpty, sphinx, debugpy, pyright, antlr4-python3-runtime, pyqt6, PyQt6-WebEngine, PyGetWindow, epc,
 isbntools.
 
 A /python pip/ =requirements.txt= file can be found in the =site-lisp/python= directory for convenience:
@@ -8791,12 +8833,22 @@ all whitespace until the next non-whitespace character.
 Refefences:
 - [[https://endlessparentheses.com/hungry-delete-mode.html][Hungry Delete Mode]]
 
+| Key binding | Command                    | Description                                                 |
+|-------------+----------------------------+-------------------------------------------------------------|
+| =H-d=         | =M-x hungry-delete-forward=  | Delete the following character or all following whitespace. |
+| =H-<DEL>=     | =M-x hungry-delete-backward= | Delete the preceding character or all preceding whitespace. |
+|-------------+----------------------------+-------------------------------------------------------------|
+
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Hungry whitespace removal
 ;;
 (use-package hungry-delete
     :diminish
+    :bind (
+            ("H-d"           . hungry-delete-forward)
+            ("H-<backspace>" . hungry-delete-forward)
+        )
 )
 #+end_src
 
@@ -13300,7 +13352,7 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 ;; Support language servers
 ;;
 (use-package lsp-mode
-    :commands (lsp lsp-deferred)
+    :commands (lsp lsp-deferred company-lsp)
     :init
         (setq lsp-keymap-prefix "C-c l")
 
@@ -13321,6 +13373,8 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (setq lsp-lens-enable t)
         (setq lsp-headerline-breadcrumb-enable t)
         (setq lsp-modeline-code-actions-enable t)
+
+        (setq lsp-enable-completion-at-point nil)
 
         ;;(setq lsp-modeline-diagnostics-enable nil)
         ;;(setq lsp-keep-workspace-alive nil)
@@ -13356,7 +13410,8 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
             (lsp-mode . (lambda ()
                             (set (make-local-variable 'company-backends)
                                 '(
-                                    (company-capf
+                                    (company-lsp
+                                     company-capf
                                          company-keywords
                                               company-abbrev
                                               company-dabbrev
@@ -14350,6 +14405,29 @@ increased productivity when writing and taking notes by making it fast and
 simple to find the right file at the right time and by automating many of the
 usual tasks such as creating new files and saving files.
 
+#+attr_html: :class styledtable
+| Key binding | Command                             | Description                                                             |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c n D=     | =M-x deft=                            | Switch to *Deft* buffer and load files.                                   |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =<Ret>=       | =M-x deft-complete=                   | Open file.                                                              |
+| =C-o=         | =M-x deft-open-file-other-window=     | Open file at point in other window.                                     |
+| =C-u C-o=     | =C-u M-x deft-open-file-other-window= | Open file at point in other window and switch to window.                |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c C-c=     | =M-x deft-filter-clear=               | Clear the current filter string and refresh the file browser.           |
+| =C-c C-q=     | =M-x quit-window=                     | Close Deft window.                                                      |
+| =C-c C-g=     | =M-x deft-refresh=                    | Update the file cache, reapply the filter, and refresh the *Deft* buffer. |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c C-t=     | =M-x deft-toggle-incremental-search=  | Toggle the ‘deft-incremental-search’ setting.                           |
+| =C-c C-l=     | =M-x deft-filter=                     | Update the filter with STR and update the file browser.                 |
+| =C-c C-s=     | =M-x deft-toggle-sort-method=         | Toggle file sorting method defined in ‘deft-current-sort-method’        |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+| =C-c C-n=     | =M-X deft-new-file=                   | Create a new file quickly.                                              |
+| =C-c C-d=     | =M-x deft-delete-file=                | Delete the file represented by the button at the point.                 |
+| =C-c C-r=     | =M-x deft-rename-file=                | Rename the file represented by the button at the point.                 |
+| =C-c C-a=     | =M-x deft-archive-file=               | Archive the file represented by the button at the point.                |
+|-------------+-------------------------------------+-------------------------------------------------------------------------|
+
 #+begin_src emacs-lisp :tangle config/init-advanced-deft.el :var file-description="Advanced Deft setup"
 ;;
 ;; Configure deft-mode
@@ -14361,9 +14439,8 @@ usual tasks such as creating new files and saving files.
       (setq deft-recursive t)
       (setq deft-default-extension "org")
       (setq deft-extensions '("org" "md" "txt"))
-      (setq deft-strip-summary-regexp ":PROPERTIES:\n\\(.+\n\\)+:END:\n")
       (setq deft-use-filename-as-title t)
-      ;;(setq deft-use-filename-as-title nil)
+      ;(setq deft-use-filename-as-title nil)
       (setq deft-use-filter-string-for-filename t)
       (setq deft-auto-save-interval -1.0)
       (setq deft-file-naming-rules
@@ -14372,6 +14449,26 @@ usual tasks such as creating new files and saving files.
               (case-fn . downcase)))
       (setq deft-org-mode-title-prefix t)
       (setq deft-text-mode 'org-mode)
+
+      (defun psimacs/config/deft-parse-title (file contents)
+        "Parse the given FILE and CONTENTS and determine the title.
+If `deft-use-filename-as-title' is nil, the title is taken to
+be the first non-empty line of the FILE.  Else the base name of the FILE is
+used as title."
+        (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
+          (if begin
+              (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
+            (deft-base-filename file))))
+
+      (advice-add 'deft-parse-title :override #'psimacs/config/deft-parse-title)
+      (setq deft-strip-summary-regexp
+          (concat "\\("
+                  "[\n\t]" ;; blank
+                  "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
+                  "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n" ;; org-roam ID
+                  "\\|\\[\\[\\(.*\\]\\)" ;; any link
+                  "\\)"))
+
   :bind
       ("C-c n D" . deft)
 )
@@ -16001,6 +16098,19 @@ Each link also can be exported to LaTeX to build a PDF.
         (require 'org-ref-wos)
         (require 'queue)
 
+        (org-export-define-derived-backend 'org-ref 'org
+          :menu-entry
+          '(?R "Org-ref export"
+               ((?a "to Ascii" org-ref-export-to-ascii)
+                (?m "to markdown" org-ref-export-to-md)
+                (?h "to html" org-ref-export-to-html)
+                (?l "to LaTeX" org-ref-export-to-latex)
+                (?p "to PDF" org-ref-export-to-pdf)
+                (?o "to ODT" org-ref-export-to-odt)
+                (?O "to Org buffer" org-ref-export-as-org)
+                (?e "to email" org-ref-export-to-message)
+                (?w "to docx" org-ref-export-to-docx))))
+
         (defun psimacs/config/citeproc-bt--process-brackets (fn &rest args)
           "Advice for the citeproc-bt--process-brackets allowing resuing of embedded LaTeX math."
           ;(message "Entry: %S" args)
@@ -16386,10 +16496,55 @@ References:
 - [[https://jasbrg.com/notes/2021-12-01-org_roam_post/][Org Roam Post by λx.jasbrg]]
 - [[https://rgoswami.me/posts/org-note-workflow/][An Orgmode Note Workflow]]
 - [[https://keido.site/notes/20211204183600/][Keido site]]
+- [[https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/][5-org-roam-hacks]]
 
 Brains:
 - [[https://braindump.jethro.dev/][Jethro's Braindump]]
 - [[https://braindump.badykov.com/about/][Ayrat's Braindump]]
+
+
+#+attr_html: :class styledtable1
+| Key binding | Command                                            | Description                                                                  |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n A=     | =M-x psimacs/org-roam/refresh-agenda-list=           | Let be the org-agenda files the ones that have tag <Project>.                |
+| =C-c n D=     | =M-x deft=                                           | Switch to *Deft* buffer and load files.                                        |
+| =C-c n R=     | =M-x org-roam-node-random=                           | Find and open a random Org-roam node.                                        |
+| =C-c n c=     | =M-x org-roam-capture=                               | Launches an ‘org-capture’ process for a new or existing node.                |
+| =C-c n f=     | =M-x org-roam-node-find=                             | Find and open an Org-roam node by its title or alias.                        |
+| =C-c n i=     | =M-x org-roam-node-insert=                           | Find an Org-roam node and insert (where the point is) an "id:" link to it.   |
+| =C-c n j=     | =M-x org-roam-dailies-capture-today=                 | Create an entry in the daily-note for today.                                 |
+| =C-c n o=     | =M-x org-id-get-create=                              | Create an ID for the current entry and return it.                            |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n p f=   | =M-x psimacs/org-roam/find-project=                  | Find org roam node files which have tag <Project>.                           |
+| =C-c n p n=   | =M-x psimacs/org-roam/project-capture-note=          | Select or create project node and capture note.                              |
+| =C-c n p r=   | =M-x psimacs/org-roam/project-capture-reference=     | Select or create project node and capture reference.                         |
+| =C-c n p s=   | =M-x psimacs/org-roam/project-capture-resource=      | Select or create project node and capture resource.                          |
+| =C-c n p t=   | =M-x psimacs/org-roam/project-capture-task=          | Select or create project node and capture task.                              |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n x i=   | =M-x psimacs/org-roam/capture-inbox=                 | Create a inbox capture node.                                                 |
+| =C-c n r f=   | =M-x org-roam-ref-find=                              | Find and open an Org-roam node that’s dedicated to a specific ref.           |
+| =C-c n a a=   | =M-x org-roam-alias-add=                             | Add ALIAS to the node at point.                                              |
+| =C-c n a r=   | =M-x org-roam-ref-add=                               | Add REF to the node at point.                                                |
+| =C-c n a t=   | =M-x org-roam-tag-add=                               | Add TAGS to the node at point.                                               |
+| =C-c n I D=   | =M-x psimacs/org-roam/node-insert-immediate-default= | Immediate node insertion using the default capture template.                 |
+| =C-c n I I=   | =M-x psimacs/org-roam/node-insert-immediate=         | Immediate node insertion but let you choose the capture template.            |
+| =C-c n g g=   | =M-x org-roam-graph=                                 | Build and possibly display a graph for NODE.                                 |
+| =C-c n g u=   | =M-x org-roam-ui-mode=                               | Enable org-roam-ui.                                                          |
+| =C-c n b d=   | =M-x org-roam-buffer-display-dedicated=              | Launch NODE dedicated Org-roam buffer.                                       |
+| =C-c n b t=   | =M-x org-roam-buffer-toggle=                         | Toggle display of the persistent ‘org-roam-buffer’.                          |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n d f=   | =M-x org-roam-dailies-find-directory=                | Find and open ‘org-roam-dailies-directory’.                                  |
+| =C-c n d c=   | =M-x org-roam-dailies-goto-date=                     | Find the daily-note for a date using the calendar, creating it if necessary. |
+| =C-c n d C=   | =M-x org-roam-dailies-capture-date=                  | Create an entry in the daily-note for a date using the calendar.             |
+| =C-c n d d=   | =M-x org-roam-dailies-goto-today=                    | Find the daily-note for today, creating it if necessary.                     |
+| =C-c n d D=   | =M-x org-roam-dailies-capture-today=                 | Create an entry in the daily-note for today.                                 |
+| =C-c n d n=   | =M-x org-roam-dailies-goto-next-note=                | Find next daily-note.                                                        |
+| =C-c n d p=   | =M-x org-roam-dailies-goto-previous-note=            | Find previous daily-note.                                                    |
+| =C-c n d t=   | =M-x org-roam-dailies-goto-tomorrow=                 | Find the daily-note for tomorrow, creating it if necessary.                  |
+| =C-c n d T=   | =M-x org-roam-dailies-capture-tomorrow=              | Create an entry in the daily-note for tomorrow.                              |
+| =C-c n d y=   | =M-x org-roam-dailies-goto-yesterday=                | Find the daily-note for yesterday, creating it if necessary.                 |
+| =C-c n d Y=   | =M-x org-roam-dailies-capture-yesterday=             | Create an entry in the daily-note for yesteday.                              |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-roam.el :var file-description="Major Modes - org-roam setup"
 ;;
@@ -16483,6 +16638,14 @@ Brains:
                     :unnarrowed t
                 )
                 (
+                    "p" "project" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ProjectTemplate.org"))
+                    :if-new (
+                                file "projects/%<%Y-%m-%d>-${slug}.org"
+                            )
+                    :unnarrowed t
+                )
+                (
                     "r" "reference" plain
                     (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ReferenceTemplate.org"))
                     :if-new (
@@ -16494,7 +16657,7 @@ Brains:
                     "b" "book note" plain
                     (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "BookNoteTemplate.org"))
                     :if-new (
-                                file "references/%<%Y-%m-%d>-${slug}.org"
+                                file "book-notes/%<%Y-%m-%d>-${slug}.org"
                             )
                     :unnarrowed t
                 )
@@ -16587,6 +16750,19 @@ Brains:
             )
         )
 
+        (setq psimacs/org-roam/project-capture-templates
+            `(
+                (
+                    "p" "project" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ProjectTemplate.org"))
+                    :if-new (
+                                file "projects/%<%Y-%m-%d>-${slug}.org"
+                            )
+                    :unnarrowed t
+                )
+            )
+        )
+
         (setq org-roam-dailies-caputure-templates
             '(
                 (
@@ -16649,6 +16825,7 @@ Brains:
         )
 
         (defun psimacs/org-roam/refresh-agenda-list ()
+            "Let be the org-agenda files the ones that have tag <Project>."
             (interactive)
             (setq org-agenda-files (psimacs/org-roam/list-notes-by-tag "Project"))
         )
@@ -16666,6 +16843,7 @@ Brains:
         )
 
         (defun psimacs/org-roam/find-project ()
+            "Find org roam node files which have tag <Project>."
             (interactive)
             ;; Add the project file to the agenda after capture is finished
             (add-hook 'org-capture-after-finalize-hook #'psimacs/org-roam/project-finalize-hook)
@@ -16675,24 +16853,13 @@ Brains:
                 nil
                 nil
                 (psimacs/org-roam/filter-by-tag "Project")
-                :templates
-                    '(
-                        (
-                            "p"
-                            "project" plain
-                            "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-                            :if-new (
-                                        file+head
-                                        "%<%Y-%m-%d>-${slug}.org"
-                                        "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
-                                    )
-                            :unnarrowed t
-                        )
-                    )
+                nil
+                :templates psimacs/org-roam/project-capture-templates
             )
         )
 
         (defun psimacs/org-roam/capture-inbox ()
+            "Create a inbox capture node."
             (interactive)
             (org-roam-capture- :node (org-roam-node-create)
                                :templates
@@ -16700,7 +16867,7 @@ Brains:
                                         (
                                             "i"
                                             "inbox" plain
-                                            "* %?"
+                                            "* %U %?"
                                             :if-new (
                                                         file+head
                                                         "Inbox.org"
@@ -16711,7 +16878,8 @@ Brains:
             )
         )
 
-        (defun psimacs/org-roam/capture-task ()
+        (defun psimacs/org-roam/project-capture-task ()
+            "Create a project task capture node."
             (interactive)
             ;; Add the project file to the agenda after capture is finished
             (add-hook 'org-capture-after-finalize-hook #'psimacs/org-roam/project-finalize-hook)
@@ -16723,23 +16891,94 @@ Brains:
                                         (psimacs/org-roam/filter-by-tag "Project")
                                      )
                                 :templates
-                                    '(
+                                    `(
                                         (
-                                            "p"
-                                            "project" plain
-                                            "* TODO %?"
+                                            "t" "task" entry
+                                            "** TODO %?"
                                             :if-new (
-                                                        file+head+olp
-                                                        "%<%Y-%m-%d>-${slug}.org"
-                                                        "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n\n"
-                                                        ("Tasks")
+                                                        file+head+olp "projects/%<%Y-%m-%d>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project" ("Tasks")
                                                     )
+                                            :unnarrowed t
                                         )
                                     )
             )
         )
 
+        (defun psimacs/org-roam/project-capture-note ()
+            "Create a project note capture node."
+            (interactive)
+
+            ;; Capture the new note, creating the project file if necessary
+            (org-roam-capture- :node (
+                                        org-roam-node-read
+                                        nil
+                                        (psimacs/org-roam/filter-by-tag "Project")
+                                     )
+                                :templates
+                                    `(
+                                        (
+                                            "n" "note" entry
+                                            "** %?"
+                                            :if-new (
+                                                        file+head+olp "projects/%<%Y-%m-%d>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project" ("Notes")
+                                                    )
+                                            :unnarrowed t
+                                        )
+                                    )
+            )
+        )
+
+        (defun psimacs/org-roam/project-capture-reference ()
+            "Create a project reference capture node."
+            (interactive)
+
+            ;; Capture the new reference, creating the project file if necessary
+            (org-roam-capture- :node (
+                                        org-roam-node-read
+                                        nil
+                                        (psimacs/org-roam/filter-by-tag "Project")
+                                     )
+                                :templates
+                                    `(
+                                        (
+                                            "r" "reference" item
+                                            "- %?"
+                                            :if-new (
+                                                        file+head+olp "projects/%<%Y-%m-%d>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project" ("References")
+                                                    )
+                                            :unnarrowed t
+                                        )
+                                    )
+            )
+        )
+
+        (defun psimacs/org-roam/project-capture-resource()
+            "Create a project resource capture node."
+            (interactive)
+
+            ;; Capture the new resource, creating the project file if necessary
+            (org-roam-capture- :node (
+                                        org-roam-node-read
+                                        nil
+                                        (psimacs/org-roam/filter-by-tag "Project")
+                                     )
+                                :templates
+                                    `(
+                                        (
+                                            "s" "resource" entry
+                                            "- %?"
+                                            :if-new (
+                                                        file+head+olp "projects/%<%Y-%m-%d>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project" ("References")
+                                                    )
+                                            :unnarrowed t
+                                        )
+                                    )
+            )
+        )
+
+
         (defun psimacs/org-roam/copy-todo-to-today ()
+            "Copy the todo task to today node."
             (interactive)
             (let ( (org-refile-keep t) ;; Set this to nil to delete the original, i.e if you want to move the completed task instead
                     (org-roam-dailies-capture-templates
@@ -16782,10 +17021,6 @@ Brains:
             )
         )
 
-        ;; (global-set-key (kbd "C-c n p") #'psimacs/org-roam/find-project)
-        ;; (global-set-key (kbd "C-c n x") #'psimacs/org-roam/capture-inbox)
-        ;; (global-set-key (kbd "C-c n t") #'psimacs/org-roam/capture-task)
-
         ;; Build the agenda list the first time for the session
         (psimacs/org-roam/refresh-agenda-list)
 
@@ -16813,7 +17048,6 @@ Brains:
             ("C-c n b d" . org-roam-buffer-display-dedicated)
             ("C-c n f"   . org-roam-node-find)
             ("C-c n R"   . org-roam-node-random)
-            ("C-c n p"   . psimacs/org-roam/find-project)
             ("C-c n g g" . org-roam-graph)
             ("C-c n g s" . org-roam-show-graph)
             ("C-c n g u" . org-roam-ui-mode)
@@ -16826,32 +17060,39 @@ Brains:
             ("C-c n r f" . org-roam-ref-find)
             ("C-c n c"   . org-roam-capture)
             ("C-c n j"   . org-roam-dailies-capture-today)
-            ("C-c n x i" . psimacs/org-roam/capture-inbox)
-            ("C-c n x t" . psimacs/org-roam/capture-task)
+            ("C-c n p f" . psimacs/org-roam/find-project)
+            ("C-c n p n" . psimacs/org-roam/project-capture-note)
+            ("C-c n p r" . psimacs/org-roam/project-capture-reference)
+            ("C-c n p s" . psimacs/org-roam/project-capture-resource)
+            ("C-c n p t" . psimacs/org-roam/project-capture-task)
+            ("C-c n x i" . psimacs/org-roam/project-capture-inbox)
             ("C-c n A"   . psimacs/org-roam/refresh-agenda-list)
             ("C-c n o"   . org-id-get-create)
-
-            ;;("C-c n d n" . org-roam-dailies-capture-today)
-            ;;("C-c n d v" . org-roam-dailies-capture-date)
-
-            ;;("C-c n d d" . org-roam-dailies-goto-today)
-            ;;("C-c n d y" . org-roam-dailies-goto-yesterday)
-            ;;("C-c n d t" . org-roam-dailies-goto-tomorrow)
-            ;;("C-c n d c" . org-roam-dailies-goto-date)
-
-            ;;("C-c n d b" . org-roam-dailies-goto-next-note)
-            ;;("C-c n d f" . org-roam-dailies-goto-previous-note)
 
             :map org-mode-map
                 ("C-M-i" . completion-at-point)
 
             :map org-roam-dailies-map
-                ("y" . org-roam-dailies-capture-yesterday)
-                ("t" . org-roam-dailies-capture-tomorrow)
-        )
+                ("d" . org-roam-dailies-goto-today)
+                ("D" . org-roam-dailies-capture-today)
 
-    ;;:bind-keymap
-    ;;    ("C-c n d" . org-roam-dailies-map)
+                ("y" . org-roam-dailies-goto-yesterday)
+                ("Y" . org-roam-dailies-capture-yesterday)
+
+                ("t" . org-roam-dailies-goto-tomorrow)
+                ("T" . org-roam-dailies-capture-tomorrow)
+
+                ("c" . org-roam-dailies-goto-date)
+                ("C" . org-roam-dailies-capture-date)
+
+                ("n" . org-roam-dailies-goto-next-note)
+                ("p" . org-roam-dailies-goto-previous-note)
+
+                ("f" . org-roam-dailies-find-directory)
+                ("b" . nil)
+                ("v" . nil)
+                ("." . nil)
+        )
 )
 #+end_src
 
@@ -18169,6 +18410,16 @@ References:
 ;;
 ;; Hydra for various toggles
 ;;
+(defun psimacs/debug/toogle-debugging ()
+    "Enable/Disable debugging flags."
+    (interactive)
+    (when debug-on-error
+        (setq eval-expression-debug-on-error t))
+
+    (setq-default debug-on-error (not debug-on-error))
+    (setq-default eval-expression-debug-on-error (not eval-expression-debug-on-error))
+)
+
 (define-key psimacs/config/global-key-map/hydra (kbd "SPC")
     (pretty-hydra-define
         psimacs/hydra/toggle
@@ -18199,6 +18450,11 @@ References:
                     ("f" flycheck-mode "flycheck" :toggle t)
                     ("b" subword-mode "subword" :toggle t)
                     ("B" superword-mode "superword" :toggle t)
+                )
+            "Debugging"
+                (
+                    ("D" psimacs/debug/toogle-debugging "Debugging")
+                    ("X" (setq-default eval-expression-debug-on-error (not eval-expression-debug-on-error)) "debug on error on eval-expression" :toggle eval-expression-debug-on-error)
                     ("E" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
                     ("Q" toggle-debug-on-quit  "debug on quit"  :toggle (default-value 'debug-on-quit))
                 )
@@ -18984,17 +19240,4 @@ Additional key bindings for *Psimacs*:
 (when psimacs/config/byte-compile-config-folder
     (byte-recompile-directory psimacs/config/config-dir 0)
 )
-#+end_src
-
-* Disable Debug on Error
-
-It is inconvenient to enter the debugger each time commands signal Lisp errors when invoked inappropriately.
-
-Reference: [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Debugging.html][Entering the Debugger on an Error]]
-
-#+begin_src emacs-lisp :tangle yes
-;;
-;; Disable entering the debugger for inappropriately invoked Lisp commands
-;;
-(setq debug-on-error  nil)
 #+end_src
