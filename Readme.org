@@ -41,17 +41,54 @@ The name *Psimacs* is arbitrarily. I was in search for a catchy name with just o
 
 * Installation
 
-This configuration uses *Emacs* >= 27. Clone the git repository into your *.emcas.d* directory
+At first, install [[https://www.gnu.org/software/emacs/download.html][Emacs]] for Windows, e.g. 28.2 to =c:/utils/Emacs= and then install the primary dependencies of this
+configuration. Create shortcuts for =runemacs.exe= and =emacsclientw.exe=. Both shortcuts should start *Emacs* from the
+home directory and the client should be called as:
+=C:\utils\Emacs\bin\emacsclientw.exe -n -a C:\utils\Emacs\bin\runemacs.exe -c=
 
-#+begin_src shell
+The main dependencies for *Psimacs* are:
+- Python :: Install e.g. [[https://www.python.org/downloads/][Python]] 3.10.8 to =c:/utils/Python310=.
+- Msys2 :: Install [[https://www.msys2.org/][MSYS2]] to =c:/utils/msys64=.
+
+This configuration uses *Emacs* >= 27 and is tested with  *Emacs* = 28.2. Clone the git repository into your *.emcas.d*
+directory:
+
+#+begin_example
 mv ~/.emacs.d ~/.emacs.d.bak
 git clone https://github.com/hatlafax/psimacs.git ~/.emacs.d
-#+end_src
+#+end_example
 
-and just run *Emacs*.
+Now install dependency packages for Python:
 
-However, the configuration do have some dependencies that should be installed separately and beforehand of *Psimacs*.
-On default the non *Emacs* dependencies are expected to be installed in directory *c:/utils/*.
+#+begin_example
+cd c:/utils/python310
+python -m pip install pip --upgrade
+
+cd c:/utils/Python310/Scripts
+pip install -r ~/.emacs.d/assets/dependencies/python/requirements.txt
+#+end_example
+
+Next, install dependency packages for MSYS2. Open the /MSYS2 MinGW 64-bit/ shell and run the following commands:
+
+#+begin_example
+pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
+#+end_example
+
+Remark: Configure =requirements.txt= as your likeing before running the installation.
+
+Finally, just run *Emacs*.
+
+The only file really needed is the =early-init.el= file. On startup, it reads the file =init.org= and extracts all the
+initialization code into the main =init.el= and various additionally =config/init-*.el= files. The created =init.el=
+file is then read and evaluated in the further startup procedure. The =init.el= file loads the other =config/init-*.el=
+files on evaluation.
+
+Never edit transient file =init.el= or =config/init-*.el= directly. They will be overridden by the next run of
+*Psimacs*. Instead modify the =init.org= file to change your configuration.
+
+You can create a HTML document =init.html= of this file by simply typing =C-c C-e h h= in the *Emacs* buffer for
+this file. It is recommended to use this =init.html= for browser reading.
+This configuration uses *Emacs* >= 27. Clone the git repository into your *.emcas.d* directory
 
 * Usage
 

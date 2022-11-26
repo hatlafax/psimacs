@@ -50,15 +50,42 @@ See also:
 
 ** Installation
 
+At first, install [[https://www.gnu.org/software/emacs/download.html][Emacs]] for Windows, e.g. 28.2 to =c:/utils/Emacs= and then install the primary dependencies of this
+configuration. Create shortcuts for =runemacs.exe= and =emacsclientw.exe=. Both shortcuts should start *Emacs* from the
+home directory and the client should be called as:
+=C:\utils\Emacs\bin\emacsclientw.exe -n -a C:\utils\Emacs\bin\runemacs.exe -c=
+
+The main dependencies for *Psimacs* are:
+- Python :: Install e.g. [[https://www.python.org/downloads/][Python]] 3.10.8 to =c:/utils/Python310=.
+- Msys2 :: Install [[https://www.msys2.org/][MSYS2]] to =c:/utils/msys64=.
+
 This configuration uses *Emacs* >= 27 and is tested with  *Emacs* = 28.2. Clone the git repository into your *.emcas.d*
-directory
+directory:
 
 #+begin_example
 mv ~/.emacs.d ~/.emacs.d.bak
 git clone https://github.com/hatlafax/psimacs.git ~/.emacs.d
 #+end_example
 
-and just run *Emacs*.
+Now install dependency packages for Python:
+
+#+begin_example
+cd c:/utils/python310
+python -m pip install pip --upgrade
+
+cd c:/utils/Python310/Scripts
+pip install -r ~/.emacs.d/assets/dependencies/python/requirements.txt
+#+end_example
+
+Next, install dependency packages for MSYS2. Open the /MSYS2 MinGW 64-bit/ shell and run the following commands:
+
+#+begin_example
+pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
+#+end_example
+
+Remark: Configure =requirements.txt= as your likeing before running the installation.
+
+Finally, just run *Emacs*.
 
 The only file really needed is the =early-init.el= file. On startup, it reads the file =init.org= and extracts all the
 initialization code into the main =init.el= and various additionally =config/init-*.el= files. The created =init.el=
@@ -2823,17 +2850,12 @@ autoconf-wrapper 15-1
 autoconf2.13 2.13-5
 autogen 5.18.16-4
 automake-wrapper 11-4
-automake1.10 1.10.3-4
 automake1.11 1.11.6-6
 automake1.12 1.12.6-6
 automake1.13 1.13.4-7
 automake1.14 1.14.1-6
 automake1.15 1.15.1-4
 automake1.16 1.16.5-1
-automake1.6 1.6.3-3
-automake1.7 1.7.9-3
-automake1.8 1.8.5-4
-automake1.9 1.9.6-3
 base 2022.06-1
 bison 3.8.2-4
 btyacc 20210619-2
@@ -3009,7 +3031,6 @@ scons 3.1.2-8
 swig 4.0.2-2
 texinfo 6.8-6
 texinfo-tex 6.8-6
-ttyrec 1.0.8-2
 unrar 6.1.4-2
 unzip 6.0-2
 winpty 0.4.3-1

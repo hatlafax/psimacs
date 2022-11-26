@@ -131,7 +131,10 @@ Do not change it here!!!
   "The psimacs htmlized initialization file.")
 
 (defconst psimacs/config/keybindings-html-file-name "keybindings.html"
-  "The psimacs htmlized initialization file.")
+  "The psimacs htmlized keybindings file.")
+
+(defconst psimacs/config/sorted-keybindings-html-file-name "sortedKeyBindings.html"
+  "The psimacs htmlized sorted keybindings file.")
 
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
@@ -749,6 +752,9 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/keybindings-html-file-name)
                                              (concat db-dir psimacs/config/keybindings-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/sorted-keybindings-html-file-name)
+                                             (concat db-dir psimacs/config/sorted-keybindings-html-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
