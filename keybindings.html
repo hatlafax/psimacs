@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-10-23 So 17:49 -->
+<!-- 2022-10-31 Mo 10:51 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Psimacs Key Bindings</title>
@@ -212,12 +212,12 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org97b4c77">1. Overview of Psimacs Key Bindings</a></li>
+<li><a href="#org3ec4364">1. Overview of Psimacs Key Bindings</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org97b4c77" class="outline-2">
-<h2 id="org97b4c77"><span class="section-number-2">1.</span> Overview of Psimacs Key Bindings</h2>
+<div id="outline-container-org3ec4364" class="outline-2">
+<h2 id="org3ec4364"><span class="section-number-2">1.</span> Overview of Psimacs Key Bindings</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The following tables summarizes the key bindings added explicitly by <b>Psimacs</b>. Neither shown are the bindings provided
@@ -1526,6 +1526,43 @@ by the various packages nor by <b>Emacs</b> itself.
 </tbody>
 <tbody>
 <tr>
+<td class="org-left"><code>H-m C-s C-m f</code></td>
+<td class="org-left"><code>M-x mosey-forward</code></td>
+<td class="org-left">Mosey on forward.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-m b</code></td>
+<td class="org-left"><code>M-x mosey-backward</code></td>
+<td class="org-left">Mosey on back.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-m F</code></td>
+<td class="org-left"><code>M-x mosey-forward-bounce</code></td>
+<td class="org-left">Bounce forward a notch when it hits the beginning.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-m B</code></td>
+<td class="org-left"><code>M-x mosey-backward-bounce</code></td>
+<td class="org-left">Bounce back a notch when it hits the end.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-m C-f</code></td>
+<td class="org-left"><code>M-x mosey-forward-cycle</code></td>
+<td class="org-left">Loop around when it gets to one end or the other.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-s C-m C-b</code></td>
+<td class="org-left"><code>M-x mosey-backward-cycle</code></td>
+<td class="org-left">Loop around when it gets to one end or the other.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
 <td class="org-left"><code>H-m C-s a</code></td>
 <td class="org-left"><code>M-x swiper-all</code></td>
 <td class="org-left">Incrementally search in all open buffers.</td>
@@ -1832,6 +1869,61 @@ by the various packages nor by <b>Emacs</b> itself.
 <td class="org-left"><code>H-m C-x C-a</code></td>
 <td class="org-left"><code>M-x abbrev-mode</code></td>
 <td class="org-left">Enable/Disable abbreviation mode.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><code>H-m C-y w</code></td>
+<td class="org-left"><code>M-x aya-create</code></td>
+<td class="org-left">Create a snippet from the text between BEG and END.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y TAB</code></td>
+<td class="org-left"><code>M-x aya-expand</code></td>
+<td class="org-left">Insert the last yasnippet created by <code>aya-create</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y SPC</code></td>
+<td class="org-left"><code>M-x aya-expand-from-history</code></td>
+<td class="org-left">Select and insert a yasnippet from the <code>aya-history</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y d</code></td>
+<td class="org-left"><code>M-x aya-delete-from-history</code></td>
+<td class="org-left">Select and delete one or more snippets from <code>aya-history</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y c</code></td>
+<td class="org-left"><code>M-x aya-clear-history</code></td>
+<td class="org-left">Clear <code>aya-history</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y n</code></td>
+<td class="org-left"><code>M-x aya-next-in-history</code></td>
+<td class="org-left">Set <code>aya-current</code> to the next item in history. Wraps at the end of history.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y p</code></td>
+<td class="org-left"><code>M-x aya-previous-in-history</code></td>
+<td class="org-left">Set <code>aya-current</code> to the previous item in history. Wraps around at start of history.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y s</code></td>
+<td class="org-left"><code>M-x aya-persist-snippet</code></td>
+<td class="org-left">Save the current auto-snippet to a user snippets folder. The current <code>major-mode</code> name will be used to determine the snippets sub-directory to store the snippet.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-m C-y o</code></td>
+<td class="org-left"><code>M-x aya-open-line</code></td>
+<td class="org-left">Generic expansion function. It will either expand or move to the next field depending on the context.</td>
 </tr>
 </tbody>
 <tbody>
@@ -3232,7 +3324,7 @@ by the various packages nor by <b>Emacs</b> itself.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Johannes Brunen</p>
-<p class="date">Created: 2022-10-23 So 17:49</p>
+<p class="date">Created: 2022-10-31 Mo 10:51</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

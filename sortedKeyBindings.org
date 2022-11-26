@@ -316,7 +316,6 @@ Inside *Info* the following commands are useful:
 |               | =C-u M-x info-display-manual= | Show the *Info* manual by name, but limits the completion alternatives to currently visited info files.                    |
 |---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
 
-
 ** Debugging ELisp with Debug and EDebug
 
 *Emacs* has two [[https://www.gnu.org/software/emacs/manual/html_node/eintr/debug.html][debuggers]],
@@ -337,14 +336,14 @@ The first is built into the internals of Emacs and is always with you; the secon
 
     The most used commads are the following. For more detail see [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugger-Commands.html][Debugger Commands]].
 
-    | Key binding | Description                                                                                                                                                  |
-    |-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | =c=         | Exit the debugger and continue execution.                                                                                                                    |
-    | =q=         | Terminate the program being debugged; return to top-level Emacs command execution.                                                                           |
-    | =d=         | Continue execution, but enter the debugger the next time any Lisp function is called.                                                                        |
-    | =l=         | Display a list of functions that will invoke the debugger when called. This is a list of functions that are set to break on entry by means of debug-on-entry.|
-    | =e=         | Read a Lisp expression in the minibuffer, evaluate it.                                                                                                       |
-    |-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | Key binding | Description                                                                                                                                                   |
+    |-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | =c=           | Exit the debugger and continue execution.                                                                                                                     |
+    | =q=           | Terminate the program being debugged; return to top-level Emacs command execution.                                                                            |
+    | =d=           | Continue execution, but enter the debugger the next time any Lisp function is called.                                                                         |
+    | =l=           | Display a list of functions that will invoke the debugger when called. This is a list of functions that are set to break on entry by means of debug-on-entry. |
+    | =e=           | Read a Lisp expression in the minibuffer, evaluate it.                                                                                                        |
+    |-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 - EDebug
 
@@ -943,14 +942,14 @@ Additionally, creating a key binding for =persp-mode-map= will also activate the
 Since [[https://github.com/nex3/perspective-el][perspective]]  maintains distinct buffer lists for each [[https://github.com/nex3/perspective-el][perspective]], it helps to use a
 Perspective-aware buffer switcher.
 
-| Buffer switcher | Support                                                                                                                                                                                                                                                                                       |
-|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                   |
-| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
-| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
-| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                    |
+| Buffer switcher | Support                                                                                                                                                                                                                                                                                                                    |
+|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                                |
+| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
+| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
+| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                 |
 | Ivy / Counsel   | Perspective provides two commands for listing buffers using Ivy and Counsel: =persp-ivy-switch-buffer= and =persp-counsel-switch-buffer=. When these functions are called normally, they show a list of buffers filtered by the current perspective. With a prefix argument, they shows a list of buffers in all perspectives. |
-|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Abbreviations
 
@@ -1354,6 +1353,22 @@ a char-based decision tree.
 | =H-m C-s C-a w= | =M-x avy-goto-word-1=            | Input one char at word start, jump to a word start with a tree.                                                                       |
 | =H-m C-s C-a W= | =M-x avy-goto-word-0=            | Input zero chars, jump to a word start with a tree.                                                                                   |
 |---------------+--------------------------------+---------------------------------------------------------------------------------------------------------------------------------------|
+
+** Mosey
+
+[[https://github.com/alphapapa/mosey.el][Mosey]] is a GNU Emacs package that makes it easy to mosey back and forth
+in your buffers.
+
+#+attr_html: :class styledtable1
+| Key binding     | Command                   | Description                                        |
+|-----------------+---------------------------+----------------------------------------------------|
+| =H-m C-s C-m f=   | =M-x mosey-forward=         | Mosey on forward.                                  |
+| =H-m C-s C-m b=   | =M-x mosey-backward=        | Mosey on back.                                     |
+| =H-m C-s C-m F=   | =M-x mosey-forward-bounce=  | Bounce forward a notch when it hits the beginning. |
+| =H-m C-s C-m B=   | =M-x mosey-backward-bounce= | Bounce back a notch when it hits the end.          |
+| =H-m C-s C-m C-f= | =M-x mosey-forward-cycle=   | Loop around when it gets to one end or the other.  |
+| =H-m C-s C-m C-b= | =M-x mosey-backward-cycle=  | Loop around when it gets to one end or the other.  |
+|-----------------+---------------------------+----------------------------------------------------|
 
 ** Multiple Cursors
 
@@ -1999,6 +2014,26 @@ See also:
 | =C-c C-c=     | =M-x yas-load-snippet-buffer-and-close= | Prompts for a snippet table and loads the snippet currently being edited. Also saves the snippet and calls quit-window. The destination is decided based on the chosen snippet table and snippet collection directly. |
 | =C-c C-t=     | =M-x yas-tryout-snippet=                | When editing a snippet, this opens a new empty buffer, sets it to the appropriate major mode and inserts the snippet there, so you can see what it looks like.                                                        |
 |-------------+---------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+** Auto-YASnippet
+
+[[https://github.com/abo-abo/auto-yasnippet][Auto-YASnippet]] is a hybrid of keyboard macros and YASnippet.
+You create the snippet on the go and it'll be ready to use immediately. Because you're not leaving the
+current buffer the workflow is very fast.
+
+#+attr_html: :class styledtable1
+| Key binding | Command                     | Description                                                                                                                                                     |
+|-------------+-----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-y w=   | =M-x aya-create=              | Create a snippet from the text between BEG and END.                                                                                                             |
+| =H-m C-y TAB= | =M-x aya-expand=              | Insert the last yasnippet created by =aya-create=.                                                                                                                |
+| =H-m C-y SPC= | =M-x aya-expand-from-history= | Select and insert a yasnippet from the =aya-history=.                                                                                                             |
+| =H-m C-y d=   | =M-x aya-delete-from-history= | Select and delete one or more snippets from =aya-history=.                                                                                                        |
+| =H-m C-y c=   | =M-x aya-clear-history=       | Clear =aya-history=.                                                                                                                                              |
+| =H-m C-y n=   | =M-x aya-next-in-history=     | Set =aya-current= to the next item in history. Wraps at the end of history.                                                                                       |
+| =H-m C-y p=   | =M-x aya-previous-in-history= | Set =aya-current= to the previous item in history. Wraps around at start of history.                                                                              |
+| =H-m C-y s=   | =M-x aya-persist-snippet=     | Save the current auto-snippet to a user snippets folder. The current =major-mode= name will be used to determine the snippets sub-directory to store the snippet. |
+| =H-m C-y o=   | =M-x aya-open-line=           | Generic expansion function. It will either expand or move to the next field depending on the context.                                                           |
+|-------------+-----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Treemacs
 

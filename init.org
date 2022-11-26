@@ -45,7 +45,8 @@ frameworks that are build by a lot of talented people. So feel free to use it or
 
 The name *Psimacs* is arbitrarily. I was in search for a catchy name with just one syllable in front of the *macs*.
 
-See also: [[https://github.com/caisah/emacs.dz][A list of people with nice emacs config files]]
+See also:
+- [[https://github.com/caisah/emacs.dz][A list of people with nice emacs config files]]
 
 ** Installation
 
@@ -95,6 +96,7 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 ** Limitations / Known Issues
 
 - Tested on Windows operating system only
+- Does have a very long Startup time. But using the Emacs client it not such of a big deal.
 
 ** License (GPL v3)
 
@@ -192,41 +194,49 @@ References:
 - Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
 
 #+attr_html: :class styledtable
-| Key binding             | Command                               | Description                                                                                                                                                                                                                                          |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-SPC= =C-@=               | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
-| =C-u C-SPC= =C-u C-@= =H-x p= | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
-| =C-x C-SPC= =C-x C-@= =H-x q= | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
-| =C-SPC C-SPC=             |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
-| =C-u C-u C-SPC=           |                                       | Unconditionally set mark.                                                                                                                                                                                                                            |
-| =C-x C-x=                 | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =S-C-f=                   | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |
-| =S-...=                   | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-w=                     | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                                                                                                                                   |
-| =M-w=                     | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                                                                                                                              |
-| =C-y=                     | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
-| =M-y=                     | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-u=                 | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
-| =C-x C-l=                 | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
-| =H-x H-x C-x C-u=         | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
-| =H-x H-x C-x C-l=         | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-g=                     | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                                                                                                                             |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-@=                     | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
-| =C-M-@=                   | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
-| =M-h=                     | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
-| =C-M-h=                   | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
-| =C-x C-p=                 | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
-| =C-x h=                   | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                                                                                                                                  |
-|-------------------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                               | Description                                                                                                                                                                                                                                          |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC=           | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
+| =C-@=             |                                       |                                                                                                                                                                                                                                                      |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-u C-SPC=       | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
+| =C-u C-@=         |                                       |                                                                                                                                                                                                                                                      |
+| =H-x p=           |                                       |                                                                                                                                                                                                                                                      |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-SPC=       | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
+| =C-x C-@=         |                                       |                                                                                                                                                                                                                                                      |
+| =H-x q=           |                                       |                                                                                                                                                                                                                                                      |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC C-SPC=     |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
+| =C-u C-u C-SPC=   |                                       | Unconditionally set mark.                                                                                                                                                                                                                            |
+| =C-x C-x=         | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =S-C-f=           | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |
+| =S-...=           | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-w=             | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                                                                                                                                   |
+| =M-w=             | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                                                                                                                              |
+| =C-y=             | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
+| =M-y=             | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-u=         | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
+| =C-x C-l=         | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
+| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
+| =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-g=             | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                                                                                                                             |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
+| =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
+| =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
+| =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
+| =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
+| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                                                                                                                                  |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Useful commands
 
-In the following, a table is provided that contain useful commands and their key bindings.
+In the following, a table is provided that contains useful commands and their key bindings.
 The list is not exhaustive, but contains only bindings and commands that I did not know
 about beforhand or that I might forget about in the future.
 
@@ -389,14 +399,14 @@ If you want errors to enter the debugger, set the variable =debug-on-error= to =
 
 The most used commads are the following. For more detail see [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Debugger-Commands.html][Debugger Commands]].
 
-| Key binding | Description                                                                                                                                                  |
-|-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =c=         | Exit the debugger and continue execution.                                                                                                                    |
-| =q=         | Terminate the program being debugged; return to top-level Emacs command execution.                                                                           |
-| =d=         | Continue execution, but enter the debugger the next time any Lisp function is called.                                                                        |
-| =l=         | Display a list of functions that will invoke the debugger when called. This is a list of functions that are set to break on entry by means of debug-on-entry.|
-| =e=         | Read a Lisp expression in the minibuffer, evaluate it.                                                                                                       |
-|-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding | Description                                                                                                                                                   |
+|-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =c=           | Exit the debugger and continue execution.                                                                                                                     |
+| =q=           | Terminate the program being debugged; return to top-level Emacs command execution.                                                                            |
+| =d=           | Continue execution, but enter the debugger the next time any Lisp function is called.                                                                         |
+| =l=           | Display a list of functions that will invoke the debugger when called. This is a list of functions that are set to break on entry by means of debug-on-entry. |
+| =e=           | Read a Lisp expression in the minibuffer, evaluate it.                                                                                                        |
+|-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 *** Edebug
 
@@ -505,13 +515,13 @@ In summary, the general rules are:
 
 *Psimacs* uses the =<super> = and =<hyper>= key prefixes for all of its own key bindings.
 
-| Key          | Mnemonic | Keyboard                                              |
-|--------------+----------+-------------------------------------------------------|
-| =<hyper>=    | =H-=     | =<Menu>= or =<Prnt-Scrn>= in case of Lenovo notebook. |
-| =<super>=    | =s-=     | =<Left-Window>= and =<Right-Window>=                  |
-| =<meta>=     | =M-=     | =<Alt>=                                               |
-| =<ctrl>=     | =C-=     | =<Strg>=                                              |
-|--------------+----------+-------------------------------------------------------|
+| Key     | Mnemonic | Keyboard                                          |
+|---------+----------+---------------------------------------------------|
+| =<hyper>= | =H-=       | =<Menu>= or =<Prnt-Scrn>= in case of Lenovo notebook. |
+| =<super>= | =s-=       | =<Left-Window>= and =<Right-Window>=                  |
+| =<meta>=  | =M-=       | =<Alt>=                                             |
+| =<ctrl>=  | =C-=       | =<Strg>=                                            |
+|---------+----------+---------------------------------------------------|
 
 Worth readings about *Emacs* keybindings:
 - [[https://karl-voit.at/2018/07/08/emacs-key-bindings/][UOMF: My Emacs Key Binding Strategy]]
@@ -2811,7 +2821,7 @@ This list just what is currently installed on my system.
 asciidoc 9.1.1-2
 autoconf-wrapper 15-1
 autoconf2.13 2.13-5
-autogen 5.18.16-3
+autogen 5.18.16-4
 automake-wrapper 11-4
 automake1.10 1.10.3-4
 automake1.11 1.11.6-6
@@ -2825,185 +2835,185 @@ automake1.7 1.7.9-3
 automake1.8 1.8.5-4
 automake1.9 1.9.6-3
 base 2022.06-1
-bison 3.8.2-3
+bison 3.8.2-4
 btyacc 20210619-2
-diffstat 1.64-1
-diffutils 3.8-3
+diffstat 1.65-1
+diffutils 3.8-4
 dos2unix 7.4.3-1
-flex 2.6.4-2
-gdb 11.1-2
+flex 2.6.4-3
+gdb 11.1-4
 gettext-devel 0.21-2
-git 2.37.3-1
-gperf 3.1-4
-groff 1.22.4-3
-help2man 1.48.5-1
-intltool 0.51.0-2
+git 2.38.1-1
+gperf 3.1-5
+groff 1.22.4-4
+help2man 1.48.5-3
+intltool 0.51.0-3
 liblzo2 2.10-2
-libtool 2.4.6-14
-libunrar 6.1.4-1
-libunrar-devel 6.1.4-1
+libtool 2.4.7-2
+libunrar 6.1.4-2
+libunrar-devel 6.1.4-2
 lzop 1.04-1
 m4 1.4.19-2
-make 4.3-3
-man-db 2.10.2-2
-mercurial 6.2.1-1
+make 4.3-4
+man-db 2.10.2-3
+mercurial 6.2.3-1
 mingw-w64-clang-x86_64-boost 1.80.0-2
-mingw-w64-clang-x86_64-cgal 5.5-2
-mingw-w64-clang-x86_64-clang 15.0.0-3
-mingw-w64-clang-x86_64-clang-analyzer 15.0.0-3
-mingw-w64-clang-x86_64-clang-tools-extra 15.0.0-3
-mingw-w64-clang-x86_64-compiler-rt 15.0.0-3
-mingw-w64-clang-x86_64-crt-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-cgal 5.5.1-1
+mingw-w64-clang-x86_64-clang 15.0.5-1
+mingw-w64-clang-x86_64-clang-analyzer 15.0.5-1
+mingw-w64-clang-x86_64-clang-tools-extra 15.0.5-1
+mingw-w64-clang-x86_64-compiler-rt 15.0.5-1
+mingw-w64-clang-x86_64-crt-git 10.0.0.r149.g3dfe76203-1
 mingw-w64-clang-x86_64-fox 1.6.57-2
 mingw-w64-clang-x86_64-git-repo 0.4.20-1
 mingw-w64-clang-x86_64-glfw 3.3.8-2
 mingw-w64-clang-x86_64-glm 0.9.9.8-1
-mingw-w64-clang-x86_64-headers-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-clang-x86_64-libmangle-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-clang-x86_64-libwinpthread-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-clang-x86_64-lld 15.0.0-3
-mingw-w64-clang-x86_64-lldb 15.0.0-1
-mingw-w64-clang-x86_64-llvm 15.0.0-3
-mingw-w64-clang-x86_64-make 4.3-1
-mingw-w64-clang-x86_64-mlir 15.0.0-1
+mingw-w64-clang-x86_64-headers-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-clang-x86_64-libmangle-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-clang-x86_64-libwinpthread-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-clang-x86_64-lld 15.0.5-1
+mingw-w64-clang-x86_64-lldb 15.0.4-1
+mingw-w64-clang-x86_64-llvm 15.0.5-1
+mingw-w64-clang-x86_64-make 4.4-2
+mingw-w64-clang-x86_64-mlir 15.0.4-1
 mingw-w64-clang-x86_64-ntldd-git r19.7fb9365-2
-mingw-w64-clang-x86_64-openmp 15.0.0-1
-mingw-w64-clang-x86_64-pkgconf 1.8.0-2
-mingw-w64-clang-x86_64-polly 15.0.0-1
-mingw-w64-clang-x86_64-qt6-3d 6.3.2-1
-mingw-w64-clang-x86_64-qt6-3d-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-5compat 6.3.2-1
-mingw-w64-clang-x86_64-qt6-5compat-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-activeqt 6.3.2-1
-mingw-w64-clang-x86_64-qt6-activeqt-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-base 6.3.2-1
-mingw-w64-clang-x86_64-qt6-base-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-charts 6.3.2-1
-mingw-w64-clang-x86_64-qt6-charts-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-connectivity 6.3.2-1
-mingw-w64-clang-x86_64-qt6-connectivity-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-datavis3d 6.3.2-1
-mingw-w64-clang-x86_64-qt6-datavis3d-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-declarative 6.3.2-1
-mingw-w64-clang-x86_64-qt6-declarative-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-doc 6.3.1-1
-mingw-w64-clang-x86_64-qt6-imageformats 6.3.2-1
-mingw-w64-clang-x86_64-qt6-imageformats-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-lottie 6.3.2-1
-mingw-w64-clang-x86_64-qt6-lottie-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-multimedia 6.3.2-1
-mingw-w64-clang-x86_64-qt6-multimedia-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-networkauth 6.3.2-1
-mingw-w64-clang-x86_64-qt6-networkauth-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-positioning 6.3.2-1
-mingw-w64-clang-x86_64-qt6-positioning-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-quick3d 6.3.2-1
-mingw-w64-clang-x86_64-qt6-quick3d-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-quicktimeline 6.3.2-1
-mingw-w64-clang-x86_64-qt6-quicktimeline-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-remoteobjects 6.3.2-1
-mingw-w64-clang-x86_64-qt6-remoteobjects-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-scxml 6.3.2-1
-mingw-w64-clang-x86_64-qt6-scxml-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-sensors 6.3.2-1
-mingw-w64-clang-x86_64-qt6-sensors-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-serialbus 6.3.2-1
-mingw-w64-clang-x86_64-qt6-serialbus-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-serialport 6.3.2-1
-mingw-w64-clang-x86_64-qt6-serialport-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-shadertools 6.3.2-1
-mingw-w64-clang-x86_64-qt6-shadertools-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-svg 6.3.2-1
-mingw-w64-clang-x86_64-qt6-svg-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-tools 6.3.2-1
-mingw-w64-clang-x86_64-qt6-tools-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-translations 6.3.2-1
-mingw-w64-clang-x86_64-qt6-virtualkeyboard 6.3.2-1
-mingw-w64-clang-x86_64-qt6-virtualkeyboard-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-webchannel 6.3.2-1
-mingw-w64-clang-x86_64-qt6-webchannel-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-websockets 6.3.2-1
-mingw-w64-clang-x86_64-qt6-websockets-debug 6.3.2-1
-mingw-w64-clang-x86_64-qt6-webview 6.3.2-1
-mingw-w64-clang-x86_64-qt6-webview-debug 6.3.2-1
-mingw-w64-clang-x86_64-spirv-headers 1~1.3.224.1-1
-mingw-w64-clang-x86_64-spirv-tools 2022.3-1
-mingw-w64-clang-x86_64-tools-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-clang-x86_64-vulkan-headers 1.3.228-1
-mingw-w64-clang-x86_64-vulkan-loader 1.3.228-1
-mingw-w64-clang-x86_64-vulkan-validation-layers 1.3.225-1
-mingw-w64-clang-x86_64-winpthreads-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-clang-x86_64-winstorecompat-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-clang-x86_64-openmp 15.0.4-2
+mingw-w64-clang-x86_64-pkgconf 1~1.8.0-2
+mingw-w64-clang-x86_64-polly 15.0.4-1
+mingw-w64-clang-x86_64-qt6-3d 6.4.1-1
+mingw-w64-clang-x86_64-qt6-3d-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-5compat 6.4.1-1
+mingw-w64-clang-x86_64-qt6-5compat-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-activeqt 6.4.1-1
+mingw-w64-clang-x86_64-qt6-activeqt-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-base 6.4.1-2
+mingw-w64-clang-x86_64-qt6-base-debug 6.4.1-2
+mingw-w64-clang-x86_64-qt6-charts 6.4.1-1
+mingw-w64-clang-x86_64-qt6-charts-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-connectivity 6.4.1-1
+mingw-w64-clang-x86_64-qt6-connectivity-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-datavis3d 6.4.1-1
+mingw-w64-clang-x86_64-qt6-datavis3d-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-declarative 6.4.1-1
+mingw-w64-clang-x86_64-qt6-declarative-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-doc 6.4.1-1
+mingw-w64-clang-x86_64-qt6-imageformats 6.4.1-1
+mingw-w64-clang-x86_64-qt6-imageformats-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-lottie 6.4.1-1
+mingw-w64-clang-x86_64-qt6-lottie-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-multimedia 6.4.1-1
+mingw-w64-clang-x86_64-qt6-multimedia-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-networkauth 6.4.1-1
+mingw-w64-clang-x86_64-qt6-networkauth-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-positioning 6.4.1-1
+mingw-w64-clang-x86_64-qt6-positioning-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-quick3d 6.4.1-1
+mingw-w64-clang-x86_64-qt6-quick3d-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-quicktimeline 6.4.1-1
+mingw-w64-clang-x86_64-qt6-quicktimeline-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-remoteobjects 6.4.1-1
+mingw-w64-clang-x86_64-qt6-remoteobjects-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-scxml 6.4.1-1
+mingw-w64-clang-x86_64-qt6-scxml-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-sensors 6.4.1-1
+mingw-w64-clang-x86_64-qt6-sensors-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-serialbus 6.4.1-1
+mingw-w64-clang-x86_64-qt6-serialbus-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-serialport 6.4.1-1
+mingw-w64-clang-x86_64-qt6-serialport-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-shadertools 6.4.1-1
+mingw-w64-clang-x86_64-qt6-shadertools-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-svg 6.4.1-1
+mingw-w64-clang-x86_64-qt6-svg-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-tools 6.4.1-1
+mingw-w64-clang-x86_64-qt6-tools-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-translations 6.4.1-1
+mingw-w64-clang-x86_64-qt6-virtualkeyboard 6.4.1-1
+mingw-w64-clang-x86_64-qt6-virtualkeyboard-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-webchannel 6.4.1-1
+mingw-w64-clang-x86_64-qt6-webchannel-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-websockets 6.4.1-1
+mingw-w64-clang-x86_64-qt6-websockets-debug 6.4.1-1
+mingw-w64-clang-x86_64-qt6-webview 6.4.1-1
+mingw-w64-clang-x86_64-qt6-webview-debug 6.4.1-1
+mingw-w64-clang-x86_64-spirv-headers 1~1.3.231.1-1
+mingw-w64-clang-x86_64-spirv-tools 2022.4-1
+mingw-w64-clang-x86_64-tools-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-clang-x86_64-vulkan-headers 1.3.235-1
+mingw-w64-clang-x86_64-vulkan-loader 1.3.235-1
+mingw-w64-clang-x86_64-vulkan-validation-layers 1.3.234-1
+mingw-w64-clang-x86_64-winpthreads-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-clang-x86_64-winstorecompat-git 10.0.0.r149.g3dfe76203-1
 mingw-w64-x86_64-aspell 0.60.8-2
 mingw-w64-x86_64-aspell-de 20161207-2
 mingw-w64-x86_64-aspell-en 2020.12.07-1
 mingw-w64-x86_64-binutils 2.39-2
 mingw-w64-x86_64-boost 1.80.0-2
-mingw-w64-x86_64-cgal 5.5-2
-mingw-w64-x86_64-clang 15.0.0-3
-mingw-w64-x86_64-clang-analyzer 15.0.0-3
-mingw-w64-x86_64-clang-tools-extra 15.0.0-3
-mingw-w64-x86_64-cmake 3.24.2-1
-mingw-w64-x86_64-compiler-rt 15.0.0-3
-mingw-w64-x86_64-crt-git 10.0.0.r72.g1dd2a4993-1
+mingw-w64-x86_64-cgal 5.5.1-1
+mingw-w64-x86_64-clang 15.0.5-1
+mingw-w64-x86_64-clang-analyzer 15.0.5-1
+mingw-w64-x86_64-clang-tools-extra 15.0.5-1
+mingw-w64-x86_64-cmake 3.25.0-1
+mingw-w64-x86_64-compiler-rt 15.0.5-1
+mingw-w64-x86_64-crt-git 10.0.0.r149.g3dfe76203-1
 mingw-w64-x86_64-doxygen 1.9.5-1
 mingw-w64-x86_64-eigen3 3.4.0-1
-mingw-w64-x86_64-emacs-pdf-tools-server 0.91-2
-mingw-w64-x86_64-fd 8.4.0-1
-mingw-w64-x86_64-ffmpeg 4.4.2-6
-mingw-w64-x86_64-gcc 12.2.0-1
-mingw-w64-x86_64-gcc-ada 12.2.0-1
-mingw-w64-x86_64-gcc-fortran 12.2.0-1
-mingw-w64-x86_64-gcc-libgfortran 12.2.0-1
-mingw-w64-x86_64-gcc-objc 12.2.0-1
-mingw-w64-x86_64-gdb 12.1-3
-mingw-w64-x86_64-gdb-multiarch 12.1-3
+mingw-w64-x86_64-emacs-pdf-tools-server 0.91-3
+mingw-w64-x86_64-fd 8.5.3-1
+mingw-w64-x86_64-ffmpeg 4.4.3-3
+mingw-w64-x86_64-gcc 12.2.0-6
+mingw-w64-x86_64-gcc-ada 12.2.0-6
+mingw-w64-x86_64-gcc-fortran 12.2.0-6
+mingw-w64-x86_64-gcc-libgfortran 12.2.0-6
+mingw-w64-x86_64-gcc-objc 12.2.0-6
+mingw-w64-x86_64-gdb 12.1-5
+mingw-w64-x86_64-gdb-multiarch 12.1-5
 mingw-w64-x86_64-glfw 3.3.8-2
 mingw-w64-x86_64-glm 0.9.9.8-1
-mingw-w64-x86_64-gnutls 3.7.7-2
+mingw-w64-x86_64-gnutls 3.7.8-1
 mingw-w64-x86_64-graphviz 2.44.1-12
-mingw-w64-x86_64-headers-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-x86_64-hugo 0.103.1-1
+mingw-w64-x86_64-headers-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-hugo 0.107.0-1
 mingw-w64-x86_64-hunspell 1.7.1-1
 mingw-w64-x86_64-hunspell-en 2020.12.07-1
-mingw-w64-x86_64-imagemagick 7.1.0.39-3
-mingw-w64-x86_64-inkscape 1.2.1-4
+mingw-w64-x86_64-imagemagick 7.1.0.52-2
+mingw-w64-x86_64-inkscape 1.2.1-5
 mingw-w64-x86_64-libblocksruntime 0.4.1-1
-mingw-w64-x86_64-libgccjit 12.2.0-1
-mingw-w64-x86_64-libmangle-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-x86_64-make 4.3-1
+mingw-w64-x86_64-libgccjit 12.2.0-6
+mingw-w64-x86_64-libmangle-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-make 4.4-2
 mingw-w64-x86_64-meld3 3.22.0-1
-mingw-w64-x86_64-ninja 1.11.1-1
+mingw-w64-x86_64-ninja 1.11.1-2
 mingw-w64-x86_64-ntldd-git r19.7fb9365-2
-mingw-w64-x86_64-openblas 0.3.21-4
-mingw-w64-x86_64-python-pip 22.2.2-1
+mingw-w64-x86_64-openblas 0.3.21-6
+mingw-w64-x86_64-python-pip 22.3.1-1
 mingw-w64-x86_64-qt5 5.15.3-1
 mingw-w64-x86_64-quazip-qt5 1.3-1
 mingw-w64-x86_64-ripgrep 13.0.0-1
-mingw-w64-x86_64-spirv-headers 1~1.3.224.1-1
-mingw-w64-x86_64-spirv-tools 2022.3-1
-mingw-w64-x86_64-tools-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-x86_64-vulkan-validation-layers 1.3.225-1
-mingw-w64-x86_64-winpthreads-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-x86_64-winstorecompat-git 10.0.0.r72.g1dd2a4993-1
-mingw-w64-x86_64-zeromq 4.3.4-1
+mingw-w64-x86_64-spirv-headers 1~1.3.231.1-1
+mingw-w64-x86_64-spirv-tools 2022.4-1
+mingw-w64-x86_64-tools-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-vulkan-validation-layers 1.3.234-1
+mingw-w64-x86_64-winpthreads-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-winstorecompat-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-zeromq 4.3.4-2
 p7zip 17.04-1
 pactoys r55.8860e1f-1
-patch 2.7.6-1
-patchutils 0.4.2-2
-pkgconf 1.8.0-1
+patch 2.7.6-2
+patchutils 0.4.2-3
+pkgconf 1.8.0-2
 pkgfile 21-2
 quilt 0.66-3
 reflex 20210510-2
 scons 3.1.2-8
 swig 4.0.2-2
-texinfo 6.8-4
-texinfo-tex 6.8-4
+texinfo 6.8-6
+texinfo-tex 6.8-6
 ttyrec 1.0.8-2
-unrar 6.1.4-1
+unrar 6.1.4-2
 unzip 6.0-2
 winpty 0.4.3-1
-xmlto 0.0.28-3
+xmlto 0.0.28-4
 zip 3.0-3
 #+end_example
 
@@ -4196,7 +4206,7 @@ Usage: The following commands and functions can be used to govern the benchmarki
 
 | =benchmark-init/show-durations-tabulated= |
 | =benchmark-init/show-durations-tree=      |
-|                                           |
+|                                         |
 | =benchmark-init/activate=                 |
 | =benchmark-init/deactivate=               |
 
@@ -8229,6 +8239,7 @@ See also:
 | =...=         |                            | ...                                          |
 | =C-9 C-v=     |                            | Yank  rectangle from register 9              |
 |             |                            |                                              |
+|-------------+----------------------------+----------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 ;;
@@ -8397,14 +8408,14 @@ Additionally, creating a key binding for =persp-mode-map= will also activate the
 Since [[https://github.com/nex3/perspective-el][perspective]]  maintains distinct buffer lists for each [[https://github.com/nex3/perspective-el][perspective]], it helps to use a
 Perspective-aware buffer switcher.
 
-| Buffer switcher | Support                                                                                                                                                                                                                                                                                       |
-|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                   |
-| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
-| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
-| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                    |
+| Buffer switcher | Support                                                                                                                                                                                                                                                                                                                    |
+|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                                |
+| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
+| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
+| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                 |
 | Ivy / Counsel   | Perspective provides two commands for listing buffers using Ivy and Counsel: =persp-ivy-switch-buffer= and =persp-counsel-switch-buffer=. When these functions are called normally, they show a list of buffers filtered by the current perspective. With a prefix argument, they shows a list of buffers in all perspectives. |
-|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 (use-package perspective
@@ -9122,51 +9133,51 @@ In addition, Ediff can apply a patch to a file and then let you step through bot
 patched and the original one, simultaneously, difference-by-difference.
 #+end_quote
 
-| Command                                           | Description                                                                                                                                                                                                                                                                                   |
-|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                            |
-| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                    |
-| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                       |
-| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                          |
-| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                          |
-| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                        |
-| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                      |
-| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                    |
-| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                  |
-| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                    |
-| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                  |
-| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                               |
-| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                               |
-| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                  |
-| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                        |
-| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                               |
+| Command                                           | Description                                                                                                                                                                                                                                                                                                                       |
+|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                                                                |
+| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                                                        |
+| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                                                           |
+| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                                                            |
+| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                                                        |
+| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                      |
+| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                        |
+| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                                                      |
+| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                                                                   |
+| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                                                                   |
+| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                                                      |
+| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                                                            |
+| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                                                                   |
 | =M-x ediff-patch-file=                              | Patch a file or multiple files, then compare. Since the patch might be in a buffer or a file, you will be asked which is the case. To avoid this extra prompt, you can invoke this command with a prefix argument. With an odd prefix argument, Ediff assumes the patch is in a file; with an even argument, a buffer is assumed. |
-| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                             |
-| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                              |
-| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                             |
-| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                            |
-| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                       |
-| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                        |
-| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                       |
-| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                 |
-| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                       |
-| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                   |
-| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                 |
-| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                          |
-|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                                                                 |
+| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                                                                  |
+| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                                                                 |
+| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                                                                |
+| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
+| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                                                           |
+| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                                                     |
+| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
+| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                                                       |
+| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                                                     |
+| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                                                              |
+|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 
 Remarks:
@@ -9407,6 +9418,39 @@ _W_: ... zero chars, jump ...
         ("w" avy-goto-word-1)
         ("W" avy-goto-word-0)
     )
+)
+#+end_src
+
+*** Mosey
+
+[[https://github.com/alphapapa/mosey.el][Mosey]] is a GNU Emacs package that makes it easy to mosey back and forth
+in your buffers.
+
+#+attr_html: :class styledtable1
+| Key binding     | Command                   | Description                                        |
+|-----------------+---------------------------+----------------------------------------------------|
+| =H-m C-s C-m f=   | =M-x mosey-forward=         | Mosey on forward.                                  |
+| =H-m C-s C-m b=   | =M-x mosey-backward=        | Mosey on back.                                     |
+| =H-m C-s C-m F=   | =M-x mosey-forward-bounce=  | Bounce forward a notch when it hits the beginning. |
+| =H-m C-s C-m B=   | =M-x mosey-backward-bounce= | Bounce back a notch when it hits the end.          |
+| =H-m C-s C-m C-f= | =M-x mosey-forward-cycle=   | Loop around when it gets to one end or the other.  |
+| =H-m C-s C-m C-b= | =M-x mosey-backward-cycle=  | Loop around when it gets to one end or the other.  |
+|-----------------+---------------------------+----------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Easily mosey back and forth
+;;
+(use-package mosey
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-s C-m f"   . mosey-forward)
+            ("C-s C-m b"   . mosey-backward)
+            ("C-s C-m F"   . mosey-forward-bounce)
+            ("C-s C-m B"   . mosey-backward-bounce)
+            ("C-s C-m C-f" . mosey-forward-cycle)
+            ("C-s C-m C-b" . mosey-backward-cycle)
+        )
 )
 #+end_src
 
@@ -11589,6 +11633,48 @@ YASnippets:
 )
 #+end_src
 
+** Auto-YASnippet
+
+[[https://github.com/abo-abo/auto-yasnippet][Auto-YASnippet]] is a hybrid of keyboard macros and YASnippet.
+You create the snippet on the go and it'll be ready to use immediately. Because you're not leaving the
+current buffer the workflow is very fast.
+
+#+attr_html: :class styledtable1
+| Key binding   | Command                       | Description                                                                                                                                                       |
+|---------------+-------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-y w=   | =M-x aya-create=              | Create a snippet from the text between BEG and END.                                                                                                               |
+| =H-m C-y TAB= | =M-x aya-expand=              | Insert the last yasnippet created by =aya-create=.                                                                                                                |
+| =H-m C-y SPC= | =M-x aya-expand-from-history= | Select and insert a yasnippet from the =aya-history=.                                                                                                             |
+| =H-m C-y d=   | =M-x aya-delete-from-history= | Select and delete one or more snippets from =aya-history=.                                                                                                        |
+| =H-m C-y c=   | =M-x aya-clear-history=       | Clear =aya-history=.                                                                                                                                              |
+| =H-m C-y n=   | =M-x aya-next-in-history=     | Set =aya-current= to the next item in history. Wraps at the end of history.                                                                                       |
+| =H-m C-y p=   | =M-x aya-previous-in-history= | Set =aya-current= to the previous item in history. Wraps around at start of history.                                                                              |
+| =H-m C-y s=   | =M-x aya-persist-snippet=     | Save the current auto-snippet to a user snippets folder. The current =major-mode= name will be used to determine the snippets sub-directory to store the snippet. |
+| =H-m C-y o=   | =M-x aya-open-line=           | Generic expansion function. It will either expand or move to the next field depending on the context.                                                             |
+|---------------+-------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-advanced-yasnippet.el :var file-description="Advanced yasnippet setup"
+;;
+;; yasnipped is a template system for Emacs
+;;
+(use-package auto-yasnippet
+    :config
+
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-y w"     . aya-create)
+            ("C-y <tab>" . aya-expand)
+            ("C-y SPC"   . aya-expand-from-history)
+            ("C-y d"     . aya-delete-from-history)
+            ("C-y c"     . aya-clear-history)
+            ("C-y n"     . aya-next-in-history)
+            ("C-y p"     . aya-previous-in-history)
+            ("C-y s"     . aya-persist-snippet)
+            ("C-y o"     . aya-open-line)
+          )
+)
+#+end_src
+
 ** Treemacs
 
 [[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a tree layout file explorer for *Emacs*.
@@ -12642,6 +12728,18 @@ This derivation of the else-compile-buffer function additionally saves the point
 
         (defun psimacs/else/transform-insert-year (str)
             (format-time-string "%Y")
+        )
+
+        (defun psimacs/else/transform-insert-date (str)
+            (format-time-string "%d.%m.%Y")
+        )
+
+        (defun psimacs/else/transform-insert-buffer-name (str)
+            (buffer-name)
+        )
+
+        (defun psimacs/else/transform-insert-author (str)
+            psimacs/config/copyright/author
         )
 
     :after hydra

@@ -31,7 +31,7 @@
                                                                       "GPL-2.0"
                                                                       "GPL-3.0"
                                                                       "AGPL-3.0"
-                                                                      "PSFL-3.10.2"
+                                                                      "PSFL-3.10.8"
                                                                      ) 2 t))
            (python-module  (read-string "Enter the python module to be tested: " ))
            (python-class   (read-string (format "Enter the class name of module %s: " python-module) ))

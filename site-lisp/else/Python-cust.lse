@@ -5,7 +5,7 @@
 ;; Keywords: language sensitive abbreviation template placeholder token
 ;;
 ;; This is a customization of the 'Python.lse' specification from
-;; Peter Milliken <peter.milliken@gmail.com> targeting Python 3.9.x.
+;; Peter Milliken <peter.milliken@gmail.com> targeting Python 3.10.x.
 ;;
 ;; GNU Emacs is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -191,7 +191,8 @@ DEFINE PLACEHOLDER UNITTEST_COMPILATION_UNIT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    "[hashbang_line]"
+    "[shebang_line]"
+    "[encoding_line]"
     "[license]"
     """"Unit test for module {test_module_name}."
 
@@ -267,7 +268,8 @@ DEFINE PLACEHOLDER MODULE_COMPILATION_UNIT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
-    "[hashbang_line]"
+    "[shebang_line]"
+    "[encoding_line]"
     "[license]"
     "[document_string]"
     "[import_stmt]..."
@@ -393,18 +395,39 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER HASHBANG_LINE
+DELETE PLACEHOLDER SHEBANG_LINE
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER HASHBANG_LINE
+DEFINE PLACEHOLDER SHEBANG_LINE
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
+    /DUPLICATION=VERTICAL
     /SEPARATOR=""
-    /TYPE=NONTERMINAL
+    /TYPE=MENU
 
+    "#! /usr/bin/env python"
+    "#! /usr/bin/env python3"
     "#! {text}"
-    ""
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER ENCODING_LINE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER ENCODING_LINE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "# -*- coding: utf-8 -*-"
+    "# -*- coding: latin-1 -*-"
+    "# -*- coding: iso-8859-1 -*-"
+    "# -*- coding: ascii -*-"
+    "# -*- coding: {text} -*-"
 
 END DEFINE
 
@@ -420,8 +443,11 @@ DEFINE PLACEHOLDER LICENSER
     /SEPARATOR=""
     /TYPE=MENU
 
+    "Johannes Brunen <jbrunen@datasolid.de>"
     "Johannes Brunen <hatlafax@gmx.de>"
-    "DataSolid GmbH, MÃ¶nchengladbach <csons@datasolid.de>"
+    "Hatlafax <hatlafax@gmx.de>"
+    "Christian Sons <csons@datasolid.de>"
+    "DataSolid GmbH, Moenchengladbach <csons@datasolid.de>"
     "{text}"
 
 END DEFINE
@@ -443,52 +469,102 @@ DEFINE PLACEHOLDER YYYY
 
 END DEFINE
 
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER DD_MM_YYYY
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER DD_MM_YYYY
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-date
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid date: DD.MM.YYYY"
+
+END DEFINE
 
 ;;------------------------------------------------------------------------------
 
-DELETE PLACEHOLDER PSF_LICENSE_3.10.2
+DELETE PLACEHOLDER FILENAME
     /LANGUAGE="Python"
-DEFINE PLACEHOLDER PSF_LICENSE_3.10.2
+DEFINE PLACEHOLDER FILENAME
     /LANGUAGE="Python"
     /NOAUTO_SUBSTITUTE
-    /DESCRIPTION="Python Software Foundation License v3.10.2"
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-buffer-name
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid filename."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER AUTHOR
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER AUTHOR
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-author
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid author name."
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER PSF_LICENSE_3.10.8
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER PSF_LICENSE_3.10.8
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Python Software Foundation License v3.10.8"
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
 
     "#"
-    "# Distributed under the Python Software Foundation License, Version 3.10.2."
+    "# Distributed under the Python Software Foundation License, Version 3.10.8."
     "#"
     "#    https://docs.python.org/3/license.html"
     "#"
     "# 1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and"
     "#    the Individual or Organization ("Licensee") accessing and otherwise using Python"
-    "#    3.10.2 software in source or binary form and its associated documentation."
+    "#    3.10.8 software in source or binary form and its associated documentation."
     "#"
     "# 2. Subject to the terms and conditions of this License Agreement, PSF hereby"
     "#    grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,"
     "#    analyze, test, perform and/or display publicly, prepare derivative works,"
-    "#    distribute, and otherwise use Python 3.10.2 alone or in any derivative"
+    "#    distribute, and otherwise use Python 3.10.8 alone or in any derivative"
     "#    version, provided, however, that PSF's License Agreement and PSF's notice of"
-    "#    copyright, i.e., "Copyright © 2001-2022 Python Software Foundation; All Rights"
-    "#    Reserved" are retained in Python 3.10.2 alone or in any derivative version"
+    "#    copyright, i.e., 'Copyright (c) 2001-2022 Python Software Foundation; All Rights"
+    "#    Reserved' are retained in Python 3.10.8 alone or in any derivative version"
     "#    prepared by Licensee."
     "#"
     "# 3. In the event Licensee prepares a derivative work that is based on or"
-    "#    incorporates Python 3.10.2 or any part thereof, and wants to make the"
+    "#    incorporates Python 3.10.8 or any part thereof, and wants to make the"
     "#    derivative work available to others as provided herein, then Licensee hereby"
     "#    agrees to include in any such work a brief summary of the changes made to Python"
-    "#    3.10.2."
+    "#    3.10.8."
     "#"
-    "# 4. PSF is making Python 3.10.2 available to Licensee on an "AS IS" basis."
+    "# 4. PSF is making Python 3.10.8 available to Licensee on an "AS IS" basis."
     "#    PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.  BY WAY OF"
     "#    EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR"
     "#    WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE"
-    "#    USE OF PYTHON 3.10.2 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS."
+    "#    USE OF PYTHON 3.10.8 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS."
     "#"
-    "# 5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 3.10.2"
+    "# 5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 3.10.8"
     "#    FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF"
-    "#    MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 3.10.2, OR ANY DERIVATIVE"
+    "#    MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 3.10.8, OR ANY DERIVATIVE"
     "#    THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF."
     "#"
     "# 6. This License Agreement will automatically terminate upon a material breach of"
@@ -500,8 +576,7 @@ DEFINE PLACEHOLDER PSF_LICENSE_3.10.2
     "#    trademark sense to endorse or promote products or services of Licensee, or any"
     "#    third party."
     "#"
-    "# 8. By copying, installing or otherwise using Python 3.10.2, Licensee agrees"
-    "#    to be bound by the terms and conditions of this License Agreement."
+    "# 8. By copying, installing or otherwise using Python 3.10.8, Licensee agrees"
     "#"
 
 END DEFINE
@@ -884,6 +959,71 @@ END DEFINE
 
 ;;------------------------------------------------------------------------------
 
+DELETE PLACEHOLDER BOOST_LICENSE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER BOOST_LICENSE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="Boost Licence v1.0"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "#"
+    "# Distributed under the Boost Software License, Version 1.0."
+    "#"
+    "# Copyright (c) {yyyy} {licenser}"
+    "#"
+    "# Permission is hereby granted, free of charge, to any person or organization"
+    "# obtaining a copy of the software and accompanying documentation covered by"
+    "# this license (the "Software") to use, reproduce, display, distribute, execute,"
+    "# and transmit the Software, and to prepare derivative works of the Software, and"
+    "# to permit third-parties to whom the Software is furnished to do so, all subject"
+    "# to the following:"
+    "#"
+    "# The copyright notices in the Software and this entire statement, including the"
+    "# above license grant, this restriction and the following disclaimer, must be"
+    "# included in all copies of the Software, in whole or in part, and all derivative"
+    "# works of the Software, unless such copies or derivative works are solely in the"
+    "# form of machine-executable object code generated by a source language processor."
+    "#"
+    "# THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+    "# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+    "# FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL"
+    "# THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE FOR ANY DAMAGES"
+    "# OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR"
+    "# IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    "#"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
+DELETE PLACEHOLDER DATASOLID_LICENSE
+    /LANGUAGE="Python"
+DEFINE PLACEHOLDER DATASOLID_LICENSE
+    /LANGUAGE="Python"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION="DataSolid Licence"
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "#"
+    "# Name:         {filename}"
+    "# Purpose:      {text}"
+    "#"
+    "# Author:       {author}"
+    "#"
+    "# Created:      {dd_mm_yyyy}"
+    "# Copyright:    (c) DataSolid GmbH,  {yyyy} {licenser}"
+    "# License:      DataSolid GmbH Python Software License"
+    "#"
+
+END DEFINE
+
+;;------------------------------------------------------------------------------
+
 DELETE PLACEHOLDER LICENSE
     /LANGUAGE="Python"
 DEFINE PLACEHOLDER LICENSE
@@ -894,6 +1034,7 @@ DEFINE PLACEHOLDER LICENSE
     /SEPARATOR=""
     /TYPE=MENU
 
+    "DATASOLID_LICENSE"/PLACEHOLDER
     "APACHE_LICENSE_2.0"/PLACEHOLDER
     "BOOST_LICENSE"/PLACEHOLDER
     "MIT_LICENSE"/PLACEHOLDER
@@ -904,7 +1045,7 @@ DEFINE PLACEHOLDER LICENSE
     "GPL_2_0_LICENSE"/PLACEHOLDER
     "GPL_3_0_LICENSE"/PLACEHOLDER
     "AGPL_3_0_LICENSE"/PLACEHOLDER
-    "PSF_LICENSE_3.10.2"/PLACEHOLDER
+    "PSF_LICENSE_3.10.8"/PLACEHOLDER
 
 END DEFINE
 
