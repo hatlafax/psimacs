@@ -1,4 +1,4 @@
-lsp-enable-completion-at-point# -*- mode: org; coding: utf-8; -*-
+# -*- mode: org; coding: utf-8; -*-
 #+title: Psimacs Emacs configuration
 #+description: Loading Emacs configuration using org-babel
 #+tags: Emacs
@@ -21,7 +21,7 @@ lsp-enable-completion-at-point# -*- mode: org; coding: utf-8; -*-
 
 * Introduction
 
-This is *Psimacs*, a /modern/ *Emacs* configuration build from the ground up using a [[https://de.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
+This is *Psimacs*, a /modern/ *Emacs* configuration build from the ground up using a [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
 The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is the file that your are
 currently reading.
 
@@ -32,21 +32,6 @@ desired.
 This document not only describes the *Psimacs* configuration, but also some additional information useful
 for working with *Emacs* in general. In this respect it serves as a kind of mind map for the author.
 
-Some great *Emacs* resources:
-- [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]]
-- [[https://github.com/caisah/emacs.dz][Emacs Configurations]]
-- [[http://xahlee.info/emacs/index.html][Xah Emacs Site]]
-- [[https://emacs.zeef.com/ehartc][Emacs by Ernst de Hart]]
-- [[https://www.emacswiki.org/][EmacsWiki]]
-- [[https://systemcrafters.net/emacs-from-scratch/][System Crafters]]
-- [[https://planet.emacslife.com/][Planet Emacslife]]
-- [[https://www.gnu.org/software/emacs/manual/][Emacs Manual]]
-- [[https://www.gnu.org/software/emacs/manual/elisp.html][Emacs Lisp Manual]]
-- [[https://www.masteringemacs.org/][Mastering Emacs]]
-- [[https://endlessparentheses.com/][Endless Parentheses]]
-- [[https://pragmaticemacs.wordpress.com/][Pragmatic Emacs]]
-- [[https://irreal.org/blog/][Irreal]]
-- [[https://emacsthemes.com/themes/planet-theme.html][Emacs Themes]]
 ** Motivation
 
 A lot of *Emacs* configurations can be found on the Internet. Many of them are well crafted and could be used out of
@@ -55,6 +40,8 @@ But I wanted to craft my own configuration that is tailored to my needs and that
 vast *Emacs* universe. My configuration it not perfect for everyone and it will not be able to compete against the big
 frameworks that are build by a lot of talented people. So feel free to use it or blame it. I am fine with it.
 
+Additionally, my configuration is Windows OS centric, i.e. it is developed and tested for use on Windows OS.
+
 The name *Psimacs* is arbitrarily. I was in search for a catchy name with just one syllable in front of the *macs*.
 
 See also:
@@ -62,16 +49,22 @@ See also:
 
 ** Installation
 
-At first, install [[https://www.gnu.org/software/emacs/download.html][Emacs]] for Windows, e.g. 28.2 to =c:/utils/Emacs= and then install the primary dependencies of this
-configuration. Create shortcuts for =runemacs.exe= and =emacsclientw.exe=. Both shortcuts should start *Emacs* from the
-home directory and the client should be called as:
-=C:\utils\Emacs\bin\emacsclientw.exe -n -a C:\utils\Emacs\bin\runemacs.exe -c=
+Install [[https://www.gnu.org/software/emacs/download.html][Emacs]] for Windows into a preferred directory, e.g. =c:/utils/Emacs=.
 
-The main dependencies for *Psimacs* are:
+Create desktop shortcuts for =runemacs.exe= and =emacsclientw.exe=. Both shortcuts should start *Emacs* from the
+user's home directory. The *Emacs* client should be called with the following command:
+
+#+begin_src example
+C:\utils\Emacs\bin\emacsclientw.exe -n -a C:\utils\Emacs\bin\runemacs.exe -c
+#+end_src
+
+*Psimacs* does have a couple of dependencies. Install them first to avoid configuration problems.
+The main dependencies are:
+
 - Python :: Install e.g. [[https://www.python.org/downloads/][Python]] 3.10.8 to =c:/utils/Python310=.
 - Msys2 :: Install [[https://www.msys2.org/][MSYS2]] to =c:/utils/msys64=.
 
-This configuration uses *Emacs* >= 27 and is tested with  *Emacs* = 28.2. Clone the git repository into your *.emcas.d*
+This configuration uses *Emacs 28.2**. Clone the git repository into your *~/.emcas.d*
 directory:
 
 #+begin_example
@@ -95,7 +88,9 @@ Next, install dependency packages for MSYS2. Open the /MSYS2 MinGW 64-bit/ shell
 pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
 #+end_example
 
-Remark: Configure =requirements.txt= as your likeing before running the installation.
+Remarks:
+- It is also possible use virtual Python environments.
+- Adapting the two ==requirements.txt= might be worth the effort, since these two represent my personal settings.
 
 Finally, just run *Emacs*.
 
@@ -104,42 +99,70 @@ initialization code into the main =init.el= and various additionally =config/ini
 file is then read and evaluated in the further startup procedure. The =init.el= file loads the other =config/init-*.el=
 files on evaluation.
 
-Never edit transient file =init.el= or =config/init-*.el= directly. They will be overridden by the next run of
-*Psimacs*. Instead modify the =init.org= file to change your configuration.
+Never edit transient filee =early-init.el=,  =init.el= or =config/init-*.el= directly. They will be overridden by the next
+run of *Psimacs*. Instead modify the =init.org= file in order to change your configuration.
 
-You can create a HTML document =init.html= of this file by simply typing =C-c C-e h h= in the *Emacs* buffer for
+You can create a HTML document =init.html= from the =init.org= file by simply typing =C-c C-e h h= in the *Emacs* buffer for
 this file. It is recommended to use this =init.html= for browser reading.
 
 ** Usage
 
-All functions and variables that are defined in *Psimacs* are prefixed by a path like string  =psimacs/category=.
-The /category/ is used to order the functions and variables by topic. For example the /string/ related function
-/starts-with/ is defined as =psimacs/string/starts-with=.
+All functions and variables that are defined by *Psimacs* are prefixed by a path like string  =psimacs/category=.
+The /category/ is used to structure the functions and variables by topic. As an example, the /string/ related function
+=starts-with= is defined as =psimacs/string/starts-with=.
 
 ** Dependencies
 
-The configuration does have some dependencies that should be installed separately and beforehand of *Psimacs*.
-On default the non *Emacs* dependencies are expected to be installed into directory *c:/utils/* on /Windows OS/.
-A directory constant =psimacs/config/dependencies-dir= will be defined by the configuration that allows to change
-the default location of the dependencies.
+The configuration does have many dependencies that could be installed separately, Some are mandatory and some are
+optional. By default, all non *Emacs* dependencies are expected to be installed into directory *c:/utils/* on /Windows/.
+A global directory constant =psimacs/config/dependencies-dir= is used by the configuration for changing this default
+location conveniently.
 
+Install missing dependencies at the time you notice that they are missing. Most of the dependencies only apply to
+very narrow use cases.
+
+The two mentioned =requirements.txt= files for [[https://www.python.org/downloads/][Python]] and [[https://www.msys2.org/][MSYS2]] actually cover many of the cases. I try to tackle
+as many dependencies as possible with to the MSYS2 installation.
+
+** Great Emacs resources
+- [[https://www.damtp.cam.ac.uk/user/sje30/ess11/resources/emacs-refcard.pdf][Emacs RefCard]]
+- [[https://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs-v2-Large.png][How to Learn Emacs]]
+- [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]]
+- [[https://github.com/caisah/emacs.dz][Emacs Configurations]]
+- [[http://xahlee.info/emacs/index.html][Xah Emacs Site]]
+- [[https://emacs.zeef.com/ehartc][Emacs by Ernst de Hart]]
+- [[https://www.emacswiki.org/][EmacsWiki]]
+- [[https://systemcrafters.net/emacs-from-scratch/][System Crafters]]
+- [[https://planet.emacslife.com/][Planet Emacslife]]
+- [[https://www.gnu.org/software/emacs/manual/][Emacs Manual]]
+- [[https://www.gnu.org/software/emacs/manual/elisp.html][Emacs Lisp Manual]]
+- [[https://gigamonkeys.com/book/][Practical Common Lisp]]
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+- [[https://endlessparentheses.com/][Endless Parentheses]]
+- [[https://pragmaticemacs.wordpress.com/][Pragmatic Emacs]]
+- [[https://irreal.org/blog/][Irreal]]
+- [[https://sachachua.com/blog/][Living an awesome life of Sacha Chua]]
+- [[https://emacsthemes.com/themes/planet-theme.html][Emacs Themes]]
 ** Disclaimer
 
 This is an *Emacs* beginners configuration and the usage is at one's own risk. It is not tested thoroughly. Please
 bear in mind.
 
-Many of the configuration settings are borrowed from other similar endeavors out there.
+Many of the configuration settings are borrowed from other similar endeavors out there. Thank you to them.
 
 This is work in progress. Sometimes this *Readme* is ahead of times or not yet updated.
 
 ** Limitations / Known Issues
 
-- Tested on Windows operating system only
-- Does have a very long Startup time. But using the Emacs client it not such of a big deal.
+- Tested on *Windows* operating system only.
+- *Linux* support is planned for the future.
+- *WSL2* support is planned for the future.
+- This configuration has a very long Startup time. *Emacs client* usage is strongly recommended.
+- At the first run, an error happens. After leaving *Psimacs* and restarting it, everything is on go.
 
 ** License (GPL v3)
 
-Copyright (C) 2020-2021 Johannes Brunen (hatlafax@gmx.de)
+Copyright (C) 2020-2022 Johannes Brunen (hatlafax@gmx.de)
 
 License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
@@ -13073,6 +13096,30 @@ The package [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-comm
             ("k" . evilnc-comment-or-uncomment-lines)
           )
 
+)
+#+end_src
+
+** String Inflection
+
+[[https://github.com/akicho8/string-inflection][String-inflection]] is a nifty package to cycle through string case styles:
+/camel/, /snake/, /kebab/... The package includes a handful of cycling functions for
+different languages (Ruby, Python and Java), but it's easy to mix and match to roll your own.
+
+#+attr_html: :class styledtable
+| Key binding | Command                         | Description                                                              |
+|-------------+---------------------------------+--------------------------------------------------------------------------|
+| H-m H-l=    | =M-x string-inflection-all-cycle= | foo_bar => FOO_BAR => FooBar => fooBar => foo-bar => Foo_Bar => foo_bar. |
+|-------------+---------------------------------+--------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-advanced-programming.el :var file-description="Advanced programming setup"
+;;
+;; A nifty package to cycle through string case styles
+;;
+(use-package string-inflection
+  :ensure t
+  :bind (:map prog-mode-map
+            ("H-m H-l" . string-inflection-all-cycle)
+        )
 )
 #+end_src
 
