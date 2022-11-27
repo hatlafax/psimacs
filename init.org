@@ -1,4 +1,4 @@
-# -*- mode: org; coding: utf-8; -*-
+lsp-enable-completion-at-point# -*- mode: org; coding: utf-8; -*-
 #+title: Psimacs Emacs configuration
 #+description: Loading Emacs configuration using org-babel
 #+tags: Emacs
@@ -32,9 +32,21 @@ desired.
 This document not only describes the *Psimacs* configuration, but also some additional information useful
 for working with *Emacs* in general. In this respect it serves as a kind of mind map for the author.
 
-Some great useful *Emacs* references:
-- [[http://ergoemacs.org/][Xah Emacs Site]]
-
+Some great *Emacs* resources:
+- [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]]
+- [[https://github.com/caisah/emacs.dz][Emacs Configurations]]
+- [[http://xahlee.info/emacs/index.html][Xah Emacs Site]]
+- [[https://emacs.zeef.com/ehartc][Emacs by Ernst de Hart]]
+- [[https://www.emacswiki.org/][EmacsWiki]]
+- [[https://systemcrafters.net/emacs-from-scratch/][System Crafters]]
+- [[https://planet.emacslife.com/][Planet Emacslife]]
+- [[https://www.gnu.org/software/emacs/manual/][Emacs Manual]]
+- [[https://www.gnu.org/software/emacs/manual/elisp.html][Emacs Lisp Manual]]
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+- [[https://endlessparentheses.com/][Endless Parentheses]]
+- [[https://pragmaticemacs.wordpress.com/][Pragmatic Emacs]]
+- [[https://irreal.org/blog/][Irreal]]
+- [[https://emacsthemes.com/themes/planet-theme.html][Emacs Themes]]
 ** Motivation
 
 A lot of *Emacs* configurations can be found on the Internet. Many of them are well crafted and could be used out of
@@ -12114,12 +12126,17 @@ The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] g
 
 **** projectile-b2
 
+Attention: This is work in progress and currently not publicly available.
+
 The package [[https://github.com/hatlafax/projectile-b2][projectile-b2]] gives fine grained support of [[https://www.bfgroup.xyz/b2/][B2]] with Emacs projectile.
 
 #+begin_src emacs-lisp :tangle config/init-advanced-projectile.el
 ;;
 ;; Configure the projectile-cmake package
 ;;
+(when (and (file-directory-p psimacs/config/work-lisp-dir)
+           (file-exists-p (psimacs/file-system/concat-file psimacs/config/work-lisp-dir "projectile-b2.el")))
+
 (use-package projectile-b2
     :diminish projectile-b2-mode
     ;:straight (projectile-b2 :host github :repo "hatlafax/projectile-b2")
@@ -12139,6 +12156,8 @@ The package [[https://github.com/hatlafax/projectile-b2][projectile-b2]] gives f
         ;(setq projectile-b2-root-file "Jamroot.jam")
         ;(setq projectile-b2-jamfile "Jamfile.jam")
         (setq projectile-b2-executable psimacs/config/b2-runtime-exe)
+)
+
 )
 #+end_src
 
@@ -13493,7 +13512,7 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (setq lsp-headerline-breadcrumb-enable t)
         (setq lsp-modeline-code-actions-enable t)
 
-        (setq lsp-enable-completion-at-point nil)
+        (setq lsp-completion-enable nil)
 
         ;;(setq lsp-modeline-diagnostics-enable nil)
         ;;(setq lsp-keep-workspace-alive nil)
@@ -14552,7 +14571,7 @@ usual tasks such as creating new files and saving files.
 ;; Configure deft-mode
 ;;
 (use-package deft
-  :commands (deft)
+  :commands (deft deft-base-filename)
   :config
       (setq deft-directory  psimacs/config/roam-notes-dir)
       (setq deft-recursive t)
