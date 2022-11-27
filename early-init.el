@@ -31,6 +31,7 @@
 ;; Emacs 27 introduces early-init.el, which is run before init.el,
 ;; before package and UI initialization happens.
 ;;
+(require 'map) ;; needed for map-put
 
 (defconst psimacs/config/startup-timing t
   "Enables the timing of the startup procedure.")
