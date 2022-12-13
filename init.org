@@ -64,7 +64,7 @@ The main dependencies are:
 - Python :: Install e.g. [[https://www.python.org/downloads/][Python]] 3.10.8 to =c:/utils/Python310=.
 - Msys2 :: Install [[https://www.msys2.org/][MSYS2]] to =c:/utils/msys64=.
 
-This configuration uses *Emacs 28.2**. Clone the git repository into your *~/.emcas.d*
+This configuration uses *Emacs 28.2*. Clone the git repository into your *~/.emcas.d*
 directory:
 
 #+begin_example
@@ -90,7 +90,7 @@ pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
 
 Remarks:
 - It is also possible use virtual Python environments.
-- Adapting the two ==requirements.txt= might be worth the effort, since these two represent my personal settings.
+- Adapting the two =requirements.txt= might be worth the effort, since these two represent my personal settings.
 
 Finally, just run *Emacs*.
 
@@ -107,14 +107,14 @@ this file. It is recommended to use this =init.html= for browser reading.
 
 ** Usage
 
-All functions and variables that are defined by *Psimacs* are prefixed by a path like string  =psimacs/category=.
+All functions and variables that are defined by *Psimacs* are prefixed by a path like string =psimacs/category=.
 The /category/ is used to structure the functions and variables by topic. As an example, the /string/ related function
 =starts-with= is defined as =psimacs/string/starts-with=.
 
 ** Dependencies
 
 The configuration does have many dependencies that could be installed separately, Some are mandatory and some are
-optional. By default, all non *Emacs* dependencies are expected to be installed into directory *c:/utils/* on /Windows/.
+optional. By default, all non *Emacs* dependencies are expected to be installed into directory *c:/utils* on /Windows/.
 A global directory constant =psimacs/config/dependencies-dir= is used by the configuration for changing this default
 location conveniently.
 
@@ -256,50 +256,52 @@ References:
 - Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
 
 #+attr_html: :class styledtable
-| Key binding     | Command                               | Description                                                                                                                                                                                                                                          |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                               | Description                                                                                                                                    |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-SPC=           | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
-| =C-@=             |                                       |                                                                                                                                                                                                                                                      |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-u C-SPC=       | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
-| =C-u C-@=         |                                       |                                                                                                                                                                                                                                                      |
-| =H-x p=           |                                       |                                                                                                                                                                                                                                                      |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-SPC=       | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
-| =C-x C-@=         |                                       |                                                                                                                                                                                                                                                      |
-| =H-x q=           |                                       |                                                                                                                                                                                                                                                      |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-SPC C-SPC=     |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
-| =C-u C-u C-SPC=   |                                       | Unconditionally set mark.                                                                                                                                                                                                                            |
-| =C-x C-x=         | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =S-C-f=           | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |
-| =S-...=           | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-w=             | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                                                                                                                                   |
-| =M-w=             | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                                                                                                                              |
-| =C-y=             | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
-| =M-y=             | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-u=         | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
-| =C-x C-l=         | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
-| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
-| =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-g=             | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                                                                                                                             |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
-| =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
-| =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
-| =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
-| =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
-| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                                                                                                                                  |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-@=             |                                       |                                                                                                                                                |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-u C-SPC=       | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                             |
+| =C-u C-@=         |                                       |                                                                                                                                                |
+| =H-x p=           |                                       |                                                                                                                                                |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-SPC=       | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                       |
+| =C-x C-@=         |                                       |                                                                                                                                                |
+| =H-x q=           |                                       |                                                                                                                                                |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC C-SPC=     |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.            |
+| =C-u C-u C-SPC=   |                                       | Unconditionally set mark.                                                                                                                      |
+| =C-x C-x=         | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                           |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =S-C-f=           | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                |
+| =S-...=           | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.             |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-w=             | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                             |
+| =M-w=             | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                        |
+| =C-y=             | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                  |
+| =M-y=             | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                    |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-u=         | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                         |
+| =C-x C-l=         | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                         |
+| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                             |
+| =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                             |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-g=             | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                       |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                            |
+| =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                    |
+| =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                       |
+| =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                             |
+| =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                 |
+| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                            |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                   |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Useful commands
 
 In the following, a table is provided that contains useful commands and their key bindings.
-The list is not exhaustive, but contains only bindings and commands that I did not know
+The list is not exhaustive, but contains just bindings and commands that I did not know
 about beforhand or that I might forget about in the future.
 
 #+attr_html: :class styledtable
@@ -575,7 +577,7 @@ In summary, the general rules are:
   the =<lwindow>= and =<rwindow>= /Windows/ keys and the =<apps>= /Application Context/ key to be the =<super>=
   and =<hyper>= prefix keys instead.
 
-*Psimacs* uses the =<super> = and =<hyper>= key prefixes for all of its own key bindings.
+*Psimacs* uses the ~<super>~ and ~<hyper>~ key prefixes for most of its own key bindings.
 
 | Key     | Mnemonic | Keyboard                                          |
 |---------+----------+---------------------------------------------------|
@@ -851,8 +853,14 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 (defconst psimacs/config/keybindings-html-file-name "keybindings.html"
   "The psimacs htmlized keybindings file.")
 
+(defconst psimacs/config/keybindings-org-file-name "keybindings.org"
+  "The psimacs org keybindings file.")
+
 (defconst psimacs/config/sorted-keybindings-html-file-name "sortedKeyBindings.html"
   "The psimacs htmlized sorted keybindings file.")
+
+(defconst psimacs/config/sorted-keybindings-org-file-name "sortedKeyBindings.org"
+  "The psimacs org sorted keybindings file.")
 
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
@@ -1631,7 +1639,7 @@ Other configurations then can exchange the /psimacs/ string to something other.
   "The psimacs dropbox directory or nil.")
 
 ;;
-;; ... and the its emacs configuration directory
+;; ... and the emacs configuration directory
 ;;
 (defconst psimacs/config/dropbox-emacs-dir
   (if psimacs/config/dropbox-dir (file-name-as-directory (concat psimacs/config/dropbox-dir
@@ -1668,6 +1676,12 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/sorted-keybindings-html-file-name)
                                              (concat db-dir psimacs/config/sorted-keybindings-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/keybindings-org-file-name)
+                                             (concat db-dir psimacs/config/keybindings-org-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/sorted-keybindings-org-file-name)
+                                             (concat db-dir psimacs/config/sorted-keybindings-org-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
@@ -1748,7 +1762,7 @@ This starts the synchronization between the user *Psimacs* configuration and the
 
 ** Tangling the main /init.org/ file.
 
-This starts the processing of this org file (=init.org=), resulting in tbe final configuration files for *Psimacs*.
+This starts the processing of this org file (=init.org=), resulting in the final configuration files for *Psimacs*.
 
 #+begin_src emacs-lisp :tangle early-init.el
 ;;
@@ -1776,7 +1790,7 @@ file is setup. It starts with a commentary preamble written to the primary =init
 
 *Psimacs* splits the configuration into various =init-*.el=-files. This will allow better looking up specific
 settings or perform some experimentation. Each of these configuration files will be properly documented and it
-is possible to completely relinquish the tangling process and work with the =init-*.el = initialization files
+is possible to completely relinquish the tangling process and work with the =init-*.el= initialization files
 alone.
 
 The main configuration starts now. It is sectioned into different topics. Each topic starts with a prime section
@@ -4967,7 +4981,7 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
 ;;
-;; Ensure that Emacs is totally UTF-8
+;;  that Emacs is totally UTF-8
 ;;
 (set-charset-priority 'unicode)
 (set-locale-environment "en_US.UTF-8")
@@ -10447,6 +10461,84 @@ Duplicate line or region N times.
 )
 #+end_src
 
+** Help on Psimacs
+
+Provide access to the HTML documentation of *Psimacs*.
+
+| Key binding | Command                                  | Description                                                      |
+|-------------+------------------------------------------+------------------------------------------------------------------|
+| =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config=   | Open default browser and shows the Psimacs configuration export. |
+| =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=     | Open default browser and shows the Psimacs keys.                 |
+| =H-h H-p b=   | =M-x psimacs/help/browse-psimacs-key-list= | Open default browser and shows the Psimacs listed keys.          |
+|-------------+------------------------------------------+------------------------------------------------------------------|
+| =H-h H-p C=   | =M-x psimacs/help/org-psimacs-config=      | Open org buffer with Psimacs configuration.                      |
+| =H-h H-p K=   | =M-x psimacs/help/org-psimacs-keys=        | Open org buffer and shows the Psimacs keys.                      |
+| =H-h H-p B=   | =M-x psimacs/help/org-psimacs-key-list=    | Open org buffer and shows the psimacs listed keys.               |
+|-------------+------------------------------------------+------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-tools.el
+(defun psimacs/help/browse-psimacs-config ()
+  "Open default browser and shows the psimacs HTML configuration export."
+  (interactive)
+  (browse-url (psimacs/file-system/concat-file user-emacs-directory "init.html"))
+)
+
+(defun psimacs/help/browse-psimacs-keys ()
+  "Open default browser and shows the psimacs HTML keys."
+  (interactive)
+  (browse-url (psimacs/file-system/concat-file user-emacs-directory "sortedKeyBindings.html"))
+)
+
+(defun psimacs/help/browse-psimacs-key-list ()
+  "Open default browser and shows the psimacs HTML listed keys."
+  (interactive)
+  (browse-url (psimacs/file-system/concat-file user-emacs-directory "keybindings.html"))
+)
+
+(defun psimacs/help/open-psimacs-config ()
+  "Open org buffer with Psimacs configuration."
+  (interactive)
+  (find-file-read-only (psimacs/file-system/concat-file user-emacs-directory "init.org"))
+)
+
+(defun psimacs/help/open-psimacs-keys ()
+  "Open org buffer and shows the Psimacs keys."
+  (interactive)
+  (find-file-read-only (psimacs/file-system/concat-file user-emacs-directory "sortedKeyBindings.org"))
+)
+
+(defun psimacs/help/open-psimacs-key-list ()
+  "Open org buffer and shows the psimacs listed keys."
+  (interactive)
+  (find-file-read-only (psimacs/file-system/concat-file user-emacs-directory "keybindings.org"))
+)
+
+(define-key psimacs/config/global-key-map/help (kbd "H-p c") 'psimacs/help/browse-psimacs-config)
+(define-key psimacs/config/global-key-map/help (kbd "H-p k") 'psimacs/help/browse-psimacs-keys)
+(define-key psimacs/config/global-key-map/help (kbd "H-p b") 'psimacs/help/browse-psimacs-key-list)
+(define-key psimacs/config/global-key-map/help (kbd "H-p C") 'psimacs/help/open-psimacs-config)
+(define-key psimacs/config/global-key-map/help (kbd "H-p K") 'psimacs/help/open-psimacs-keys)
+(define-key psimacs/config/global-key-map/help (kbd "H-p B") 'psimacs/help/open-psimacs-key-list)
+#+end_src
+
+** EditorConfig Emacs Plugin
+
+[[https://github.com/editorconfig/editorconfig-emacs][EditorConfig Emacs Plugin]] brings support for [[https://editorconfig.org/][EditorConfig]] to *Emacs*.
+
+Remark: This mode might be conflicting with =lsp-mode's= setting of
+        =lsp-enable-indentation=. Set this variable to =nil= if you
+        see problems with identation.
+
+#+begin_src emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Support for EditorConfig files
+;;
+(use-package editorconfig
+  :config
+      (editorconfig-mode 1)
+)
+#+end_src
+
 * Utility Lisp functions
 
 All functions defined in *Psimacs* are prefixed by =psimacs/category=. For example
@@ -13078,6 +13170,68 @@ Emacs, it will be the key to ultimately Live in Emacs.
 )
 #+end_src
 
+** Voice Coding Support
+
+Attention: This is work in progress and not actually working!!!
+
+References:
+- [[https://talonvoice.com/][Talon Voice]]
+- [[https://github.com/knausj85/knausj_talon][knausj_talon]]
+- [[https://github.com/jcaw/porthole][porthole]]
+- [[https://github.com/jcaw/porthole-python-client][porthole-python-client]]
+- [[https://pypi.org/project/emacs-porthole/][emacs-porthole on pip]]
+- [[https://eschulte.github.io/emacs-web-server/index.html][Emacs-Web-Server]]
+- [[https://gitmemories.com/john2x/dank-mode][dank-mode]] shows how to install web-server with straight.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-voice-assistance.el :var file-description="Advanced voice assistance setup"
+;;
+;; Support for voice assisted codeing
+;;
+(use-package web-server
+  :defer t
+  :straight (web-server :host github :repo "eschulte/emacs-web-server" :local-repo "web-server")
+)
+
+(setq psimacs/porthole/servername "psimacs-porthole-control-server")
+;(setq psimacs/porthole/username   "dummy")
+;(setq psimacs/porthole/password   "dummy")
+;(setq psimacs/porthole/port-nr    8000)
+
+(defun psimacs/config/handle-voice-command (cmd)
+  "Handler for voice commands."
+  (message cmd)
+)
+
+(use-package porthole
+  :init
+    (porthole-start-server
+      psimacs/porthole/servername
+     ; :PORT psimacs/porthole/port-nr
+     ; :USERNAME psimacs/porthole/username
+     ; :PASSWORD psimacs/porthole/password
+     ; :PUBLISH-PORT nil
+     ; :PUBLISH-USERNAME nil
+     ; :PUBLISH-PASSWORD nil
+    )
+
+    (porthole-expose-function psimacs/porthole/servername 'psimacs/config/handle-voice-command)
+    (porthole-expose-function psimacs/porthole/servername 'insert)
+)
+#+end_src
+
+Python client usage:
+
+#+begin_src shell
+pip install emacs-porthole
+#+end_src
+
+#+begin_src python
+from emacs_porthole import call
+
+result = call("psimacs-porthole-control-server", method="insert", params=["Some text to insert"])
+result = call("psimacs-porthole-control-server", method="handle-voice-command", params=["Some text to insert"])
+#+end_src
+
 * Programming Support
 
 *Psimacs* provides extended support for programming.
@@ -13116,7 +13270,6 @@ different languages (Ruby, Python and Java), but it's easy to mix and match to r
 ;; A nifty package to cycle through string case styles
 ;;
 (use-package string-inflection
-  :ensure t
   :bind (:map prog-mode-map
             ("H-m H-l" . string-inflection-all-cycle)
         )
@@ -18749,13 +18902,16 @@ _p_: package       _w_: where-is            _d_: doc strings
 _m_: mode          _b_: show all bindings   _s_: info by symbol
 _v_: variable      ^ ^
 _e_: view messages _l_: view lossage        _C_: coding-system     _I_: input-method
+
+^ ^                _K_: Psimacs keys        ^ ^                    _P_: Psimacs
+^ ^                _B_: Psimacs key list
+
 _q_: quit
 "
         ("e" view-echo-area-messages)
         ("l" view-lossage)
         ("C" describe-coding-system)
         ("I" describe-input-method)
-
 
         ;; Documentation
         ("i" info nil)
@@ -18777,6 +18933,11 @@ _q_: quit
         ("m" describe-mode nil)
         ("v" helpful-variable nil)
         ("y" describe-syntax nil)
+
+        ;; Psimacs
+        ("P" psimacs/help/browse-psimacs-config nil)
+        ("K" psimacs/help/browse-psimacs-keys nil)
+        ("B" psimacs/help/browse-psimacs-key-list nil)
 
         ;; quit
         ("q" help-quit)

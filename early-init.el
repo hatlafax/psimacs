@@ -134,8 +134,14 @@ Do not change it here!!!
 (defconst psimacs/config/keybindings-html-file-name "keybindings.html"
   "The psimacs htmlized keybindings file.")
 
+(defconst psimacs/config/keybindings-org-file-name "keybindings.org"
+  "The psimacs org keybindings file.")
+
 (defconst psimacs/config/sorted-keybindings-html-file-name "sortedKeyBindings.html"
   "The psimacs htmlized sorted keybindings file.")
+
+(defconst psimacs/config/sorted-keybindings-org-file-name "sortedKeyBindings.org"
+  "The psimacs org sorted keybindings file.")
 
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
@@ -724,7 +730,7 @@ After this function is finished the two directories are identical.
   "The psimacs dropbox directory or nil.")
 
 ;;
-;; ... and the its emacs configuration directory
+;; ... and the emacs configuration directory
 ;;
 (defconst psimacs/config/dropbox-emacs-dir
   (if psimacs/config/dropbox-dir (file-name-as-directory (concat psimacs/config/dropbox-dir
@@ -756,6 +762,12 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/sorted-keybindings-html-file-name)
                                              (concat db-dir psimacs/config/sorted-keybindings-html-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/keybindings-org-file-name)
+                                             (concat db-dir psimacs/config/keybindings-org-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/sorted-keybindings-org-file-name)
+                                             (concat db-dir psimacs/config/sorted-keybindings-org-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
