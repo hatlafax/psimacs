@@ -298,6 +298,69 @@ References:
 | =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                   |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
 
+** Registers and Bookmarks
+
+*** Registers
+
+Emacs registers are compartments where you can save text, rectangles, positions, and other things for later use.
+
+In the following table =r= is any single key character.
+
+Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][Registers]]
+
+#+attr_html: :class styledtable
+| Key binding   | Command                                    | Description                                                                                                                        |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+|               | =M-x view-register RET r=                    | Display a description of what register r contains.                                                                                 |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r SPC r=   | =M-x point-to-register RET r=                | Record the position of point and the current buffer in register r.                                                                 |
+| =C-x r SPC r r= | =M-x point-to-register RET r r=              | Saves both the position of point and the current buffer in register r.                                                             |
+| =C-x r j r=     | =M-x jump-to-register RET r=                 | Jump to the position and buffer saved in register r.                                                                               |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r s r=     | =M-x copy-to-register RET r=                 | Copy region into register r.                                                                                                       |
+| =C-u C-x r s r= | =C-u M-x copy-to-register RET r=             | Copies the text into register r and deletes the text from the buffer as well.                                                      |
+| =C-x r i r=     | =M-x insert-register RET r=                  | Insert text from register r.                                                                                                       |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+|               | =M-x append-to-register RET r=               | Append region to text in register r.                                                                                               |
+|               | =C-u M-x append-to-register RET r=           | Append region to text in register r and deletes the text from the buffer as well.                                                  |
+| =C-x r +=       | =M-x increment-register=                     | When register r contains text, use this command to append to that register.                                                        |
+|               | =M-x prepend-to-register RET r=              | Prepend region to text in register r.                                                                                              |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r r r=     | =M-x copy-rectangle-to-register RET r=       | Copy the region-rectangle into register r. With prefix argument, delete it as well.                                                |
+| =C-x r i r=     | =M-x insert-register RET r=                  | Insert the rectangle stored in register r (if it contains a rectangle).                                                            |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r w r=     | =M-x window-configuration-to-register RET r= | Save the state of the selected frame’s windows in register r.                                                                      |
+| =C-x r f r=     | =M-x frameset-to-register RET r=             | Save the state of all frames, including all their windows, in register r.                                                          |
+| =C-x r j r=     | =M-x jump-to-register RET r=                 | To restore a window or frame configuration stored in register r. When you restore a frame configuration, any existing frames not included in the  configuration become invisible. |
+| =C-u C-x r j r= | =C-u M-x jump-to-register RET r=             | Use Prefix to also delete pre-existing frames.                                                                                     |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-k x r=   | =M-x kmacro-to-register RET r=               | Stores the last keyboard macro in register r.                                                                                      |
+| =C-x r j r=     | =M-x jump-to-register RET r=                 | To execute the keyboard macro in register r                                                                                        |
+|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+
+*** Bookmarks
+
+Bookmarks are somewhat like registers in that they record positions you can jump to. Unlike registers,
+they have long names, and they persist automatically.
+
+Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]]
+
+#+attr_html: :class styledtable
+| Key binding          | Command                                       | Description                                                                                                                        |
+|----------------------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r m=              | =M-x bookmark-set RET=                          | Set the bookmark for the visited file, at point.                                                                                   |
+| =C-x r m Bookmark RET= | =M-x bookmark-set Bookmark RET=                 | Set the bookmark named Bookmark at point.                                                                                          |
+| =C-x r M Bookmark RET= | =M-x bookmark-set-no-overwrite Bookmark RET=    | Like =C-x r m=, but don’t overwrite an existing bookmark.                                                                            |
+| =C-x r b Bookmark RET= | =M-x bookmark-jump Bookmark RET=                | Jump to the bookmark named Bookmark.                                                                                               |
+| =C-x r l=              | =M-x list-bookmarks=                            | List all bookmarks.                                                                                                                |
+|                      | =M-x bookmark-save=                             | Save all the current bookmark values in the default bookmark file.                                                                 |
+|                      | =M-x bookmark-write RET Filename RET=           | Save all the current bookmark values in the file Filename.                                                                         |
+|                      | =M-x bookmark-load RET Filename RET=            | Load a file named Filename that contains a list of bookmark values. You can use this command, as well as bookmark-write, to work with other files of bookmark values in addition to your default bookmark file. |
+|                      | =M-x bookmark-delete RET Bookmark RET=          | Delete the bookmark named Bookmark.                                                                                                |
+|                      | =M-x bookmark-insert-location RET Bookmark RET= | Insert in the buffer the name of the file that bookmark Bookmark points to.                                                        |
+|                      | =M-x bookmark-insert RET Bookmark RET=          | Insert in the buffer the contents of the file that bookmark Bookmark points to.                                                    |
+|----------------------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+
 ** Useful commands
 
 In the following, a table is provided that contains useful commands and their key bindings.
@@ -9740,6 +9803,51 @@ See also:
                 ("H-c s" . vr/isearch-forward)
                 ("H-c p" . vr/isearch-backward)
           )
+)
+#+end_src
+
+*** Ripgrep
+
+The package [[https://github.com/dajva/rg.el][rg]] brings support for [[https://github.com/BurntSushi/ripgrep][ripgrep]] to *Psimacs*.
+
+[[https://github.com/BurntSushi/ripgrep][ripgrep]] is a line-oriented search tool that recursively searches the current directory for a regex pattern.
+It is expected to be installed on the system and availbale through the search path of the os. Personally,
+I have it installed with MSYS2. By default, /ripgrep/ will respect gitignore rules and automatically skip
+hidden files/directories and binary files. (To disable all automatic filtering by default, use rg -uuu.)
+
+Emacs package [[https://github.com/dajva/rg.el][rg]] allows you to interactively create searches, doing automatic searches based on the
+editing context, refining and modifying search results and much more. It is also highly configurable
+to be able to fit different users’ needs.
+
+See also:
+- [[https://github.com/BurntSushi/ripgrep][ripgrep]]
+- [[https://github.com/dajva/rg.el][rg]]
+- [[https://rgel.readthedocs.io/][rg on readthedocs]]
+
+| Key binding               | Command                  | Description                              |
+|---------------------------+--------------------------+------------------------------------------|
+| =C-c s=                     | =M-x rg-menu=              | Show the rg menu.                        |
+|---------------------------+--------------------------+------------------------------------------|
+| =C-c s r (rg)=              |                          | Interactive search with regex.           |
+| =C-c s t=                   |                          | Interactive search with literate string. |
+| =C-c s p (rg-project)=      |                          | Project search                           |
+| =C-c s d (rg-dwim)=         |                          | DWIM in current project.                 |
+| =C-u C-c s d (rg-dwim)=     |                          | DWIM in current dir.                     |
+| =C-u C-u C-c s d (rg-dwim)= |                          | DWIM in current file.                    |
+|---------------------------+--------------------------+------------------------------------------|
+|                           | =M-x rg-dwim-project-dir=  | DWIM search in the current directory.    |
+|                           | =M-x rg-dwim-current-file= | DWIM search in the current file.         |
+|                           | =M-x rg-dwim-project-dir=  | DWIM search in the current project.      |
+|---------------------------+--------------------------+------------------------------------------|
+
+
+#+begin_src emacs-lisp :tangle config/init-basic-ripgrep.el :var file-description="Emacs ripgrep setup"
+;;
+;; Setup usage of ripgrep
+;;
+(use-package rg
+    :init
+        (rg-enable-default-bindings)
 )
 #+end_src
 
