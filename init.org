@@ -16947,13 +16947,20 @@ Reference: [[https://scripter.co/org-keywords-lower-case/][Converting Org keywor
 [[https://github.com/nnicandro/emacs-jupyter][emacs-jupyter]] provides /REPL/ and org-mode source block frontends to Jupyter kernels.
 Kernel interactions integrated with Emacs’s built-in features.
 
-| Key binding | Command                                        | Description                                     |
-|-------------+------------------------------------------------+-------------------------------------------------|
-| =H-SPC j=     | =M-x psimacs/hydra/jupyter/open-hydra=           | Show hydra for jupyter notebooks commands.      |
-| =H-m n=       | =M-x psimacs/jupyter/next-jupyter-src-block=     | Move point into the next jupyter src block.     |
-| =H-m p=       | =M-x psimacs/jupyter/previous-jupyter-src-block= | Move point into the previous jupyter src block. |
-| =H-RET=       | =M-x jupyter-org-execute-and-next-block=         | Execute block and move to next block.           |
-|-------------+------------------------------------------------+-------------------------------------------------|
+| Key binding    | Command                                            | Description                                     |
+|----------------+----------------------------------------------------+-------------------------------------------------|
+| =H-SPC j=        | =M-x psimacs/hydra/jupyter/open-hydra=               | Show hydra for jupyter notebooks commands.      |
+|----------------+----------------------------------------------------+-------------------------------------------------|
+| =H-RET=          | =M-x jupyter-org-execute-and-next-block=             | Execute jupyter block and move to next block.   |
+| =C-S-H-<return>= | =M-x psimacs/jupyter/execute-all-jupyter-src-blocks= | Execute all jupyter blocks.                     |
+|----------------+----------------------------------------------------+-------------------------------------------------|
+| =H-m n=          | =M-x psimacs/jupyter/next-jupyter-src-block=         | Move point into the next jupyter src block.     |
+| =H-m p=          | =M-x psimacs/jupyter/previous-jupyter-src-block=     | Move point into the previous jupyter src block. |
+|----------------+----------------------------------------------------+-------------------------------------------------|
+| =H-m i d=        | =M-x org-display-inline-images=                      | Display inline images.                          |
+| =H-m i r=        | =M-x org-redisplay-inline-images=                    | Redisplay inline images.                        |
+| =H-m i t=        | =M-x org-toogle-inline-images=                       | Toogle inline images.                           |
+|----------------+----------------------------------------------------+-------------------------------------------------|
 
 The following commands are defined only if point is in an org-babel source block.
 
@@ -17739,78 +17746,101 @@ Usually called in a hook function."
         ;; customization of what is in jupyter
         ;; These are more aligned with jupyter notebook I think
 
-        (defhydra psimacs/hydra/jupyter (:color blue :hint nil)
-            "
-            ^Execute^                 ^Navigate^                   ^Edit^              ^Misc^                  ^Kernel^
-^^^^^^^^^^------------------------------------------------------------------------------------------------------------------------
-    _C-<return>_: current               _p_: previous           _M-p_: move up        _l_: clear result        _S_: scratch
-    _H-<return>_: current jupyter next  _n_: next               _M-n_: move down      _L_: clear all results   _r_: goto REPL
-    _S-<return>_: current go next       _P_: busy previous        _x_: kill           _h_: edit header         _I_: interrupt kernel
-    _M-<return>_: current and new       _N_: busy next            _c_: copy           _i_: inspect             _R_: restart kernel
-  _C-M-<return>_: to point              _v_: jump to visible      _C_: clone          _o_: toggle ouput        _k_: kill kernel
-  _H-M-<return>_: subtree to point      _j_: jump to block        _m_: merge      _<tab>_: org-cycle
-  _S-C-<return>_: restart/to point      _E_: jump to error        _s_: split          _t_: toggle line numbers
-  _S-M-<return>_: restart/block         _a_: jump to first line   _+_: insert above   _#_: dwim comment
-  _H-C-<return>_: restart/buffer        _e_: jump to last line    _-_: insert below   _1_: toggle advice
-  ^ ^                                   _._: jump to end          _M_: mark code      _2_: toggle result colons
-  ^ ^                                   ^ ^                       ^ ^                 _X_: export notebook
-  _q_: quit  _z_: undo  _Z_: redo  _H-z_: redo all
-        "
-                ("C-<return>"   org-ctrl-c-ctrl-c)
-                ("H-<return>"   psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next :color red)
-                ("S-<return>"   jupyter-org-execute-and-next-block :color red)
-                ("M-<return>"   (progn (org-ctrl-c-ctrl-c) (psimacs/jupyter/insert-src-block t)) )
-                ("C-M-<return>" jupyter-org-execute-to-point)
-                ("H-M-<return>" jupyter-org-execute-subtree)
-                ("S-C-<return>" jupyter-org-restart-and-execute-to-point)
-                ("S-M-<return>" jupyter-org-restart-kernel-execute-block)
-                ("H-C-<return>" jupyter-org-restart-kernel-execute-buffer)
+        (defvar psimacs/internal/hydra/jupyter-notebook
+            (pretty-hydra-define
+                psimacs/hydra/jupyter
+                (
+                   :title (psimacs/config/pretty-hydra-title "Jupyter Notebook" 'faicon "toggle-on" :v-adjust -0.1)
+                   :color blue
+                   :quit-key "q"
+                )
+                (
+                    "Execute"
+                      (
+                        ("C-<return>"     org-ctrl-c-ctrl-c                                          "current")
+                        ("H-<return>"     psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next      "current jupyter go next" :color red)
+                        ("S-<return>"     jupyter-org-execute-and-next-block                         "current src go next"     :color red)
+                        ("M-<return>"     (progn (org-ctrl-c-ctrl-c) (psimacs/jupyter/insert-src-block t)) "current and new")
+                        ("C-M-<return>"   jupyter-org-execute-to-point                               "to point")
+                        ("H-M-<return>"   jupyter-org-execute-subtree                                "subtree to point")
+                        ("S-C-<return>"   jupyter-org-restart-and-execute-to-point                   "restart - to point")
+                        ("S-M-<return>"   jupyter-org-restart-kernel-execute-block                   "restart - block")
+                        ("H-C-<return>"   jupyter-org-restart-kernel-execute-buffer                  "restart - buffer")
+                        ("C-S-H-<return>" psimacs/jupyter/execute-all-jupyter-src-blocks             "all jupyter blocks")
+                      )
 
-                ("p" org-babel-previous-src-block :color red)
-                ("n" org-babel-next-src-block :color red)
-                ("P" jupyter-org-previous-busy-src-block :color red)
-                ("N" jupyter-org-next-busy-src-block :color red)
-                ("v" jupyter-org-jump-to-visible-block)
-                ("j" jupyter-org-jump-to-block)
-                ("E" psimacs/jupyter/jump-to-error)
-                ("a" psimacs/jupyter/ob/jump-to-first-line)
-                ("e" psimacs/jupyter/ob/jump-to-end-line)
-                ("." psimacs/jupyter/ob/jump-to-end)
+                    "Navigate"
+                      (
+                        ("p" org-babel-previous-src-block        "previous"      :color red)
+                        ("n" org-babel-next-src-block            "next"          :color red)
+                        ("P" jupyter-org-previous-busy-src-block "busy previous" :color red)
+                        ("N" jupyter-org-next-busy-src-block     "busy next"     :color red)
+                        ("v" jupyter-org-jump-to-visible-block   "jump to visible")
+                        ("j" jupyter-org-jump-to-block           "jump to block")
+                        ("J" psimacs/jupyter/ob/jump-to-end            "jump to end")
+                        ("E" psimacs/jupyter/jump-to-error             "jump to error")
+                        ("a" psimacs/jupyter/ob/jump-to-first-line     "jump to first line")
+                        ("e" psimacs/jupyter/ob/jump-to-end-line       "jump to last line")
+                      )
 
-                ("M-p" jupyter-org-move-src-block :color red)
-                ("M-n" (jupyter-org-move-src-block t) :color red)
-                ("x" jupyter-org-kill-block-and-results)
-                ("c" jupyter-org-copy-block-and-results)
-                ("C" (jupyter-org-clone-block t))
-                ("m" jupyter-org-merge-blocks)
-                ("s" jupyter-org-split-src-block)
-                ("+" (jupyter-org-insert-src-block nil current-prefix-arg))
-                ("-" (jupyter-org-insert-src-block t current-prefix-arg))
-                ("M" psimacs/jupyter/ob/mark-code)
+                    "Edit"
+                      (
+                        ("M-p" jupyter-org-move-src-block                             "move block up"   :color red)
+                        ("M-n" (jupyter-org-move-src-block t)                         "move block down" :color red)
+                        ("x"   jupyter-org-kill-block-and-results                     "kill block")
+                        ("c"   jupyter-org-copy-block-and-results                     "copy block")
+                        ("C"   (jupyter-org-clone-block t)                            "clone block")
+                        ("m"   jupyter-org-merge-blocks                               "merge blocks")
+                        ("s"   jupyter-org-split-src-block                            "split block")
+                        ("+"   (jupyter-org-insert-src-block nil current-prefix-arg)  "insert block above")
+                        ("-"   (jupyter-org-insert-src-block t current-prefix-arg)    "insert block below")
+                        ("M"   psimacs/jupyter/ob/mark-code                                 "mark block code")
+                      )
 
-                ("l" org-babel-remove-result)
-                ("L" jupyter-org-clear-all-results)
-                ("h" jupyter-org-edit-header)
-                ("i" jupyter-org-inspect-src-block)
-                ("o" psimacs/jupyter/ob/toggle-output)
-                ("<tab>" org-cycle :color red)
-                ("t" psimacs/jupyter/ob/toggle-line-numbers)
-                ("#" org-comment-dwim)
-                ("1" psimacs/jupyter/toggle-advice-functions :toggle psimacs/config/jupyter-advice-jupyter-fn :color red)
-                ("2" psimacs/jupyter/toggle-results-with-colons :toggle psimacs/config/jupyter-result-with-colons :color red)
-                ("X" psimacs/jupyter/export/notebook :color blue)
+                    "Miscellaneous"
+                      (
+                        ("l" org-babel-remove-result          "clear result")
+                        ("L" jupyter-org-clear-all-results    "clear all results")
+                        ("h" jupyter-org-edit-header          "edit header")
+                        ("i" jupyter-org-inspect-src-block    "inspect")
+                        ("o" psimacs/jupyter/ob/toggle-output       "toogle output")
+                        ("<tab>" org-cycle                    "org cycle"       :color red)
+                        ("t" psimacs/jupyter/ob/toggle-line-numbers "toogle line numbers")
+                        ("#" org-comment-dwim                 "dwim comment")
+                        ("X" psimacs/jupyter/export/notebook        "export notebook" :color blue)
+                      )
 
-                ("I" jupyter-org-interrupt-kernel)
-                ("S" org-babel-jupyter-scratch-buffer)
-                ("R" (jupyter-org-with-src-block-client (jupyter-repl-restart-kernel)))
-                ("r" org-babel-switch-to-session)
-                ("k" psimacs/jupyter/org-kill-kernel)
+                      ""
 
-                ("z" undo-fu-only-undo :color red)
-                ("Z" undo-fu-only-redo :color red)
-                ("H-z" undo-fu-only-redo-all :color red)
-                ("q" nil)
+                      (
+                        ("di"  org-display-inline-images   "display images")
+                        ("dr"  org-redisplay-inline-images "redisplay images")
+                        ("dt"  org-toogle-inline-images    "toogle images")
+                        ("z"   undo-fu-only-undo           "undo"     :color red)
+                        ("Z"   undo-fu-only-redo           "redo"     :color red)
+                        ("H-z" undo-fu-only-redo-all       "redo all" :color red)
+                      )
+
+                    "Kernel"
+                      (
+                        ("S" org-babel-jupyter-scratch-buffer   "scratch buffer")
+                        ("r" org-babel-switch-to-session        "goto REPL")
+                        ("R" (jupyter-org-with-src-block-client
+                                 (jupyter-repl-restart-kernel)) "restart")
+                        ("I" jupyter-org-interrupt-kernel       "interrupt kernel")
+                        ("k" psimacs/jupyter/org-kill-kernel          "kill kernel")
+                      )
+
+                    "Settings"
+                      (
+                        ("A"   psimacs/jupyter/toggle-advice-functions    "toggle advice"        :color red :toggle psimacs/config/jupyter-advice-jupyter-fn)
+                        ("U"   psimacs/jupyter/toggle-results-with-colons "toogle result colons" :color red :toggle psimacs/config/jupyter-result-with-colons)
+                      )
+                )
+            )
+            "Definition of the jupyter notebook hydra."
         )
+
 
         (defun psimacs/hydra/jupyter/open-hydra ()
             "First search jupyter source block then open jupyter hydra."
@@ -17827,10 +17857,14 @@ Usually called in a hook function."
 
     :bind (
         :map org-mode-map
-            ("H-m n"      . psimacs/jupyter/next-jupyter-src-block)
-            ("H-m p"      . psimacs/jupyter/previous-jupyter-src-block)
-            ("H-<return>" . psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next)
-            ("H-SPC j"    . psimacs/hydra/jupyter/open-hydra)
+            ("H-m n"          . psimacs/jupyter/next-jupyter-src-block)
+            ("H-m p"          . psimacs/jupyter/previous-jupyter-src-block)
+            ("H-<return>"     . psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next)
+            ("C-S-H-<return>" . psimacs/jupyter/execute-all-jupyter-src-blocks)
+            ("H-m i d"        . org-display-inline-images)
+            ("H-m i r"        . org-redisplay-inline-images)
+            ("H-m i t"        . org-toogle-inline-images)
+            ("H-SPC j"        . psimacs/hydra/jupyter/open-hydra)
         )
 )
 #+end_src
