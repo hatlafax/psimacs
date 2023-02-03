@@ -256,47 +256,47 @@ References:
 - Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
 
 #+attr_html: :class styledtable
-| Key binding     | Command                               | Description                                                                                                                                    |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                               | Description                                                                                                                                                                                                                                          |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =C-SPC=           | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
-| =C-@=             |                                       |                                                                                                                                                |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-u C-SPC=       | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                             |
-| =C-u C-@=         |                                       |                                                                                                                                                |
-| =H-x p=           |                                       |                                                                                                                                                |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-SPC=       | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                       |
-| =C-x C-@=         |                                       |                                                                                                                                                |
-| =H-x q=           |                                       |                                                                                                                                                |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-SPC C-SPC=     |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.            |
-| =C-u C-u C-SPC=   |                                       | Unconditionally set mark.                                                                                                                      |
-| =C-x C-x=         | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                           |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =S-C-f=           | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                |
-| =S-...=           | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.             |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-w=             | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                             |
-| =M-w=             | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                        |
-| =C-y=             | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                  |
-| =M-y=             | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                    |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-u=         | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                         |
-| =C-x C-l=         | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                         |
-| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                             |
-| =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                             |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-g=             | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                       |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                            |
-| =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                    |
-| =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                       |
-| =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                             |
-| =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                 |
-| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                            |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                   |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-@=             |                                       |                                                                                                                                                                                                                                                      |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-u C-SPC=       | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
+| =C-u C-@=         |                                       |                                                                                                                                                                                                                                                      |
+| =H-x p=           |                                       |                                                                                                                                                                                                                                                      |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-SPC=       | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
+| =C-x C-@=         |                                       |                                                                                                                                                                                                                                                      |
+| =H-x q=           |                                       |                                                                                                                                                                                                                                                      |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC C-SPC=     |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
+| =C-u C-u C-SPC=   |                                       | Unconditionally set mark.                                                                                                                                                                                                                            |
+| =C-x C-x=         | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =S-C-f=           | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |
+| =S-...=           | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-w=             | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                                                                                                                                   |
+| =M-w=             | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                                                                                                                              |
+| =C-y=             | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
+| =M-y=             | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-u=         | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
+| =C-x C-l=         | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
+| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
+| =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-g=             | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                                                                                                                             |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
+| =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
+| =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
+| =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
+| =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
+| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                                                                                                                                  |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                                                                                                                         |
+|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Registers and Bookmarks
 
@@ -309,34 +309,34 @@ In the following table =r= is any single key character.
 Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][Registers]]
 
 #+attr_html: :class styledtable
-| Key binding   | Command                                    | Description                                                                                                                        |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-|               | =M-x view-register RET r=                    | Display a description of what register r contains.                                                                                 |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r SPC r=   | =M-x point-to-register RET r=                | Record the position of point and the current buffer in register r.                                                                 |
-| =C-x r SPC r r= | =M-x point-to-register RET r r=              | Saves both the position of point and the current buffer in register r.                                                             |
-| =C-x r j r=     | =M-x jump-to-register RET r=                 | Jump to the position and buffer saved in register r.                                                                               |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r s r=     | =M-x copy-to-register RET r=                 | Copy region into register r.                                                                                                       |
-| =C-u C-x r s r= | =C-u M-x copy-to-register RET r=             | Copies the text into register r and deletes the text from the buffer as well.                                                      |
-| =C-x r i r=     | =M-x insert-register RET r=                  | Insert text from register r.                                                                                                       |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-|               | =M-x append-to-register RET r=               | Append region to text in register r.                                                                                               |
-|               | =C-u M-x append-to-register RET r=           | Append region to text in register r and deletes the text from the buffer as well.                                                  |
-| =C-x r +=       | =M-x increment-register=                     | When register r contains text, use this command to append to that register.                                                        |
-|               | =M-x prepend-to-register RET r=              | Prepend region to text in register r.                                                                                              |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r r r=     | =M-x copy-rectangle-to-register RET r=       | Copy the region-rectangle into register r. With prefix argument, delete it as well.                                                |
-| =C-x r i r=     | =M-x insert-register RET r=                  | Insert the rectangle stored in register r (if it contains a rectangle).                                                            |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r w r=     | =M-x window-configuration-to-register RET r= | Save the state of the selected frame’s windows in register r.                                                                      |
-| =C-x r f r=     | =M-x frameset-to-register RET r=             | Save the state of all frames, including all their windows, in register r.                                                          |
+| Key binding   | Command                                    | Description                                                                                                                                                                       |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|               | =M-x view-register RET r=                    | Display a description of what register r contains.                                                                                                                                |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r SPC r=   | =M-x point-to-register RET r=                | Record the position of point and the current buffer in register r.                                                                                                                |
+| =C-x r SPC r r= | =M-x point-to-register RET r r=              | Saves both the position of point and the current buffer in register r.                                                                                                            |
+| =C-x r j r=     | =M-x jump-to-register RET r=                 | Jump to the position and buffer saved in register r.                                                                                                                              |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r s r=     | =M-x copy-to-register RET r=                 | Copy region into register r.                                                                                                                                                      |
+| =C-u C-x r s r= | =C-u M-x copy-to-register RET r=             | Copies the text into register r and deletes the text from the buffer as well.                                                                                                     |
+| =C-x r i r=     | =M-x insert-register RET r=                  | Insert text from register r.                                                                                                                                                      |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|               | =M-x append-to-register RET r=               | Append region to text in register r.                                                                                                                                              |
+|               | =C-u M-x append-to-register RET r=           | Append region to text in register r and deletes the text from the buffer as well.                                                                                                 |
+| =C-x r +=       | =M-x increment-register=                     | When register r contains text, use this command to append to that register.                                                                                                       |
+|               | =M-x prepend-to-register RET r=              | Prepend region to text in register r.                                                                                                                                             |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r r r=     | =M-x copy-rectangle-to-register RET r=       | Copy the region-rectangle into register r. With prefix argument, delete it as well.                                                                                               |
+| =C-x r i r=     | =M-x insert-register RET r=                  | Insert the rectangle stored in register r (if it contains a rectangle).                                                                                                           |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r w r=     | =M-x window-configuration-to-register RET r= | Save the state of the selected frame’s windows in register r.                                                                                                                     |
+| =C-x r f r=     | =M-x frameset-to-register RET r=             | Save the state of all frames, including all their windows, in register r.                                                                                                         |
 | =C-x r j r=     | =M-x jump-to-register RET r=                 | To restore a window or frame configuration stored in register r. When you restore a frame configuration, any existing frames not included in the  configuration become invisible. |
-| =C-u C-x r j r= | =C-u M-x jump-to-register RET r=             | Use Prefix to also delete pre-existing frames.                                                                                     |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-k x r=   | =M-x kmacro-to-register RET r=               | Stores the last keyboard macro in register r.                                                                                      |
-| =C-x r j r=     | =M-x jump-to-register RET r=                 | To execute the keyboard macro in register r                                                                                        |
-|---------------+--------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+| =C-u C-x r j r= | =C-u M-x jump-to-register RET r=             | Use Prefix to also delete pre-existing frames.                                                                                                                                    |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-k x r=   | =M-x kmacro-to-register RET r=               | Stores the last keyboard macro in register r.                                                                                                                                     |
+| =C-x r j r=     | =M-x jump-to-register RET r=                 | To execute the keyboard macro in register r                                                                                                                                       |
+|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 *** Bookmarks
 
@@ -346,20 +346,20 @@ they have long names, and they persist automatically.
 Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]]
 
 #+attr_html: :class styledtable
-| Key binding          | Command                                       | Description                                                                                                                        |
-|----------------------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r m=              | =M-x bookmark-set RET=                          | Set the bookmark for the visited file, at point.                                                                                   |
-| =C-x r m Bookmark RET= | =M-x bookmark-set Bookmark RET=                 | Set the bookmark named Bookmark at point.                                                                                          |
-| =C-x r M Bookmark RET= | =M-x bookmark-set-no-overwrite Bookmark RET=    | Like =C-x r m=, but don’t overwrite an existing bookmark.                                                                            |
-| =C-x r b Bookmark RET= | =M-x bookmark-jump Bookmark RET=                | Jump to the bookmark named Bookmark.                                                                                               |
-| =C-x r l=              | =M-x list-bookmarks=                            | List all bookmarks.                                                                                                                |
-|                      | =M-x bookmark-save=                             | Save all the current bookmark values in the default bookmark file.                                                                 |
-|                      | =M-x bookmark-write RET Filename RET=           | Save all the current bookmark values in the file Filename.                                                                         |
+| Key binding          | Command                                       | Description                                                                                                                                                                                                     |
+|----------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r m=              | =M-x bookmark-set RET=                          | Set the bookmark for the visited file, at point.                                                                                                                                                                |
+| =C-x r m Bookmark RET= | =M-x bookmark-set Bookmark RET=                 | Set the bookmark named Bookmark at point.                                                                                                                                                                       |
+| =C-x r M Bookmark RET= | =M-x bookmark-set-no-overwrite Bookmark RET=    | Like =C-x r m=, but don’t overwrite an existing bookmark.                                                                                                                                                         |
+| =C-x r b Bookmark RET= | =M-x bookmark-jump Bookmark RET=                | Jump to the bookmark named Bookmark.                                                                                                                                                                            |
+| =C-x r l=              | =M-x list-bookmarks=                            | List all bookmarks.                                                                                                                                                                                             |
+|                      | =M-x bookmark-save=                             | Save all the current bookmark values in the default bookmark file.                                                                                                                                              |
+|                      | =M-x bookmark-write RET Filename RET=           | Save all the current bookmark values in the file Filename.                                                                                                                                                      |
 |                      | =M-x bookmark-load RET Filename RET=            | Load a file named Filename that contains a list of bookmark values. You can use this command, as well as bookmark-write, to work with other files of bookmark values in addition to your default bookmark file. |
-|                      | =M-x bookmark-delete RET Bookmark RET=          | Delete the bookmark named Bookmark.                                                                                                |
-|                      | =M-x bookmark-insert-location RET Bookmark RET= | Insert in the buffer the name of the file that bookmark Bookmark points to.                                                        |
-|                      | =M-x bookmark-insert RET Bookmark RET=          | Insert in the buffer the contents of the file that bookmark Bookmark points to.                                                    |
-|----------------------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------|
+|                      | =M-x bookmark-delete RET Bookmark RET=          | Delete the bookmark named Bookmark.                                                                                                                                                                             |
+|                      | =M-x bookmark-insert-location RET Bookmark RET= | Insert in the buffer the name of the file that bookmark Bookmark points to.                                                                                                                                     |
+|                      | =M-x bookmark-insert RET Bookmark RET=          | Insert in the buffer the contents of the file that bookmark Bookmark points to.                                                                                                                                 |
+|----------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Useful commands
 
@@ -2626,6 +2626,7 @@ your calendar.
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "projects"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "references"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "research"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "notebooks"))
 
 (defconst psimacs/config/roam-templates-dir
     (psimacs/file-system/concat-directory psimacs/config/site-lisp-dir "roam-templates")
@@ -8542,14 +8543,14 @@ Additionally, creating a key binding for =persp-mode-map= will also activate the
 Since [[https://github.com/nex3/perspective-el][perspective]]  maintains distinct buffer lists for each [[https://github.com/nex3/perspective-el][perspective]], it helps to use a
 Perspective-aware buffer switcher.
 
-| Buffer switcher | Support                                                                                                                                                                                                                                                                                                                    |
-|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                                |
-| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
-| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
-| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                 |
+| Buffer switcher | Support                                                                                                                                                                                                                                                                                       |
+|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                   |
+| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
+| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
+| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                    |
 | Ivy / Counsel   | Perspective provides two commands for listing buffers using Ivy and Counsel: =persp-ivy-switch-buffer= and =persp-counsel-switch-buffer=. When these functions are called normally, they show a list of buffers filtered by the current perspective. With a prefix argument, they shows a list of buffers in all perspectives. |
-|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 (use-package perspective
@@ -9267,51 +9268,51 @@ In addition, Ediff can apply a patch to a file and then let you step through bot
 patched and the original one, simultaneously, difference-by-difference.
 #+end_quote
 
-| Command                                           | Description                                                                                                                                                                                                                                                                                                                       |
-|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                                                                |
-| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                                                        |
-| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                                                           |
-| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                                                            |
-| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                                                        |
-| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                      |
-| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                        |
-| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                                                      |
-| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                                                                   |
-| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                                                                   |
-| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                                                      |
-| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                                                            |
-| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                                                                   |
+| Command                                           | Description                                                                                                                                                                                                                                                                                   |
+|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                            |
+| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                    |
+| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                       |
+| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                          |
+| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                          |
+| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                        |
+| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                      |
+| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                    |
+| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                  |
+| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                    |
+| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                  |
+| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                               |
+| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                               |
+| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                  |
+| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                        |
+| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                               |
 | =M-x ediff-patch-file=                              | Patch a file or multiple files, then compare. Since the patch might be in a buffer or a file, you will be asked which is the case. To avoid this extra prompt, you can invoke this command with a prefix argument. With an odd prefix argument, Ediff assumes the patch is in a file; with an even argument, a buffer is assumed. |
-| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                                                                 |
-| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                                                                  |
-| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                                                                 |
-| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                                                                |
-| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
-| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                                                            |
-| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                                                           |
-| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                                                              |
-| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                                                     |
-| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
-| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                                                       |
-| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                                                     |
-| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                                                              |
-|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                             |
+| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                             |
+| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                       |
+| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                        |
+| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                       |
+| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                 |
+| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                       |
+| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                   |
+| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                 |
+| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                          |
+|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 
 Remarks:
@@ -11897,9 +11898,9 @@ You create the snippet on the go and it'll be ready to use immediately. Because 
 current buffer the workflow is very fast.
 
 #+attr_html: :class styledtable1
-| Key binding   | Command                       | Description                                                                                                                                                       |
-|---------------+-------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-m C-y w=   | =M-x aya-create=              | Create a snippet from the text between BEG and END.                                                                                                               |
+| Key binding | Command                     | Description                                                                                                                                                     |
+|-------------+-----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-y w=   | =M-x aya-create=              | Create a snippet from the text between BEG and END.                                                                                                             |
 | =H-m C-y TAB= | =M-x aya-expand=              | Insert the last yasnippet created by =aya-create=.                                                                                                                |
 | =H-m C-y SPC= | =M-x aya-expand-from-history= | Select and insert a yasnippet from the =aya-history=.                                                                                                             |
 | =H-m C-y d=   | =M-x aya-delete-from-history= | Select and delete one or more snippets from =aya-history=.                                                                                                        |
@@ -11907,8 +11908,8 @@ current buffer the workflow is very fast.
 | =H-m C-y n=   | =M-x aya-next-in-history=     | Set =aya-current= to the next item in history. Wraps at the end of history.                                                                                       |
 | =H-m C-y p=   | =M-x aya-previous-in-history= | Set =aya-current= to the previous item in history. Wraps around at start of history.                                                                              |
 | =H-m C-y s=   | =M-x aya-persist-snippet=     | Save the current auto-snippet to a user snippets folder. The current =major-mode= name will be used to determine the snippets sub-directory to store the snippet. |
-| =H-m C-y o=   | =M-x aya-open-line=           | Generic expansion function. It will either expand or move to the next field depending on the context.                                                             |
-|---------------+-------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-m C-y o=   | =M-x aya-open-line=           | Generic expansion function. It will either expand or move to the next field depending on the context.                                                           |
+|-------------+-----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-yasnippet.el :var file-description="Advanced yasnippet setup"
 ;;
@@ -13307,7 +13308,27 @@ References:
 
 (defun psimacs/config/handle-voice-command (cmd)
   "Handler for voice commands."
+  ;;(message cmd)
+  (setq unread-command-events
+    (nconc (listify-key-sequence (kbd cmd)) unread-command-events))
+)
+
+(defun psimacs/config/handle-voice-test-command (cmd)
+  "Handler for voice commands."
   (message cmd)
+)
+
+(defun psimacs/config/list-interactive-documented-commands()
+  "Get a list of all interactive commands."
+  (let ((result))
+    (mapatoms
+     (lambda (s)
+       (when (and (commandp s)
+                  (documentation s t)
+                  (null (get s 'byte-obsolete-info)))
+         (setq result (cons s result)))))
+    result
+  )
 )
 
 (use-package porthole
@@ -13323,6 +13344,8 @@ References:
     )
 
     (porthole-expose-function psimacs/porthole/servername 'psimacs/config/handle-voice-command)
+    (porthole-expose-function psimacs/porthole/servername 'psimacs/config/handle-voice-test-command)
+    (porthole-expose-function psimacs/porthole/servername 'psimacs/config/list-interactive-documented-commands)
     (porthole-expose-function psimacs/porthole/servername 'insert)
 )
 #+end_src
@@ -16087,9 +16110,9 @@ Once information is in the system, it may need to be moved around. Org provides 
 
                         (setq result (concat
                             "\n"
-                            "#+BEGIN_SRC" " " arg "\n"
+                            "#+begin_src" " " arg "\n"
                             region-text "\n"
-                            "#+END_SRC" "\n"
+                            "#+end_src" "\n"
                             ))))
                 result
             )
@@ -16556,7 +16579,9 @@ Each link also can be exported to LaTeX to build a PDF.
                 (?o "to ODT" org-ref-export-to-odt)
                 (?O "to Org buffer" org-ref-export-as-org)
                 (?e "to email" org-ref-export-to-message)
-                (?w "to docx" org-ref-export-to-docx))))
+                (?w "to docx" org-ref-export-to-docx)
+                (?X "notebook" psimacs/jupyter/export/notebook)
+        )))
 
         (defun psimacs/config/citeproc-bt--process-brackets (fn &rest args)
           "Advice for the citeproc-bt--process-brackets allowing resuing of embedded LaTeX math."
@@ -16815,16 +16840,16 @@ to =M-<TAB>=.
 
 | Key binding | Description                           |
 |-------------+---------------------------------------|
-| =<﻿a <tab>=    | =#+begin_export ascii ... #+end_export= |
-| =<c <tab>=    | =#+begin_center ... #+end_center=       |
-| =<C <tab>=    | =#+begin_comment ... #+end_comment=     |
-| =<e <tab>=    | =#+begin_example ... #+end_example=     |
-| =<E <tab>=    | =#+begin_export ... #+end_export=       |
-| =<h <tab>=    | =#+begin_export html ... #+end_export=  |
-| =<l <tab>=    | =#+begin_export latex ... #+end_export= |
-| =<q <tab>=    | =#+begin_quote ... #+end_quote=         |
-| =<s <tab>=    | =#+begin_src ... #+end_src=             |
-| =<v <tab>=    | =#+begin_verse ... #+end_verse=         |
+| =<﻿a TAB=      | =#+begin_export ascii ... #+end_export= |
+| =<c TAB=      | =#+begin_center ... #+end_center=       |
+| =<C TAB=      | =#+begin_comment ... #+end_comment=     |
+| =<e TAB=      | =#+begin_example ... #+end_example=     |
+| =<E TAB=      | =#+begin_export ... #+end_export=       |
+| =<h TAB=      | =#+begin_export html ... #+end_export=  |
+| =<l TAB=      | =#+begin_export latex ... #+end_export= |
+| =<q TAB=      | =#+begin_quote ... #+end_quote=         |
+| =<s TAB=      | =#+begin_src ... #+end_src=             |
+| =<v TAB=      | =#+begin_verse ... #+end_verse=         |
 |-------------+---------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
@@ -16915,6 +16940,899 @@ Reference: [[https://scripter.co/org-keywords-lower-case/][Converting Org keywor
         (setq count (1+ count))
         (replace-match (downcase (match-string-no-properties 1)) :fixedcase nil nil 1))
       (message "Lower-cased %d matches" count))))
+#+end_src
+
+*** Jupyter Notebook Integration
+
+[[https://github.com/nnicandro/emacs-jupyter][emacs-jupyter]] provides /REPL/ and org-mode source block frontends to Jupyter kernels.
+Kernel interactions integrated with Emacs’s built-in features.
+
+| Key binding | Command                                        | Description                                     |
+|-------------+------------------------------------------------+-------------------------------------------------|
+| =H-SPC j=     | =M-x psimacs/hydra/jupyter/open-hydra=           | Show hydra for jupyter notebooks commands.      |
+| =H-m n=       | =M-x psimacs/jupyter/next-jupyter-src-block=     | Move point into the next jupyter src block.     |
+| =H-m p=       | =M-x psimacs/jupyter/previous-jupyter-src-block= | Move point into the previous jupyter src block. |
+| =H-RET=       | =M-x jupyter-org-execute-and-next-block=         | Execute block and move to next block.           |
+|-------------+------------------------------------------------+-------------------------------------------------|
+
+The following commands are defined only if point is in an org-babel source block.
+
+| Key binding | Command                                | Description                                                                 |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------|
+| =C-RET=       | =M-x org-ctrl-c-ctrl-c=                  | Execute block.                                                              |
+| =S-RET=       | =M-x jupyter-org-execute-and-next-block= | Execute block and move to next block.                                       |
+| =M-RET=       |                                        | Execute block and add a new block.                                          |
+| =C-M-RET=     | =M-x jupyter-org-execute-to-point=       | Execute block to point.                                                     |
+| =S-C-RET=     | =M-x org-babel-execute-buffer=           | Execute all blocks of buffer.                                               |
+| =H-M-RET=     | =M-x jupyter-org-execute-subtree=        | Execute subree to point.                                                    |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------|
+| =C-M-x=       | =M-x jupyter-eval-defun=                 | Evaluate the function at point.                                             |
+| =M-i=         | =M-x jupyter-inspect-at-point=           | Inspect the code at point.                                                  |
+| =C-c C-b=     | =M-x jupyter-eval-buffer=                | Evaluate the whole buffer.                                                  |
+| =C-c C-c=     | =M-x jupyter-eval-line-or-region=        | Evaluate line or region.                                                    |
+| =C-c C-i=     | =M-x jupyter-repl-interrupt-kernel=      | Interrupt the kernel if possible.                                           |
+| =C-c C-r=     | =M-x jupyter-repl-restart-kernel=        | Restart the kernel.                                                         |
+| =C-c C-s=     | =M-x jupyter-repl-scratch-buffer=        | Switch to a scratch buffer connected to the current REPL in another window. |
+| =C-c C-o=     | =M-x jupyter-eval-remove-overlays=       | Remove all evaluation result overlays in the buffer.                        |
+| =C-c M-:=     | =M-x jupyter-eval-string=                | Evaluate string.                                                            |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------|
+
+
+| Key binding | Description                           |
+|-------------+---------------------------------------|
+| =<bsh TAB=    | Bash shell source code block.         |
+| =<sh TAB=     | Shell source code block.              |
+| =<el TAB=     | Emacs lisp source code block.         |
+| =<ell TAB=    | Lexical Emacs lisp source code block. |
+| =<p TAB=      | Python source code block.             |
+| =<ip TAB=     | IPython source code block.            |
+| =<jp TAB=     | Jupyter source code block.            |
+| =<jps TAB=    | Jupyter session source code block.    |
+| =<sl TAB=     | Source block with language choice.    |
+| =sbh TAB=     | Get source header value snippet.      |
+|-------------+---------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; Export org to jupyter notebook
+;;
+(use-package ox-ipynb
+  :straight (:host github :repo "jkitchin/ox-ipynb")
+  :after ox
+  :config
+    (defun psimacs/config/export-to-ipynb-file (&optional async subtreep visible-only body-only info)
+              "Advice for the ox-ipynb-export-to-ipynb-file."
+
+      (let ((org-export-with-broken-links t))
+      (with-current-buffer (ox-ipynb-export-to-ipynb-buffer async subtreep visible-only body-only info)
+        (let* (
+               (efn (message (psimacs/file-system/find-file default-directory)))
+               (buf (find-file-noselect efn) ))
+
+          (message efn)
+
+          (write-file efn)
+          (with-current-buffer buf
+            (setq-local export-file-name efn))
+          (kill-buffer buf)
+          efn))))
+
+    (advice-add 'ox-ipynb-export-to-ipynb-file :override #'psimacs/config/export-to-ipynb-file)
+)
+#+end_src
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; Configuration of emacs-jupyter
+;;
+(use-package zmq)
+(use-package jupyter
+    :after ox-ipynb
+    :demand t
+    :config
+        (message "jupyter has been configured!")
+
+        ;(setq jupyter--debug t)
+        (setq jgupyter-default-timeout 20.0)
+        (setq jupyter-long-timeout 120)
+
+        (defvar psimacs/config/jupyter-result-with-colons t
+            "Print colons in front of result values.")
+
+        (defvar psimacs/config/jupyter-advice-jupyter-fn t
+            "Advice jupyter function with private reimplementations.")
+
+        ;; * automatic buffer kernels This is done by setting a session name in the org
+        ;; file <jps is a yasnippet that does this reliably. I decided for now it is too
+        ;; difficult to advise everything in jupyter to get the same result.
+
+        (add-to-list 'org-babel-load-languages '(jupyter . t) t)
+
+        (setq org-babel-default-header-args:jupyter-python
+              '((:results . "both")
+                (:session . "jupyter-python")
+                (:kernel  . "python3")
+                (:pandoc  . "t")
+                (:exports . "both")
+                (:cache   . "no")
+                (:noweb   . "no")
+                (:hlines  . "no")
+                (:tangle  . "no")
+                (:eval    . "never-export")))
+
+        (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+
+        (add-to-list 'org-src-lang-modes '("jupyter-python" . python))
+
+        (defalias 'org-babel-execute:ipython 'org-babel-execute:jupyter-python)
+        (setq org-babel-default-header-args:ipython org-babel-default-header-args:jupyter-python)
+        (add-to-list 'org-src-lang-modes '("ipython" . python))
+
+        (defun psimacs/jupyter/get-session ()
+          "Get the session name in the current buffer."
+          (let ((lang (car (org-babel-get-src-block-info))))
+            (or
+             (cdr
+              (assoc :session
+                     (cadr (org-babel-params-from-properties lang))))
+             (cdr (assoc :session
+                         org-babel-default-header-args:jupyter-python)))))
+
+
+        (defun psimacs/jupyter/org-kill-kernel ()
+          "Kill the kernel."
+          (interactive)
+          (let ((session (psimacs/jupyter/get-session)))
+            (catch 'done
+              (cl-loop for buffer in (buffer-list)
+                       do
+                       (when (string-match
+                              (format "*jupyter-repl\\[.*\\]-%s*" session)
+                              (buffer-name buffer))
+                         (kill-buffer buffer)
+                         (setq header-line-format nil)
+                         (throw 'done buffer))))))
+
+
+        (defun psimacs/jupyter/kill-kernel-hook (&rest args)
+          (setq header-line-format
+                (format "%s running. Click here to kill it."
+                        (psimacs/jupyter/get-session)))
+          (local-set-key [header-line down-mouse-1]
+                         `(lambda ()
+                            (interactive)
+                            (psimacs/jupyter/org-kill-kernel)))
+          (add-hook 'kill-buffer-hook 'psimacs/jupyter/org-kill-kernel nil t))
+
+
+        (defun psimacs/jupyter/check-restart (&rest args)
+          "If :restart is in the header, kill the kernel first."
+          (let ((src (org-element-context)))
+            (when (string-match ":restart" (or (org-element-property :parameters src) ""))
+              (psimacs/jupyter/org-kill-kernel))))
+
+        ;; * Fixing raw results
+        ;; in emacs-jupyter :results raw, :results drawer did not work. This function seems to do the trick.
+
+        ;; This function in emacs-jupyter seems to take a long time, and maybe is run
+        ;; asynchronously. That messes up the order of results, as faster running things
+        ;; come first in some process filter. This avoids this step and we do it later
+        ;; in `psimacs/jupyter/org-sync-results'. There is probably no guarantee that
+        ;; this always works though.
+        (defun psimacs/jupyter/org-export-block-or-pandoc (type value params)
+          "Return VALUE, either converted with pandoc or in an export block.
+        If PARAMS has non-nil value for key ':pandoc' and TYPE is in
+        `jupyter-org-pandoc-convertable', convert the result with pandoc.
+        Otherwise, wrap it in an export block."
+          (jupyter-org-export-block type value))
+
+
+        ;; used to advise `jupyter-org-sync-results'. I do this to fix some issues liek
+        ;; retsults drawers, etc.
+        (defun psimacs/jupyter/org-sync-results (req)
+          "Return the result string in org syntax for the results of REQ.
+        Meant to be used as the return value of
+        `org-babel-execute:jupyter'."
+          (when-let* ((results (nreverse (jupyter-org-request-results req)))
+                      ;; Not sure why these are reversed above, it works right for some things,
+                      ;; but not right for display stuff. I wonder if there is some way
+                      ;; to tell when something is displayed.
+                      (params (jupyter-org-request-block-params req))
+                      (result-params (alist-get :result-params params)))
+
+            (when psimacs/config/jupyter-result-with-colons
+              (setq results (jupyter-org--coalesce-stream-results results)))
+
+            ;; There is an inconsistency when you specify :results value where printed
+            ;; outputs and the return value is provided, sometimes as a fixed width.
+            ;; That is consistent with the jupyter notebook, but not consistent with
+            ;; org-babel. Here I only return the last thing if value is selected, and do
+            ;; not require it to be fixed-width. That also isn't quite right, except in
+            ;; a drawer.
+            (when (member "value" result-params)
+              (let ((retval (car (last results))))
+                (setq results
+                      (list
+                       (cond
+                        ((eq 'fixed-width (org-element-type retval))
+                         (if (not psimacs/config/jupyter-result-with-colons)
+                           (org-element-property :value retval)
+                          retval))
+                        (t
+                         retval))))))
+
+            (when (member "both" result-params)
+              (let ((retval (car (last results))))
+                (setf (car (last results))
+                      (cond
+                       ((eq 'fixed-width (org-element-type retval))
+                        (if (not psimacs/config/jupyter-result-with-colons)
+                         (org-element-property :value retval)
+                         retval))
+                       (t
+                        retval)))))
+
+            ;; Do pandoc conversion here so the order of results is preserved.
+            (when (cdr (assoc :pandoc params))
+              (setq results
+                    (cl-loop for result in results
+                             collect
+                             (cond
+                              ((stringp result)
+                               result)
+                              ((and (listp result)
+                                    (member (org-element-property :type result) jupyter-org-pandoc-convertable))
+                               (jupyter-pandoc-convert
+                                (org-element-property :type result)
+                                "org"
+                                (org-element-property :value result)))
+                              (t
+                               result)))))
+
+            (org-element-interpret-data
+             (cond
+              ;; This happens when a named block is a variable in another block.
+              ;; It is different than a :results silent header.
+              ((jupyter-org-request-silent-p req)
+               results)
+
+              ((member "raw" result-params)
+               results)
+
+              ;; fall through to a drawer for now.
+              (t
+               (apply #'jupyter-org-results-drawer results))))))
+
+        ;; This was causing a problem in emacs-jupyter for using code blocks as
+        ;; variables in other blocks. Commenting out the first line seems to fix it for
+        ;; me.
+        (defun psimacs/jupyter/org--add-result (req result)
+          (cond
+           ;; ((jupyter-org-request-silent-p req)
+           ;;  (unless (equal (jupyter-org-request-silent-p req) "none")
+           ;;    (message "%s" (org-element-interpret-data result))))
+           ((jupyter-org-request-async-p req)
+            (jupyter-org--clear-request-id req)
+            (jupyter-org--do-insert-result req result))
+           (t
+            (push result (jupyter-org-request-results req)))))
+
+
+        (defvar psimacs/jupyter/advices
+          '((org-babel-execute:jupyter          :before   psimacs/jupyter/kill-kernel-hook)
+            (org-babel-execute:jupyter          :before   psimacs/jupyter/check-restart)
+            (jupyter-org-sync-results           :override psimacs/jupyter/org-sync-results)
+            (jupyter-org--add-result            :override psimacs/jupyter/org--add-result)
+            (jupyter-org-export-block-or-pandoc :override psimacs/jupyter/org-export-block-or-pandoc)
+          )
+          "Advices for psimacs/jupyter.
+        This is a list of (emacs-jupyter-fn :position psimacs/jupyter/fn)")
+
+
+        (defun psimacs/jupyter/advise ()
+          "Turn psimacs/jupyter advices on."
+          (interactive)
+          (message "Advising emacs-jupyter")
+          (setq psimacs/config/jupyter-advice-jupyter-fn t)
+          (cl-loop for (emacs-jupyter-fn position psimacs/jupyter/fn) in psimacs/jupyter/advices
+                   do
+                   (advice-add emacs-jupyter-fn position psimacs/jupyter/fn)))
+
+
+        (defun psimacs/jupyter/unadvise ()
+          "Turn psimacs/jupyter advices off."
+          (interactive)
+          (message "Un-advising emacs-jupyter")
+          (setq psimacs/config/jupyter-advice-jupyter-fn nil)
+          (cl-loop for (emacs-jupyter-fn position psimacs/jupyter/fn) in psimacs/jupyter/advices
+                   do
+                   (advice-remove emacs-jupyter-fn psimacs/jupyter/fn)))
+
+        (defun psimacs/jupyter/toggle-advice-functions ()
+            "Toggle the advice of jupyter functions."
+            (interactive)
+            (if psimacs/config/jupyter-advice-jupyter-fn
+                (psimacs/jupyter/unadvise)
+               (psimacs/jupyter/advise)))
+
+        (defun psimacs/jupyter/toggle-results-with-colons ()
+            "Toggle the flag psimacs/config/jupyter-result-with-colons"
+            (interactive)
+            (setq psimacs/config/jupyter-result-with-colons (not psimacs/config/jupyter-result-with-colons)))
+
+        ;; Turn on by default
+        (psimacs/jupyter/advise)
+
+
+        ;; I don't know where the \\ lines come from, this removes them.
+        (defun psimacs/config/rm-backslashes ()
+          "rm \\ from the end of lines."
+          (let ((result-start (org-babel-where-is-src-block-result)))
+            (save-excursion
+              (when (and result-start
+                         (goto-char result-start)
+                         (looking-at org-babel-result-regexp))
+                (while (re-search-forward "\\\\\\\\" (org-babel-result-end) t)
+                  (replace-match "")
+                  ;; I don't know why this is needed, but without, it was not finding everything.
+                  (goto-char result-start))))))
+
+        (add-hook 'org-babel-after-execute-hook 'psimacs/config/rm-backslashes)
+
+        ;; * Fix org-show-entry so it doesn't collapse results all the time
+        ;;
+        ;; I like to see the results, and this function usually hides them. I added the
+        ;; unless wrapper, so it doesn't happen if point is on a src block. In a
+        ;; previous version I just commented out the org-cycle-hide-drawers line, and I
+        ;; may need to go back to that. this version should work as the original one
+        ;; though except in src blocks. normally it is triggered by jumping to the next
+        ;; src-block, and this is when I don't want it to hide the previous results.
+
+        (defun psimacs/org/show-entry ()
+          "Show the body directly following this heading.
+        Show the heading too, if it is currently invisible."
+          (interactive)
+          (unless (org-in-src-block-p)
+            (save-excursion
+              (ignore-errors
+                (org-back-to-heading t)
+                (outline-flag-region
+                 (max (point-min) (1- (point)))
+                 (save-excursion
+                   (if (re-search-forward
+                        (concat "[\r\n]\\(" org-outline-regexp "\\)") nil t)
+                       (match-beginning 1)
+                     (point-max)))
+                 nil)
+                (org-cycle-hide-drawers 'children)))))
+
+        (advice-add 'org-show-entry :override #'psimacs/org/show-entry)
+
+        ;; * Working with exceptions
+        ;;
+        ;; The syntax highlighting for exceptions seems broken. `jupyter-org-client' has
+        ;; a bunch of code that suggests this should be working, even referencing my
+        ;; blog post about it. This is ok for now I guess. As I recall the syntax
+        ;; highlighting is not persistent if you don't put the ansi codes in the buffer.
+        ;;
+        ;; this handled in generic functions that I find too difficult to trace for now.
+
+        (defun psimacs/jupyter/jump-to-error ()
+          "In a src block, jump to the line indicated as an error in the results.
+        In a SyntaxError, there is not a traceback with a line number, so
+        we handle it separately. It doesn't seem like it should be that
+        way, but it is."
+          (interactive)
+          (let* ((cp (point))
+                 (location (org-babel-where-is-src-block-result))
+                 (case-fold-search t))
+
+            (when (and location
+                       (goto-char location)
+                       (looking-at org-babel-result-regexp))
+              (cond
+               ;; Check for SyntaxError
+               ((string-match "SyntaxError:" (buffer-substring location (org-babel-result-end)))
+                (re-search-forward (rx (zero-or-more " ") "^") nil (org-babel-result-end))
+                (forward-line -1)
+                (let ((pattern (string-trim-left
+                                (buffer-substring-no-properties
+                                 (line-beginning-position) (line-end-position)))))
+                  (goto-char cp)
+                  (goto-char (org-element-property :begin (org-element-context)))
+                  (unless
+                      (search-forward pattern (org-element-property :end (org-element-context)) t)
+                    (message "No SyntaxError found like %s" pattern))))
+
+               ;; search for something like --> 21
+               (t
+                (goto-char location)
+                (re-search-forward "^-*> \\([[:digit:]]*\\)" (org-babel-result-end))
+                (save-match-data
+                  (goto-char cp)
+                  (goto-char (org-element-property :begin (org-element-context))))
+                (forward-line (string-to-number (match-string-no-properties 1))))))))
+
+
+        ;; * Handling ansi codes
+
+        (defun psimacs/jupyter/ansi ()
+          "Replaces ansi-codes in exceptions with colored text.
+        I thought emacs-jupyter did this automatically, but it may only
+        happen in the REPL. Without this, the tracebacks are very long
+        and basically unreadable.
+
+        We also add some font properties to click on goto-error.
+
+        This should only apply to jupyter-lang blocks."
+          (when (string-match "^jupyter" (car (or (org-babel-get-src-block-info t) '(""))))
+            (let* ((r (org-babel-where-is-src-block-result))
+                   (result (when r
+                             (save-excursion
+                               (goto-char r)
+                               (org-element-context)))))
+              (when result
+                (ansi-color-apply-on-region (org-element-property :begin result)
+                                            (org-element-property :end result))
+
+                ;; Let's fontify "# [goto error]" to it is clickable
+                (save-excursion
+                  (goto-char r)
+                  (when (search-forward "# [goto error]" (org-element-property :end result) t)
+                    (add-text-properties
+                     (match-beginning 0) (match-end 0)
+                     (list 'help-echo "Click to jump to error."
+                           'mouse-face 'highlight
+                           'local-map (let ((map (copy-keymap help-mode-map)))
+                                        (define-key map [mouse-1] (lambda ()
+                                                                    (interactive)
+                                                                    (search-backward "#+begin_src")
+                                                                    (psimacs/jupyter/jump-to-error)))
+                                        map))))))
+
+              t)))
+
+        (defun psimacs/jupyter/insert-src-block (&optional below)
+          "Insert a src block above the current point.
+With prefix arg BELOW, insert it below the current point.
+
+If point is in a block, copy the header to the new block"
+          (interactive "P")
+          (if (org-in-src-block-p)
+              (let* ((src (org-element-context))
+	             (start (org-element-property :begin src))
+	             (end (org-element-property :end src))
+	             (lang (org-element-property :language src))
+	             (switches (or (org-element-property :switches src) ""))
+	             (parameters (or (org-element-property :parameters src) ""))
+	             location)
+	        (if below
+	            (progn
+	              (goto-char start)
+	              (setq location (org-babel-where-is-src-block-result nil nil))
+	              (if (not  location)
+		          (goto-char end)
+		        (goto-char location)
+		        (goto-char (org-element-property :end (org-element-context))))
+	              (insert (format "\n#+begin_src %s %s %s\n\n#+end_src\n\n" lang switches parameters))
+	              (forward-line -3))
+	          ;; after current block
+	          (goto-char (org-element-property :begin (org-element-context)))
+	          (insert (format "\n#+begin_src %s %s %s\n\n#+end_src\n\n" lang switches parameters))
+	          (forward-line -3)))
+
+            ;; Not in a src block, just insert a block
+            (beginning-of-line)
+            (insert (format "\n#+begin_src %s\n\n#+end_src\n" (completing-read "Language: " (mapcar 'car org-babel-load-languages))))
+            (forward-line -1)))
+
+
+            (defun psimacs/jupyter/ob/jump-to-first-line ()
+              "Move point to start of first line in the src block."
+              (interactive)
+              (org-mark-ring-push)
+              (org-edit-special)
+              (goto-char (point-min))
+              (org-edit-src-exit))
+
+
+            (defun psimacs/jupyter/ob/jump-to-end-line ()
+              "Move point to end of last line in the src block."
+              (interactive)
+              (org-mark-ring-push)
+              (org-edit-special)
+              (goto-char (point-max))
+              (org-edit-src-exit))
+
+
+            (defun psimacs/jupyter/ob/jump-to-end ()
+              "Jump to src block end."
+              (interactive)
+              (org-mark-ring-push)
+              (let* ((src (org-element-context))
+                     (nlines (org-element-property :post-blank src)))
+
+                (goto-char (org-element-property :end src))
+                (when (numberp nlines)
+                  (forward-line (* -1 (cl-incf nlines))))
+                (goto-char (line-end-position))))
+
+            (defun psimacs/jupyter/ob/toggle-output ()
+              "Toggle folded state of results if there are some."
+              (interactive)
+              (let ((loc (org-babel-where-is-src-block-result)))
+                (when loc
+                  (save-excursion
+                    (goto-char loc)
+                    (org-cycle)))))
+
+
+            (defun psimacs/jupyter/ob/mark-code ()
+              "Mark the code in the block."
+              (interactive)
+              (org-edit-special)
+              (let ((p0 (point-min))
+                    (p1 (point-max)))
+                (goto-char p0)
+                (org-edit-src-exit)
+                (set-mark (point))
+                (goto-char (+ (point) (- p1 2)))))
+
+            ;; * line numbers
+            (defvar psimacs/jupyter/ob/number-line-overlays '()
+              "List of overlays for line numbers.")
+
+            (make-variable-buffer-local 'psimacs/jupyter/ob/number-line-overlays)
+
+            (defun psimacs/jupyter/ob/toggle-line-numbers ()
+              (interactive)
+              (if psimacs/jupyter/ob/number-line-overlays
+                  (psimacs/jupyter/ob/remove-line-numbers)
+                (psimacs/jupyter/ob/add-line-numbers)))
+
+
+            (defun psimacs/jupyter/ob/remove-line-numbers ()
+              "Remove line numbers from "
+              (interactive)
+              (mapc 'delete-overlay
+                    psimacs/jupyter/ob/number-line-overlays)
+              (setq-local psimacs/jupyter/ob/number-line-overlays '())
+              (remove-hook 'post-command-hook 'psimacs/jupyter/ob/add-line-numbers t))
+
+
+            (defun psimacs/jupyter/ob/add-line-numbers ()
+              "Add line numbers to an org src-block."
+              (interactive)
+              (save-excursion
+                (let* ((src-block (org-element-context))
+                       (nlines (- (length
+                                   (s-split
+                                    "\n"
+                                    (org-element-property :value src-block)))
+                                  1)))
+                  ;; clear any existing overlays
+                  (psimacs/jupyter/ob/remove-line-numbers)
+
+                  (goto-char (org-element-property :begin src-block))
+                  ;; the beginning may be header, so we move forward to get the #+BEGIN
+                  ;; line. Then jump one more to get in the code block
+                  (while (not (looking-at "#\\+BEGIN"))
+                    (forward-line))
+                  (forward-line)
+                  (cl-loop for i from 1 to nlines
+                           do
+                           (beginning-of-line)
+                           (let (ov)
+                             (setq ov (make-overlay (point)(point)))
+                             (overlay-put
+                              ov
+                              'before-string (propertize
+                                              (format "%03s " (number-to-string i))
+                                              'font-lock-face '(:foreground "black" :background "gray80")))
+                             (push ov psimacs/jupyter/ob/number-line-overlays))
+                           (forward-line))))
+              ;; This allows you to update the numbers if you change the block, e.g. add/remove lines
+              (add-hook 'post-command-hook 'psimacs/jupyter/ob/add-line-numbers nil 'local))
+
+
+        ;; https://github.com/nnicandro/emacs-jupyter/issues/391
+        ;; https://stackoverflow.com/questions/47585133/how-to-auto-suppress-results-for-empty-output
+        (advice-add 'org-babel-insert-result :filter-args
+            (lambda (args)
+              (let ((result (car args))
+                (result-params (cadr args))
+                (others (cddr args)))
+            (apply 'list
+                   result
+                   (if (or
+                    (string-empty-p result) (not result))
+                   (progn (org-babel-remove-result) '("silent"))
+                    result-params)
+                   others))))
+
+
+        (add-to-list 'org-babel-after-execute-hook 'psimacs/jupyter/ansi t)
+
+        (defun psimacs/jupyter/export/notebook (&optional async subtreep visible-only body-only ext-plist)
+          "Export notebook to .html and .ipynb"
+          (interactive)
+          (let* ((name (file-name-sans-extension (buffer-file-name)))
+                 (wcfg (current-window-configuration))
+                )
+            (let ((org-export-with-drawers "RESULTS"))
+              (with-current-buffer (org-ref-export-as-org)
+                (with-current-buffer (org-html-export-as-html)
+                  (write-file (concat name ".html"))
+                  (quit-window t)
+                  )
+                (quit-window t)
+                )
+              )
+
+            (let ((org-export-with-broken-links t)
+                  (org-export-with-drawers nil))
+              (with-current-buffer (org-ref-export-as-org)
+                (with-current-buffer (ox-ipynb-export-to-ipynb-buffer)
+                  (write-file (concat name ".ipynb"))
+                  (quit-window t)
+                  )
+                (quit-window t)
+                )
+              )
+              (set-window-configuration wcfg)
+            )
+        )
+
+        (defun psimacs/jupyter/next-jupyter-src-block ()
+          "Move point into the next jupyter src block."
+          (interactive)
+          (let ((found nil))
+            (while (not found)
+              (org-babel-next-src-block)
+
+              (if (org-in-src-block-p)
+                  (let ((info (org-babel-get-src-block-info)))
+                    (when (string-match "^jupyter-\\(.+\\)$" (car info))
+                      (setq found t)
+                    )
+                  )
+                (setq found t)))))
+
+        (defun psimacs/jupyter/previous-jupyter-src-block ()
+          "Move point into the previous jupyter src block."
+          (interactive)
+          (let ((found nil))
+            (while (not found)
+              (org-babel-previous-src-block)
+
+              (if (org-in-src-block-p)
+                  (let ((info (org-babel-get-src-block-info)))
+                    (when (string-match "^jupyter-\\(.+\\)$" (car info))
+                      (setq found t)
+                    )
+                  )
+                (setq found t)))))
+
+        (defun psimacs/jupyter/in-jupyter-src-block-p ()
+            "t if point is inside a jupyter source block, else nil."
+            (let ((found nil))
+                (if (org-in-src-block-p)
+                    (let ((info (org-babel-get-src-block-info)))
+                        (if (string-match "^jupyter-\\(.+\\)$" (car info))
+                            (setq found t)
+                        )
+                    ))
+                found
+            ))
+
+        (defun psimacs/jupyter/execute-all-jupyter-src-blocks ()
+          "Execute all jupyter source blocks of the document."
+          (interactive)
+          (save-excursion
+            (let ((proceed t))
+                (goto-char (point-min))
+                (unless (psimacs/jupyter/in-jupyter-src-block-p)
+                    (psimacs/jupyter/next-jupyter-src-block))
+
+                (while (and proceed (psimacs/jupyter/in-jupyter-src-block-p))
+                    (org-ctrl-c-ctrl-c)
+                    (let ((p (point)))
+                        (psimacs/jupyter/next-jupyter-src-block)
+                        (when (eq p (point))
+                            (setq proceed nil))
+
+                    )
+                )
+            )
+          )
+        )
+
+        (defun psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next ()
+          "Execute current resp. next jupyter source blocks and move to the next one."
+          (interactive)
+          (unless (psimacs/jupyter/in-jupyter-src-block-p)
+            (psimacs/jupyter/next-jupyter-src-block))
+
+          (when (psimacs/jupyter/in-jupyter-src-block-p)
+            (org-ctrl-c-ctrl-c)
+            (psimacs/jupyter/next-jupyter-src-block)
+            (recenter-top-bottom)
+          )
+        )
+
+        (defvar psimacs/jupyter/src-keys '()
+          "Keep a list of key definitions for each language.")
+
+
+        (defmacro psimacs/jupyter/define-src-key (language key def)
+          "For LANGUAGE (symbol) src blocks, define key sequence KEY as DEF.
+KEY should be a string sequence that will be used in a `kbd' sequence.
+This is like `define-key', except the definition only applies in
+src blocks for a specific LANGUAGE.
+
+If language is nil apply to all src-blocks.
+
+Adapted from
+http://endlessparentheses.com/define-context-aware-keys-in-emacs.html"
+          (declare (indent 3)
+	           (debug (form form form &rest sexp)))
+          ;; store the key in psimacs/jupyter/src-keys
+          (unless (cdr (assoc language psimacs/jupyter/src-keys))
+            (cl-pushnew (list language '()) psimacs/jupyter/src-keys))
+
+          (cl-pushnew (cons key def) (cdr (assoc language psimacs/jupyter/src-keys)))
+
+          `(define-key org-mode-map ,(kbd key)
+             '(menu-item
+               ,(format "maybe-%s" (or (car (cdr-safe def)) def))
+               nil
+               :filter (lambda (&optional _)
+		         ,(if language
+		              `(when (and (org-in-src-block-p)
+				          (string= ,(symbol-name language)
+					           (car (org-babel-get-src-block-info t))))
+			         ,def)
+		            `(when (org-in-src-block-p)
+		               ,def))))))
+
+
+        (defvar psimacs/jupyter/src-key-bindings
+          '(("C-<return>"   . #'org-ctrl-c-ctrl-c)
+            ("S-<return>"   . #'jupyter-org-execute-and-next-block)
+            ("M-<return>"   . #'(progn (org-ctrl-c-ctrl-c) (psimacs/jupyter/insert-src-block t)) )
+            ("C-M-<return>" . #'jupyter-org-execute-to-point)
+            ("H-M-<return>" . #'jupyter-org-execute-subtree)
+            ("S-C-<return>" . #'jupyter-org-restart-and-execute-to-point)
+            ("S-M-<return>" . #'jupyter-org-restart-kernel-execute-block)
+            ("H-C-<return>" . #'jupyter-org-restart-kernel-execute-buffer))
+          "Keybindings for src-blocks.")
+
+        (defun psimacs/jupyter/src-key-bindings ()
+          "Function to define key-bindings.
+Usually called in a hook function."
+          ;; These should work in every src-block IMO.
+          (cl-loop for (key . cmd) in psimacs/jupyter/src-key-bindings
+	           do
+	           (eval `(psimacs/jupyter/define-src-key nil ,key ,cmd))))
+
+        ;; I think this hook needs to be run at the end.
+        (add-hook 'org-mode-hook 'psimacs/jupyter/src-key-bindings t)
+
+        (defun psimacs/jupyter/show-src-keys (language)
+          "Show a reminder of the keys bound for LANGUAGE blocks."
+          (interactive (list (completing-read "Language: " (mapcar 'car psimacs/jupyter/src-keys))))
+          (let* ((s (cl-loop for (key . function) in  (cdr (assoc (if (stringp language)
+							              (intern-soft language)
+							            language)
+							          psimacs/jupyter/src-keys))
+		             collect
+		             (format "%10s  %40s" key function)))
+	         (n (length s))
+	         (m (floor (/ n 2))))
+            (message "%s" (cl-loop for i to m concat
+			           (s-join " | "
+				           (append (-slice s (* i 3) (* 3 (+ i 1)))
+					           '("\n")))))))
+
+
+        ;; * The psimacs jupyter hydra
+        ;; customization of what is in jupyter
+        ;; These are more aligned with jupyter notebook I think
+
+        (defhydra psimacs/hydra/jupyter (:color blue :hint nil)
+            "
+            ^Execute^                 ^Navigate^                   ^Edit^              ^Misc^                  ^Kernel^
+^^^^^^^^^^------------------------------------------------------------------------------------------------------------------------
+    _C-<return>_: current               _p_: previous           _M-p_: move up        _l_: clear result        _S_: scratch
+    _H-<return>_: current jupyter next  _n_: next               _M-n_: move down      _L_: clear all results   _r_: goto REPL
+    _S-<return>_: current go next       _P_: busy previous        _x_: kill           _h_: edit header         _I_: interrupt kernel
+    _M-<return>_: current and new       _N_: busy next            _c_: copy           _i_: inspect             _R_: restart kernel
+  _C-M-<return>_: to point              _v_: jump to visible      _C_: clone          _o_: toggle ouput        _k_: kill kernel
+  _H-M-<return>_: subtree to point      _j_: jump to block        _m_: merge      _<tab>_: org-cycle
+  _S-C-<return>_: restart/to point      _E_: jump to error        _s_: split          _t_: toggle line numbers
+  _S-M-<return>_: restart/block         _a_: jump to first line   _+_: insert above   _#_: dwim comment
+  _H-C-<return>_: restart/buffer        _e_: jump to last line    _-_: insert below   _1_: toggle advice
+  ^ ^                                   _._: jump to end          _M_: mark code      _2_: toggle result colons
+  ^ ^                                   ^ ^                       ^ ^                 _X_: export notebook
+  _q_: quit  _z_: undo  _Z_: redo  _H-z_: redo all
+        "
+                ("C-<return>"   org-ctrl-c-ctrl-c)
+                ("H-<return>"   psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next :color red)
+                ("S-<return>"   jupyter-org-execute-and-next-block :color red)
+                ("M-<return>"   (progn (org-ctrl-c-ctrl-c) (psimacs/jupyter/insert-src-block t)) )
+                ("C-M-<return>" jupyter-org-execute-to-point)
+                ("H-M-<return>" jupyter-org-execute-subtree)
+                ("S-C-<return>" jupyter-org-restart-and-execute-to-point)
+                ("S-M-<return>" jupyter-org-restart-kernel-execute-block)
+                ("H-C-<return>" jupyter-org-restart-kernel-execute-buffer)
+
+                ("p" org-babel-previous-src-block :color red)
+                ("n" org-babel-next-src-block :color red)
+                ("P" jupyter-org-previous-busy-src-block :color red)
+                ("N" jupyter-org-next-busy-src-block :color red)
+                ("v" jupyter-org-jump-to-visible-block)
+                ("j" jupyter-org-jump-to-block)
+                ("E" psimacs/jupyter/jump-to-error)
+                ("a" psimacs/jupyter/ob/jump-to-first-line)
+                ("e" psimacs/jupyter/ob/jump-to-end-line)
+                ("." psimacs/jupyter/ob/jump-to-end)
+
+                ("M-p" jupyter-org-move-src-block :color red)
+                ("M-n" (jupyter-org-move-src-block t) :color red)
+                ("x" jupyter-org-kill-block-and-results)
+                ("c" jupyter-org-copy-block-and-results)
+                ("C" (jupyter-org-clone-block t))
+                ("m" jupyter-org-merge-blocks)
+                ("s" jupyter-org-split-src-block)
+                ("+" (jupyter-org-insert-src-block nil current-prefix-arg))
+                ("-" (jupyter-org-insert-src-block t current-prefix-arg))
+                ("M" psimacs/jupyter/ob/mark-code)
+
+                ("l" org-babel-remove-result)
+                ("L" jupyter-org-clear-all-results)
+                ("h" jupyter-org-edit-header)
+                ("i" jupyter-org-inspect-src-block)
+                ("o" psimacs/jupyter/ob/toggle-output)
+                ("<tab>" org-cycle :color red)
+                ("t" psimacs/jupyter/ob/toggle-line-numbers)
+                ("#" org-comment-dwim)
+                ("1" psimacs/jupyter/toggle-advice-functions :toggle psimacs/config/jupyter-advice-jupyter-fn :color red)
+                ("2" psimacs/jupyter/toggle-results-with-colons :toggle psimacs/config/jupyter-result-with-colons :color red)
+                ("X" psimacs/jupyter/export/notebook :color blue)
+
+                ("I" jupyter-org-interrupt-kernel)
+                ("S" org-babel-jupyter-scratch-buffer)
+                ("R" (jupyter-org-with-src-block-client (jupyter-repl-restart-kernel)))
+                ("r" org-babel-switch-to-session)
+                ("k" psimacs/jupyter/org-kill-kernel)
+
+                ("z" undo-fu-only-undo :color red)
+                ("Z" undo-fu-only-redo :color red)
+                ("H-z" undo-fu-only-redo-all :color red)
+                ("q" nil)
+        )
+
+        (defun psimacs/hydra/jupyter/open-hydra ()
+            "First search jupyter source block then open jupyter hydra."
+            (interactive)
+            (unless (psimacs/jupyter/in-jupyter-src-block-p)
+            (psimacs/jupyter/next-jupyter-src-block))
+
+            (when (psimacs/jupyter/in-jupyter-src-block-p)
+                (psimacs/hydra/jupyter/body)
+            )
+        )
+
+        ;;(jupyter-org-define-key (kbd "H-SPC j") #'psimacs/hydra/jupyter/body)
+
+    :bind (
+        :map org-mode-map
+            ("H-m n"      . psimacs/jupyter/next-jupyter-src-block)
+            ("H-m p"      . psimacs/jupyter/previous-jupyter-src-block)
+            ("H-<return>" . psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next)
+            ("H-SPC j")   . psimacs/hydra/jupyter/open-hydra-body
+        )
+)
 #+end_src
 
 ** Org-roam
@@ -17097,6 +18015,14 @@ Brains:
                     :unnarrowed t
                 )
                 (
+                    "n" "notebook" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "NotebookTemplate.org"))
+                    :if-new (
+                                file "notebooks/%<%Y-%m-%d>-${slug}.org"
+                            )
+                    :unnarrowed t
+                )
+                (
                     "r" "reference" plain
                     (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ReferenceTemplate.org"))
                     :if-new (
@@ -17120,84 +18046,6 @@ Brains:
                             )
                     :unnarrowed t
                 )
-
-                ; (
-                    ; "a" "article" plain
-                    ; "%?"
-                    ; :if-new (
-                                ; file+head "articles/%<%Y-%m-%d>-${slug}.org"
-                                ; "#+title: ${title}\n#+lastmod: \n\n"
-                            ; )
-                    ; :immediate-finish t
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "r" "reference" plain
-                    ; "%?"
-                    ; :if-new (
-                                ; file+head "references/%<%Y-%m-%d>-${slug}.org"
-                                ; "#+title: ${title}\n#+lastmod: \n\n"
-                            ; )
-                    ; :immediate-finish t
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "l" "programming language" plain
-                    ; "* Characteristics\n\n- Family: %?\n-Inspired by:\n\n* Reference \n\n"
-                    ; :if-new (
-                                ; file+head
-                                ; "%<%Y-%m-%d>-${slug}.org"
-                                ; "#+title: ${title}\n#+lastmod: \n\n")
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "b" "book notes" plain
-                    ; (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "BookNoteTemplate.org"))
-                    ; :if-new (
-                                ; file+head "references/%<%Y-%m-%d>-${slug}.org"
-                            ; )
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "B" "book notes" plain
-                    ; "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
-                    ; :if-new (
-                                ; file+head
-                                ; "%<%Y-%m-%d>-${slug}.org"
-                                ; "#+title: ${title}\n#+lastmod: \n\n"
-                            ; )
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "p" "project" plain
-                    ; "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-                    ; :if-new (
-                                ; file+head
-                                ; "%<%Y-%m-%d>-${slug}.org"
-                                ; "#+title: ${title}\n#+lastmod: \n#+category: ${title}\n#+filetags Project\n\n"
-                            ; )
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "P" "private" plain
-                    ; "%?"
-                    ; :if-new (
-                                ; file+head
-                                ; "%<%Y-%m-%d>-${slug}-private.org"
-                                ; "#+title: ${title}\n#+lastmod: \n\n"
-                            ; )
-                    ; :unnarrowed t
-                ; )
-                ; (
-                    ; "t" "temporary" plain
-                    ; "%?"
-                    ; :if-new (
-                                ; file+head
-                                ; "%<%Y-%m-%d>-${slug}-temp.org"
-                                ; "#+title: ${title}\n#+lastmod: \n#+hugo_lastmod: Time-stamp: <>\n\n"
-                            ; )
-                    ; :unnarrowed t
-                ; )
             )
         )
 
@@ -18341,7 +19189,6 @@ Easy way to duplicate a line and, optionally, comment-out the first one."
 #+end_src
 
 ** Mark
-
 *** Mark line
 
 #+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
@@ -18821,33 +19668,34 @@ References:
 - [[https://github.com/abo-abo/hydra][Hydra]]
 - [[https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/][Hydras to Share]]
 
-| Key binding | Command                                 | Description             |
-|-------------+-----------------------------------------+-------------------------|
-| =H-SPC H-SPC= | =M-x psimacs/hydra/hydra/body=            | Hydras...               |
-| =H-SPC SPC=   | =M-x psimacs/hydra/toggle/body=           | Toggles...              |
-| =H-SPC a=     | =M-x psimacs/hydra/apropos/body=          | Apropos...              |
-| =H-SPC d=     | =M-x dap-hydra=                           | DAP-Mode hydra...       |
-| =H-SPC e=     | =M-x psimacs/hydra/else/body=             | ELSE mode hydra...      |
-| =H-SPC h=     | =M-x psimacs/hydra/help/body=             | Help...                 |
-| =H-SPC H=     | =M-x psimacs/hydra/helpful/body=          | Helpful...              |
-| =H-SPC i=     | =M-x hydra-ivy/body=                      | Ivy...                  |
-| =H-SPC l=     | =M-x psimacs/hydra/lsp/body=              | LSP Mode hydra...       |
-| =H-SPC m=     | =M-x major-mode-hydra=                    | Major Mode's hydra...   |
-| =H-SPC p=     | =M-x psimacs/hydra/projectile/body=       | Projectile...           |
-| =H-SPC t=     | =M-x psimacs/hydra/avy/body=              | Fast Jumping in Text... |
-| =H-SPC T=     | =M-x psimacs/hydra/transpose/body=        | Transposing...          |
-| =H-SPC w=     | =M-x psimacs/hydra/window/body=           | Window...               |
-| =H-SPC y=     | =M-x psimacs/hydra/yasnippet/body=        | YASnippet...            |
-| =H-SPC C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...     |
-| =H-SPC C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...             |
-| =H-SPC C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                |
-| =H-SPC C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...          |
-| =H-SPC C-m=   | =M-x psimacs/hydra/word-modes/body=       | CamelCase...            |
-| =H-SPC C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...             |
-| =H-SPC C-p=   | =M-x hydra-projectile-cmake/body=         | Projectile CMake...     |
-| =H-SPC C-r=   | =M-x psimacs/hydra/rectangle/body=        | Rectangle...            |
-| =H-SPC C-s=   | =M-x psimacs/hydra/straight/body=         | Straight...             |
-|-------------+-----------------------------------------+-------------------------|
+| Key binding | Command                                 | Description               |
+|-------------+-----------------------------------------+---------------------------|
+| =H-SPC H-SPC= | =M-x psimacs/hydra/hydra/body=            | Hydras...                 |
+| =H-SPC SPC=   | =M-x psimacs/hydra/toggle/body=           | Toggles...                |
+| =H-SPC a=     | =M-x psimacs/hydra/apropos/body=          | Apropos...                |
+| =H-SPC d=     | =M-x dap-hydra=                           | DAP-Mode hydra...         |
+| =H-SPC e=     | =M-x psimacs/hydra/else/body=             | ELSE mode hydra...        |
+| =H-SPC h=     | =M-x psimacs/hydra/help/body=             | Help...                   |
+| =H-SPC H=     | =M-x psimacs/hydra/helpful/body=          | Helpful...                |
+| =H-SPC i=     | =M-x hydra-ivy/body=                      | Ivy...                    |
+| =H-SPC j=     | =M-x psimacs/hydra/jupyter/open-hydra=    | Jupyter Notebook hydra... |
+| =H-SPC l=     | =M-x psimacs/hydra/lsp/body=              | LSP Mode hydra...         |
+| =H-SPC m=     | =M-x major-mode-hydra=                    | Major Mode's hydra...     |
+| =H-SPC p=     | =M-x psimacs/hydra/projectile/body=       | Projectile...             |
+| =H-SPC t=     | =M-x psimacs/hydra/avy/body=              | Fast Jumping in Text...   |
+| =H-SPC T=     | =M-x psimacs/hydra/transpose/body=        | Transposing...            |
+| =H-SPC w=     | =M-x psimacs/hydra/window/body=           | Window...                 |
+| =H-SPC y=     | =M-x psimacs/hydra/yasnippet/body=        | YASnippet...              |
+| =H-SPC C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...       |
+| =H-SPC C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...               |
+| =H-SPC C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                  |
+| =H-SPC C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...            |
+| =H-SPC C-m=   | =M-x psimacs/hydra/word-modes/body=       | CamelCase...              |
+| =H-SPC C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...               |
+| =H-SPC C-p=   | =M-x hydra-projectile-cmake/body=         | Projectile CMake...       |
+| =H-SPC C-r=   | =M-x psimacs/hydra/rectangle/body=        | Rectangle...              |
+| =H-SPC C-s=   | =M-x psimacs/hydra/straight/body=         | Straight...               |
+|-------------+-----------------------------------------+---------------------------|
 
 ** Toggles
 
@@ -19601,16 +20449,21 @@ _q_: quit_
 
             "Project"
                 (
-                    ("p"   psimacs/hydra/projectile/body "  Projectile")
-                    ("C-p" hydra-projectile-cmake/body   "Projectile Cmake")
+                    ("p"   psimacs/hydra/projectile/body      "  Projectile")
+                    ("C-p" hydra-projectile-cmake/body  "Projectile Cmake")
                 )
 
             "Tools"
                 (
-                    ("i"   hydra-ivy/body               "  Ivy")
+                    ("i"   hydra-ivy/body         "  Ivy")
                     ("y"   psimacs/hydra/yasnippet/body "  Snippets")
                     ("C-i" psimacs/hydra/image+/body    "Image+")
                     ("C-f" psimacs/hydra/flycheck/body  "Flycheck")
+                )
+
+            "Org"
+                (
+                    ("j"   psimacs/hydra/jupyter/open-hydra   "Jupyter Notebook")
                 )
 
             "Special"

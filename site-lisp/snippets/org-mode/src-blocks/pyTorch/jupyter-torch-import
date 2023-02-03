@@ -1,0 +1,51 @@
+# -*- mode: snippet -*-
+# name: jupyter-torch-import
+# key: <jp-ti
+# --
+** Imports
+
+#+name: imports
+#+begin_src jupyter-python
+import os
+import sys
+import time
+import timeit
+
+import numpy as np
+import pandas as pd
+
+import seaborn as sns
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+from tqdm.auto import tqdm
+#from tqdm import tqdm
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from torch.utils.data import *
+
+import torchvision
+from torchvision import transforms
+
+from pycse.plotly import *
+from pycse.orgmode import *
+import plotly.express as px
+
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score
+)
+
+import torch_utilities as util
+
+from functools import partialmethod
+tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")$0
+#+end_src
+
