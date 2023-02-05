@@ -9577,14 +9577,25 @@ in your buffers.
 ;; Easily mosey back and forth
 ;;
 (use-package mosey
+    :config
+      (defmosey '(beginning-of-line
+                  back-to-indentation
+                  sp-forward-sexp
+                  sp-backward-sexp
+                  mosey-goto-end-of-code
+                  mosey-goto-beginning-of-comment-text
+                  end-of-line
+                 )
+             :prefix "psimacs"
+      )
     :bind (
         :map psimacs/config/global-key-map/special
-            ("C-s C-m f"   . mosey-forward)
-            ("C-s C-m b"   . mosey-backward)
-            ("C-s C-m F"   . mosey-forward-bounce)
-            ("C-s C-m B"   . mosey-backward-bounce)
-            ("C-s C-m C-f" . mosey-forward-cycle)
-            ("C-s C-m C-b" . mosey-backward-cycle)
+            ("C-s C-m f"   . mosey-psimacs-forward)
+            ("C-s C-m b"   . mosey-psimacs-backward)
+            ("C-s C-m F"   . mosey-psimacs-forward-bounce)
+            ("C-s C-m B"   . mosey-psimacs-backward-bounce)
+            ("C-s C-m C-f" . mosey-psimacs-forward-cycle)
+            ("C-s C-m C-b" . mosey-psimacs-backward-cycle)
         )
 )
 #+end_src
@@ -19729,6 +19740,7 @@ References:
 | =H-SPC C-p=   | =M-x hydra-projectile-cmake/body=         | Projectile CMake...       |
 | =H-SPC C-r=   | =M-x psimacs/hydra/rectangle/body=        | Rectangle...              |
 | =H-SPC C-s=   | =M-x psimacs/hydra/straight/body=         | Straight...               |
+| =H-SPC H-m=   | =M-x psimacs/hydra/navigation/body=       | Navigation...             |
 |-------------+-----------------------------------------+---------------------------|
 
 ** Toggles
@@ -20363,7 +20375,7 @@ _q_: quit_
 
 #+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
 ;;
-;; Hydra for hydra
+;; Hydra for parenthesis
 ;;
 (define-key psimacs/config/global-key-map/hydra (kbd "p")
     (pretty-hydra-define
@@ -20438,6 +20450,150 @@ _q_: quit_
 )
 #+end_src
 
+** Navigation
+
+#+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
+;;
+;; Hydra for navigation
+;;
+    (define-key psimacs/config/global-key-map/hydra (kbd "H-m")
+        (pretty-hydra-define
+            psimacs/hydra/navigation
+            (
+               :title (psimacs/config/pretty-hydra-title "Navigation")
+               :color red
+               :quit-key "q"
+            )
+            (
+                "Basic"
+                  (
+                    ("C-f"       forward-char           "      forward char")
+                    ("C-b"       backward-char          "      backward char")
+                    ("M-f"       forward-word           "      forward word")
+                    ("M-b"       backward-word          "      backward word")
+                    ("C-M-f"     forward-sexp           "    forward sexp")
+                    ("C-M-b"     backward-sexp          "    backward sexp")
+                    ("M-e"       forward-sentence       "      forward sentence")
+                    ("M-a"       backward-sentence      "      backward sentence")
+                    ("C-<down>"  forward-paragrap       " forward paragraph  M-{")
+                    ("C-<up>"    backward-paragraph     "   backward paragraph M-}")
+                    ("C-n"       next-line              "      next line")
+                    ("C-p"       previous-line          "      previous line")
+                    ("C-a"       move-beginning-of-line "      beginning of line")
+                    ("C-e"       move-end-of-line       "      end of line")
+                    ("M-m"       back-to-indentation    "      first non-whitespace char")
+                    ("C-<home>"  beginning-of-buffer    " beginning of buffer M-<")
+                    ("C-<end>"   end-of-buffer          "  end of buffer       M->")
+                    ("M-g c"     goto-char              "    goto char position")
+                    ("M-g M-g"   goto-line              "  goto line")
+                    ("M-g <tab>" goto-column            "goto column")
+                  )
+
+                "Scroll and Search"
+                  (
+                    ("C-v"       scroll-up-command        "      scroll up   <PageDown>")
+                    ("M-v"       scroll-down-command      "      scroll down <PageUp>")
+                    ("M-<next>"  scroll-other-window      " scroll other window up C-M-v")
+                    ("M-<prior>" scroll-other-window-down "scroll other window down")
+                    ("C-x <"     scroll-left              "    scroll left")
+                    ("C-x >"     scroll-right             "    scroll right")
+                    ("C-l"       recenter-top-bottom      "      recenter top botton")
+                    ("C-M-S"     recenter-other-window    "    recenter other window")
+                    ("C-M-l"     reposition-window        "    reposition window")
+                    ("H-m C-s s" isearch-forward          "forward")
+                    ("H-m C-s r" isearch-backward         "backward")
+                    ("H-c s"     vr/isearch-forward       "    forward with pcre")
+                    ("H-c p"     vr/isearch-backward      "    backward with pcra")
+                    ("C-s"       swiper-isearch           "      swiper isearch")
+                  )
+
+                "Avy and Mosey"
+                  (
+                    ("H-m C-s C-a c"   avy-goto-char                  "  avy goto char")
+                    ("H-m C-s C-a C"   avy-goto-char-2                "  avy goto char 2")
+                    ("H-m C-s C-a t"   avy-goto-char-timer            "  avy goto char N")
+                    ("H-m C-s C-a T"   avy-org-goto-heading-timer     "  avy goto org heading N")
+                    ("H-m C-s C-a l"   avy-goto-line                  "  avy goto line")
+                    ("H-m C-s C-a W"   avy-goto-word-0                "  avy goto word 0")
+                    ("H-m C-s C-a w"   avy-goto-word-1                "  avy goto word 1")
+                    ("H-m C-s C-m f"   mosey-psimacs-forward          "  mosey forward")
+                    ("H-m C-s C-m b"   mosey-psimacs-backward         "  mosey backward")
+                    ("H-m C-s C-m F"   mosey-psimacs-forward-bounce   "  mosey forward bounce")
+                    ("H-m C-s C-m B"   mosey-psimacs-backward-bounce  "  mosey backward bounce")
+                    ("H-m C-s C-m C-f" mosey-psimacs-forward-cycle    "mosey forward cycle")
+                    ("H-m C-s C-m C-b" mosey-psimacs-backward-cycle   "mosey forward cycle")
+                  )
+
+                "Org"
+                  (
+                    ("C-c C-n"     org-next-visible-heading              "    next heading")
+                    ("C-c C-p"     org-previous-visible-heading          "    prev heading")
+                    ("C-c C-f"     org-forward-heading-same-level        "    next heading same level")
+                    ("C-c C-b"     org-backward-heading-same-level       "    prev heading same level")
+                    ("C-c C-u"     outline-up-heading                    "    up heading")
+                    ("C-c C-j"     org-goto                              "    org goto")
+                    ("H-m n"       psimacs/jupyter/next-jupyter-src-block      "      next jupyter block")
+                    ("H-m p"       psimacs/jupyter/previous-jupyter-src-block  "      prev jupyter block")
+                    ("C-c %"       org-mark-ring-push                    "      mark ring push")
+                    ("C-c &"       org-mark-ring-goto                    "      mark ring goto")
+                    ("C-c C-x C-n" org-next-link                         "next link")
+                    ("C-c C-x C-p" org-previous-link                     "prev link")
+                  )
+
+                "Smart Prarens"
+                  (
+                    ("H-p C-f" sp-forward-sexp                  "forward sexp")
+                    ("H-p C-b" sp-backward-sexp                 "backward sexp")
+                    ("H-p M-F" sp-forward-symbol                "forward symbol")
+                    ("H-p M-B" sp-backward-symbol               "backward symbol")
+                    ("H-p C-n" sp-next-sexp                     "next sexp")
+                    ("H-p C-p" sp-previous-sexp                 "prev sexp")
+                    ("H-p C-u" sp-up-sexp                       "up sexp")
+                    ("H-p C-d" sp-down-sexp                     "down sexp")
+                    ("H-p M-u" sp-backward-up-sexp              "backward up sexp")
+                    ("H-p M-d" sp-backward-down-sexp            "backward down sexp")
+                    ("H-p C-a" sp-beginning-of-sexp             "beg sexp")
+                    ("H-p C-e" sp-end-of-sexp                   "end sexp")
+                    ("H-p M-a" sp-beginning-of-next-sexp        "beginning next sexp")
+                    ("H-p M-e" sp-beginning-of-previous-sexp    "beginning prev sexp")
+                  )
+
+                "Buffer"
+                  (
+                    ("C-<tab>"     psimacs/buffer/next-user-buffer      "    next user buffer")
+                    ("C-S-<tab>"   psimacs/buffer/previous-user-buffer  "  prev user buffer")
+                    ("H-<tab>"     psimacs/buffer/next-emacs-buffer     "    next emacs buffer")
+                    ("H-S-<tab>"   psimacs/buffer/previous-emacs-buffer "  prev emacs butter")
+                    ("C-x <right>" next-buffer                    "next buffer")
+                    ("C-x <left>"  previous-buffer                " prev buffer")
+                    ("C-x C-b"     ibuffer                        "    edit list of buffers" :color blue)
+                    ("C-x b"       switch-to-buffer               "      switch to buffer")
+                    ("C-x k"       kill-buffer                    "      kill buffer")
+                    ("H-b"         frog-jump-buffer               "        frog jump buffer")
+                    ("H-B"         frog-jump-buffer-other-window  "        from jump buffer other window")
+                  )
+
+                "Tabs, Bookmarks, ELSE"
+                  (
+                    ("s-n"      centaur-tabs-forward            "     next tab")
+                    ("s-p"      centaur-tabs-backward           "     prev tab")
+                    ("C-x o"    ace-window                      "   ace other window")
+                    ("C-x O"    other-frame                     "   next frame")
+                    ("<f2>"     bm-next                         "    next bookmark")
+                    ("S-<f2>"   bm-previous                     "  prev bookmark")
+                    ("C-<f2>"   bm-toggle                       "  set bookmark")
+                    ("C-S-<f2>" bm-remove-all-current-buffer    "remove all bookmarks")
+
+                    ("H-n"      else-next                       "     ELSE next placeholder")
+                    ("H-p"      else-previous                   "     ELSE prev placeholder")
+                    ("H-SPC e"  psimacs/hydra/else/body               " ELSE hydra" :color blue)
+                  )
+            )
+        )
+    )
+
+#+end_src
+
 ** Hydra
 
 #+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
@@ -20466,6 +20622,7 @@ _q_: quit_
                     ("t"   psimacs/hydra/avy/body         "  Avy Text Movement")
                     ("C-o" psimacs/hydra/org/body         "Navigation")
                     ("C-m" psimacs/hydra/word-modes/body  "Word Movement Modes")
+                    ("H-m" psimacs/hydra/navigation/body  "Navigation")
                 )
 
             "Edit"
