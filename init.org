@@ -10927,7 +10927,7 @@ The following [[https://github.com/emacs-helm/helm][Helm]] configuration is take
 ;;
 (use-package helm
   :config
-      (require 'helm-config)
+      ;;(require 'helm-config)
       (setq helm-input-idle-delay                     0.01
             helm-reuse-last-window-split-state        t
             helm-always-two-windows                   t
@@ -13283,10 +13283,9 @@ Emacs, it will be the key to ultimately Live in Emacs.
 (use-package graphviz-dot-mode
     :config
         (setq graphviz-dot-indent-width 4)
-)
-
-(use-package company-graphviz-dot
-    :straight nil
+    :mode ("\\.dot\\'" . graphviz-dot-mode)
+    :hook
+        (graphviz-dot-mode . company-mode)
 )
 #+end_src
 
@@ -17665,6 +17664,46 @@ If point is in a block, copy the header to the new block"
           )
         )
 
+        (defun psimacs/jupyter/execute-remaining-jupyter-src-blocks ()
+          "Execute the remaining jupyter source blocks of the document."
+          (interactive)
+          (save-excursion
+            (let ((proceed t))
+                (unless (psimacs/jupyter/in-jupyter-src-block-p)
+                    (psimacs/jupyter/next-jupyter-src-block))
+
+                (while (and proceed (psimacs/jupyter/in-jupyter-src-block-p))
+                    (org-ctrl-c-ctrl-c)
+                    (let ((p (point)))
+                        (psimacs/jupyter/next-jupyter-src-block)
+                        (when (eq p (point))
+                            (setq proceed nil))
+                    )
+                )
+            )
+          )
+        )
+
+        (defun psimacs/jupyter/remove-results-remaining-jupyter-src-blocks ()
+          "Remove the results of the remaining jupyter source blocks of the document."
+          (interactive)
+          (save-excursion
+            (let ((proceed t))
+                (unless (psimacs/jupyter/in-jupyter-src-block-p)
+                    (psimacs/jupyter/next-jupyter-src-block))
+
+                (while (and proceed (psimacs/jupyter/in-jupyter-src-block-p))
+                    (org-babel-remove-result)
+                    (let ((p (point)))
+                        (psimacs/jupyter/next-jupyter-src-block)
+                        (when (eq p (point))
+                            (setq proceed nil))
+                    )
+                )
+            )
+          )
+        )
+
         (defun psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next ()
           "Execute current resp. next jupyter source blocks and move to the next one."
           (interactive)
@@ -17762,22 +17801,23 @@ Usually called in a hook function."
                 psimacs/hydra/jupyter
                 (
                    :title (psimacs/config/pretty-hydra-title "Jupyter Notebook" 'faicon "toggle-on" :v-adjust -0.1)
-                   :color blue
+                   :color teal
                    :quit-key "q"
                 )
                 (
                     "Execute"
                       (
-                        ("C-<return>"     org-ctrl-c-ctrl-c                                          "current")
-                        ("H-<return>"     psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next      "current jupyter go next" :color red)
-                        ("S-<return>"     jupyter-org-execute-and-next-block                         "current src go next"     :color red)
-                        ("M-<return>"     (progn (org-ctrl-c-ctrl-c) (psimacs/jupyter/insert-src-block t)) "current and new")
-                        ("C-M-<return>"   jupyter-org-execute-to-point                               "to point")
-                        ("H-M-<return>"   jupyter-org-execute-subtree                                "subtree to point")
-                        ("S-C-<return>"   jupyter-org-restart-and-execute-to-point                   "restart - to point")
-                        ("S-M-<return>"   jupyter-org-restart-kernel-execute-block                   "restart - block")
-                        ("H-C-<return>"   jupyter-org-restart-kernel-execute-buffer                  "restart - buffer")
-                        ("C-S-H-<return>" psimacs/jupyter/execute-all-jupyter-src-blocks             "all jupyter blocks")
+                        ("C-<return>"     org-ctrl-c-ctrl-c                                          "    current")
+                        ("H-<return>"     psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next      "    current jupyter go next" :color red)
+                        ("S-<return>"     jupyter-org-execute-and-next-block                         "    current src go next"     :color red)
+                        ("M-<return>"     (progn (org-ctrl-c-ctrl-c) (psimacs/jupyter/insert-src-block t)) "    current and new")
+                        ("C-M-<return>"   jupyter-org-execute-to-point                               "  to point")
+                        ("H-M-<return>"   jupyter-org-execute-subtree                                "  subtree to point")
+                        ("S-C-<return>"   jupyter-org-restart-and-execute-to-point                   "  restart - to point")
+                        ("S-M-<return>"   jupyter-org-restart-kernel-execute-block                   "  restart - block")
+                        ("H-C-<return>"   jupyter-org-restart-kernel-execute-buffer                  "  restart - buffer")
+                        ("S-H-<return>"   psimacs/jupyter/execute-remaining-jupyter-src-blocks             "  remaining jupyter blocks")
+                        ("C-S-H-<return>" psimacs/jupyter/execute-all-jupyter-src-blocks                   "all jupyter blocks")
                       )
 
                     "Navigate"
@@ -17798,37 +17838,38 @@ Usually called in a hook function."
                       (
                         ("M-p" jupyter-org-move-src-block                             "move block up"   :color red)
                         ("M-n" (jupyter-org-move-src-block t)                         "move block down" :color red)
-                        ("x"   jupyter-org-kill-block-and-results                     "kill block")
-                        ("c"   jupyter-org-copy-block-and-results                     "copy block")
-                        ("C"   (jupyter-org-clone-block t)                            "clone block")
-                        ("m"   jupyter-org-merge-blocks                               "merge blocks")
-                        ("s"   jupyter-org-split-src-block                            "split block")
-                        ("+"   (jupyter-org-insert-src-block nil current-prefix-arg)  "insert block above")
-                        ("-"   (jupyter-org-insert-src-block t current-prefix-arg)    "insert block below")
-                        ("M"   psimacs/jupyter/ob/mark-code                                 "mark block code")
+                        ("x"   jupyter-org-kill-block-and-results                     "  kill block")
+                        ("c"   jupyter-org-copy-block-and-results                     "  copy block")
+                        ("C"   (jupyter-org-clone-block t)                            "  clone block")
+                        ("m"   jupyter-org-merge-blocks                               "  merge blocks")
+                        ("s"   jupyter-org-split-src-block                            "  split block")
+                        ("+"   (jupyter-org-insert-src-block nil current-prefix-arg)  "  insert block above")
+                        ("-"   (jupyter-org-insert-src-block t current-prefix-arg)    "  insert block below")
+                        ("M"   psimacs/jupyter/ob/mark-code                                 "  mark block code")
                       )
 
                     "Miscellaneous"
                       (
-                        ("l" org-babel-remove-result          "clear result")
-                        ("L" jupyter-org-clear-all-results    "clear all results")
-                        ("h" jupyter-org-edit-header          "edit header")
-                        ("i" jupyter-org-inspect-src-block    "inspect")
-                        ("o" psimacs/jupyter/ob/toggle-output       "toogle output")
-                        ("<tab>" org-cycle                    "org cycle"       :color red)
-                        ("t" psimacs/jupyter/ob/toggle-line-numbers "toogle line numbers")
-                        ("#" org-comment-dwim                 "dwim comment")
-                        ("X" psimacs/jupyter/export/notebook        "export notebook" :color blue)
+                        ("l"     org-babel-remove-result          "    clear result")
+                        ("L"     jupyter-org-clear-all-results    "    clear all results")
+                        ("H-l"   jupyter-org-clear-all-results    "  clear all results")
+                        ("h"     jupyter-org-edit-header          "    edit header")
+                        ("i"     jupyter-org-inspect-src-block    "    inspect")
+                        ("o"     psimacs/jupyter/ob/toggle-output       "    toogle output")
+                        ("<tab>" org-cycle                        "org cycle"       :color red)
+                        ("t"     psimacs/jupyter/ob/toggle-line-numbers "    toogle line numbers")
+                        ("#"     org-comment-dwim                 "    dwim comment")
+                        ("X"     psimacs/jupyter/export/notebook        "    export notebook" :color blue)
                       )
 
                       ""
 
                       (
-                        ("di"  org-display-inline-images   "display images")
-                        ("dr"  org-redisplay-inline-images "redisplay images")
-                        ("dt"  org-toogle-inline-images    "toogle images")
-                        ("z"   undo-fu-only-undo           "undo"     :color red)
-                        ("Z"   undo-fu-only-redo           "redo"     :color red)
+                        ("di"  org-display-inline-images   " display images")
+                        ("dr"  org-redisplay-inline-images " redisplay images")
+                        ("dt"  org-toogle-inline-images    " toogle images")
+                        ("z"   undo-fu-only-undo           "  undo"     :color red)
+                        ("Z"   undo-fu-only-redo           "  redo"     :color red)
                         ("H-z" undo-fu-only-redo-all       "redo all" :color red)
                       )
 
@@ -17871,10 +17912,12 @@ Usually called in a hook function."
             ("H-m n"          . psimacs/jupyter/next-jupyter-src-block)
             ("H-m p"          . psimacs/jupyter/previous-jupyter-src-block)
             ("H-<return>"     . psimacs/jupyter/execute-jupyter-src-blocks-and-move-to-next)
+            ("S-H-<return>"   . psimacs/jupyter/execute-remaining-jupyter-src-blocks)
             ("C-S-H-<return>" . psimacs/jupyter/execute-all-jupyter-src-blocks)
             ("H-m i d"        . org-display-inline-images)
             ("H-m i r"        . org-redisplay-inline-images)
             ("H-m i t"        . org-toogle-inline-images)
+            ("H-m H-l"        . remove-results-remaining-jupyter-src-blocks)
             ("H-SPC j"        . psimacs/hydra/jupyter/open-hydra)
         )
 )
@@ -20461,7 +20504,7 @@ _q_: quit_
             psimacs/hydra/navigation
             (
                :title (psimacs/config/pretty-hydra-title "Navigation")
-               :color red
+               :color pink
                :quit-key "q"
             )
             (
@@ -20500,11 +20543,11 @@ _q_: quit_
                     ("C-l"       recenter-top-bottom      "      recenter top botton")
                     ("C-M-S"     recenter-other-window    "    recenter other window")
                     ("C-M-l"     reposition-window        "    reposition window")
-                    ("H-m C-s s" isearch-forward          "forward")
-                    ("H-m C-s r" isearch-backward         "backward")
-                    ("H-c s"     vr/isearch-forward       "    forward with pcre")
-                    ("H-c p"     vr/isearch-backward      "    backward with pcra")
-                    ("C-s"       swiper-isearch           "      swiper isearch")
+                    ("H-m C-s s" isearch-forward          "search forward")
+                    ("H-m C-s r" isearch-backward         "search backward")
+                    ("H-c s"     vr/isearch-forward       "    search forward with pcre")
+                    ("H-c p"     vr/isearch-backward      "    search backward with pcra")
+                    ("C-s"       swiper-isearch           "      swiper search")
                   )
 
                 "Avy and Mosey"
