@@ -18,13 +18,13 @@
 
 * Introduction
 
-This is *Psimacs*, a /modern/ *Emacs* configuration build from the ground up using a [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
-The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is the file that your are
-currently reading.
+This is *Psimacs*, a imho /modern/ *Emacs* configuration build from the ground up using a [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
+The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is 
+the file that your are currently reading.
 
 Additionally, *Psimacs* allows the synchronization of the user's local *Emacs* configuration with a configuration
-repository residing on [[https://www.dropbox.com/][Dropbox]]. This comes quite handy if sharing of one configuration with multiple machines is
-desired.
+repository residing on [[https://www.dropbox.com/][Dropbox]]. This comes quite handy if sharing of one configuration 
+with multiple machines is desired.
 
 This document not only describes the *Psimacs* configuration, but also some additional information useful
 for working with *Emacs* in general. In this respect it serves as a kind of mind map for the author.
@@ -96,7 +96,7 @@ initialization code into the main =init.el= and various additionally =config/ini
 file is then read and evaluated in the further startup procedure. The =init.el= file loads the other =config/init-*.el=
 files on evaluation.
 
-Never edit transient filee =early-init.el=,  =init.el= or =config/init-*.el= directly. They will be overridden by the next
+Never edit transient file =early-init.el=,  =init.el= or =config/init-*.el= directly. They will be overridden by the next
 run of *Psimacs*. Instead modify the =init.org= file in order to change your configuration.
 
 You can create a HTML document =init.html= from the =init.org= file by simply typing =C-c C-e h h= in the *Emacs* buffer for
@@ -119,7 +119,7 @@ Install missing dependencies at the time you notice that they are missing. Most 
 very narrow use cases.
 
 The two mentioned =requirements.txt= files for [[https://www.python.org/downloads/][Python]] and [[https://www.msys2.org/][MSYS2]] actually cover many of the cases. I try to tackle
-as many dependencies as possible with to the MSYS2 installation.
+as many dependencies as possible with the MSYS2 installation.
 
 ** Great Emacs resources
 - [[https://www.damtp.cam.ac.uk/user/sje30/ess11/resources/emacs-refcard.pdf][Emacs RefCard]]
@@ -140,12 +140,13 @@ as many dependencies as possible with to the MSYS2 installation.
 - [[https://irreal.org/blog/][Irreal]]
 - [[https://sachachua.com/blog/][Living an awesome life of Sacha Chua]]
 - [[https://emacsthemes.com/themes/planet-theme.html][Emacs Themes]]
+
 ** Disclaimer
 
 This is an *Emacs* beginners configuration and the usage is at one's own risk. It is not tested thoroughly. Please
 bear in mind.
 
-Many of the configuration settings are borrowed from other similar endeavors out there. Thank you to them.
+Many of the configuration settings are borrowed from other similar endeavors out there. Thank you to all of them.
 
 This is work in progress. Sometimes this *Readme* is ahead of times or not yet updated.
 
@@ -155,7 +156,6 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 - *Linux* support is planned for the future.
 - *WSL2* support is planned for the future.
 - This configuration has a very long Startup time. *Emacs client* usage is strongly recommended.
-- At the first run, an error happens. After leaving *Psimacs* and restarting it, everything is on go.
 
 ** License (GPL v3)
 
@@ -176,10 +176,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-* Working with Emacs
+* Working with Psimacs
 
-*Emacs* provides a great number of predefined key bindings to quite useful commands. In the following
-sections some of these bindings are introduced.
+*Emacs* itself provides a great number of predefined key bindings to many useful commands. 
+In the following sections some of these bindings are introduced.
+
+Beside of the predefined key bindings, however, *Psimacs* also has many of its own key bindings.
+The following two pages provides cheat sheats for these bindings:
+
+- [[https://hatlafax.github.io/psimacs/keybindings.html][List of all Psimacs Key Bindings]].
+- [[https://hatlafax.github.io/psimacs/sortedKeyBindings.html][Psimacs Keybindings on Topic.]]
+
+Additionally, *Psimacs* comes with many hydras, providing an alternative usage pattern.
+A /hydra/ for many of these /hydras/ can be activated by pressing =H-SPC H-SPC=.
 
 ** Basic movements
 
@@ -4741,7 +4750,7 @@ common prefix - a /hydra/.
 
 *Psimacs* provides many /hydras/ that gives another usage pattern of *Emacs*. All global /hydras/ are
 conveniently accessible through bindings =H-SPC= or =s-SPC=. All *Psimacs* hydras commands start with string
-=psimacs/hydra/=.
+=psimacs/hydra/=. A /hydra/ for the /hydras/ can be activated by pressing =H-SPC H-SPC=.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
 ;;
@@ -9534,7 +9543,7 @@ a char-based decision tree.
         (avy-lead-face ((t (:background "#51afef" :foreground "#870000" :weight bold))))
     :hydra (psimacs/hydra/avy (:color blue :hint nil)
 "
-^^Avy Text Movement: Input ...
+^^Avy Text Navigation: Input ...
 ^^---------------------------------------------------------
 _c_: ... one char, jump ...
 _C_: ... two consecutive chars, jump ...
@@ -20645,24 +20654,24 @@ _q_: quit_
         psimacs/hydra/hydra
         (
             :title "Hydra"
-            :color blue
+            :color teal
             :hint nil
             :quit-key "q"
         )
         (
             "Help"
                 (
-                    ("a" psimacs/hydra/apropos/body "Apropos")
-                    ("h" psimacs/hydra/help/body    "Help")
-                    ("H" psimacs/hydra/help/body    "Helpful")
+                    ("a" psimacs/hydra/apropos/body             "Apropos")
+                    ("h" psimacs/hydra/help/body                "Help")
+                    ("H" psimacs/hydra/help/body                "Helpful")
                 )
 
-            "Movement"
+            "Navigation"
                 (
-                    ("t"   psimacs/hydra/avy/body         "  Avy Text Movement")
-                    ("C-o" psimacs/hydra/org/body         "Navigation")
-                    ("C-m" psimacs/hydra/word-modes/body  "Word Movement Modes")
-                    ("H-m" psimacs/hydra/navigation/body  "Navigation")
+                    ("t"   psimacs/hydra/avy/body               "  Avy Text Navigation")
+                    ("C-o" psimacs/hydra/org/body               "Navigation")
+                    ("C-m" psimacs/hydra/word-modes/body        "Word Movement Modes")
+                    ("H-m" psimacs/hydra/navigation/body        "Navigation")
                 )
 
             "Edit"
@@ -20674,33 +20683,37 @@ _q_: quit_
 
             "UI"
                 (
-                    ("SPC" psimacs/hydra/toggle/body "Toggle")
-                    ("w"   psimacs/hydra/window/body "Window")
+                    ("SPC" psimacs/hydra/toggle/body            "Toggle")
+                    ("w"   psimacs/hydra/window/body            "  Window")
                 )
 
             "Project"
                 (
-                    ("p"   psimacs/hydra/projectile/body      "  Projectile")
-                    ("C-p" hydra-projectile-cmake/body  "Projectile Cmake")
+                    ("p"   psimacs/hydra/projectile/body        "  Projectile")
+                    ("C-p" hydra-projectile-cmake/body          "Projectile Cmake")
                 )
 
             "Tools"
                 (
-                    ("i"   hydra-ivy/body         "  Ivy")
-                    ("y"   psimacs/hydra/yasnippet/body "  Snippets")
-                    ("C-i" psimacs/hydra/image+/body    "Image+")
-                    ("C-f" psimacs/hydra/flycheck/body  "Flycheck")
+                    ("i"   hydra-ivy/body                       "  Ivy")
+                    ("y"   psimacs/hydra/yasnippet/body         "  Snippets")
+                    ("C-i" psimacs/hydra/image+/body            "Image+")
+                    ("C-f" psimacs/hydra/flycheck/body          "Flycheck")
                 )
 
-            "Org"
+            "Programming"
                 (
-                    ("j"   psimacs/hydra/jupyter/open-hydra   "Jupyter Notebook")
+                    ("e"   psimacs/hydra/else/body              "ELSE Mode")
+                    ("j"   psimacs/hydra/jupyter/open-hydra     "Jupyter Notebook")
+                    ("l"   psimacs/hydra/lsp/body               "LSP Mode")
+                    ("d"   dap-hydra                            "DAP Mode")
                 )
 
-            "Special"
+            "Miscellaneous"
                 (
-                    ("C-l" psimacs/hydra/vlf-large-files/body "VLF Large File Support")
-                    ("C-s" psimacs/hydra/straight/body        "Straight")
+                    ("C-l" psimacs/hydra/vlf-large-files/body   "VLF Large File Support")
+                    ("C-s" psimacs/hydra/straight/body          "Straight")
+                    ("m"   major-mode-hydra                     "  Major Mode")
                 )
         )
     )
