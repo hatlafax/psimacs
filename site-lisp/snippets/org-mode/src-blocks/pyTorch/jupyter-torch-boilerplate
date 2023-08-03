@@ -1,0 +1,104 @@
+# -*- mode: snippet -*-
+# name: jupyter-torch-boilerplate
+# key: <jp-bp
+# --
+* Boilerplate
+
+** Testing :noexport:
+
+#+name: jupyter-testing
+#+begin_src jupyter-python
+print("Hello World")
+#+end_src
+
+** Imports
+
+#+name: imports
+#+begin_src jupyter-python
+import os
+import sys
+import time
+import timeit
+
+import numpy as np
+import pandas as pd
+import networkx as nx
+
+import seaborn as sns
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+from tqdm.auto import tqdm
+#from tqdm import tqdm
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+import torch.utils.data as pyt_data
+
+import torchvision
+from torchvision import transforms
+
+import torch_geometric.nn as geo_nn
+import torch_geometric.transforms as geo_T
+import torch_geometric.data as geo_data
+import torch_geometric.utils as geo_utils
+import torch_geometric.loader as geo_loader
+
+from pycse.plotly import *
+from pycse.orgmode import *
+import plotly.express as px
+
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score
+)
+
+from sklearn.manifold import TSNE
+
+import torch_utilities as util
+from torch_utilities import print_tensor as prinT
+
+from functools import partialmethod
+tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+#+end_src
+
+#+name: versions
+#+begin_src jupyter-python
+print(f"Python version is {sys.version}")
+print(f"Torch version is {torch.__version__}")
+#+end_src
+
+** Jupyter Matplotlib
+
+#+name: jupyter-matplotlib
+#+begin_src jupyter-python
+%matplotlib inline
+#%config InlineBackend.figure_format = 'retina'
+#%config InlineBackend.figure_format = 'png2x'
+#%config InlineBackend.figure_format = 'png'
+#%config InlineBackend.figure_formats = ['svg']
+
+import matplotlib_inline
+matplotlib_inline.backend_inline.set_matplotlib_formats('png', 'pdf')
+
+#import matplotlib as mpl
+#mpl.rcParams['figure.dpi'] = 100
+#mpl.rcParams['figure.facecolor'] = '1'
+#+end_src
+
+** Seeding
+
+#+name: seeding
+#+begin_src jupyter-python
+torch.backends.cudnn.deterministic=True
+util.set_seed(42)
+#+end_src
+
+$0
+

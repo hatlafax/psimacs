@@ -19,11 +19,11 @@
 * Introduction
 
 This is *Psimacs*, a imho /modern/ *Emacs* configuration build from the ground up using a [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
-The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is 
+The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is
 the file that your are currently reading.
 
 Additionally, *Psimacs* allows the synchronization of the user's local *Emacs* configuration with a configuration
-repository residing on [[https://www.dropbox.com/][Dropbox]]. This comes quite handy if sharing of one configuration 
+repository residing on [[https://www.dropbox.com/][Dropbox]]. This comes quite handy if sharing of one configuration
 with multiple machines is desired.
 
 This document not only describes the *Psimacs* configuration, but also some additional information useful
@@ -82,7 +82,8 @@ pip install -r ~/.emacs.d/assets/dependencies/python/requirements.txt
 Next, install dependency packages for MSYS2. Open the /MSYS2 MinGW 64-bit/ shell and run the following commands:
 
 #+begin_example
-pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
+#pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
+pacman -S $(cat ~/.emacs.d/assets/dependencies/msys2/requirements.txt | cut -d' ' -f1)
 #+end_example
 
 Remarks:
@@ -178,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Working with Psimacs
 
-*Emacs* itself provides a great number of predefined key bindings to many useful commands. 
+*Emacs* itself provides a great number of predefined key bindings to many useful commands.
 In the following sections some of these bindings are introduced.
 
 Beside of the predefined key bindings, however, *Psimacs* also has many of its own key bindings.
@@ -951,6 +952,9 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
+
+(defconst psimacs/config/docs-folder "docs"
+  "The psimacs docs directory.")
 
 (defconst psimacs/config/work-lisp-folder "work-lisp"
   "The psimacs work-lisp directory.")
@@ -1783,6 +1787,12 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/work-lisp-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/work-lisp-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/docs-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/docs-folder))))
+
+
 
         ;;
         ;; Create missing dropbox emacs directory
@@ -2633,6 +2643,7 @@ your calendar.
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "references"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "research"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "notebooks"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "cookbooks"))
 
 (defconst psimacs/config/roam-templates-dir
     (psimacs/file-system/concat-directory psimacs/config/site-lisp-dir "roam-templates")
@@ -2965,11 +2976,11 @@ I will update this list from time to time. However, not all of these installed p
 This list just what is currently installed on my system.
 
 #+begin_example
-asciidoc 9.1.1-2
-autoconf-wrapper 15-1
+asciidoc 10.2.0-3
+autoconf-wrapper 20221207-1
 autoconf2.13 2.13-5
 autogen 5.18.16-4
-automake-wrapper 11-4
+automake-wrapper 20221207-1
 automake1.11 1.11.6-6
 automake1.12 1.12.6-6
 automake1.13 1.13.4-7
@@ -2977,181 +2988,338 @@ automake1.14 1.14.1-6
 automake1.15 1.15.1-4
 automake1.16 1.16.5-1
 base 2022.06-1
+base-devel 2022.12-2
 bison 3.8.2-4
-btyacc 20210619-2
+btyacc 20221106-1
 diffstat 1.65-1
 diffutils 3.8-4
-dos2unix 7.4.3-1
+dos2unix 7.4.4-1
 flex 2.6.4-3
-gdb 11.1-4
+gdb 11.1-6
 gettext-devel 0.21-2
-git 2.38.1-1
+git 2.39.2-1
 gperf 3.1-5
 groff 1.22.4-4
-help2man 1.48.5-3
+help2man 1.49.2-1
 intltool 0.51.0-3
 liblzo2 2.10-2
-libtool 2.4.7-2
-libunrar 6.1.4-2
-libunrar-devel 6.1.4-2
+libtool 2.4.7-3
+libunrar 6.2.2-1
+libunrar-devel 6.2.2-1
 lzop 1.04-1
 m4 1.4.19-2
-make 4.3-4
+make 4.4-1
 man-db 2.10.2-3
-mercurial 6.2.3-1
-mingw-w64-clang-x86_64-boost 1.80.0-2
-mingw-w64-clang-x86_64-cgal 5.5.1-1
-mingw-w64-clang-x86_64-clang 15.0.5-1
-mingw-w64-clang-x86_64-clang-analyzer 15.0.5-1
-mingw-w64-clang-x86_64-clang-tools-extra 15.0.5-1
-mingw-w64-clang-x86_64-compiler-rt 15.0.5-1
-mingw-w64-clang-x86_64-crt-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-clang-x86_64-fox 1.6.57-2
-mingw-w64-clang-x86_64-git-repo 0.4.20-1
+mercurial 6.3.2-1
+mingw-w64-clang-x86_64-boost 1.81.0-6
+mingw-w64-clang-x86_64-cgal 5.5.2-1
+mingw-w64-clang-x86_64-clang 15.0.7-3
+mingw-w64-clang-x86_64-clang-analyzer 15.0.7-3
+mingw-w64-clang-x86_64-clang-tools-extra 15.0.7-3
+mingw-w64-clang-x86_64-compiler-rt 15.0.7-3
+mingw-w64-clang-x86_64-crt-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-clang-x86_64-fox 1.6.57-4
+mingw-w64-clang-x86_64-git-repo 0.4.20-2
 mingw-w64-clang-x86_64-glfw 3.3.8-2
-mingw-w64-clang-x86_64-glm 0.9.9.8-1
-mingw-w64-clang-x86_64-headers-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-clang-x86_64-libmangle-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-clang-x86_64-libwinpthread-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-clang-x86_64-lld 15.0.5-1
-mingw-w64-clang-x86_64-lldb 15.0.4-1
-mingw-w64-clang-x86_64-llvm 15.0.5-1
+mingw-w64-clang-x86_64-glm 0.9.9.8-2
+mingw-w64-clang-x86_64-headers-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-clang-x86_64-libmangle-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-clang-x86_64-libwinpthread-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-clang-x86_64-lld 15.0.7-3
+mingw-w64-clang-x86_64-lldb 15.0.7-2
+mingw-w64-clang-x86_64-llvm 15.0.7-3
 mingw-w64-clang-x86_64-make 4.4-2
-mingw-w64-clang-x86_64-mlir 15.0.4-1
+mingw-w64-clang-x86_64-mlir 15.0.7-2
 mingw-w64-clang-x86_64-ntldd-git r19.7fb9365-2
-mingw-w64-clang-x86_64-openmp 15.0.4-2
+mingw-w64-clang-x86_64-openmp 15.0.7-3
 mingw-w64-clang-x86_64-pkgconf 1~1.8.0-2
-mingw-w64-clang-x86_64-polly 15.0.4-1
-mingw-w64-clang-x86_64-qt6-3d 6.4.1-1
-mingw-w64-clang-x86_64-qt6-3d-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-5compat 6.4.1-1
-mingw-w64-clang-x86_64-qt6-5compat-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-activeqt 6.4.1-1
-mingw-w64-clang-x86_64-qt6-activeqt-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-base 6.4.1-2
-mingw-w64-clang-x86_64-qt6-base-debug 6.4.1-2
-mingw-w64-clang-x86_64-qt6-charts 6.4.1-1
-mingw-w64-clang-x86_64-qt6-charts-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-connectivity 6.4.1-1
-mingw-w64-clang-x86_64-qt6-connectivity-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-datavis3d 6.4.1-1
-mingw-w64-clang-x86_64-qt6-datavis3d-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-declarative 6.4.1-1
-mingw-w64-clang-x86_64-qt6-declarative-debug 6.4.1-1
+mingw-w64-clang-x86_64-polly 15.0.7-2
+mingw-w64-clang-x86_64-qt6-3d 6.4.2-1
+mingw-w64-clang-x86_64-qt6-3d-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-5compat 6.4.2-1
+mingw-w64-clang-x86_64-qt6-5compat-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-activeqt 6.4.2-1
+mingw-w64-clang-x86_64-qt6-activeqt-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-base 6.4.2-5
+mingw-w64-clang-x86_64-qt6-base-debug 6.4.2-5
+mingw-w64-clang-x86_64-qt6-charts 6.4.2-1
+mingw-w64-clang-x86_64-qt6-charts-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-connectivity 6.4.2-1
+mingw-w64-clang-x86_64-qt6-connectivity-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-datavis3d 6.4.2-1
+mingw-w64-clang-x86_64-qt6-datavis3d-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-declarative 6.4.2-1
+mingw-w64-clang-x86_64-qt6-declarative-debug 6.4.2-1
 mingw-w64-clang-x86_64-qt6-doc 6.4.1-1
-mingw-w64-clang-x86_64-qt6-imageformats 6.4.1-1
-mingw-w64-clang-x86_64-qt6-imageformats-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-lottie 6.4.1-1
-mingw-w64-clang-x86_64-qt6-lottie-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-multimedia 6.4.1-1
-mingw-w64-clang-x86_64-qt6-multimedia-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-networkauth 6.4.1-1
-mingw-w64-clang-x86_64-qt6-networkauth-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-positioning 6.4.1-1
-mingw-w64-clang-x86_64-qt6-positioning-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-quick3d 6.4.1-1
-mingw-w64-clang-x86_64-qt6-quick3d-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-quicktimeline 6.4.1-1
-mingw-w64-clang-x86_64-qt6-quicktimeline-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-remoteobjects 6.4.1-1
-mingw-w64-clang-x86_64-qt6-remoteobjects-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-scxml 6.4.1-1
-mingw-w64-clang-x86_64-qt6-scxml-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-sensors 6.4.1-1
-mingw-w64-clang-x86_64-qt6-sensors-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-serialbus 6.4.1-1
-mingw-w64-clang-x86_64-qt6-serialbus-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-serialport 6.4.1-1
-mingw-w64-clang-x86_64-qt6-serialport-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-shadertools 6.4.1-1
-mingw-w64-clang-x86_64-qt6-shadertools-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-svg 6.4.1-1
-mingw-w64-clang-x86_64-qt6-svg-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-tools 6.4.1-1
-mingw-w64-clang-x86_64-qt6-tools-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-translations 6.4.1-1
-mingw-w64-clang-x86_64-qt6-virtualkeyboard 6.4.1-1
-mingw-w64-clang-x86_64-qt6-virtualkeyboard-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-webchannel 6.4.1-1
-mingw-w64-clang-x86_64-qt6-webchannel-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-websockets 6.4.1-1
-mingw-w64-clang-x86_64-qt6-websockets-debug 6.4.1-1
-mingw-w64-clang-x86_64-qt6-webview 6.4.1-1
-mingw-w64-clang-x86_64-qt6-webview-debug 6.4.1-1
-mingw-w64-clang-x86_64-spirv-headers 1~1.3.231.1-1
-mingw-w64-clang-x86_64-spirv-tools 2022.4-1
-mingw-w64-clang-x86_64-tools-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-clang-x86_64-vulkan-headers 1.3.235-1
-mingw-w64-clang-x86_64-vulkan-loader 1.3.235-1
-mingw-w64-clang-x86_64-vulkan-validation-layers 1.3.234-1
-mingw-w64-clang-x86_64-winpthreads-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-clang-x86_64-winstorecompat-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-clang-x86_64-qt6-imageformats 6.4.2-1
+mingw-w64-clang-x86_64-qt6-imageformats-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-lottie 6.4.2-1
+mingw-w64-clang-x86_64-qt6-lottie-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-multimedia 6.4.2-2
+mingw-w64-clang-x86_64-qt6-multimedia-debug 6.4.2-2
+mingw-w64-clang-x86_64-qt6-networkauth 6.4.2-1
+mingw-w64-clang-x86_64-qt6-networkauth-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-positioning 6.4.2-1
+mingw-w64-clang-x86_64-qt6-positioning-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-quick3d 6.4.2-1
+mingw-w64-clang-x86_64-qt6-quick3d-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-quicktimeline 6.4.2-1
+mingw-w64-clang-x86_64-qt6-quicktimeline-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-remoteobjects 6.4.2-1
+mingw-w64-clang-x86_64-qt6-remoteobjects-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-scxml 6.4.2-1
+mingw-w64-clang-x86_64-qt6-scxml-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-sensors 6.4.2-1
+mingw-w64-clang-x86_64-qt6-sensors-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-serialbus 6.4.2-1
+mingw-w64-clang-x86_64-qt6-serialbus-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-serialport 6.4.2-1
+mingw-w64-clang-x86_64-qt6-serialport-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-shadertools 6.4.2-1
+mingw-w64-clang-x86_64-qt6-shadertools-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-svg 6.4.2-1
+mingw-w64-clang-x86_64-qt6-svg-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-tools 6.4.2-1
+mingw-w64-clang-x86_64-qt6-tools-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-translations 6.4.2-1
+mingw-w64-clang-x86_64-qt6-virtualkeyboard 6.4.2-1
+mingw-w64-clang-x86_64-qt6-virtualkeyboard-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-webchannel 6.4.2-1
+mingw-w64-clang-x86_64-qt6-webchannel-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-websockets 6.4.2-1
+mingw-w64-clang-x86_64-qt6-websockets-debug 6.4.2-1
+mingw-w64-clang-x86_64-qt6-webview 6.4.2-1
+mingw-w64-clang-x86_64-qt6-webview-debug 6.4.2-1
+mingw-w64-clang-x86_64-spirv-headers 1~1.3.239.0-1
+mingw-w64-clang-x86_64-spirv-tools 2023.1-1
+mingw-w64-clang-x86_64-tools-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-clang-x86_64-vulkan-headers 1.3.242-1
+mingw-w64-clang-x86_64-vulkan-loader 1.3.242-1
+mingw-w64-clang-x86_64-vulkan-validation-layers 1.3.242-1
+mingw-w64-clang-x86_64-winpthreads-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-clang-x86_64-winstorecompat-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-aspell 0.60.8-2
+mingw-w64-ucrt-x86_64-aspell-de 20161207-2
+mingw-w64-ucrt-x86_64-aspell-en 2020.12.07-1
+mingw-w64-ucrt-x86_64-boost 1.81.0-6
+mingw-w64-ucrt-x86_64-cgal 5.5.2-1
+mingw-w64-ucrt-x86_64-clang-analyzer 15.0.7-3
+mingw-w64-ucrt-x86_64-clang-tools-extra 15.0.7-3
+mingw-w64-ucrt-x86_64-cmake 3.25.2-1
+mingw-w64-ucrt-x86_64-compiler-rt 15.0.7-3
+mingw-w64-ucrt-x86_64-crt-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-doxygen 1.9.6-2
+mingw-w64-ucrt-x86_64-eigen3 3.4.0-1
+mingw-w64-ucrt-x86_64-emacs-pdf-tools-server 1.0.0-1
+mingw-w64-ucrt-x86_64-fd 8.7.0-1
+mingw-w64-ucrt-x86_64-ffmpeg 5.1.2-3
+mingw-w64-ucrt-x86_64-fox 1.6.57-4
+mingw-w64-ucrt-x86_64-gcc-ada 12.2.0-10
+mingw-w64-ucrt-x86_64-gcc-fortran 12.2.0-10
+mingw-w64-ucrt-x86_64-gcc-libgfortran 12.2.0-10
+mingw-w64-ucrt-x86_64-gcc-objc 12.2.0-10
+mingw-w64-ucrt-x86_64-gdb 13.1-3
+mingw-w64-ucrt-x86_64-gdb-multiarch 13.1-3
+mingw-w64-ucrt-x86_64-git-repo 0.4.20-2
+mingw-w64-ucrt-x86_64-glfw 3.3.8-2
+mingw-w64-ucrt-x86_64-glm 0.9.9.8-2
+mingw-w64-ucrt-x86_64-gnutls 3.8.0-1
+mingw-w64-ucrt-x86_64-graphviz 2.44.1-12
+mingw-w64-ucrt-x86_64-headers-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-hugo 0.111.1-1
+mingw-w64-ucrt-x86_64-hunspell 1.7.2-1
+mingw-w64-ucrt-x86_64-hunspell-en 2020.12.07-1
+mingw-w64-ucrt-x86_64-imagemagick 7.1.0.62-1
+mingw-w64-ucrt-x86_64-inkscape 1.2.2-2
+mingw-w64-ucrt-x86_64-libblocksruntime 0.4.1-1
+mingw-w64-ucrt-x86_64-libgccjit 12.2.0-10
+mingw-w64-ucrt-x86_64-libmangle-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-libwinpthread-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-lld 15.0.7-3
+mingw-w64-ucrt-x86_64-lldb 15.0.7-2
+mingw-w64-ucrt-x86_64-llvm 15.0.7-3
+mingw-w64-ucrt-x86_64-make 4.4-2
+mingw-w64-ucrt-x86_64-meld3 3.22.0-1
+mingw-w64-ucrt-x86_64-mlir 15.0.7-2
+mingw-w64-ucrt-x86_64-ninja 1.11.1-3
+mingw-w64-ucrt-x86_64-ntldd-git r19.7fb9365-2
+mingw-w64-ucrt-x86_64-openblas 0.3.21-7
+mingw-w64-ucrt-x86_64-openmp 15.0.7-3
+mingw-w64-ucrt-x86_64-pkgconf 1~1.8.0-2
+mingw-w64-ucrt-x86_64-polly 15.0.7-2
+mingw-w64-ucrt-x86_64-python-pip 23.0.1-1
+mingw-w64-ucrt-x86_64-qt5-3d 5.15.8-3
+mingw-w64-ucrt-x86_64-qt5-activeqt 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-base 5.15.8+kde+r181-1
+mingw-w64-ucrt-x86_64-qt5-charts 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-connectivity 5.15.8+kde+r5-1
+mingw-w64-ucrt-x86_64-qt5-datavis3d 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-declarative 5.15.8+kde+r21-1
+mingw-w64-ucrt-x86_64-qt5-doc 5.15.5-1
+mingw-w64-ucrt-x86_64-qt5-gamepad 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-graphicaleffects 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-imageformats 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-location 5.15.8+kde+r3-1
+mingw-w64-ucrt-x86_64-qt5-lottie 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-multimedia 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-networkauth 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-purchasing 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-quick3d 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-quickcontrols 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-quickcontrols2 5.15.8+kde+r7-1
+mingw-w64-ucrt-x86_64-qt5-quicktimeline 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-remoteobjects 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-script 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-scxml 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-sensors 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-serialbus 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-serialport 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-speech 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-svg 5.15.8+kde+r8-1
+mingw-w64-ucrt-x86_64-qt5-tools 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-translations 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-virtualkeyboard 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-webchannel 5.15.8+kde+r3-1
+mingw-w64-ucrt-x86_64-qt5-webglplugin 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-websockets 5.15.8+kde+r2-1
+mingw-w64-ucrt-x86_64-qt5-webview 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-winextras 5.15.8-1
+mingw-w64-ucrt-x86_64-qt5-xmlpatterns 5.15.8-1
+mingw-w64-ucrt-x86_64-qt6-3d 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-3d-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-5compat 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-5compat-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-activeqt 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-activeqt-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-base 6.4.2-5
+mingw-w64-ucrt-x86_64-qt6-base-debug 6.4.2-5
+mingw-w64-ucrt-x86_64-qt6-charts 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-charts-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-connectivity 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-connectivity-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-datavis3d 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-datavis3d-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-declarative 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-declarative-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-doc 6.4.1-1
+mingw-w64-ucrt-x86_64-qt6-imageformats 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-imageformats-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-lottie 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-lottie-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-multimedia 6.4.2-2
+mingw-w64-ucrt-x86_64-qt6-multimedia-debug 6.4.2-2
+mingw-w64-ucrt-x86_64-qt6-networkauth 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-networkauth-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-positioning 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-positioning-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-quick3d 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-quick3d-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-quicktimeline 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-quicktimeline-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-remoteobjects 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-remoteobjects-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-scxml 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-scxml-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-sensors 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-sensors-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-serialbus 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-serialbus-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-serialport 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-serialport-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-shadertools 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-shadertools-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-svg 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-svg-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-tools 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-tools-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-translations 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-virtualkeyboard 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-virtualkeyboard-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-webchannel 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-webchannel-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-websockets 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-websockets-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-webview 6.4.2-1
+mingw-w64-ucrt-x86_64-qt6-webview-debug 6.4.2-1
+mingw-w64-ucrt-x86_64-quazip-qt5 1.4-2
+mingw-w64-ucrt-x86_64-ripgrep 13.0.0-1
+mingw-w64-ucrt-x86_64-spirv-headers 1~1.3.239.0-1
+mingw-w64-ucrt-x86_64-spirv-tools 2023.1-1
+mingw-w64-ucrt-x86_64-tools-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-tree-sitter 0.20.7-1
+mingw-w64-ucrt-x86_64-vulkan-headers 1.3.242-1
+mingw-w64-ucrt-x86_64-vulkan-loader 1.3.242-1
+mingw-w64-ucrt-x86_64-vulkan-validation-layers 1.3.242-1
+mingw-w64-ucrt-x86_64-winpthreads-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-winstorecompat-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-ucrt-x86_64-zeromq 4.3.4-2
 mingw-w64-x86_64-aspell 0.60.8-2
 mingw-w64-x86_64-aspell-de 20161207-2
 mingw-w64-x86_64-aspell-en 2020.12.07-1
-mingw-w64-x86_64-binutils 2.39-2
-mingw-w64-x86_64-boost 1.80.0-2
-mingw-w64-x86_64-cgal 5.5.1-1
-mingw-w64-x86_64-clang 15.0.5-1
-mingw-w64-x86_64-clang-analyzer 15.0.5-1
-mingw-w64-x86_64-clang-tools-extra 15.0.5-1
-mingw-w64-x86_64-cmake 3.25.0-1
-mingw-w64-x86_64-compiler-rt 15.0.5-1
-mingw-w64-x86_64-crt-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-x86_64-doxygen 1.9.5-1
+mingw-w64-x86_64-binutils 2.40-2
+mingw-w64-x86_64-boost 1.81.0-6
+mingw-w64-x86_64-cgal 5.5.2-1
+mingw-w64-x86_64-clang 15.0.7-3
+mingw-w64-x86_64-clang-analyzer 15.0.7-3
+mingw-w64-x86_64-clang-tools-extra 15.0.7-3
+mingw-w64-x86_64-cmake 3.25.2-1
+mingw-w64-x86_64-compiler-rt 15.0.7-3
+mingw-w64-x86_64-crt-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-x86_64-doxygen 1.9.6-2
 mingw-w64-x86_64-eigen3 3.4.0-1
-mingw-w64-x86_64-emacs-pdf-tools-server 0.91-3
-mingw-w64-x86_64-fd 8.5.3-1
-mingw-w64-x86_64-ffmpeg 4.4.3-3
-mingw-w64-x86_64-gcc 12.2.0-6
-mingw-w64-x86_64-gcc-ada 12.2.0-6
-mingw-w64-x86_64-gcc-fortran 12.2.0-6
-mingw-w64-x86_64-gcc-libgfortran 12.2.0-6
-mingw-w64-x86_64-gcc-objc 12.2.0-6
-mingw-w64-x86_64-gdb 12.1-5
-mingw-w64-x86_64-gdb-multiarch 12.1-5
+mingw-w64-x86_64-emacs-pdf-tools-server 1.0.0-1
+mingw-w64-x86_64-fd 8.7.0-1
+mingw-w64-x86_64-ffmpeg 5.1.2-3
+mingw-w64-x86_64-gcc 12.2.0-10
+mingw-w64-x86_64-gcc-ada 12.2.0-10
+mingw-w64-x86_64-gcc-fortran 12.2.0-10
+mingw-w64-x86_64-gcc-libgfortran 12.2.0-10
+mingw-w64-x86_64-gcc-objc 12.2.0-10
+mingw-w64-x86_64-gdb 13.1-3
+mingw-w64-x86_64-gdb-multiarch 13.1-3
 mingw-w64-x86_64-glfw 3.3.8-2
-mingw-w64-x86_64-glm 0.9.9.8-1
-mingw-w64-x86_64-gnutls 3.7.8-1
+mingw-w64-x86_64-glm 0.9.9.8-2
+mingw-w64-x86_64-gnutls 3.8.0-1
 mingw-w64-x86_64-graphviz 2.44.1-12
-mingw-w64-x86_64-headers-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-x86_64-hugo 0.107.0-1
-mingw-w64-x86_64-hunspell 1.7.1-1
+mingw-w64-x86_64-headers-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-x86_64-hugo 0.111.1-1
+mingw-w64-x86_64-hunspell 1.7.2-1
 mingw-w64-x86_64-hunspell-en 2020.12.07-1
-mingw-w64-x86_64-imagemagick 7.1.0.52-2
-mingw-w64-x86_64-inkscape 1.2.1-5
+mingw-w64-x86_64-imagemagick 7.1.0.62-1
+mingw-w64-x86_64-inkscape 1.2.2-2
 mingw-w64-x86_64-libblocksruntime 0.4.1-1
-mingw-w64-x86_64-libgccjit 12.2.0-6
-mingw-w64-x86_64-libmangle-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-libgccjit 12.2.0-10
+mingw-w64-x86_64-libmangle-git 10.0.0.r234.g283e5b23a-1
 mingw-w64-x86_64-make 4.4-2
 mingw-w64-x86_64-meld3 3.22.0-1
-mingw-w64-x86_64-ninja 1.11.1-2
+mingw-w64-x86_64-ninja 1.11.1-3
 mingw-w64-x86_64-ntldd-git r19.7fb9365-2
-mingw-w64-x86_64-openblas 0.3.21-6
-mingw-w64-x86_64-python-pip 22.3.1-1
+mingw-w64-x86_64-openblas 0.3.21-7
+mingw-w64-x86_64-python-pip 23.0.1-1
 mingw-w64-x86_64-qt5 5.15.3-1
-mingw-w64-x86_64-quazip-qt5 1.3-1
+mingw-w64-x86_64-quazip-qt5 1.4-2
 mingw-w64-x86_64-ripgrep 13.0.0-1
-mingw-w64-x86_64-spirv-headers 1~1.3.231.1-1
-mingw-w64-x86_64-spirv-tools 2022.4-1
-mingw-w64-x86_64-tools-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-x86_64-vulkan-validation-layers 1.3.234-1
-mingw-w64-x86_64-winpthreads-git 10.0.0.r149.g3dfe76203-1
-mingw-w64-x86_64-winstorecompat-git 10.0.0.r149.g3dfe76203-1
+mingw-w64-x86_64-spirv-headers 1~1.3.239.0-1
+mingw-w64-x86_64-spirv-tools 2023.1-1
+mingw-w64-x86_64-tools-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-x86_64-tree-sitter 0.20.7-1
+mingw-w64-x86_64-vulkan-validation-layers 1.3.242-1
+mingw-w64-x86_64-winpthreads-git 10.0.0.r234.g283e5b23a-1
+mingw-w64-x86_64-winstorecompat-git 10.0.0.r234.g283e5b23a-1
 mingw-w64-x86_64-zeromq 4.3.4-2
 p7zip 17.04-1
 pactoys r55.8860e1f-1
 patch 2.7.6-2
 patchutils 0.4.2-3
-pkgconf 1.8.0-2
+pkgconf 1.9.4-1
 pkgfile 21-2
 quilt 0.66-3
-reflex 20210510-2
-scons 3.1.2-8
-swig 4.0.2-2
-texinfo 6.8-6
-texinfo-tex 6.8-6
-unrar 6.1.4-2
+reflex 20221012-1
+scons 3.1.2-9
+swig 4.0.2-3
+texinfo 7.0.2-1
+texinfo-tex 7.0.2-1
+unrar 6.2.2-1
 unzip 6.0-2
 winpty 0.4.3-1
 xmlto 0.0.28-4
@@ -8407,6 +8575,23 @@ See also:
 )
 #+end_src
 
+*** Dired
+
+Some settings for build-in /Dired/.
+
+#+begin_src emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; Avoid creation of new buffers for each visited directory
+;;
+(use-package dired
+    :straight nil
+    :commands (dired dired-jump)
+    ;:custom ((dired-listing-switches "-agho --group-directories-first"))
+    :config
+        (setq dired-kill-when-opening-new-dired-buffer t)
+)
+#+end_src
+
 *** Dired+
 
 Package [[https://www.emacswiki.org/emacs/DiredPlus][Dired+]] extends functionalities provided by standard *Emacs* library [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]]. The standard functions are all
@@ -8483,7 +8668,6 @@ Some usefule key bindings and commands:
 |             | =C-u M-x dired-do-find-marked-files==        | Open marked files, without splitting window.                                             |
 |-------------+--------------------------------------------+------------------------------------------------------------------------------------------|
 
-
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Enhance dired a little
@@ -8495,7 +8679,114 @@ Some usefule key bindings and commands:
 )
 #+end_src
 
-*** Perspective
+*** CANCELED Testing Dirvish
+
+#+begin_src emacs-lisp :tangle no config/init-basic-handling.el
+(use-package dired
+    :straight nil
+    :config
+        (setq dired-listing-switches
+            "-l --almost-all --human-readable --time-style=long-iso --group-directories-first --no-group")
+  :bind
+      ;; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+      (
+        :map dired-mode-map
+        ("/" . dired-goto-file)
+        ("," . dired-create-directory)
+        ("." . dired-create-empty-file)
+        ("I" . dired-insert-subdir)
+        ("K" . dired-kill-subdir)
+        ("O" . dired-find-file-other-window)
+        ("[" . dired-prev-dirline)
+        ("]" . dired-next-dirline)
+        ("o" . dired-up-directory)
+        ("^" . mode-line-other-buffer)
+        ("x" . dired-do-delete)
+        ("X" . dired-do-flagged-delete)
+        ("y" . dired-do-copy)
+      )
+)
+
+(use-package dired-x
+    :straight nil
+    :init
+        (with-eval-after-load 'dired-x
+            (setq dired-omit-files (concat dired-omit-files "\\|^\\..*$")))
+)
+
+(use-package dired-aux
+    :straight nil
+)
+
+(use-package diredfl
+    :hook (
+            (dired-mode . diredfl-mode)
+            (dirvish-directory-view-mode . diredfl-mode)
+            (enable-theme-functions . (lambda (_theme)
+              (set-face-attribute 'diredfl-dir-name nil :bold t)))
+          )
+    :config
+        (set-face-attribute 'diredfl-dir-name nil :bold t)
+)
+
+(use-package dirvish
+    :init
+        (dirvish-override-dired-mode)
+    :custom
+        (dirvish-quick-access-entries
+            '(("h" "~/"                          "Home")
+            ))
+        (dirvish-mode-line-format
+            '(:left (sort file-time " " file-size symlink) :right (omit yank index)))
+
+        ;; Don't worry, Dirvish is still performant even you enable all these attributes
+        (dirvish-attributes '(all-the-icons collapse subtree-state vc-state git-msg))
+  
+    :config
+  
+        ;; Enable mouse drag-and-drop files to other applications
+        (setq dired-listing-switches
+            "-l --almost-all --human-readable --time-style=long-iso --group-directories-first --no-group")
+
+        (setq mouse-1-click-follows-link nil)
+        (setq dired-mouse-drag-files t)                   ; added in Emacs 29
+        (setq mouse-drag-and-drop-region-cross-program t) ; added in Emacs 29
+        (setq dired-kill-when-opening-new-dired-buffer t) ; added in Emacs 28
+        (setq dired-recursive-copies 'always)
+        (setq dired-recursive-deletes 'always)
+        (setq delete-by-moving-to-trash t)
+        (setq dired-dwim-target t)
+        (setq dired-bind-info nil)
+        (setq dired-bind-man nil)
+        (setq dired-clean-confirm-killing-deleted-buffers nil)
+        (setq dired-do-revert-buffer t)
+        (setq dired-auto-revert-buffer #'dired-directory-changed-p)
+  :bind
+      ;; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+      (("C-c f" . dirvish-fd)
+       ;; Dirvish has all the keybindings in `dired-mode-map' already
+       :map dirvish-mode-map
+       ("a"   . dirvish-quick-access)
+       ("f"   . dirvish-file-info-menu)
+       ("y"   . dirvish-yank-menu)
+       ("N"   . dirvish-narrow)
+       ("^"   . dirvish-history-last)
+       ("h"   . dirvish-history-jump) ; remapped `describe-mode'
+       ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+       ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+       ("TAB" . dirvish-subtree-toggle)
+       ("M-f" . dirvish-history-go-forward)
+       ("M-b" . dirvish-history-go-backward)
+       ("M-l" . dirvish-ls-switches-menu)
+       ("M-m" . dirvish-mark-menu)
+       ("M-t" . dirvish-layout-toggle)
+       ("M-s" . dirvish-setup-menu)
+       ("M-e" . dirvish-emerge-menu)
+       ("M-j" . dirvish-fd-jump))
+)
+#+end_src
+
+*** Long Buffer Lines
 
 The package [[https://www.emacswiki.org/emacs/SoLong][so-long]] provides a workaround for the problem of really long buffer lines. *Emacs* can't work with
 these so good.
@@ -8511,6 +8802,8 @@ which are considered to affect performance noticeably).
     :config (setq so-long-threshold 400)
 )
 #+end_src
+
+*** Perspective
 
 The [[https://github.com/nex3/perspective-el][perspective]] package provides multiple named workspaces
 (or "perspectives") in *Emacs*, similar to multiple desktops in window managers.
@@ -8600,7 +8893,7 @@ If the expanded text is more than one word, for example, suppose you want to def
 
 Remove an abbreviation by =C-u -1 C-x a g= rspl. =C-u -1 C-x a l= followed by the memnomic, e.g. "bg".
 
-Other commands: =M-x list-abbrevs=, =M-x edit-abbrevs=, =M-x edit-abbrevs-redefine=, =M-x abbrev-edit-save-buffe=
+Other commands: =M-x list-abbrevs= =M-x edit-abbrevs=, =M-x edit-abbrevs-redefine=, =M-x abbrev-edit-save-buffe=
 and =M-x abbrev-edit-save-to-file=.
 
 Additionally, =M-x read-abbrev-file= and =M-x write-abbrev-file=.
@@ -12834,7 +13127,7 @@ See also:
     - [[https://github.com/emacsmirror/git-timemachine][emacsmirror/git-timemachine]]
     - [[https://codeberg.org/pidu/git-timemachine][pidu/git-timemachine]]
 
-#+begin_src emacs-lisp :tangle config/init-advanced-magit.el
+#+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
 (use-package git-timemachine
 ;    :after magit
 ;    :straight (git-timemachine :host https://codeberg.org :repo "pidu/git-timemachine")
@@ -16584,12 +16877,33 @@ Each link also can be exported to LaTeX to build a PDF.
         (require 'org-ref-wos)
         (require 'queue)
 
+        (defun psimacs/org-ref/export/file (&optional async subtreep visible-only body-only ext-plist)
+          "Export notebook to .html"
+          (interactive)
+          (let* ((name (file-name-sans-extension (buffer-file-name)))
+                 (wcfg (current-window-configuration))
+                )
+            (let ((org-export-with-drawers "RESULTS"))
+              (with-current-buffer (org-ref-export-as-org)
+                (with-current-buffer (org-html-export-as-html)
+                  (write-file (concat name ".html"))
+                  (quit-window t)
+                  )
+                (quit-window t)
+                )
+              )
+
+              (set-window-configuration wcfg)
+            )
+        )
+
         (org-export-define-derived-backend 'org-ref 'org
           :menu-entry
           '(?R "Org-ref export"
                ((?a "to Ascii" org-ref-export-to-ascii)
                 (?m "to markdown" org-ref-export-to-md)
                 (?h "to html" org-ref-export-to-html)
+                (?H "to HTML" psimacs/org-ref/export/file)
                 (?l "to LaTeX" org-ref-export-to-latex)
                 (?p "to PDF" org-ref-export-to-pdf)
                 (?o "to ODT" org-ref-export-to-odt)
@@ -17055,7 +17369,7 @@ The following commands are defined only if point is in an org-babel source block
     :config
         (message "jupyter has been configured!")
 
-        ;(setq jupyter--debug t)
+                ;(setq jupyter--debug t)
         (setq jgupyter-default-timeout 20.0)
         (setq jupyter-long-timeout 120)
 
@@ -17086,6 +17400,8 @@ The following commands are defined only if point is in an org-babel source block
         (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 
         (add-to-list 'org-src-lang-modes '("jupyter-python" . python))
+
+        (put 'jupyter-org-resource-directory 'safe-local-variable #'stringp)
 
         (defalias 'org-babel-execute:ipython 'org-babel-execute:jupyter-python)
         (setq org-babel-default-header-args:ipython org-babel-default-header-args:jupyter-python)
@@ -18085,6 +18401,14 @@ Brains:
                     :unnarrowed t
                 )
                 (
+                    "C" "cookbook" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "CookbookTemplate.org"))
+                    :if-new (
+                                file "cookbooks/%<%Y-%m-%d>-${slug}.org"
+                            )
+                    :unnarrowed t
+                )
+                (
                     "a" "article" plain
                     (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "ArticleTemplate.org"))
                     :if-new (
@@ -18639,6 +18963,16 @@ major plantuml-mode.
         (add-to-list 'auto-mode-alist    '("\\.plantuml\\'" . plantuml-mode))
         ;(add-to-list 'org-src-lang-modes '("plantuml"       . plantuml))
 
+
+        (setq org-babel-default-header-args:plantuml
+                      '((:results . "file")
+                        (:exports . "both")
+                        (:cache   . "no")
+                        (:noweb   . "no")
+                        (:hlines  . "no")
+                        (:tangle  . "no")
+                        (:eval    . "never-export")))
+     
         ;;
         ;; Replace the function plantuml-update-preview-buffer with function psimacs/config/plantuml-update-preview-buffer
         ;; The only difference is that the psimacs/config/plantuml-update-preview-buffer adds the line
@@ -19852,6 +20186,11 @@ References:
                     ("E" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
                     ("Q" toggle-debug-on-quit  "debug on quit"  :toggle (default-value 'debug-on-quit))
                 )
+
+            "Miscellaneous"
+                (
+                    ("k" (setq-default dired-kill-when-opening-new-dired-buffer (not dired-kill-when-opening-new-dired-buffer)) "only one dired buffer" :toggle dired-kill-when-opening-new-dired-buffer)
+                )
         )
     )
 )
@@ -19869,22 +20208,21 @@ See also:
 ;; Hydra for various word modes
 ;;
 (define-key psimacs/config/global-key-map/hydra (kbd "C-m")
-    (defhydra psimacs/hydra/word-modes
-        (:color pink :hint nil)
-"
-^^Word Movement Modes:
-^^-----------------------------------------------------
-_b_:   subword Mode  some■Thing some■-thing some■_thing
-_p_: superword Mode  someThing■ some-thing■ some_thing■
-_n_:    normal Mode  someThing■ some■-thing some■_thing
-
-_q_: quit
-
-"
-        ("b" subword-mode   )
-        ("p" superword-mode )
-        ("n" normal-mode    )
-        ("q" nil :color blue)
+    (pretty-hydra-define
+        psimacs/hydra/word-modes
+        (
+           :title (psimacs/config/pretty-hydra-title "Word Movement Modes" 'faicon "toggle-on" :v-adjust -0.1)
+           :color amaranth
+           :quit-key "q"
+        )
+        (
+            ""
+                (
+                    ("b" subword-mode   "subword Mode   ☞ some■Thing some■-thing some■_thing" :toggle t)
+                    ("p" superword-mode "superword Mode ☞ someThing■ some-thing■ some_thing■" :toggle t)
+                    ("n" normal-mode    "normal Mode    ☞ someThing■ some■-thing some■_thing")
+                )
+        )
     )
 )
 #+end_src
@@ -20016,9 +20354,9 @@ _q_: quit
                 (
                     ("f" helpful-callable "callable")
                     ("F" helpful-function "function")
-                    ("M" helpful-macro "macro")
-                    ("c" helpful-command "command")
-                    ("k" helpful-key "key")
+                    ("M" helpful-macro    "macro")
+                    ("c" helpful-command  "command")
+                    ("k" helpful-key      "key")
                     ("v" helpful-variable "variable")
                     ("p" helpful-at-point "at point")
                 )
@@ -20663,7 +21001,7 @@ _q_: quit_
                 (
                     ("a" psimacs/hydra/apropos/body             "Apropos")
                     ("h" psimacs/hydra/help/body                "Help")
-                    ("H" psimacs/hydra/help/body                "Helpful")
+                    ("H" psimacs/hydra/helpful/body             "Helpful")
                 )
 
             "Navigation"
@@ -20695,7 +21033,7 @@ _q_: quit_
 
             "Tools"
                 (
-                    ("i"   hydra-ivy/body                       "  Ivy")
+                    ("i"   hydra-ivy/body                 "  Ivy")
                     ("y"   psimacs/hydra/yasnippet/body         "  Snippets")
                     ("C-i" psimacs/hydra/image+/body            "Image+")
                     ("C-f" psimacs/hydra/flycheck/body          "Flycheck")
@@ -20706,14 +21044,14 @@ _q_: quit_
                     ("e"   psimacs/hydra/else/body              "ELSE Mode")
                     ("j"   psimacs/hydra/jupyter/open-hydra     "Jupyter Notebook")
                     ("l"   psimacs/hydra/lsp/body               "LSP Mode")
-                    ("d"   dap-hydra                            "DAP Mode")
+                    ("d"   dap-hydra                      "DAP Mode")
                 )
 
             "Miscellaneous"
                 (
                     ("C-l" psimacs/hydra/vlf-large-files/body   "VLF Large File Support")
                     ("C-s" psimacs/hydra/straight/body          "Straight")
-                    ("m"   major-mode-hydra                     "  Major Mode")
+                    ("m"   major-mode-hydra               "  Major Mode")
                 )
         )
     )
