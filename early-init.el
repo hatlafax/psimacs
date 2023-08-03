@@ -164,6 +164,9 @@ Do not change it here!!!
 (defconst psimacs/config/site-lisp-folder "site-lisp"
   "The psimacs site-lisp directory.")
 
+(defconst psimacs/config/docs-folder "docs"
+  "The psimacs docs directory.")
+
 (defconst psimacs/config/work-lisp-folder "work-lisp"
   "The psimacs work-lisp directory.")
 
@@ -800,6 +803,12 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                                                              psimacs/config/work-lisp-folder))
                                              (file-name-as-directory (concat db-dir
                                                                              psimacs/config/work-lisp-folder))))
+        (add-to-list 'sync-dirs-alist  (cons (file-name-as-directory (concat user-emacs-directory
+                                                                             psimacs/config/docs-folder))
+                                             (file-name-as-directory (concat db-dir
+                                                                             psimacs/config/docs-folder))))
+
+
 
         ;;
         ;; Create missing dropbox emacs directory
