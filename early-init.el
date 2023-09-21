@@ -303,7 +303,7 @@ It is the fraction of the current heap size."
 ;;
 ;; After initialization set the garbage collection threshold to a reasonable value.
 ;;
-(add-hook 'add-init-hook
+(add-hook 'after-init-hook
           `(lambda ()
             (setq gc-cons-threshold  psimacs/config/gc-cons-threshold
                   gc-cons-percentage psimacs/config/gc-cons-percentage)
