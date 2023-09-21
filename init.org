@@ -1192,6 +1192,8 @@ ugly flashes of unstyled Emacs.
                   gc-cons-percentage psimacs/config/gc-cons-percentage)
             (garbage-collect)
                   ) t)
+
+;; (setq garbage-collection-messages t)
 #+end_src
 
 
@@ -4569,6 +4571,11 @@ Let *Psimacs* perform garbage collection if it does not have the focus.
 
 #+begin_src emacs-lisp :tangle config/init-basic-optimizations.el :var file-description="Basic performance optimizations"
 ;;
+;; Verbose garbage collector
+;;
+;; (setq garbage-collection-messages t)
+
+;;
 ;; Garbage collect when out of focus
 ;;
 (add-hook 'emacs-startup-hook
@@ -4592,7 +4599,7 @@ garbage collection threshold.
 ;;
 (defun psimacs/config/gc-minibuffer-setup-hook ()
   "Enlarge the current gc-cons-threshold"
-  (setq gc-cons-threshold (* psimacs/config/gc-cons-threshold 8)))
+  (setq gc-cons-threshold (* psimacs/config/gc-cons-threshold 10)))
 
 (defun psimacs/config/gc-minibuffer-exit-hook ()
   "Garbage collect and reset the gc-cons-threshold"
@@ -4615,10 +4622,12 @@ The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hac
 ;; Use the garbage collector magic hack
 ;;
 (use-package gcmh
-    :diminish gcmh-mode
-    :init (gcmh-mode 1)
-    :config
-        (setq gcmh-low-cons-threshold psimacs/config/gc-cons-threshold)
+    :diminish
+    :custom
+        (gcmh-low-cons-threshold psimacs/config/gc-cons-threshold)
+        ;;(gcmh-verbose t)
+    :hook
+        (emacs-startup . gcmh-mode)
 )
 #+end_src
 
@@ -14140,7 +14149,7 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         ;;(setq lsp-yaml-schema-store-local-db psimacs/config/lsp-yaml-schema-store-local-db-file)
 
         ;(setq lsp-pyls-server-command psimacs/config/pyls-runtime-exe)
-        (setq lsp-idle-delay 0.1)
+        (setq lsp-idle-delay 0.500)
 
         (setq lsp-auto-guess-root t)
         (setq lsp-enable-indentation t)
