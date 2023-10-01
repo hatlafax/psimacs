@@ -674,6 +674,8 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed Database"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-wget2"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed dos2unix"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed winpty"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed diffutils"
 
     #
     # Bootstrap msys64 into psimacs dir: install git
@@ -699,6 +701,7 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-imagemagick-docs"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-zeromq"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-winpty"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-tree-sitter"
 
     #
     # Bootstrap msys64 into psimacs dir: install tools
@@ -736,6 +739,7 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-scite-defaults"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-fd"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ffmpeg"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-diffutils"
     
     #
     # Bootstrap msys64 into psimacs dir: install nerd fonts
