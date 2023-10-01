@@ -770,6 +770,34 @@ itself at startup.
 (require 'map) ;; needed for map-put
 #+end_src
 
+** Setup Garbage Collection
+
+For the initialization procedure we try to avoid any garbage collection operation.
+
+The GC can easily double startup time, so we suppress it at startup by turning up =gc-cons-threshold=
+and the =gc-cons-percentage= temporarily.
+
+For detail information read the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Garbage-Collection.html][Garbage Collection manual entry]].
+
+Later in the initialization process the garbage collection procedure is even more fine tuned.
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Garbage collection optimization
+;;      Defer garbage collection further back in the startup process
+;;
+(setq gc-cons-threshold most-positive-fixnum
+      ;; The value of this variable is the number of bytes of storage that must
+      ;; be allocated for Lisp objects after one garbage collection in order to
+      ;; trigger another garbage collection.
+
+      gc-cons-percentage 1.0
+      ;; The value of this variable specifies the amount of consing before a
+      ;; garbage collection occurs, as a fraction of the current heap size.
+)
+
+#+end_src
+
 ** Some basic constants
 
 *** Timing of the Emacs load time
@@ -777,6 +805,9 @@ itself at startup.
 *Psimacs* allows the timing of the complete startup procedure.
 
 #+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Start up timing
+;;
 (defconst psimacs/config/startup-timing t
   "Enables the timing of the startup procedure.")
 
@@ -979,18 +1010,18 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 Copyright information that should be inserted into all tangled code.
 
 #+begin_src emacs-lisp :tangle early-init.el
-(defconst psimacs/config/copyright/year       "2020-2022")
+(defconst psimacs/config/copyright/year       "2020-2024")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
 (defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
 (defconst psimacs/config/copyright/url        "https://github.com/hatlafax/psimacs")
 (defconst psimacs/config/copyright/license    "GNU GENERAL PUBLIC LICENSE")
 (defconst psimacs/config/copyright/version    "Version 3, 29 June 2007")
- #+end_src
+#+end_src
 
-*** Garbage collection
+*** Garbage collection default parameters
 
-Fine tuning the garbage collection after startup initialization.
+Copyright information that should be inserted into all tangled code.
 
 #+begin_src emacs-lisp :tangle early-init.el
 ;;
@@ -1007,23 +1038,27 @@ It is the fraction of the current heap size."
 )
 #+end_src
 
-** Some early optimization settings
-
-- Support for native compilation
+*** Support for Native compilation
 
 As of /Emacs 28/ navtive elisp compilation is supported. The following code
 set the directory where the compiled files are stored.
 
 #+begin_src emacs-lisp :tangle early-init.el
-(when (featurep 'native-compile)
-    (setq native-comp-async-report-warnings-errors nil
-          native-comp-deferred-compilation t)
-    ;;
-    ;; Don't store eln files in ~/.emacs.d/eln-cache
-    ;;
-    (add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
-)
+;;
+;; Native compilation
+;;
+(setq native-comp-async-report-warnings-errors nil)  ;; hide warnings
+(setq native-comp-deferred-compilation         nil)  ;; Obsolete since 29.1; use native-comp-jit-compilation instead.
+(setq native-comp-jit-compilation              nil)
+
+;;
+;; Don't store eln files in ~/.emacs.d/eln-cache
+;;
+(add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
+(startup-redirect-eln-cache             psimacs/config/native-comp-dir)
 #+end_src
+
+** Some early optimization settings
 
 - Lexical Scope and binding
 
@@ -1061,6 +1096,17 @@ is because it breaks some old (badly written) code.
 (setq package-enable-at-startup nil)
 #+end_src
 
+- In noninteractive sessions, prioritize non-byte-compiled source files to prevent the use of stale byte-code.
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; In noninteractive sessions, prioritize non-byte-compiled source files to
+;; prevent the use of stale byte-code. Otherwise, it saves us a little IO time
+;; to skip the mtime checks on every *.elc file.
+;;
+(setq load-prefer-newer noninteractive)
+#+end_src
+
 - Let's inhibit resizing the frame at early stage.
 
   [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Implied-Frame-Resizing.html][Implied Frame Resizing]]:
@@ -1085,6 +1131,23 @@ is because it breaks some old (badly written) code.
 (setq frame-inhibit-implied-resize t)
 #+end_src
 
+- Avoid flickering of the screen
+
+  Set theme colors early. The colors are taken from the alect-colors found in the 'alect-themes.el'.
+  If another theme is used on default, these settings should be adapted, accordingly.
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Change color to avoid screen flickering
+;;
+;(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
+;(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
+;(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
+;(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
+;(set-face-background 'default "#2B2320" nil) ; the kaolin-valley-dark theme background color
+(set-face-background 'default "#1a1a1a" nil) ; the nimbus theme background color
+#+end_src
+
 Premature redisplays can substantially affect startup times and produce
 ugly flashes of unstyled Emacs.
 
@@ -1094,8 +1157,10 @@ ugly flashes of unstyled Emacs.
     ;; Premature redisplays can substantially affect startup times and produce
     ;; ugly flashes of unstyled Emacs.
     ;;
-    (setq-default inhibit-redisplay t
-                  inhibit-message t)
+    (setq-default inhibit-startup-screen  t
+                  inhibit-startup-message t
+                  inhibit-redisplay       t
+                  inhibit-message         t)
 
     (add-hook 'window-setup-hook
         (lambda ()
@@ -1123,6 +1188,24 @@ ugly flashes of unstyled Emacs.
 )
 #+end_src
 
+- Prevent flashing of unstyled modeline at startup
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Prevent flashing of unstyled modeline at startup
+;;
+(setq-default mode-line-format nil)
+#+end_src
+
+- Don't pass case-insensitive to `auto-mode-alist'
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Don't pass case-insensitive to `auto-mode-alist'
+;;
+(setq auto-mode-case-fold nil)
+#+end_src
+
 - Never use the menu-bar, the tool-bar or the scroll-bar:
 
   It will be faster to disable them here before they've been initialized.
@@ -1133,56 +1216,27 @@ ugly flashes of unstyled Emacs.
 ;;
 ;; Beautify Emacs
 ;;
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(horizontal-scroll-bar-mode -1)
+;;
+;; Faster to disable these here (before they've been initialized)
+;;
+(push '(menu-bar-lines . 0)   default-frame-alist)
+(push '(tool-bar-lines . 0)   default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+(when (featurep 'ns)
+    (push '(ns-transparent-titlebar . t) default-frame-alist))
+(setq-default mode-line-format nil)
+
+;(menu-bar-mode -1)
+;(tool-bar-mode -1)
+;(scroll-bar-mode -1)
+;(horizontal-scroll-bar-mode -1)
 #+end_src
 
-- Avoid flickering of the screen
+- Garbage Collection fine tuning
 
-  Set theme colors early. The colors are taken from the alect-colors found in the 'alect-themes.el'.
-  If another theme is used on default, these settings should be adapted, accordingly.
-
-#+begin_src emacs-lisp :tangle early-init.el
-;;
-;; Change color to avoid screen flickering
-;;
-;(set-face-foreground 'default "#d0bf8f" nil) ; the alect-dark theme forground color
-;(set-face-background 'default "#3f3f3f" nil) ; the alect-dark theme background color
-
-;(set-face-foreground 'default "#bbc2cf" nil) ; the doom-one theme forground color
-;(set-face-background 'default "#282c34" nil) ; the doom-one theme background color
-
-;(set-face-background 'default "#2B2320" nil) ; the kaolin-valley-dark theme background color
-
-(set-face-background 'default "#1a1a1a" nil) ; the nimbus theme background color
-#+end_src
-
-- Avoid garbage collection at startup
-
-  The GC can easily double startup time, so we suppress it at startup by turning up =gc-cons-threshold=
-  and the =gc-cons-percentage= temporarily.
-
-  For detail information read the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Garbage-Collection.html][Garbage Collection manual entry]].
-
-  Later in the initialization process the garbage collection procedure is even more fine tuned.
+After initialization we set sensible GC parameters.
 
 #+begin_src emacs-lisp :tangle early-init.el
-;;
-;; Garbage collection optimization
-;;
-(setq gc-cons-threshold  most-positive-fixnum
-      ;; The value of this variable is the number of bytes of storage that must
-      ;; be allocated for Lisp objects after one garbage collection in order to
-      ;; trigger another garbage collection.
-
-      gc-cons-percentage 0.6
-      ;; The value of this variable specifies the amount of consing before a
-      ;; garbage collection occurs, as a fraction of the current heap size.
-)
-
-
 ;;
 ;; After initialization set the garbage collection threshold to a reasonable value.
 ;;
@@ -1192,10 +1246,7 @@ ugly flashes of unstyled Emacs.
                   gc-cons-percentage psimacs/config/gc-cons-percentage)
             (garbage-collect)
                   ) t)
-
-;; (setq garbage-collection-messages t)
 #+end_src
-
 
 - Another small optimization concerns on =file-name-handler-alist=
 
@@ -1203,17 +1254,24 @@ ugly flashes of unstyled Emacs.
   setting it to nil and after initialization finished put the value back make the initialization process quicker.
 
 #+begin_src emacs-lisp :tangle early-init.el
-(defvar psimacs/config/file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
+;;
+;; Suppress file handlers operations at startup
+;;
+(unless (or (daemonp) noninteractive init-file-debug)
+  ;; `file-name-handler-alist' is consulted on each call to `require' and `load'
+  (let ((old-value file-name-handler-alist))
+    (setq file-name-handler-alist nil)
+    (set-default-toplevel-value 'file-name-handler-alist file-name-handler-alist)
 
-;;
-;; After initialization reset the file-name-handler-alist
-;;
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq file-name-handler-alist psimacs/config/file-name-handler-alist)
-            (makunbound 'psimacs/config/file-name-handler-alist)
-            ))
+    ;;
+    ;; After initialization reset the file-name-handler-alist
+    ;;
+    (add-hook 'emacs-startup-hook
+              (lambda ()
+                "Recover file name handlers."
+                (setq file-name-handler-alist
+                      (delete-dups (append file-name-handler-alist old-value))))
+              )))
 #+end_src
 
 - Disable warnings generated when functions are redefined with defadvice
@@ -1432,6 +1490,8 @@ Source code blocks that tangle to early-init.el are handled differently. In this
          (found-files-alist ())
          (found-load-dir-alist ()))
     (with-temp-buffer (insert-file-contents orgfile)
+                      (require 'map) ;; needed for map-put
+
                       (goto-char (point-min))
                       (while (re-search-forward src-block-regexp nil t)
                         (let ((lang (match-string 2))
@@ -1867,6 +1927,15 @@ file is setup. It starts with a commentary preamble written to the primary =init
 ;; Emacs 27 introduces early-init.el, which is run before init.el,
 ;; before package and UI initialization happens.
 ;;
+
+;;
+;; Psimacs has been setup with Emacs 29.2. No suport for older version.
+;;
+(when (version< emacs-version "29.2")
+    (warning "Only tested with Emacs 29.2 and above!"))
+
+(when (version< emacs-version "27.1")
+    (error "This requires Emacs 27.1 and above!"))
 #+end_src
 
 *Psimacs* splits the configuration into various =init-*.el=-files. This will allow better looking up specific
@@ -1961,6 +2030,15 @@ to it's documentation string.
     (add-to-list 'default-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
     (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
     (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+
+    ;;
+    ;; Hacky, we need a redisplay
+    ;;
+    (setq-default inhibit-redisplay nil
+                  inhibit-message   nil)
+    (redisplay)
+    (setq-default inhibit-redisplay t
+                  inhibit-message   t)
 )
 
 ;;
@@ -2197,10 +2275,21 @@ The following boolean constants are defined for convenience.
 ;;
 ;; System constants for convenience
 ;;
-(defconst psimacs/system/is-gui-flag        (display-graphic-p)          "Are we running on a GUI Emacs?")
-(defconst psimacs/system/is-windows-nt-flag (eq system-type 'windows-nt) "Are we running on a Windows OS system?")
-(defconst psimacs/system/is-gnu-linux-flag  (eq system-type 'gnu/linux)  "Are we running on a GNU/Linux system?")
-(defconst psimacs/system/is-darwin-flag     (eq system-type 'darwin)     "Are we running on a MAC system?")
+(defconst psimacs/system/is-gui-p              (display-graphic-p)                                 "Are we running on a GUI Emacs?")
+(defconst psimacs/system/is-win32-p            (eq system-type 'windows-nt)                        "Are we running on a WinTel system?")
+(defconst psimacs/system/is-linux-p            (eq system-type 'gnu/linux)                         "Are we running on a GNU/Linux system?")
+(defconst psimacs/system/is-mac-p              (eq system-type 'darwin)                            "Are we running on a Mac system?")
+(defconst psimacs/system/is-mac-x-p            (and (display-graphic-p) psimacs/system/is-mac-p)   "Are we running under X on a Mac system?")
+(defconst psimacs/system/is-mac-ns-p           (eq window-system 'ns)                              "Are we running on a GNUstep or Macintosh Cocoa display?")
+(defconst psimacs/system/is-mac-cocoa-p        (featurep 'cocoa)                                   "Are we running with Cocoa on a Mac system?")
+(defconst psimacs/system/is-mac-port-p         (eq window-system 'mac)                             "Are we running a macport build on a Mac system?")
+(defconst psimacs/system/is-linux-x-p          (and (display-graphic-p) psimacs/system/is-linux-p) "Are we running under X on a GNU/Linux system?")
+(defconst psimacs/system/is-cygwin-p           (eq system-type 'cygwin)                            "Are we running on a Cygwin system?")
+(defconst psimacs/system/is-root-p             (string-equal "root" (getenv "USER"))               "Are you using ROOT user?")
+
+(defconst emacs/>=27p (>= emacs-major-version 27) "Emacs is 27 or above.")
+(defconst emacs/>=28p (>= emacs-major-version 28) "Emacs is 28 or above.")
+(defconst emacs/>=29p (>= emacs-major-version 29) "Emacs is 29 or above.")
 #+end_src
 
 ** Helper functions for assembling folders and files
@@ -2314,6 +2403,9 @@ programs are installed.
 ;;
 ;; Directory constants used by Psimacs
 ;;
+(defconst psimacs/config/home-dir (getenv "HOME")
+  "The user home directory used by Emacs")
+
 (defconst psimacs/config/emacs-dir
   (psimacs/file-system/concat-directory invocation-directory "..")
   "The installation directory of Emacs")
@@ -2373,8 +2465,15 @@ This defines some logos and images that are used to give *Psimacs* a good look.
 ;;
 ;; Logos and the like
 ;;
-(defconst psimacs/config/logo-file
+(defconst psimacs/config/logo-file-private
   (psimacs/file-system/concat-file psimacs/config/private-dir "psimacs.png")
+  "The psimacs logo image.")
+
+(defconst psimacs/config/logo-file
+  (if (file-exists-p psimacs/config/logo-file-private)
+    psimacs/config/logo-file-private
+      (psimacs/file-system/concat-file psimacs/config/assets-dir "emacs.png")
+  )
   "The psimacs logo image.")
 
 (defconst psimacs/config/homepage
@@ -2409,7 +2508,7 @@ recipe is provided.
 ;; Installation of system wide utilities and resources
 ;;
 (defconst psimacs/config/system-utils-dir
-  (expand-file-name (file-name-as-directory "c:/utils"))
+  (psimacs/file-system/concat-directory psimacs/config/home-dir "psimacs")
   "The psimac system resources and utility directory.")
 #+end_src
 
@@ -2490,6 +2589,21 @@ Additionally the vanilla bookmark mode file is also defined in the =psimacs/conf
 (defconst psimacs/config/bookmarks-file
   (psimacs/file-system/concat-file psimacs/config/bookmarks-dir ".bookmarks")
   "The psimacs bookmarks file.")
+#+end_src
+
+** Tramp
+
+*Psimacs* does not explicitely configure tramp currently. However, to avoid the tramp
+history file to appear in the configuration root directory, we set the =tramp-persistency-file-name=
+variable.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Tramp history file
+;;
+(defconst psimacs/config/tramp-persistency-file-name
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".tramp")
+  "The psimacs tramp history file.")
 #+end_src
 
 ** Abbreviations
@@ -2590,7 +2704,7 @@ References:
    (getenv "EMACS_SERVER_FILE")
    "The active server file.")
 
-(when (and psimacs/system/is-windows-nt-flag
+(when (and psimacs/system/is-win32-p
             (or (not psimacs/config/found-server-file)
                 (not (file-exists-p psimacs/config/found-server-file))
                 (equal psimacs/config/found-server-file psimacs/config/server-file)))
@@ -2788,75 +2902,6 @@ repository.
 (defconst psimacs/config/custom-file
     (psimacs/file-system/concat-file user-emacs-directory psimacs/config/custom-file-name)
     "The psimacs customization file.")
-#+end_src
-
-** Latex
-
-LaTeX bibliography should be shared.
-
-#+begin_src emacs-lisp :tangle config/init-constants.el
-;;
-;; LaTeX file sharing
-;;
-(defconst psimacs/config/latex-dir
-  (psimacs/file-system/concat-directory psimacs/config/content-dir "latex")
-  "The psimacs shared latex directory.")
-
-(psimacs/file-system/make-directory psimacs/config/latex-dir)
-
-(defconst psimacs/config/tex-runtime-dir
-  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "MiKTeX/miktex/bin/x64")
-  ;;(psimacs/file-system/concat-directory psimacs/config/system-utils-dir "texlive/bin/win32")
-  "The psimacs tex runtime directory.")
-#+end_src
-
-** PDF viewer
-
-The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
-
-#+begin_src emacs-lisp :tangle config/init-constants.el
-;;
-;; PDF file viewing
-;;
-(defconst psimacs/config/pdf-viewer-name "SumatraPDF" "The psimacs pdf viewer name.")
-
-(defconst psimacs/config/pdf-viewer-dir
-  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "SumatraPDF")
-  "The psimacs pdf viewer directory.")
-
-(defconst psimacs/config/pdf-viewer-runtime
-  (psimacs/file-system/concat-file psimacs/config/pdf-viewer-dir "SumatraPDF-3.2-64.exe")
-  "The psimacs pdf viewer executable.")
-#+end_src
-
-** The Amx file
-
-[[https://github.com/DarwinAwardWinner/amx][Amx]] is an alternative interface for M-x in Emacs.
-
-#+begin_src emacs-lisp :tangle config/init-constants.el
-;;
-;; Amx package support file
-;;
-(defconst psimacs/config/amx-file
-  (psimacs/file-system/concat-file psimacs/config/session-dir ".amxf")
-  "The psimacs amx file.")
-#+end_src
-
-** The Treemacs constants
-
-[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a tree layout file explorer for *Emacs*.
-
-#+begin_src emacs-lisp :tangle config/init-constants.el
-;;
-;; Treemacs package support files
-;;
-(defconst psimacs/config/treemacs-persist-file
-  (psimacs/file-system/concat-file psimacs/config/session-dir ".treemacs-persist")
-  "The psimacs treemacs persist file.")
-
-(defconst psimacs/config/treemacs-last-error-persist-file
-  (psimacs/file-system/concat-file psimacs/config/session-dir ".treemacs-last-error-persist")
-  "The psimacs treemacs last error persist file.")
 #+end_src
 
 ** MSYS2
@@ -3350,17 +3395,91 @@ zip 3.0-3
   (psimacs/file-system/concat-file psimacs/config/msys-runtime-dir "bash.exe")
   "The psimacs bash executable.")
 
-(defconst psimacs/config/mingw-root-dir
-  (psimacs/file-system/concat-directory psimacs/config/msys-root-dir "mingw64")
-  "The psimacs mingw64 root directory.")
 
-(defconst psimacs/config/mingw-info-dir
-  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "share/info")
-  "The psimacs mingw64 info directory.")
+(defconst psimacs/config/msys-env-root-dir
+  (psimacs/file-system/concat-directory psimacs/config/msys-root-dir 
+    (if (getenv "MSYS2_ENV")
+      (getenv "MSYS2_ENV")
+      "ucrt64"))
+  "The psimacs environment root directory.")
 
-(defconst psimacs/config/mingw-runtime-dir
-  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "bin")
-  "The psimacs mingw64 runtime directory.")
+(defconst psimacs/config/msys-env-info-dir
+    (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "share/info")
+  "The psimacs actual msys environment info directory.")
+
+(defconst psimacs/config/msys-env-runtime-dir
+  (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "share/info")
+  "The psimacs actual msys environment runtime directory.")
+#+end_src
+
+** Latex
+
+LaTeX bibliography should be shared.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; LaTeX file sharing
+;;
+(defconst psimacs/config/latex-dir
+  (psimacs/file-system/concat-directory psimacs/config/content-dir "latex")
+  "The psimacs shared latex directory.")
+
+(psimacs/file-system/make-directory psimacs/config/latex-dir)
+
+(defconst psimacs/config/tex-runtime-dir
+  ;;(psimacs/file-system/concat-directory psimacs/config/system-utils-dir "MiKTeX/miktex/bin/x64")
+  ;;(psimacs/file-system/concat-directory psimacs/config/system-utils-dir "texlive/bin/win32")
+  psimacs/config/msys-env-runtime-dir
+  "The psimacs tex runtime directory.")
+#+end_src
+
+** PDF viewer
+
+The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; PDF file viewing
+;;
+(defconst psimacs/config/pdf-viewer-name "SumatraPDF" "The psimacs pdf viewer name.")
+
+(defconst psimacs/config/pdf-viewer-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "SumatraPDF")
+  "The psimacs pdf viewer directory.")
+
+(defconst psimacs/config/pdf-viewer-runtime
+  (psimacs/file-system/concat-file psimacs/config/pdf-viewer-dir "SumatraPDF-3.2-64.exe")
+  "The psimacs pdf viewer executable.")
+#+end_src
+
+** The Amx file
+
+[[https://github.com/DarwinAwardWinner/amx][Amx]] is an alternative interface for M-x in Emacs.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Amx package support file
+;;
+(defconst psimacs/config/amx-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".amxf")
+  "The psimacs amx file.")
+#+end_src
+
+** The Treemacs constants
+
+[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a tree layout file explorer for *Emacs*.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Treemacs package support files
+;;
+(defconst psimacs/config/treemacs-persist-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".treemacs-persist")
+  "The psimacs treemacs persist file.")
+
+(defconst psimacs/config/treemacs-last-error-persist-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".treemacs-last-error-persist")
+  "The psimacs treemacs last error persist file.")
 #+end_src
 
 ** Spell checking
@@ -3373,11 +3492,11 @@ Basically two spell checkers are usable with *Emacs*. Either [[https://github.co
 ;; Spell checking with hunspell
 ;;
 (defconst psimacs/config/spell-checker-hunspell-runtime
-  (psimacs/file-system/concat-file psimacs/config/mingw-runtime-dir "hunspell.exe")
+  (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "hunspell.exe")
   "The hunspell executable to use.")
 
 (defconst psimacs/config/spell-checker-aspell-runtime
-  (psimacs/file-system/concat-file psimacs/config/mingw-runtime-dir "aspell.exe")
+  (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "aspell.exe")
   "The aspell executable to use.")
 
 (defconst psimacs/config/spell-checker-hunspell-extra-args '("-i" "utf-8")       "Extra hunspell arguments.")
@@ -3391,11 +3510,11 @@ Basically two spell checkers are usable with *Emacs*. Either [[https://github.co
   "The hunspell dictionary directory provided by the MSYS2 package.")
 
 (defconst psimacs/config/spell-checker-hunspell-dir
-  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "share/hunspell")
+  (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "share/hunspell")
   "The psimacs spell checker dictionary directory for hunspell.")
 
 (defconst psimacs/config/spell-checker-aspell-dir
-  (psimacs/file-system/concat-directory psimacs/config/mingw-root-dir "lib/aspell-0.60")
+  (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "lib/aspell-0.60")
   "The psimacs spell checker dictionary directory for aspell.")
 
 (defconst psimacs/config/spell-checker-hunspell-german-dict "de_DE"
@@ -3532,7 +3651,8 @@ Printing relies on an installed [[https://www.ghostscript.com/][Ghostscript]] in
 ;; Ghostscript interpreter for PostScript and PDF files
 ;;
 (defconst psimacs/config/ghostscript-exe
-  (psimacs/file-system/concat-file  psimacs/config/system-utils-dir "gs/gs9.53.3/bin/gswin64c.exe")
+  ;(psimacs/file-system/concat-file  psimacs/config/system-utils-dir "gs/gs9.53.3/bin/gswin64c.exe")
+  (psimacs/file-system/concat-file  psimacs/config/msys-env-runtime-dir "gs.exe")
   "The psimacs ghost script executable.")
 #+end_src
 
@@ -3589,26 +3709,35 @@ pathes. Therefore our Windows OS [[https://www.python.org/][Python]] should alwa
 This is pretty ugly, but different python installation might be in use on different machines.
 "
     (interactive)
-    (let ((py3-8   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python38"))
-          (py3-8-5 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python385"))
-          (py3-9   (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python39"))
-          (py3-9-6 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python396"))
-          (py3-9-9 (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python399"))
-          (py3-10  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python310"))
+    (let ((py3-10  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python310"))
           (py3-11  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python311"))
           (py3-12  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python312"))
+          (py3-13  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python313"))
+          (py3-14  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python314"))
+          (py3-15  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python315"))
+          (py3-16  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python316"))
+          (py3-17  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python317"))
+          (py3-18  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python318"))
+          (py3-19  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python319"))
+          (py3-20  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python320"))
+          (py3-21  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python321"))
           (py-dir nil)
          )
 
         (or (getenv "EMACS_PYTHON")
-            (cond ((file-exists-p py3-12 ) py3-12)
+            (cond 
+                  ((file-exists-p py3-12 ) py3-21)
+                  ((file-exists-p py3-11 ) py3-20)
+                  ((file-exists-p py3-10 ) py3-19)
+                  ((file-exists-p py3-12 ) py3-18)
+                  ((file-exists-p py3-11 ) py3-17)
+                  ((file-exists-p py3-10 ) py3-16)
+                  ((file-exists-p py3-12 ) py3-15)
+                  ((file-exists-p py3-11 ) py3-14)
+                  ((file-exists-p py3-10 ) py3-13)
+                  ((file-exists-p py3-12 ) py3-12)
                   ((file-exists-p py3-11 ) py3-11)
                   ((file-exists-p py3-10 ) py3-10)
-                  ((file-exists-p py3-9  ) py3-9)
-                  ((file-exists-p py3-9-6) py3-9-6)
-                  ((file-exists-p py3-9-9) py3-9-9)
-                  ((file-exists-p py3-8  ) py3-8)
-                  ((file-exists-p py3-8-5) py3-8-5)
             ))
     )
 )
@@ -3806,7 +3935,7 @@ References:
   "The psimacs plantUml tool directory.")
 
 (defconst psimacs/config/plantuml-jar-file
-  (concat psimacs/config/plantuml-dir "lib/plantuml.jar")
+  (concat psimacs/config/plantuml-dir "plantuml.jar")
   "The psimacs plantUml jar file.")
 
 (defcustom psimacs/config/plantuml_java_arg_limit_size 0
@@ -3898,7 +4027,7 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
 ;; Graphviz tool constants
 ;;
 (defconst psimacs/config/graphviz-runtime-dir
-  psimacs/config/mingw-runtime-dir
+  psimacs/config/msys-env-runtime-dir
   "The psimacs Graphviz directory.")
 
 (defconst psimacs/config/graphviz-runtime-dot-exe
@@ -3915,7 +4044,7 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
 ;; CMake tool configuration constants
 ;;
 (defconst psimacs/config/cmake-runtime-dir
-  psimacs/config/mingw-runtime-dir
+  psimacs/config/msys-env-runtime-dir
   "The psimacs CMake directory.")
 
 (defconst psimacs/config/cmake-runtime-exe
@@ -3985,7 +4114,7 @@ Some usefule references for C++:
 ;; Clang compiler framework configuration constants
 ;;
 (defconst psimacs/config/clang-runtime-dir
-  psimacs/config/mingw-runtime-dir
+  psimacs/config/msys-env-runtime-dir
   "The psimacs clang directory.")
 
 (defconst psimacs/config/clang-c-compiler-runtime-exe
@@ -4197,7 +4326,7 @@ Websites built with [[https://gohugo.io/][Hugo]] are extremely fast and secure. 
 ;; Hugo static website generator
 ;;
 (defconst psimacs/config/hugo-site-generator-runtime
-  (psimacs/file-system/concat-file psimacs/config/mingw-runtime-dir "hugo.exe")
+  (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "hugo.exe")
   "The hugo executable to use.")
 #+end_src
 
@@ -4232,11 +4361,11 @@ correct parents search path setup. Be explicit. Additionally, synchronize the en
                 ,psimacs/config/python-scripts-dir
                 ,psimacs/config/java-runtime-dir
                 ,psimacs/config/git-runtime-dir
-                ,psimacs/config/mingw-runtime-dir
+                ,psimacs/config/msys-env-runtime-dir
                 ,psimacs/config/msys-runtime-dir
-                ,psimacs/config/tex-runtime-dir
-                ;;,psimacs/config/cmake-runtime-dir       ; cmake is part of mingw
-                ;;,psimacs/config/graphviz-runtime-dir    ; dito for graphviz
+                ;;,psimacs/config/tex-runtime-dir         ; tex is part of msys2
+                ;;,psimacs/config/cmake-runtime-dir       ; cmake is part of msys2
+                ;;,psimacs/config/graphviz-runtime-dir    ; graphviz is part of msys2
                 )
               exec-path))
 
@@ -5020,7 +5149,7 @@ for i in *info*; do install-info.exe $i dir; done
 ;;
 (require 'info)
 (add-to-list 'Info-additional-directory-list psimacs/config/msys-info-dir)
-(add-to-list 'Info-additional-directory-list psimacs/config/mingw-info-dir)
+(add-to-list 'Info-additional-directory-list psimacs/config/msys-env-info-dir)
 #+end_src
 
 ** Printing on Windows
@@ -5270,8 +5399,8 @@ References:
    (getenv "EMACS_SERVER_FILE")
    "The active server file.")
 
-(when (and psimacs/system/is-gui-flag
-           psimacs/system/is-windows-nt-flag
+(when (and psimacs/system/is-gui-p
+           psimacs/system/is-win32-p
            (or (not psimacs/config/found-server-file)
                (equal psimacs/config/found-server-file psimacs/config/server-file)))
    (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
@@ -7797,6 +7926,18 @@ Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][sa
               ("C-c C-h" . psimacs/history/visit-history-file)
           )
 )
+#+end_src
+
+*** Tramp Histroy
+
+To avoid the tramp history file to appear in the configuration root directory, 
+we set the =tramp-persistency-file-name= variable.
+
+#+begin_src emacs-lisp :tangle config/init-basic-auto-save.el
+;;
+;; Tramp history file
+;;
+(setq tramp-persistency-file-name psimacs/config/tramp-persistency-file-name)
 #+end_src
 
 *** Recent files
@@ -15746,11 +15887,12 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 ;;
 (use-package org
     ;;:straight nil
-    :straight (org-plus-contrib
-                :repo "https://code.orgmode.org/bzg/org-mode.git"
-                :local-repo "org"
-                :files (:defaults "contrib/lisp/*.el")
-             )
+    :straight (:type built-in)
+    ;:straight (org-plus-contrib
+    ;            :repo "https://code.orgmode.org/bzg/org-mode.git"
+    ;            :local-repo "org"
+    ;            :files (:defaults "contrib/lisp/*.el")
+    ;         )
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
 
     ;;
@@ -16998,7 +17140,8 @@ Each link also can be exported to LaTeX to build a PDF.
                 nil)
                (t
                 (skip-chars-forward " ")
-                (setf (buffer-substring (point-min) (point)) "  ")))
+                ;(setf (buffer-substring (point-min) (point)) "  ")))
+                (cl--set-buffer-substring (point-min) (point)) "  "))
               (forward-line)
               (indent-region (point) (point-max) 7)
 
@@ -17412,6 +17555,53 @@ The following commands are defined only if point is in an org-babel source block
 
         (put 'jupyter-org-resource-directory 'safe-local-variable #'stringp)
 
+        ;;
+        ;; Hack, for the problem that jupyter-locate-python does not find python.
+        ;; See https://github.com/emacs-jupyter/jupyter/issues/468
+        ;;
+        (defun psimacs/jupyter/jupyter-locate-python ()
+          "Return the path to the python executable in use by Jupyter.
+        If the `default-directory' is a remote directory, search on that
+        remote.  Raise an error if the executable could not be found.
+
+        The paths examined are the data paths of \"jupyter --paths\" in
+        the order specified.
+
+        This function always returns the `file-local-name' of the path."
+          (let* ((remote (file-remote-p default-directory))
+                 (paths (mapcar (lambda (x) (concat remote x))
+                           (or (plist-get
+                                (jupyter-read-plist-from-string
+                                 (jupyter-command "--paths" "--json"))
+                                :data)
+                               (error "Can't get search paths"))))
+                 (path nil))
+
+            (cl-loop
+             with programs = '("bin/python3" "bin/python"
+                               ;; Need to also check Windows since paths can be
+                               ;; pointing to local or remote files.
+                               "python3.exe" "python.exe")
+
+             with pred = (lambda (dir)
+                           (cl-loop
+                            for program in programs
+                            for spath = (expand-file-name program dir)
+                            thereis
+                              ;(setq path (and (file-exists-p spath) spath))
+                              (setq path (file-local-name (executable-find "python")))
+                              )
+                           )
+
+             for path in paths
+             thereis (locate-dominating-file path pred)
+             finally (error "No `python' found in search paths"))
+            (file-local-name path))
+        )
+
+        (advice-add 'jupyter-locate-python :override #'psimacs/jupyter/jupyter-locate-python)
+
+
         (defalias 'org-babel-execute:ipython 'org-babel-execute:jupyter-python)
         (setq org-babel-default-header-args:ipython org-babel-default-header-args:jupyter-python)
         (add-to-list 'org-src-lang-modes '("ipython" . python))
@@ -17551,26 +17741,11 @@ The following commands are defined only if point is in an org-babel source block
               (t
                (apply #'jupyter-org-results-drawer results))))))
 
-        ;; This was causing a problem in emacs-jupyter for using code blocks as
-        ;; variables in other blocks. Commenting out the first line seems to fix it for
-        ;; me.
-        (defun psimacs/jupyter/org--add-result (req result)
-          (cond
-           ;; ((jupyter-org-request-silent-p req)
-           ;;  (unless (equal (jupyter-org-request-silent-p req) "none")
-           ;;    (message "%s" (org-element-interpret-data result))))
-           ((jupyter-org-request-async-p req)
-            (jupyter-org--clear-request-id req)
-            (jupyter-org--do-insert-result req result))
-           (t
-            (push result (jupyter-org-request-results req)))))
-
 
         (defvar psimacs/jupyter/advices
           '((org-babel-execute:jupyter          :before   psimacs/jupyter/kill-kernel-hook)
             (org-babel-execute:jupyter          :before   psimacs/jupyter/check-restart)
             (jupyter-org-sync-results           :override psimacs/jupyter/org-sync-results)
-            (jupyter-org--add-result            :override psimacs/jupyter/org--add-result)
             (jupyter-org-export-block-or-pandoc :override psimacs/jupyter/org-export-block-or-pandoc)
           )
           "Advices for psimacs/jupyter.
