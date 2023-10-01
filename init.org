@@ -767,7 +767,6 @@ itself at startup.
 ;; Emacs 27 introduces early-init.el, which is run before init.el,
 ;; before package and UI initialization happens.
 ;;
-(require 'map) ;; needed for map-put
 #+end_src
 
 ** Setup Garbage Collection
@@ -966,8 +965,17 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 (defconst psimacs/config/icon-file-name "psi.ico"
   "The psimacs icon file.")
 
+(defconst psimacs/config/icon-cli-file-name "psi-cli.ico"
+  "The psimacs client icon file.")
+
 (defconst psimacs/config/license-file-name "LICENSE"
   "The psimacs license file.")
+
+(defconst psimacs/config/readme-file-name "Readme.org"
+  "The psimacs readme file.")
+
+(defconst psimacs/config/git-ignore-file-name ".gitignore"
+  "The psimacs gitignore file.")
 
 (defconst psimacs/config/custom-file-name "custom.el"
   "The psimacs custom elips file.")
@@ -1819,9 +1827,18 @@ The expected place in the dropbox directory is 'emacs/psimacs/emacs'.
                                              (concat db-dir psimacs/config/sorted-keybindings-org-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-file-name)
                                              (concat db-dir psimacs/config/icon-file-name)))
+
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory psimacs/config/icon-cli-file-name)
+                                             (concat db-dir psimacs/config/icon-cli-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/license-file-name)
                                              (concat db-dir psimacs/config/license-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/readme-file-name)
+                                             (concat db-dir psimacs/config/readme-file-name)))
+        (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
+                                                     psimacs/config/git-ignore-file-name)
+                                             (concat db-dir psimacs/config/git-ignore-file-name)))
         (add-to-list 'sync-files-alist (cons (concat user-emacs-directory
                                                      psimacs/config/custom-file-name)
                                              (concat db-dir psimacs/config/custom-file-name)))
@@ -1932,10 +1949,10 @@ file is setup. It starts with a commentary preamble written to the primary =init
 ;; Psimacs has been setup with Emacs 29.2. No suport for older version.
 ;;
 (when (version< emacs-version "29.2")
-    (warning "Only tested with Emacs 29.2 and above!"))
+    (message "Only tested with Emacs 29.2 and above!"))
 
-(when (version< emacs-version "27.1")
-    (error "This requires Emacs 27.1 and above!"))
+(when (version< emacs-version "28.2")
+    (error "This requires Emacs 28.2 and above!"))
 #+end_src
 
 *Psimacs* splits the configuration into various =init-*.el=-files. This will allow better looking up specific
