@@ -682,8 +682,6 @@ if ( ! $nopackages )
     #& $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-tools-git"
     #& $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-perl-doc"
 
-    echo "hi"
-
     #
     # Bootstrap msys64 into psimacs dir: install emacs
     #
