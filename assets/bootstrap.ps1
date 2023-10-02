@@ -170,6 +170,7 @@ if ($uninstall)
     # Define the Psimacs directory
     #
     $psimacs = "$env:HOME\psimacs"
+    $psimacs = $psimacs.Replace('/', '\')
 
     if ( ! (test-path -PathType container $psimacs) )
     {
@@ -533,6 +534,7 @@ if (-not $env:HOME)
 # Define the Psimacs directory
 #
 $psimacs = "$env:HOME\psimacs"
+$psimacs = $psimacs.Replace('/', '\')
 
 #
 # Create the $enc:HOME\psimacs directory if it does not exist
