@@ -10,6 +10,7 @@ param (
     [switch]$nopython          = $false,
     [switch]$nopythonupdate    = $false,
     [switch]$nopythonpackages  = $false,
+    [switch]$pythonuselatest   = $false,
     [string]$python,
     [switch]$nojava            = $false,
     [string]$java              = "21.35",
@@ -114,9 +115,12 @@ if ($help -or $h)
     echo "      -conemu            : Additionally install the ConEmu terminal."
     echo "    Python"
     echo "      -nopython          : Do not install Python."
+    echo "      -pythonuselatest   : Use the latest python version. Otherwise the version Python 3.11.5 is currently used."
+    echo "                           The latest Python version might not work. Not all package wheels are already available."
     echo "      -nopythonupdate    : If Python is already installed, this options allows the suppression of Python updates."
     echo "      -nopythonpackages  : Do not install the the Psimacs defined Python package requirements."
-    echo "      -python            : The Python version number in the format 'N.M.B' that should be installed. Default is latest."
+    echo "      -python            : The Python version number in the format 'N.M.B' that should be installed. Default is latest"
+    echo "                           if flage 'pythonuselatest' is defined. Otherwise the Python 3.11.5 is currently used."
     echo "    Java"
     echo "      -nojava            : Do not install OpenJDK JDK."
     echo "      -java              : The Java version number and the revision: 'N.M'"
@@ -382,6 +386,11 @@ catch [System.Management.Automation.CommandNotFoundException]
 #
 if (-not $nopython)
 {
+    if ((-not $python) -and (-not $pythonuselatest))
+    {
+        $python = "3.11.5"
+    }
+
     if ($python)
     {
         if ($python -match '(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)')
@@ -418,7 +427,7 @@ if (-not $nopython)
                 $PyMinor = $Matches.minor
                 $PyBuild = $Matches.build
 
-                $python     = "${PyMajor}.${PyMinor}.${PyBuild}"
+                $python  = "${PyMajor}.${PyMinor}.${PyBuild}"
 
                 #
                 # Remark: Python on Windows allows not to install separate build numbers.
@@ -602,7 +611,7 @@ if ( ! (Test-Path $msys64) )
         try
         {
             $ProgressPreference = "silentlyContinue"
-            Invoke-WebRequest -Uri $msys64_installer_url -OutFile $msys64_installer
+            Invoke-WebRequest -Uri $msys64_installer_url -UseBasicParsing -OutFile $msys64_installer
             $ProgressPreference = 'Continue'
         }
         catch
@@ -794,9 +803,14 @@ if ($conemu)
             $ProgressPreference = "silentlyContinue"
 
             $githubLatestReleases = 'https://api.github.com/repos/Maximus5/ConEmu/releases/latest'
-            $githubLatestRelease = (((Invoke-WebRequest $gitHubLatestReleases) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '.7z').Line
 
-            Invoke-WebRequest -Uri $githubLatestRelease -OutFile "$conemu_7z"
+            echo "$githubLatestReleases"
+
+            $githubLatestRelease = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '.7z').Line
+
+            echo "$githubLatestRelease"
+
+            Invoke-WebRequest -Uri $githubLatestRelease -UseBasicParsing -OutFile "$conemu_7z"
             $ProgressPreference = 'Continue'
         }
         catch
@@ -880,7 +894,7 @@ if (-not $nopython)
                 $python_installer_url = "https://www.python.org/ftp/python/$python/$python_installer"
                 
                 $ProgressPreference = "silentlyContinue"
-                Invoke-WebRequest -Uri $python_installer_url -OutFile $python_installer
+                Invoke-WebRequest -Uri $python_installer_url -UseBasicParsing -OutFile $python_installer
                 $ProgressPreference = 'Continue'
 
             }
@@ -1103,7 +1117,7 @@ if (-not $nojava)
             try
             {
                 $ProgressPreference = "silentlyContinue"
-                Invoke-WebRequest -Uri $java_url -OutFile $java_zip
+                Invoke-WebRequest -Uri $java_url -UseBasicParsing -OutFile $java_zip
                 $ProgressPreference = 'Continue'
 
             }
@@ -1154,7 +1168,7 @@ if (-not $nolangtool)
             try
             {
                 $ProgressPreference = "silentlyContinue"
-                Invoke-WebRequest -Uri $langtool_url -OutFile $langtool_zip
+                Invoke-WebRequest -Uri $langtool_url -UseBasicParsing -OutFile $langtool_zip
                 $ProgressPreference = 'Continue'
             }
             catch
@@ -1221,7 +1235,7 @@ if (-not $nosumatrapdf)
                 $sumatrapdf_zip_url = "https://www.sumatrapdfreader.org/dl/rel/${sumatrapdf}/$sumatrapdf_zip"
                 
                 $ProgressPreference = "silentlyContinue"
-                Invoke-WebRequest -Uri $sumatrapdf_zip_url -OutFile $sumatrapdf_zip
+                Invoke-WebRequest -Uri $sumatrapdf_zip_url -UseBasicParsing -OutFile $sumatrapdf_zip
                 $ProgressPreference = 'Continue'
 
             }
@@ -1281,9 +1295,9 @@ if (-not $nopandoc)
             $ProgressPreference = "silentlyContinue"
 
             $githubLatestReleases = 'https://api.github.com/repos/jgm/pandoc/releases/latest'
-            $githubLatestRelease = (((Invoke-WebRequest $gitHubLatestReleases) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '-windows-x86_64.zip').Line
+            $githubLatestRelease = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '-windows-x86_64.zip').Line
 
-            Invoke-WebRequest -Uri $githubLatestRelease -OutFile "$pandoc_zip"
+            Invoke-WebRequest -Uri $githubLatestRelease -UseBasicParsing -OutFile "$pandoc_zip"
             $ProgressPreference = 'Continue'
         }
         catch
@@ -1462,15 +1476,15 @@ if (-not $noplantuml)
             $ProgressPreference = "silentlyContinue"
 
             $githubLatestReleases = 'https://api.github.com/repos/plantuml/plantuml/releases/latest'
-            $githubLatestRelease = (((Invoke-WebRequest $gitHubLatestReleases) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '^.*plantuml-\d\.\d+\.\d+\.jar$').Line
+            $githubLatestRelease = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '^.*plantuml-\d\.\d+\.\d+\.jar$').Line
 
             New-Item -ItemType Directory -Path $plantuml_dir
 
-            Invoke-WebRequest -Uri $githubLatestRelease -OutFile "$plantuml_jar"
+            Invoke-WebRequest -Uri $githubLatestRelease -UseBasicParsing -OutFile "$plantuml_jar"
 
 
             $plantuml_pdf_url = "https://plantuml.com/de/guide"
-            Invoke-WebRequest -Uri $plantuml_pdf_url -OutFile "$plantuml_pdf"
+            Invoke-WebRequest -Uri $plantuml_pdf_url -UseBasicParsing -OutFile "$plantuml_pdf"
 
             $ProgressPreference = 'Continue'
         }
