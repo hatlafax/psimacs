@@ -135,7 +135,7 @@ if ($help -or $h)
     echo "      -calendarlatitude  : The user latitude used for the calender written to the 'init-private.el' file."
     echo "      -calendarlongitude : The user longitude used for the calender written to the 'init-private.el' file."
     echo "      -calendarlocation  : The user place used for the calender location."
-    echo "      -nopackageversions : Remove the 'straight/versions/default.el' file. In that case Psimacs installs the'
+    echo "      -nopackageversions : Remove the 'straight/versions/default.el' file. In that case Psimacs installs the"
     echo "                           most recent packages. Recommendet only for experts."
     echo "    Deinstallation"
     echo "      -uninstall         : Uninstall all but the virtual Python environment and Psimacs itself."
@@ -674,8 +674,6 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed Database"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-wget2"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed dos2unix"
-    & $bash_exe --login -c "pacman --sync --noconfirm --needed winpty"
-    & $bash_exe --login -c "pacman --sync --noconfirm --needed diffutils"
 
     #
     # Bootstrap msys64 into psimacs dir: install git
@@ -701,7 +699,6 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-imagemagick-docs"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-zeromq"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-winpty"
-    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-tree-sitter"
 
     #
     # Bootstrap msys64 into psimacs dir: install tools
@@ -739,7 +736,6 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-scite-defaults"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-fd"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ffmpeg"
-    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-diffutils"
     
     #
     # Bootstrap msys64 into psimacs dir: install nerd fonts
