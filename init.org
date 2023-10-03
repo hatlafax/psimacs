@@ -15901,7 +15901,7 @@ that basically calls fixing functionality provided by [[https://orgmode.org][org
 (add-hook 'straight-use-package-pre-build-functions #'psimacs/config/fix-org-autoload-function)
 #+end_src
 
-**** Org-Mode package installation
+**** Org-Mode package installation :noexport:
 
 If the temporary workaround is in use, the =:straight org-plus-contrib= statement needs to be replaced by the =:straight nil= statement.
 
@@ -15910,13 +15910,11 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 ;; The main org-mode configuration
 ;;
 (use-package org
-    ;;:straight nil
-    :straight (:type built-in)
-    ;:straight (org-plus-contrib
-    ;            :repo "https://code.orgmode.org/bzg/org-mode.git"
-    ;            :local-repo "org"
-    ;            :files (:defaults "contrib/lisp/*.el")
-    ;         )
+    :straight (org-plus-contrib
+                :repo "https://code.orgmode.org/bzg/org-mode.git"
+                :local-repo "org"
+                :files (:defaults "contrib/lisp/*.el")
+             )
     :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
 
     ;;
@@ -15935,7 +15933,7 @@ If the temporary workaround is in use, the =:straight org-plus-contrib= statemen
 )
 #+end_src
 
-**** Org-Mode package installation :noexport:
+**** Org-Mode package installation
 
 For now use the default *Emacs* build-in org-mode.
 
