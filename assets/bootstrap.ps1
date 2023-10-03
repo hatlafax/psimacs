@@ -768,9 +768,9 @@ if ( ! $nopackages )
     }
     else
     {
-        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-firacode-nerd
-        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-hack-nerd
-        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-inconsolata-nerd
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-firacode-nerd"
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-hack-nerd"
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-inconsolata-nerd"
     }
 
     #
