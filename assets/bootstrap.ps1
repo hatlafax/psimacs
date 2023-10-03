@@ -1679,7 +1679,7 @@ if (-not $nofontsinstall)
     {
         echo "Cloning temporary all-the-icons repository ..."
 
-        $all_the_icons_url = https://github.com/domtronn/all-the-icons.el.git
+        $all_the_icons_url = "https://github.com/domtronn/all-the-icons.el.git"
 
         & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $all_the_icons_url $all_the_icons_dir"
 
