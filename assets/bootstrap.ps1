@@ -30,7 +30,8 @@ param (
     [string]$calendarlocation  = "YOUR CITY, COUNTRY",
     [switch]$nopackageversions = $false,
     [switch]$nofontsinstall    = $false,
-    [switch]$allnerdfonts      = $false
+    [switch]$allnerdfonts      = $false,
+    [switch]$noalltheicons     = $false
 )
 
 if (-not $run)
@@ -1666,9 +1667,24 @@ if (-not $nofontsinstall)
         Write-Host
     }
 
-    
+    $dirs = @()
 
-    $dirs = "$msys_env_share\fonts\OTF","$msys_env_share\fonts\TTF"
+    $dirs += "$msys_env_share\fonts\OTF"
+    $dirs += "$msys_env_share\fonts\TTF"
+
+    $all_the_icons_dir  = "temp_ati"
+    $all_the_icons_path = "$psimacs\$all_the_icons_dir"
+
+    if (-not $noalltheicons)
+    {
+        echo "Cloning temporary all-the-icons repository ..."
+
+        $all_the_icons_url = https://github.com/domtronn/all-the-icons.el.git
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $all_the_icons_url $all_the_icons_dir"
+
+        $dirs += "$all_the_icons_path/fonts"
+    }
 
     foreach ($dir in $dirs)
     {
@@ -1680,8 +1696,14 @@ if (-not $nofontsinstall)
             {
                 Install-Font -FontFile $FontItem $isAdmin
             }
-
         }
+    }
+
+    if ( test-path -PathType container $all_the_icons_path )
+    {
+        echo "Removing temporary all-the-icons repository ..."
+
+        Remove-Item -Recurse -Force "$all_the_icons_path"
     }
 }
 
