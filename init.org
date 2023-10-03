@@ -6054,6 +6054,10 @@ About Unicode:
         ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-20.0")
         ;;)
 
+        ;(when (member "Hack" (font-family-list))
+        ;    (set-face-attribute 'default nil :font "Hack-10.0")
+        ;)
+
         (when (member "Hack" (font-family-list))
             (set-face-attribute 'default nil :font "Hack-10.0")
         )
@@ -17406,7 +17410,11 @@ For a gentle introduction read this [[https://www.kengrimes.com/ox-hugo-tutorial
 ;;
 ;; ox-pandoc org exporter
 ;;
-(use-package ox-pandoc :after ox)
+(use-package ox-pandoc
+    :after ox
+    :config
+        (setq org-pandoc-command psimacs/config/pandoc-runtime-exe)
+)
 #+end_src
 
 *** Lower case org keywords

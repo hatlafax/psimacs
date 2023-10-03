@@ -28,7 +28,9 @@ param (
     [string]$calendarlatitude  = "0.0",
     [string]$calendarlongitude = "0.0",
     [string]$calendarlocation  = "YOUR CITY, COUNTRY",
-    [switch]$nopackageversions = $false
+    [switch]$nopackageversions = $false,
+    [switch]$nofontsinstall    = $false,
+    [switch]$allnerdfonts      = $false
 )
 
 if (-not $run)
@@ -112,6 +114,7 @@ if ($help -or $h)
     echo "      -ucrt              : Install the UCRT64 MSYS2 environment. The future, but but fails on Emacs's zmq package needed for jupyter."
     echo "      -clang             : Install the CLANG64 MSYS2 environment. Same as UCRT64 environment."
     echo "      -nopackages        : Do not install any MSYS2 packages. Mainly for development purpose." 
+    echo "      -allnerdfonts      : Install all available nerd fonts. Otherwise only firacode, hack, and inconsolata nerd fonts gets installed."
     echo "      -conemu            : Additionally install the ConEmu terminal."
     echo "    Python"
     echo "      -nopython          : Do not install Python."
@@ -141,6 +144,7 @@ if ($help -or $h)
     echo "      -calendarlocation  : The user place used for the calender location."
     echo "      -nopackageversions : Remove the 'straight/versions/default.el' file. In that case Psimacs installs the"
     echo "                           most recent packages. Recommendet only for experts."
+    echo "      -nofontsinstall    : Do not install any fonts in the Windows system."
     echo "    Deinstallation"
     echo "      -uninstall         : Uninstall all but the virtual Python environment and Psimacs itself."
     echo "      -force             : Additionally uninstall the virtual Python environment and Psimacs itself. Also needs option '-uninstall'."
@@ -152,6 +156,12 @@ if ($help -or $h)
     echo "      bootstrap.ps1 -run -conemu -mingw -nopackages -python 3.11.4 -java 21.35"
     return
 }
+
+#
+# Are we running with Admin rights?
+#
+$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+$isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 #
 # Uninstallation
@@ -570,6 +580,7 @@ if ($mingw)
 {
     $package_prefix = "mingw-w64-x86_64"
     $msys_env_bin   = "$msys64\mingw64\bin"
+    $msys_env_share = "$msys64\mingw64\share"
     $msys_env_name  = "MINGW"
     $msys_env_icon  = "mingw64.ico"
     $msys_env_arg   = "mingw64"
@@ -579,6 +590,7 @@ if ($ucrt)
 {
     $package_prefix = "mingw-w64-ucrt-x86_64"
     $msys_env_bin   = "$msys64\ucrt64\bin"
+    $msys_env_share = "$msys64\ucrt64\share"
     $msys_env_name  = "UCRT"
     $msys_env_icon  = "ucrt64.ico"
     $msys_env_arg   = "ucrt64"
@@ -588,6 +600,7 @@ if ($clang)
 {
     $package_prefix = "mingw-w64-clang-x86_64"
     $msys_env_bin   = "$msys64\clang64\bin"
+    $msys_env_share = "$msys64\clang64\share"
     $msys_env_name  = "CLANG"
     $msys_env_icon  = "clang64.ico"
     $msys_env_arg   = "clang64"
@@ -749,7 +762,16 @@ if ( ! $nopackages )
     #
     # Bootstrap msys64 into psimacs dir: install nerd fonts
     #
-    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-nerd-fonts"
+    if ($allnerdfonts)
+    {
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-nerd-fonts"
+    }
+    else
+    {
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-firacode-nerd
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-hack-nerd
+        & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ttf-inconsolata-nerd
+    }
 
     #
     # Bootstrap msys64 into psimacs dir: install texlive
@@ -1562,6 +1584,100 @@ if (-not $nopackageversions)
     {
         echo "Removing Psimacs packages version file $straight_versions_file ..."
         Remove-Item -Force "$straight_versions_file"
+    }
+}
+
+if (-not $nofontsinstall)
+{
+    function Install-Font {
+        param
+        (
+            [Parameter(Mandatory)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$FontFile,
+            [Parameter(Mandatory)][Boolean]$InstallSystemWide
+        )
+        
+        #Get Font Name from the File's Extended Attributes
+        $oShell = new-object -com shell.application
+        $Folder = $oShell.namespace($FontFile.DirectoryName)
+        $Item = $Folder.Items().Item($FontFile.Name)
+        $FontName = $Folder.GetDetailsOf($Item, 21)
+        try {
+            switch ($FontFile.Extension) {
+                ".ttf" {$FontName = $FontName + [char]32 + '(TrueType)'}
+                ".otf" {$FontName = $FontName + [char]32 + '(OpenType)'}
+            }
+            if ($InstallSystemWide) {
+                    $fontTarget = $env:windir + "\Fonts\" + $FontFile.Name
+                    $regPath = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+                    $regValue = $FontFile.Name
+                    $regName = $FontName
+            } else {
+                    # Check whether Windows Version is high enough to support per-user font installation without admin rights
+                    $winMajorVersion = [Environment]::OSVersion.Version.Major
+                    $winBuild = [Environment]::OSVersion.Version.Build
+                    If ( -not (($winMajorVersion -ge 10) -and ($winBuild -ge 17044))) {
+                        throw "At least Windows 10 Build 17044 is required for local user installation. You have Win $winMajorVersion Build $winBuild."
+                    }
+                    $fontTarget = $env:localappdata + "\Microsoft\Windows\Fonts\" 
+                    $regPath = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+                    $regValue = $fontTarget + $FontFile.Name
+                    $regName = $FontName
+                    # The Fonts directory does not always exist on a per user level. Create it.
+                    New-Item -ItemType Directory -Force -Path "$fontTarget"
+            }
+
+            $CopyFailed = $true
+            Write-Host ("Copying $($FontFile.Name).....") -NoNewline
+            Copy-Item -Path $fontFile.FullName -Destination ($fontTarget) -Force
+            # Test if font is copied over
+            If ((Test-Path ($fontTarget)) -eq $true) {
+                Write-Host ('Success') -Foreground Yellow
+            } else {
+                Write-Host ('Failed to copy file') -ForegroundColor Red
+            }
+            $CopyFailed = $false
+
+            # Create Registry item for font
+            Write-Host ("Adding $FontName to the registry.....") -NoNewline
+            If (!(Test-Path $regPath)) {
+                New-Item -Path $regPath -Force | Out-Null
+            }
+            New-ItemProperty -Path $regPath -Name $regName -Value $regValue -PropertyType string -Force -ErrorAction SilentlyContinue| Out-Null
+
+            $AddKeyFailed = $true
+            If ((Get-ItemPropertyValue -Name $regName -Path $regPath) -eq $regValue) {
+                Write-Host ('Success') -ForegroundColor Yellow
+            } else {
+                Write-Host ('Failed to set registry key') -ForegroundColor Red
+            }
+            $AddKeyFailed = $false
+            
+        } catch {
+            If ($CopyFailed -eq $true) {
+                Write-Host ('Font file copy Failed') -ForegroundColor Red
+                $CopyFailed = $false
+            }
+            If ($AddKeyFailed -eq $true) {
+                Write-Host ('Registry Key Creation Failed') -ForegroundColor Red
+                $AddKeyFailed = $false
+            }
+            write-warning $_.exception.message
+        }
+        Write-Host
+    }
+
+    foreach ($FontItem in (Get-ChildItem -Path $msys_env_share\fonts\OTF | Where-Object {
+            ($_.Name -like '*.ttf') -or ($_.Name -like '*.OTF')
+        }))
+    {
+        Install-Font -FontFile $FontItem $isAdmin
+    }
+
+    foreach ($FontItem in (Get-ChildItem -Path $msys_env_share\fonts\TTF | Where-Object {
+            ($_.Name -like '*.ttf') -or ($_.Name -like '*.OTF')
+        }))
+    {
+        Install-Font -FontFile $FontItem $isAdmin
     }
 }
 
