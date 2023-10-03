@@ -1062,6 +1062,8 @@ set the directory where the compiled files are stored.
 ;;
 ;; Don't store eln files in ~/.emacs.d/eln-cache
 ;;
+(setq native-comp-eln-load-path (cdr native-comp-eln-load-path))
+
 (add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
 (startup-redirect-eln-cache             psimacs/config/native-comp-dir)
 #+end_src
@@ -4380,6 +4382,7 @@ correct parents search path setup. Be explicit. Additionally, synchronize the en
                 ,psimacs/config/git-runtime-dir
                 ,psimacs/config/msys-env-runtime-dir
                 ,psimacs/config/msys-runtime-dir
+                ,psimacs/config/pandoc-dir
                 ;;,psimacs/config/tex-runtime-dir         ; tex is part of msys2
                 ;;,psimacs/config/cmake-runtime-dir       ; cmake is part of msys2
                 ;;,psimacs/config/graphviz-runtime-dir    ; graphviz is part of msys2
@@ -17412,8 +17415,6 @@ For a gentle introduction read this [[https://www.kengrimes.com/ox-hugo-tutorial
 ;;
 (use-package ox-pandoc
     :after ox
-    :config
-        (setq org-pandoc-command psimacs/config/pandoc-runtime-exe)
 )
 #+end_src
 

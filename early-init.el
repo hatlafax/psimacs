@@ -241,6 +241,8 @@ It is the fraction of the current heap size."
 ;;
 ;; Don't store eln files in ~/.emacs.d/eln-cache
 ;;
+(setq native-comp-eln-load-path (cdr native-comp-eln-load-path))
+
 (add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
 (startup-redirect-eln-cache             psimacs/config/native-comp-dir)
 
