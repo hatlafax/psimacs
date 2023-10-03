@@ -1666,18 +1666,22 @@ if (-not $nofontsinstall)
         Write-Host
     }
 
-    foreach ($FontItem in (Get-ChildItem -Path $msys_env_share\fonts\OTF | Where-Object {
-            ($_.Name -like '*.ttf') -or ($_.Name -like '*.OTF')
-        }))
-    {
-        Install-Font -FontFile $FontItem $isAdmin
-    }
+    
 
-    foreach ($FontItem in (Get-ChildItem -Path $msys_env_share\fonts\TTF | Where-Object {
-            ($_.Name -like '*.ttf') -or ($_.Name -like '*.OTF')
-        }))
+    $dirs = "$msys_env_share\fonts\OTF","$msys_env_share\fonts\TTF"
+
+    foreach ($dir in $dirs)
     {
-        Install-Font -FontFile $FontItem $isAdmin
+        if ( test-path -PathType container $dir )
+        {
+            foreach ($FontItem in (Get-ChildItem -Path $dir | Where-Object {
+                    ($_.Name -like '*.ttf') -or ($_.Name -like '*.OTF')
+                }))
+            {
+                Install-Font -FontFile $FontItem $isAdmin
+            }
+
+        }
     }
 }
 
