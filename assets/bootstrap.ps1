@@ -155,6 +155,19 @@ if ($help -or $h)
     echo "      bootstrap.ps1 -run"
     echo "      bootstrap.ps1 -run -conemu -ucrt"
     echo "      bootstrap.ps1 -run -conemu -mingw -nopackages -python 3.11.4 -java 21.35"
+    echo ""
+    echo "Information:"
+    echo "      In case that the powershell script does not run, two reasons may be involved:"
+    echo ""
+    echo "      1. Set a proper execution policy for powershell scripts with respect to the user profile."
+    echo "      2. Downloaded powershell scripts are not executed. They need to be unlocked."
+    echo ""     
+    echo "      The following steps might work for you:"
+    echo '      Get-ExecutionPolicy -list'
+    echo '      Set-ExecutionPolicy -ExecutionPolicy unrestricted -Scope CurrentUser'
+    echo '      Unblock-File -Path .\bootstrap.ps1'
+    echo '      .\bootstrap.ps1 -help'
+    echo ""
     return
 }
 
