@@ -1755,6 +1755,20 @@ if (-not $nocontent)
 
        '#+latex \usepackage{textgreek}'   | out-file -filepath $content_bib_file -encoding ascii -width 200 
     }
+
+    $content_private_latex_dir  = "$psimacs\psimacs\content\org\private"
+    $content_private_latex_file = "$content_private_latex_dir\PrivateLatexPreamble.org"
+
+    if ( -not (test-path -PathType container $content_private_latex_dir) )
+    {
+        New-Item -ItemType Directory -Path $content_private_latex_dir
+
+        echo "Writing Psimacs $content_private_latex_file file ..."
+
+        '#+latex_header: \author{YOUR FULL NAME}'                 | out-file -filepath $content_bib_file -encoding ascii -width 200 
+        '#+latex_header: \authorsaffiliations{YOUR AFFILIATIONS}' | out-file -filepath $content_bib_file -encoding ascii -width 200 -append
+        '#+latex_header: \leftheader{YOUR NAME}'                  | out-file -filepath $content_bib_file -encoding ascii -width 200 -append
+    }
 }
 
 #
