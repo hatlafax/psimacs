@@ -32,7 +32,8 @@ param (
     [switch]$nofontsinstall    = $false,
     [switch]$allnerdfonts      = $false,
     [switch]$noalltheicons     = $false,
-    [switch]$noorgthemes       = $false
+    [switch]$noorgthemes       = $false,
+    [switch]$nocontent         = $false
 )
 
 if (-not $run)
@@ -1731,6 +1732,28 @@ if (-not $noorgthemes)
         echo "Cloning ORG themes repository ..."
 
         & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $themes_url $themes_dir"
+    }
+}
+
+if (-not $nocontent)
+{
+    $content_dir = "$psimacs\psimacs\content"
+    
+    if ( -not (test-path -PathType container $content_dir) )
+    {
+        New-Item -ItemType Directory -Path $content_dir
+    }
+
+    $content_bib_dir  = "$psimacs\psimacs\content\bibliography"
+    $content_bib_file = "$psimacs\psimacs\content\bibliography\bibliography.bib"
+
+    if ( -not (test-path -PathType container $content_bib_dir) )
+    {
+        New-Item -ItemType Directory -Path $content_bib_dir
+
+        echo "Writing Psimacs $content_bib_file file ..."
+
+       '#+latex \usepackage{textgreek}'   | out-file -filepath $content_bib_file -encoding ascii -width 200 
     }
 }
 
