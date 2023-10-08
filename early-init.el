@@ -236,7 +236,7 @@ It is the fraction of the current heap size."
 ;;
 (setq native-comp-async-report-warnings-errors nil)  ;; hide warnings
 (setq native-comp-deferred-compilation         nil)  ;; Obsolete since 29.1; use native-comp-jit-compilation instead.
-(setq native-comp-jit-compilation              nil)
+(setq native-comp-jit-compilation              t)
 
 ;;
 ;; Don't store eln files in ~/.emacs.d/eln-cache
