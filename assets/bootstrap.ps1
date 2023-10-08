@@ -31,7 +31,8 @@ param (
     [switch]$nopackageversions = $false,
     [switch]$nofontsinstall    = $false,
     [switch]$allnerdfonts      = $false,
-    [switch]$noalltheicons     = $false
+    [switch]$noalltheicons     = $false,
+    [switch]$noorgthemes       = $false
 )
 
 if (-not $run)
@@ -1717,6 +1718,19 @@ if (-not $nofontsinstall)
         echo "Removing temporary all-the-icons repository ..."
 
         Remove-Item -Recurse -Force "$all_the_icons_path"
+    }
+}
+
+if (-not $noorgthemes)
+{
+    $themes_url = "https://gitlab.com/OlMon/org-themes.git"
+    $themes_dir = "$psimacs\psimacs\content\themes\org-themes"
+
+    if ( -not (test-path -PathType container $themes_dir) )
+    {
+        echo "Cloning ORG themes repository ..."
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $themes_url $themes_dir"
     }
 }
 
