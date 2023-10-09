@@ -148,6 +148,10 @@ if ($help -or $h)
     echo "      -nopackageversions : Remove the 'straight/versions/default.el' file. In that case Psimacs installs the"
     echo "                           most recent packages. Recommendet only for experts."
     echo "      -nofontsinstall    : Do not install any fonts in the Windows system."
+    echo "      -allnerdfonts      : Install all of the Nerd fonts, instead of a subset."
+    echo "      -noalltheicons     : Do not install the 'all_the_icons.ttf' fonts."
+    echo "      -noorgthemes       : Do not install the org themes."
+    echo "      -nocontent         : Do not create the boilerplate content folder."
     echo "    Deinstallation"
     echo "      -uninstall         : Uninstall all but the virtual Python environment and Psimacs itself."
     echo "      -force             : Additionally uninstall the virtual Python environment and Psimacs itself. Also needs option '-uninstall'."
@@ -1591,7 +1595,7 @@ if (-not $noprivatefile)
     }
 }
 
-if (-not $nopackageversions)
+if ($nopackageversions)
 {
     $straight_dir = "$psimacs/psimacs/straight"
     $straight_versions_file = "$straight_dir/versions/default.el"
@@ -1725,13 +1729,15 @@ if (-not $nofontsinstall)
 if (-not $noorgthemes)
 {
     $themes_url = "https://gitlab.com/OlMon/org-themes.git"
-    $themes_dir = "$psimacs\psimacs\content\themes\org-themes"
+    $themes_dir = "$psimacs\psimacs\content\themes"
 
     if ( -not (test-path -PathType container $themes_dir) )
     {
         echo "Cloning ORG themes repository ..."
 
-        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $themes_url $themes_dir"
+        New-Item -ItemType Directory -Path $themes_dir
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $themes_url $themes_dir\org-themes"
     }
 }
 
@@ -1745,13 +1751,13 @@ if (-not $nocontent)
     }
 
     $content_bib_dir  = "$psimacs\psimacs\content\bibliography"
-    $content_bib_file = "$psimacs\psimacs\content\bibliography\bibliography.bib"
+    $content_bib_file = "$content_bib_dir\bibliography.bib"
 
     if ( -not (test-path -PathType container $content_bib_dir) )
     {
-        New-Item -ItemType Directory -Path $content_bib_dir
-
         echo "Writing Psimacs $content_bib_file file ..."
+
+        New-Item -ItemType Directory -Path $content_bib_dir
 
        '#+latex \usepackage{textgreek}'   | out-file -filepath $content_bib_file -encoding ascii -width 200 
     }
@@ -1761,13 +1767,13 @@ if (-not $nocontent)
 
     if ( -not (test-path -PathType container $content_private_latex_dir) )
     {
-        New-Item -ItemType Directory -Path $content_private_latex_dir
-
         echo "Writing Psimacs $content_private_latex_file file ..."
 
-        '#+latex_header: \author{YOUR FULL NAME}'                 | out-file -filepath $content_bib_file -encoding ascii -width 200 
-        '#+latex_header: \authorsaffiliations{YOUR AFFILIATIONS}' | out-file -filepath $content_bib_file -encoding ascii -width 200 -append
-        '#+latex_header: \leftheader{YOUR NAME}'                  | out-file -filepath $content_bib_file -encoding ascii -width 200 -append
+        New-Item -ItemType Directory -Path $content_private_latex_dir
+
+        '#+latex_header: \author{YOUR FULL NAME}'                 | out-file -filepath $content_private_latex_file -encoding ascii -width 200 
+        '#+latex_header: \authorsaffiliations{YOUR AFFILIATIONS}' | out-file -filepath $content_private_latex_file -encoding ascii -width 200 -append
+        '#+latex_header: \leftheader{YOUR NAME}'                  | out-file -filepath $content_private_latex_file -encoding ascii -width 200 -append
     }
 }
 
