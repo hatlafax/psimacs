@@ -1737,7 +1737,7 @@ if (-not $noorgthemes)
 
         New-Item -ItemType Directory -Path $themes_dir
 
-        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $themes_url $themes_dir\org-themes"
+        & $bash_exe --login -c "cd $(cygpath --mixed $themes_dir); git clone $themes_url org-themes"
     }
 }
 
