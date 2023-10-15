@@ -23,6 +23,7 @@ param (
     [switch]$force             = $false,
     [string]$psimacsbranch     = "develop",
     [switch]$noprivatefile     = $false,
+    [switch]$nopsimacsdocu     = $false,
     [string]$username          = "YOUR NAME",
     [string]$useremail         = "YOUR EMAIL",
     [string]$calendarlatitude  = "0.0",
@@ -140,6 +141,7 @@ if ($help -or $h)
     echo "      -psimacsbranch     : The specific branch, tag or commit to clone. Currently this is defaulted to branch"
     echo "                           'develop' which is the Emacs 29 development branch of Psimacs."
     echo "      -noprivatefile     : Do not create the 'private' directectory with an 'init-private.el' file."
+    echo "      -nopsimacsdocu     : Do not create desktop shortcuts to the HTML documentation files."
     echo "      -username          : The user name written to the 'init-private.el' file."
     echo "      -useremail         : The user email written to the 'init-private.el' file."
     echo "      -calendarlatitude  : The user latitude used for the calender written to the 'init-private.el' file."
@@ -342,6 +344,10 @@ if ($uninstall)
 
     $shortcuts += "$Desktop\Psimacs Server.lnk"
     $shortcuts += "$Desktop\Psimacs Client.lnk"
+
+    $shortcuts += "$Desktop\Psimacs Documentation.lnk"
+    $shortcuts += "$Desktop\Psimacs Key Bindings.lnk"
+    $shortcuts += "$Desktop\Psimacs Sorted Key Bindings.lnk"
 
     foreach ($shortcut in $shortcuts)
     {
@@ -1479,6 +1485,63 @@ if (! (Test-Path $init_el -PathType Leaf) )
         $Shortcut.WorkingDirectory = $env:HOME
         $ShortCut.Description      = "Psimacs Client"
         $Shortcut.Save()
+    }
+
+    if (-not $nopsimacsdocu)
+    {
+        $Icon    = "$emacs_ico"
+        $Desk    = $Shell.SpecialFolders("Desktop")
+
+        $Target  = "$psimacs\psimacs\docs\init.html"
+        $Dest    = "$Desk\Psimacs Documentation.lnk"
+        $Desc    = "Psimacs Documentation"
+
+        if (! (Test-Path "$Dest" -PathType Leaf) )
+        {
+            echo "Psimacs Documentation Shortcut..."
+
+            $Shortcut = $Shell.CreateShortcut($Dest)
+            $Shortcut.WindowStyle      = 1
+            $Shortcut.IconLocation     = $Icon
+            $Shortcut.TargetPath       = $Target
+            $Shortcut.WorkingDirectory = $env:HOME
+            $ShortCut.Description      = $Desc
+            $Shortcut.Save()
+        }
+
+        $Target  = "$psimacs\psimacs\docs\keybindings.html"
+        $Dest    = "$Desk\Psimacs Key Bindings.lnk"
+        $Desc    = "Psimacs Key Bindings"
+
+        if (! (Test-Path "$Dest" -PathType Leaf) )
+        {
+            echo "Psimacs Documentation Shortcut..."
+
+            $Shortcut = $Shell.CreateShortcut($Dest)
+            $Shortcut.WindowStyle      = 1
+            $Shortcut.IconLocation     = $Icon
+            $Shortcut.TargetPath       = $Target
+            $Shortcut.WorkingDirectory = $env:HOME
+            $ShortCut.Description      = $Desc
+            $Shortcut.Save()
+        }
+
+        $Target  = "$psimacs\psimacs\docs\sortedKeyBindings.html"
+        $Dest    = "$Desk\Psimacs Sorted Key Bindings.lnk"
+        $Desc    = "Psimacs Sorted Key Bindings"
+
+        if (! (Test-Path "$Dest" -PathType Leaf) )
+        {
+            echo "Psimacs Documentation Shortcut..."
+
+            $Shortcut = $Shell.CreateShortcut($Dest)
+            $Shortcut.WindowStyle      = 1
+            $Shortcut.IconLocation     = $Icon
+            $Shortcut.TargetPath       = $Target
+            $Shortcut.WorkingDirectory = $env:HOME
+            $ShortCut.Description      = $Desc
+            $Shortcut.Save()
+        }
     }
 }
 
