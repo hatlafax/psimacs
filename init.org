@@ -1380,7 +1380,7 @@ DESCRIPTION : short description text"
 )
 #+end_src
 
-** Tangling support without org-bable
+** Tangling support without org-babel
 
 The code generation process is not performed with the [[http://orgmode.org/worg/org-contrib/babel/][Org Mode Babel]] functionality. That is because the startup
 should be pretty fast and not rely on loading [[https://orgmode.org][org-mode]] only for this task. Additionally, the tangling function
@@ -1767,7 +1767,7 @@ The /Dropbox/ location is determined at run time.
           (cdr (assoc 'path (car (json-read-file json-path))))) nil)))
 #+end_src
 
-*Psimacs* is expected to reside in sub-directory =emacs/psimacs/emacs=. The author uses the same sub-directory
+*Psimacs* is expected to reside in sub-directory =psimacs/psimacs=. The author uses the same sub-directory
 in its home directory and avoids the =.emcad.d= directory completely. Instead the use of environment variable
 =XDG_CONFIG_HOME= allows to run various *Emacs* configuration simultaneously.
 
@@ -1783,7 +1783,7 @@ C:\utils\Emacs\bin\runemacs.exe
 The constant =psimacs/config/dropbox-dir= is the actual /Dropbox/ directory found on your machine. It is determined by
 the function =psimacs/config/find-dropbox-folder= at initialization time. The constant
 =psimacs/config/dropbox-emacs-dir= is a sub directory to =psimacs/config/dropbox-dir=. For a multiple configuration
-setup it should be =emacs/psimacs/emacs=. In a traditional Emacs setup, it would be set to =.emacs.d=.
+setup it should be =psimacs=. In a traditional Emacs setup, it would be set to =.emacs.d=.
 Other configurations then can exchange the /psimacs/ string to something other.
 
 #+begin_src emacs-lisp :tangle early-init.el
@@ -1800,7 +1800,7 @@ Other configurations then can exchange the /psimacs/ string to something other.
 ;;
 (defconst psimacs/config/dropbox-emacs-dir
   (if psimacs/config/dropbox-dir (file-name-as-directory (concat psimacs/config/dropbox-dir
-                                                                 "emacs/psimacs/emacs")) nil)
+                                                                 "psimacs")) nil)
   "The psimacs dropbox Emacs configuration directory or nil.")
 #+end_src
 
@@ -1814,7 +1814,7 @@ synchronized. These list might be adapted in the future as the configuration evo
 (defun psimacs/config/sync-with-dropbox ()
   "Synchronize with \\='dropbox\\=' directory if it exists.
 
-The expected place in the \\='dropbox\\=' directory is \\='emacs/psimacs/emacs\\='."
+The expected place in the \\='dropbox\\=' directory is \\='psimacs\\='."
   (if (and psimacs/config/dropbox-dir
            (file-directory-p psimacs/config/dropbox-dir))
       (let* ((db-dir psimacs/config/dropbox-emacs-dir)
@@ -3444,6 +3444,10 @@ zip 3.0-3
 (defconst psimacs/config/msys-env-runtime-dir
   (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "bin")
   "The psimacs actual msys environment runtime directory.")
+
+(defconst psimacs/config/msys-env-lib-dir
+    (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "lib")
+  "The psimacs actual msys environment lib directory.")
 #+end_src
 
 ** Latex
@@ -3953,7 +3957,7 @@ It must be alongside with installed with [[https://www.python.org/][Python]].
 
 ** PlantUML
 
-. [[https://plantuml.com/][PlantUML]] is an open-source tool allowing users to create [[https://en.wikipedia.org/wiki/Unified_Modeling_Language][UML]] diagrams from a plain text language.
+[[https://plantuml.com/][PlantUML]] is an open-source tool allowing users to create [[https://en.wikipedia.org/wiki/Unified_Modeling_Language][UML]] diagrams from a plain text language.
 
 References:
 - [[https://en.wikipedia.org/wiki/Unified_Modeling_Language][Wikipedia: Unified Modeling Language]]
@@ -3995,6 +3999,26 @@ Values: 0, 256, 512, 1024, 2048, 4096, 8192
 If this value is 0, then no action is taken."
 :group 'plantuml
 :type 'integer)
+#+end_src
+
+** Mermaid
+
+[[https://mermaid.js.org][Mermaid]] is an open-source tool allowing users to create diagrams and charts from a plain text language.
+It is similar to plantUML. Psimacs supports integration of Mermaid code into ORG documents and provides a dedicated mermaid-mode.
+
+References:
+- [[https://mermaid.js.org][Mermaid]]
+- [[https://github.com/arnm/ob-mermaid][ob-mermaid]]
+- [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]]
+- [[https://github.com/abrochard/mermaid-mode][mermaid-mode]]
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Mermaid configration constants
+;;
+(defconst psimacs/config/mermaid-runtime-cmd
+  (psimacs/file-system/concat-file psimacs/config/msys-env-lib-dir "mmdc.cmd")
+  "The psimacs mermaid program directory.")
 #+end_src
 
 ** ImageMagick
@@ -16411,9 +16435,30 @@ For each /ToDo/-state a corresponding /tag/ is defined above. This section defin
 )
 #+end_src
 
-**** Org bable language configuration
+**** Mermaid support with Org-Mode
 
-Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.html][org bable]].
+[[https://mermaid.js.org][Mermaid]] is an open-source tool allowing users to create diagrams and charts from a plain text language.
+*Emacs* integration of [[https://mermaid.js.org][Mermaid]] if provided by the package [[https://github.com/arnm/ob-mermaid][ob-mermaid]].
+
+References:
+- [[https://mermaid.js.org][Mermaid]]
+- [[https://github.com/arnm/ob-mermaid][ob-mermaid]]
+- [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]]
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; Mermaid support in ORG documents
+;;
+(use-package ob-mermaid
+    :after org
+    :config 
+        (setq ob-mermaid-cli-path (expand-file-name psimacs/config/mermaid-runtime-cmd))
+)
+#+end_src
+
+**** Org babel language configuration
+
+Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.html][org babel]].
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
 ;;
@@ -16428,6 +16473,7 @@ Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.ht
             (C . t)
             (python . t)
             (plantuml . t)
+            (mermaid . t)
             (dot . t)
             (emacs-lisp . t)
             (latex . t)
@@ -19289,6 +19335,28 @@ x8 : 32768"
                 (psimacs/config/plantuml-eval-java-args 0 0)
             )
         )
+)
+#+end_src
+
+** Mermaid Mode
+
+The package [[https://github.com/abrochard/mermaid-mode][mermaid-mode]] provides access to the nice
+[[https://mermaid.js.org][Mermaid]] tool that allows the generation of diagrams and charts with
+a plain text description.
+
+See also:
+- [[https://mermaid.js.org][Mermaid]]
+- [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]]
+- [[https://github.com/abrochard/mermaid-mode][mermaid-mode]]
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-mermaid-mode.el :var file-description="Major Modes - mermaid-mode setup"
+;;
+;; Configuration of the Mermaid support in Psimacs.
+;;
+(use-package mermaid-mode
+    :ensure t
+    :config
+    (setq mermaid-mmdc-location (expand-file-name psimacs/config/mermaid-runtime-cmd))
 )
 #+end_src
 

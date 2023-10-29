@@ -804,7 +804,7 @@ After this function is finished the two directories are identical."
 ;;
 (defconst psimacs/config/dropbox-emacs-dir
   (if psimacs/config/dropbox-dir (file-name-as-directory (concat psimacs/config/dropbox-dir
-                                                                 "emacs/psimacs/emacs")) nil)
+                                                                 "psimacs")) nil)
   "The psimacs dropbox Emacs configuration directory or nil.")
 
 ;;
@@ -813,7 +813,7 @@ After this function is finished the two directories are identical."
 (defun psimacs/config/sync-with-dropbox ()
   "Synchronize with \\='dropbox\\=' directory if it exists.
 
-The expected place in the \\='dropbox\\=' directory is \\='emacs/psimacs/emacs\\='."
+The expected place in the \\='dropbox\\=' directory is \\='psimacs\\='."
   (if (and psimacs/config/dropbox-dir
            (file-directory-p psimacs/config/dropbox-dir))
       (let* ((db-dir psimacs/config/dropbox-emacs-dir)
