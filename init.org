@@ -4011,6 +4011,7 @@ References:
 - [[https://github.com/arnm/ob-mermaid][ob-mermaid]]
 - [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]]
 - [[https://github.com/abrochard/mermaid-mode][mermaid-mode]]
+- [[https://mermaid.live/][Mermaid Live Editor]]
 
 #+begin_src emacs-lisp :tangle config/init-constants.el
 ;;
@@ -4434,6 +4435,11 @@ correct parents search path setup. Be explicit. Additionally, synchronize the en
 ;; Print the current exec-path to the message buffer
 ;;
 (psimacs/config/message-elements-of-list exec-path)
+
+;;
+;; Use LSP with plists
+;;
+(setenv "LSP_USE_PLISTS" "1")
 #+end_src
 
 * Package management
@@ -14351,13 +14357,27 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 (use-package lsp-mode
     :commands (lsp lsp-deferred company-lsp)
     :init
+        (setq lsp-log-io nil)
+
         (setq lsp-keymap-prefix "C-c l")
 
         (setq lsp-session-file psimacs/config/lsp-session-file)
-        ;;(setq lsp-server-install-dir psimacs/config/lsp-server-install-dir)
+        (setq lsp-server-install-dir psimacs/config/lsp-server-install-dir)
+
         ;;(setq lsp-yaml-schema-store-local-db psimacs/config/lsp-yaml-schema-store-local-db-file)
 
-        ;(setq lsp-pyls-server-command psimacs/config/pyls-runtime-exe)
+        ;; Don't auto-kill LSP server after last workspace buffer is killed, because I
+        ;; will do it for you, after `+lsp-defer-shutdown' seconds.
+        (setq lsp-keep-workspace-alive nil)
+
+        ;; Disable features that have great potential to be slow.
+        (setq lsp-enable-folding nil
+              lsp-enable-text-document-color nil)
+        ;; Reduce unexpected modifications to code
+        (setq lsp-enable-on-type-formatting nil)
+        ;; Make breadcrumbs opt-in; they're redundant with the modeline and imenu
+        (setq lsp-headerline-breadcrumb-enable nil)
+
         (setq lsp-idle-delay 0.500)
 
         (setq lsp-auto-guess-root t)
@@ -14368,27 +14388,40 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
 
         (setq lsp-enable-symbol-highlighting t)
         (setq lsp-lens-enable t)
-        (setq lsp-headerline-breadcrumb-enable t)
         (setq lsp-modeline-code-actions-enable t)
 
         (setq lsp-completion-enable nil)
 
-        ;;(setq lsp-modeline-diagnostics-enable nil)
-        ;;(setq lsp-keep-workspace-alive nil)
+        (setq lsp-modeline-diagnostics-enable nil)
+
+        (setq lsp-signature-auto-activate nil)
+        (setq lsp-modeline-workspace-status-enable nil)
+        (setq lsp-semantic-tokens-enable t)
+        (setq lsp-progress-spinner-type 'progress-bar-filled)
+        (setq lsp-enable-file-watchers nil)
+
         ;;(setq lsp-auto-execute-action nil)
         ;;(setq lsp-before-save-edits nil)
         ;;(setq lsp-eldoc-enable-hover nil)
         ;;(setq lsp-diagnostic-package :none)
         (setq lsp-completion-provider :none)
         ;;(setq lsp-enable-links nil)
-        ;;(setq lsp-enable-on-type-formatting nil)
+        ;;(setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
     :config
+        (setq lsp-use-plists t)
+
+        (setq lsp-workspace-folders-remove (list psimacs/config/home-dir))
+
         ;(define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
 
         (setq lsp-enable-dap-auto-configure t)
 
         (setq lsp-clients-clangd-executable psimacs/config/clangd-runtime-exe)
         (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+
+        (use-package consult-lsp
+            :bind (:map lsp-mode-map
+                ("C-M-." . consult-lsp-symbols)))
 
         ;(require 'dap-lldb)
         (require 'dap-cpptools)
@@ -16444,6 +16477,7 @@ References:
 - [[https://mermaid.js.org][Mermaid]]
 - [[https://github.com/arnm/ob-mermaid][ob-mermaid]]
 - [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]]
+- [[https://mermaid.live/][Mermaid Live Editor]]
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
@@ -19348,6 +19382,7 @@ See also:
 - [[https://mermaid.js.org][Mermaid]]
 - [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]]
 - [[https://github.com/abrochard/mermaid-mode][mermaid-mode]]
+- [[https://mermaid.live/][Mermaid Live Editor]]
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-mermaid-mode.el :var file-description="Major Modes - mermaid-mode setup"
 ;;
