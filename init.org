@@ -14408,6 +14408,9 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         ;;(setq lsp-enable-links nil)
         ;;(setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
     :config
+        ;; Mark lsp-clients-clangd-args as safe to override.
+        (put 'lsp-clients-clangd-args 'safe-local-variable #'consp)
+
         (setq lsp-use-plists t)
 
         (setq lsp-workspace-folders-remove (list psimacs/config/home-dir))
@@ -14415,6 +14418,8 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         ;(define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
 
         (setq lsp-enable-dap-auto-configure t)
+
+        (setq lsp-clangd-binary-path psimacs/config/clangd-runtime-exe)
 
         (setq lsp-clients-clangd-executable psimacs/config/clangd-runtime-exe)
         (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
@@ -16891,7 +16896,7 @@ References:
 
 Exporting to markdown yield non functioning table of content at least in 
 Gitlab. The problem is found in the standard use of ~<a id=~ which 
-has to be replaced by ~<a name=~. The following code advices an
+has to be adjoined by ~<a name=~. The following code advices an
 altered function that exports the problematic string.
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
@@ -16945,9 +16950,12 @@ altered function that exports the problematic string.
             (let ((anchor
                    (and (org-md--headline-referred-p headline info)
                     (if psimacs/config/org-export-markdown-headlines-with-name-tag
-                        (format "<a name=\"%s\"></a>"
-                            (or (org-element-property :CUSTOM_ID headline)
-                            (org-export-get-reference headline info)))
+                        (let ((headline-name 
+                                (or (org-element-property :CUSTOM_ID headline)
+                                (org-export-get-reference headline info))
+                             ))
+                            (format "<a id=\"%s\"></a>\n<a name=\"%s\"></a>" headline-name headline-name)
+                        )
                     (format "<a id=\"%s\"></a>"
                             (or (org-element-property :CUSTOM_ID headline)
                             (org-export-get-reference headline info)))
@@ -17245,11 +17253,32 @@ Each link also can be exported to LaTeX to build a PDF.
             )
         )
 
+        (defun psimacs/org-ref/export/file-md (&optional async subtreep visible-only body-only ext-plist)
+          "Export notebook to md."
+          (interactive)
+          (let* ((name (file-name-sans-extension (buffer-file-name)))
+                 (wcfg (current-window-configuration))
+                )
+            (let ((org-export-with-drawers "RESULTS"))
+              (with-current-buffer (org-ref-export-as-org)
+                (with-current-buffer (org-md-export-as-markdown)
+                  (write-file (concat name ".md"))
+                  (quit-window t)
+                  )
+                (quit-window t)
+                )
+              )
+
+              (set-window-configuration wcfg)
+            )
+        )
+
         (org-export-define-derived-backend 'org-ref 'org
           :menu-entry
           '(?R "Org-ref export"
                ((?a "to Ascii" org-ref-export-to-ascii)
                 (?m "to markdown" org-ref-export-to-md)
+                (?M "to MARKDOWN" psimacs/org-ref/export/file-md)
                 (?h "to html" org-ref-export-to-html)
                 (?H "to HTML" psimacs/org-ref/export/file)
                 (?l "to LaTeX" org-ref-export-to-latex)
