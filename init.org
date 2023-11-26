@@ -12880,6 +12880,38 @@ The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] g
         (setq projectile-emcmake-executable         psimacs/config/emscripten-emcmake-exe)
         (setq projectile-cmake-clang-c-executable   psimacs/config/clang-c-compiler-runtime-exe)
         (setq projectile-cmake-clang-c++-executable psimacs/config/clang-c++-compiler-runtime-exe)
+    :config
+        (defun psimacs/config/projectile-cmake--set-all-commands-lsp-clients-clangd-args(&optional evaluate)
+          "Adds or updates to .dir-locals.el the variable 'lsp-clients-clangd-args' variable in 'c++-mode'
+           wrspt. to the '--compile-commands-dir' argument."
+          (interactive)
+          (when (projectile-cmake-valid-p)
+            (let* (
+                   (build-dir   (projectile-cmake-project-build-dir))
+                   (entry       (concat "--compile-commands-dir=" build-dir))
+                   (clangd-args lsp-clients-clangd-args)
+                  )
+
+              (unless (seq-find (lambda (cand)
+                                  (string-equal entry cand)) clangd-args)
+                (if (seq-find (lambda (cand)
+                                (message "=> %s" cand)
+                                (string-prefix-p "--compile-commands-dir=" cand)) clangd-args)
+                    (setq clangd-args (cl-subst entry "--compile-commands-dir=" clangd-args :test #'string-prefix-p))
+                  (add-to-list 'clangd-args entry))
+
+                (save-current-buffer
+                  (add-dir-local-variable 'c++-mode 'lsp-clients-clangd-args clangd-args)
+
+                  (unless evaluate
+                    (save-buffer)
+                    (kill-buffer)
+
+                    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)
+                    )))))
+          )
+
+        (advice-add 'projectile-cmake--set-all-commands :after #'psimacs/config/projectile-cmake--set-all-commands-lsp-clients-clangd-args)
 )
 #+end_src
 
@@ -16490,7 +16522,7 @@ References:
 ;;
 (use-package ob-mermaid
     :after org
-    :config 
+    :config
         (setq ob-mermaid-cli-path (expand-file-name psimacs/config/mermaid-runtime-cmd))
 )
 #+end_src
@@ -16894,8 +16926,8 @@ References:
 
 **** Markdown export support
 
-Exporting to markdown yield non functioning table of content at least in 
-Gitlab. The problem is found in the standard use of ~<a id=~ which 
+Exporting to markdown yield non functioning table of content at least in
+Gitlab. The problem is found in the standard use of ~<a id=~ which
 has to be adjoined by ~<a name=~. The following code advices an
 altered function that exports the problematic string.
 
@@ -16950,7 +16982,7 @@ altered function that exports the problematic string.
             (let ((anchor
                    (and (org-md--headline-referred-p headline info)
                     (if psimacs/config/org-export-markdown-headlines-with-name-tag
-                        (let ((headline-name 
+                        (let ((headline-name
                                 (or (org-element-property :CUSTOM_ID headline)
                                 (org-export-get-reference headline info))
                              ))
