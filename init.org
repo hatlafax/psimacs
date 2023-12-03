@@ -2832,7 +2832,7 @@ your calendar.
     '(
         "Diary.org"
         "DiaryCpp.org"
-        "DiaryDataSolid.org"
+        "DiaryJavascript.org"
         "DiaryEmacs.org"
         "DiaryLaTeX.org"
         "DiaryNodejs.org"
@@ -6105,9 +6105,12 @@ About Unicode:
         ;    (set-face-attribute 'default nil :font "Hack-10.0")
         ;)
 
-        (when (member "Hack" (font-family-list))
-            (set-face-attribute 'default nil :font "Hack-10.0")
-        )
+        (if (member "Hack Nerd Font Mono" (font-family-list))
+            (set-face-attribute 'default nil :font "Hack Nerd Font Mono-10.0")
+
+          (if (member "Hack" (font-family-list))
+              (set-face-attribute 'default nil :font "Hack-10.0")
+        ))
 
         ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono" nil 'append)
         ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Oblique" nil 'append)
@@ -16283,17 +16286,17 @@ A list of useful tags is predefined by *Psimacs*.
                 ("request"      . (:foreground "LightGoldenrod1"))
                 ("buy"          . (:foreground "LightGoldenrod1"))
                 ("order"        . (:foreground "LightGoldenrod1"))
+                ("dont-forget"  . (:foreground "LightGoldenrod1"))
 
                 ;; Category of the task
-                ("caddy"        . (:foreground "DeepSkyBlue"))
+                ("pg50"         . (:foreground "DeepSkyBlue"))
                 ("render-engine". (:foreground "DeepSkyBlue"))
-                ("zinc"         . (:foreground "DeepSkyBlue"))
                 ("opensg"       . (:foreground "DeepSkyBlue"))
                 ("opengl"       . (:foreground "DeepSkyBlue"))
                 ("boost"        . (:foreground "DeepSkyBlue"))
                 ("emacs"        . (:foreground "DeepSkyBlue"))
                 ("build"        . (:foreground "DeepSkyBlue"))
-                ("caddy-python" . (:foreground "DeepSkyBlue"))
+
 
                 ;; Language
                 ("cpp"          . (:foreground "LawnGreen"))
@@ -16379,16 +16382,13 @@ A list of useful tags is predefined by *Psimacs*.
 
                 ;; Category of the task
                 (:startgroup    . nil)
-                ("caddy"        . ?1)
+                ("pg50"         . ?1)
                 ("render-engine". ?2)
-                ("zinc"         . ?3)
-                ("opensg"       . ?4)
-                ("opengl"       . ?5)
-                ("boost"        . ?6)
-                ("emacs"        . ?7)
-                ("build"        . ?8)
-                ("caddy-python" . ?9)
-                ;; ("xxx" . ?0)
+                ("opensg"       . ?3)
+                ("opengl"       . ?4)
+                ("boost"        . ?5)
+                ("emacs"        . ?6)
+                ("build"        . ?7)
                 (:endgroup      . nil)
 
                 ;; Language
@@ -16565,9 +16565,20 @@ Setup of the [[https://orgmode.org/manual/Agenda-Views.html][org agenda views]].
 (use-package org
     :straight nil
     :config
-        (setq org-agenda-file-regexp "\\`Diary[^.].*\\.org\\'")
-        (setq org-agenda-files (list psimacs/config/agenda-dir))
-        ;(setq org-agenda-files psimacs/config/org-capture-coding-diary-files)
+        (defun psimacs/config/init-agenda-files ()
+          "Initialize the list of agenda files."
+          (interactive)
+          (let ((files '() ))
+              (setq files (cl-loop
+               for file in psimacs/config/org-capture-coding-diary-files
+               collect (concat psimacs/config/agenda-dir file)))
+
+              (setq org-agenda-files files)
+            )
+          )
+
+        (psimacs/config/init-agenda-files)
+        (setq org-agenda-skip-unavailable-files t)
 
         (setq org-agenda-window-setup 'current-window)
 
@@ -16723,6 +16734,7 @@ Once information is in the system, it may need to be moved around. Org provides 
                         (when (equal mode 'org-mode)          (setq arg "org"))
                         (when (equal mode 'perl-mode)         (setq arg "perl"))
                         (when (equal mode 'plantuml-mode)     (setq arg "plantuml"))
+                        (when (equal mode 'mermaid-mode)      (setq arg "mermaid"))
                         (when (equal mode 'python-mode)       (setq arg "python"))
                         (when (equal mode 'sh-mode)           (setq arg "shell"))
                         (when (equal mode 'prolig-mode)       (setq arg "prolog"))
@@ -18989,7 +19001,10 @@ Brains:
         (defun psimacs/org-roam/refresh-agenda-list ()
             "Let be the org-agenda files the ones that have tag <Project>."
             (interactive)
-            (setq org-agenda-files (psimacs/org-roam/list-notes-by-tag "Project"))
+            (psimacs/config/init-agenda-files)
+
+            (setq org-agenda-files (append org-agenda-files (psimacs/org-roam/list-notes-by-tag "Project")))
+            (delq nil (delete-dups org-agenda-files))
         )
 
         (defun psimacs/org-roam/project-finalize-hook ()
@@ -21476,7 +21491,7 @@ _q_: quit_
             "Navigation"
                 (
                     ("t"   psimacs/hydra/avy/body               "  Avy Text Navigation")
-                    ("C-o" psimacs/hydra/org/body               "Navigation")
+                    ("C-o" psimacs/hydra/org/body               "Org Navigation")
                     ("C-m" psimacs/hydra/word-modes/body        "Word Movement Modes")
                     ("H-m" psimacs/hydra/navigation/body        "Navigation")
                 )
