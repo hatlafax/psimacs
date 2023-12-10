@@ -15467,6 +15467,65 @@ npm i -g typescript
 )
 #+end_src
 
+** YAML
+
+Reference:
+- [[https://github.com/yoshiki/yaml-mode][yaml-mode]]
+- [[https://github.com/zkry/yaml-pro][yaml-pro: tools for editing YAML leveraging tree-sitter/parser]]
+
+#+begin_src emacs-lisp :tangle config/init-advanced-yaml.el :var file-description="Advanced YAML setup"
+(use-package yaml-mode
+    :defer t
+    :bind (("H-c p" . yaml-get-path-at-point))
+    :mode (("\\.yml\\'"  . yaml-mode)
+           ("\\.yaml\\'" . yaml-mode))
+    :config
+        (use-package yaml-pro
+            :hook (yaml-mode  . yaml-pro-mode)
+            :bind (("H-c M-p" . yaml-pro-move-subtree-up)
+                   ("H-c M-n" . yaml-pro-move-subtree-down))
+        )
+
+        ;; Based on https://github.com/chopmo/dotfiles/blob/master/.emacs.d/customizations/yaml.el
+        (defun yaml-indentation-level (s)
+            (if (string-match "^ " s)
+                (+ 1 (yaml-indentation-level (substring s 1)))
+            0))
+
+        (defun yaml-clean-string (s)
+            (let* ((s (replace-regexp-in-string "^[ -:]*" "" s))
+                   (s (replace-regexp-in-string ":$" "" s)))
+                s))
+
+        (defun yaml-path-at-point ()
+            (save-excursion
+            (let* ((line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                   (level (yaml-indentation-level line))
+                   result
+                  )
+                (while (> (point) (point-min))
+                    (beginning-of-line 0)
+                    (setq line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                    (let ((new-level (yaml-indentation-level line)))
+                        (when (and (string-match "[^[:blank:]]" line)
+                                   (< new-level level)
+                              )
+                            (setq level new-level)
+                            (setq result (push (yaml-clean-string line) result)))))
+                            (mapconcat 'identity result " => ")))
+        )
+
+        (defun yaml-get-path-at-point ()
+            "Display the yaml path at point for 5 seconds"
+            (interactive)
+            (let ((ov (display-line-overlay+ (window-start) (yaml-path-at-point))))
+                  (run-with-timer 1 nil (lambda () (when (overlayp ov)
+                                             (delete-overlay ov)))))
+        )
+)
+
+#+end_src
+
 ** Deft
 
 [[https://github.com/jrblevin/deft][Deft]] is an Emacs mode for quickly browsing, filtering, and editing directories
@@ -16527,6 +16586,20 @@ References:
 )
 #+end_src
 
+**** YAML support with Org-Mode
+
+[[https://github.com/llhotka/ob-yaml][Org Babel support for YAML]] support for YAML source code blocks in Org Babel.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; YAML support in ORG documents
+;;
+(use-package ob-yaml
+    :straight (ob-yaml :host github :repo "llhotka/ob-yaml" :build (:not compile))
+    :after org
+)
+#+end_src
+
 **** Org babel language configuration
 
 Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.html][org babel]].
@@ -16548,6 +16621,7 @@ Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.ht
             (dot . t)
             (emacs-lisp . t)
             (latex . t)
+            (yaml .t)
         ))
 
         (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
@@ -16765,9 +16839,9 @@ Once information is in the system, it may need to be moved around. Org provides 
         (defun psimacs/internal/org-catpure-set-templates ()
             (let (
                     (code-point-template "* %? %^G\nEntered: %U\n%(psimacs/internal/org-capture-file-link)\n %(psimacs/internal/org-capture-code-block)\n")
-                    (todo-template       "* TODO [#C] %? %^G\nEntered:   %U\nScheduled: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%i\n")
-                    (note-template       "* %? :Note:%^G\nEntered: %U\n")
-                    (meeting-template    "* %? :Meeting:%^G\nEntered:   %U\nScheduled: %T\n")
+                    (todo-template    "* TODO [#C] %? %^G\nEntered:   %U\nScheduled: %(org-time-stamp nil nil)\n%i\n")
+                    (note-template    "* %? :Note:%^G\nEntered: %U\n")
+                    (meeting-template "* %? :Meeting:%^G\nEntered:   %U\nScheduled: %(org-time-stamp '(8) nil)\n")
                     (journal-template    "** %^{Heading}\nEntered: %U\n%i\n%a")
                     (log-time-template   "** %U - %^{Activity} :Time:")
 
@@ -18937,19 +19011,21 @@ Brains:
             )
         )
 
-        (setq org-roam-dailies-caputure-templates
-            '(
-                (
-                    "d" "default" entry
-                    "* %<%I %M %p>: %?"
-                    :if-new (
-                                file+head
-                                "%<%Y-%m-%d>-${slug}.org"
-                                "#+title: ${title}: %<%Y-%m-%d>\n\n"
-                            )
-                )
-            )
-        )
+        (setq org-roam-dailies-capture-templates
+            (let (
+                  (todo-template    "* TODO [#C] %? %^G\nEntered:   %U\nScheduled: %(org-time-stamp nil nil)\n%i\n")
+                  (note-template    "* %? :Note:%^G\nEntered: %U\n")
+                  (meeting-template "* %? :Meeting:%^G\nEntered:   %U\nScheduled: %(org-time-stamp '(8) nil)\n")
+                  (preamble         "#+title: %<%Y-%m-%d (%A)>\n#+startup: showall\n\n")
+                  (diary-file       "%<%Y-%m-%d>.org")
+                 )
+                    `(
+                      ("t" "Task"    entry ,todo-template    :target (file+head+olp ,diary-file ,preamble ("Tasks"))     :empty-lines 1 :unnarrowed t)
+                      ("n" "Note"    entry ,note-template    :target (file+head+olp ,diary-file ,preamble ("Notes"))     :empty-lines 1 :unnarrowed t)
+                      ("m" "Meeting" entry ,meeting-template :target (file+head+olp ,diary-file ,preamble ("Meetings"))  :empty-lines 1 :unnarrowed t)
+                     )
+            ))
+
 
         (setq time-stamp-active t
               time-stamp-start "#\\+lastmod:[ \t]*"
@@ -19001,10 +19077,14 @@ Brains:
         (defun psimacs/org-roam/refresh-agenda-list ()
             "Let be the org-agenda files the ones that have tag <Project>."
             (interactive)
-            (psimacs/config/init-agenda-files)
+            (let ((dailies (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "dailies")))
+              (psimacs/config/init-agenda-files)
 
-            (setq org-agenda-files (append org-agenda-files (psimacs/org-roam/list-notes-by-tag "Project")))
-            (delq nil (delete-dups org-agenda-files))
+              (setq org-agenda-files (append org-agenda-files (directory-files-recursively dailies ".org" nil)))
+
+              (setq org-agenda-files (append org-agenda-files (psimacs/org-roam/list-notes-by-tag "Project")))
+              (delq nil (delete-dups org-agenda-files))
+            )
         )
 
         (defun psimacs/org-roam/project-finalize-hook ()
