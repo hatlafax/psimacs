@@ -763,33 +763,46 @@ After this function is finished the two directories are identical."
 (defun psimacs/config/find-dropbox-folder ()
   "Get the current dropbox folder on the running machine. Otherwise nil."
   (interactive)
-  (let* ((db-appdat-info-file      (concat (expand-file-name (file-name-as-directory (getenv
-                                                                                      "APPDATA")))
-                                           "Dropbox/info.json"))
-         (db-localappdat-info-file (concat (expand-file-name (file-name-as-directory (getenv
-                                                                                      "LOCALAPPDATA")))
-                                           "Dropbox/info.json"))
-         (db-user-home-info-file   "~/Dropbox/info.json")
-         (json-path (cond ((eq system-type 'windows-nt)
-                           (if (file-exists-p db-appdat-info-file) db-appdat-info-file (if
-                                                                                           (file-exists-p
-                                                                                            db-localappdat-info-file)
-                                                                                           db-localappdat-info-file
-                                                                                         (if
-                                                                                             (file-exists-p
-                                                                                              db-user-home-info-file)
-                                                                                             db-user-home-info-file
-                                                                                           nil))))
-                          ((or
-                            (eq system-type 'darwin)
-                            (eq system-type 'gnu-linux))
-                           (if (file-exists-p db-user-home-info-file) db-user-home-info-file
-                             nil)))))
+  (let ((json-path
+	 (cond
+	  ((eq system-type 'windows-nt)
+	   (let* (
+		  (env-appdat      (getenv      "APPDATA"))
+		  (env-localappdat (getenv "LOCALAPPDATA"))
+		  (db-appdat-info-file
+		   (if env-appdat
+		       (concat (expand-file-name (file-name-as-directory env-appdat)) "Dropbox/info.json")
+		     nil))
+		  (db-localappdat-info-file
+		   (if env-localappdat
+		       (concat (expand-file-name (file-name-as-directory env-localappdat)) "Dropbox/info.json")
+		     nil))
+		  (db-user-home-info-file   "~/Dropbox/info.json")
+		  )
+	     (if (and db-appdat-info-file (file-exists-p db-appdat-info-file))
+		 db-appdat-info-file
+	       (if (and db-localappdat-info-file (file-exists-p db-localappdat-info-file))
+                   db-localappdat-info-file
+                 (if (and db-user-home-info-file (file-exists-p db-user-home-info-file))
+                     db-user-home-info-file
+                   nil)))
+	     ))
+	  ((or
+            (eq system-type 'darwin)
+            (eq system-type 'gnu/linux))
+	   (let* (
+		  (db-user-home-info-file   "~/.dropbox/info.json")
+		  )
+	     (if (and db-user-home-info-file (file-exists-p db-user-home-info-file))
+		 db-user-home-info-file
+	       nil)))
+	  )))
     (if (and json-path
              (file-exists-p json-path))
         (progn
           (require 'json)
-          (cdr (assoc 'path (car (json-read-file json-path))))) nil)))
+          (cdr (assoc 'path (car (json-read-file json-path))))) nil))	 
+)
 
 ;;
 ;; Initialize the directory constants for dropbox...

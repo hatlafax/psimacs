@@ -75,6 +75,7 @@ Now install dependency packages for Python:
 cd c:/utils/python310
 python -m pip install pip --upgrade
 
+
 cd c:/utils/Python310/Scripts
 pip install -r ~/.emacs.d/assets/dependencies/python/requirements.txt
 #+end_example
@@ -1739,33 +1740,46 @@ The /Dropbox/ location is determined at run time.
 (defun psimacs/config/find-dropbox-folder ()
   "Get the current dropbox folder on the running machine. Otherwise nil."
   (interactive)
-  (let* ((db-appdat-info-file      (concat (expand-file-name (file-name-as-directory (getenv
-                                                                                      "APPDATA")))
-                                           "Dropbox/info.json"))
-         (db-localappdat-info-file (concat (expand-file-name (file-name-as-directory (getenv
-                                                                                      "LOCALAPPDATA")))
-                                           "Dropbox/info.json"))
-         (db-user-home-info-file   "~/Dropbox/info.json")
-         (json-path (cond ((eq system-type 'windows-nt)
-                           (if (file-exists-p db-appdat-info-file) db-appdat-info-file (if
-                                                                                           (file-exists-p
-                                                                                            db-localappdat-info-file)
-                                                                                           db-localappdat-info-file
-                                                                                         (if
-                                                                                             (file-exists-p
-                                                                                              db-user-home-info-file)
-                                                                                             db-user-home-info-file
-                                                                                           nil))))
-                          ((or
-                            (eq system-type 'darwin)
-                            (eq system-type 'gnu-linux))
-                           (if (file-exists-p db-user-home-info-file) db-user-home-info-file
-                             nil)))))
+  (let ((json-path
+	 (cond
+	  ((eq system-type 'windows-nt)
+	   (let* (
+		  (env-appdat      (getenv      "APPDATA"))
+		  (env-localappdat (getenv "LOCALAPPDATA"))
+		  (db-appdat-info-file
+		   (if env-appdat
+		       (concat (expand-file-name (file-name-as-directory env-appdat)) "Dropbox/info.json")
+		     nil))
+		  (db-localappdat-info-file
+		   (if env-localappdat
+		       (concat (expand-file-name (file-name-as-directory env-localappdat)) "Dropbox/info.json")
+		     nil))
+		  (db-user-home-info-file   "~/Dropbox/info.json")
+		  )
+	     (if (and db-appdat-info-file (file-exists-p db-appdat-info-file))
+		 db-appdat-info-file
+	       (if (and db-localappdat-info-file (file-exists-p db-localappdat-info-file))
+                   db-localappdat-info-file
+                 (if (and db-user-home-info-file (file-exists-p db-user-home-info-file))
+                     db-user-home-info-file
+                   nil)))
+	     ))
+	  ((or
+            (eq system-type 'darwin)
+            (eq system-type 'gnu/linux))
+	   (let* (
+		  (db-user-home-info-file   "~/.dropbox/info.json")
+		  )
+	     (if (and db-user-home-info-file (file-exists-p db-user-home-info-file))
+		 db-user-home-info-file
+	       nil)))
+	  )))
     (if (and json-path
              (file-exists-p json-path))
         (progn
           (require 'json)
-          (cdr (assoc 'path (car (json-read-file json-path))))) nil)))
+          (cdr (assoc 'path (car (json-read-file json-path))))) nil))	 
+)
 #+end_src
 
 *Psimacs* is expected to reside in sub-directory =psimacs/psimacs=. The author uses the same sub-directory
@@ -2052,27 +2066,29 @@ to it's documentation string.
     (set-frame-position (selected-frame) psimacs/config/initial-frame-pos-x  psimacs/config/initial-frame-pos-y)
     (set-frame-size     (selected-frame) psimacs/config/initial-frame-size-x psimacs/config/initial-frame-size-y t)
 
-    ;;
-    ;; Somewhat redundant
-    ;;
-    (add-to-list 'initial-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
-    (add-to-list 'initial-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
-    (add-to-list 'initial-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-    (add-to-list 'initial-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+    (unless (daemonp)
+      ;;
+      ;; Somewhat redundant
+      ;;
+      (add-to-list 'initial-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+      (add-to-list 'initial-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+      (add-to-list 'initial-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+      (add-to-list 'initial-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
 
-    (add-to-list 'default-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
-    (add-to-list 'default-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
-    (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-    (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+      (add-to-list 'default-frame-alist `(left   . ,psimacs/config/initial-frame-pos-x))
+      (add-to-list 'default-frame-alist `(top    . ,psimacs/config/initial-frame-pos-y))
+      (add-to-list 'default-frame-alist `(width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
+      (add-to-list 'default-frame-alist `(height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
 
-    ;;
-    ;; Hacky, we need a redisplay
-    ;;
-    (setq-default inhibit-redisplay nil
-                  inhibit-message   nil)
-    (redisplay)
-    (setq-default inhibit-redisplay t
-                  inhibit-message   t)
+      ;;
+      ;; Hacky, we need a redisplay
+      ;;
+      (setq-default inhibit-redisplay nil
+                    inhibit-message   nil)
+      (redisplay)
+      (setq-default inhibit-redisplay t
+                    inhibit-message   t)
+    )
 )
 
 ;;
@@ -2193,7 +2209,9 @@ Supported strategies are:
 ;;
 ;; Initialize the frame creation strategy
 ;;
-(psimacs/window/set-frame-creation-strategy-layout)
+(unless (daemonp)
+    (psimacs/window/set-frame-creation-strategy-layout)
+)
 
 ;;
 ;; Prepare for the next frame creation
@@ -2375,7 +2393,7 @@ OVERRIDE-ALWAYS : overriding always happens when t and OVERRIDE is also t"
 (defun psimacs/file-system/make-directory (dir)
   "Create directory DIR if it does not exists yet. Otherwise do nothing."
     (unless (file-exists-p dir)
-      (make-directory dir))
+      (make-directory dir t))
 )
 #+end_src
 
@@ -2412,7 +2430,8 @@ INFO-FILE      : the info directory file into which NEW-INFO-ENTRY will be added
   (when (and
          (file-exists-p new-info-file)
          (file-directory-p info-dir)
-         (file-exists-p info-file))
+         ;(file-exists-p info-file)
+        )
     (let ( (new-info-dst-file (concat info-dir (file-name-nondirectory new-info-file))) )
       (when (or (not (file-exists-p new-info-dst-file)) (file-newer-than-file-p new-info-file new-info-dst-file))
         (copy-file new-info-file new-info-dst-file t)
@@ -2442,7 +2461,10 @@ programs are installed.
   "The user home directory used by Emacs.")
 
 (defconst psimacs/config/emacs-dir
-  (psimacs/file-system/concat-directory invocation-directory "..")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-directory invocation-directory "..")
+    (psimacs/file-system/concat-directory psimacs/config/home-dir "usr")
+  )
   "The installation directory of Emacs.")
 
 (defconst psimacs/config/config-dir
@@ -2556,7 +2578,10 @@ recipe is provided.
 ;; The primary Info directory
 ;;
 (defconst psimacs/config/emacs-info-dir
-  (psimacs/file-system/concat-directory psimacs/config/emacs-dir "share/info")
+  (let ((info-dir (psimacs/file-system/concat-directory psimacs/config/emacs-dir "share/info") ))
+    (psimacs/file-system/make-directory info-dir)
+    info-dir
+  )
   "The primary Info directory of Emacs."
 )
 
@@ -2845,7 +2870,10 @@ your calendar.
   :type 'string)
 
 
-(defconst psimacs/config/libre-office-exe "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
+(defconst psimacs/config/libre-office-exe
+  (if psimacs/system/is-win32-p
+      "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
+    "soffice")
     "The otd to docx converter of the LibreOffice suite.")
 #+end_src
 
@@ -3415,8 +3443,14 @@ zip 3.0-3
 ;; MSYS2 installation
 ;;
 (defconst psimacs/config/msys-root-dir
-  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "msys64")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "msys64")
+    "/")
   "The psimacs msys64 root directory.")
+
+(defconst psimacs/config/msys-share-dir
+  (psimacs/file-system/concat-directory psimacs/config/msys-root-dir "usr/share")
+  "The psimacs msys64 share directory.")
 
 (defconst psimacs/config/msys-info-dir
   (psimacs/file-system/concat-directory psimacs/config/msys-root-dir "usr/share/info")
@@ -3427,16 +3461,24 @@ zip 3.0-3
   "The psimacs msys runtime directory.")
 
 (defconst psimacs/config/msys-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/msys-runtime-dir "bash.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/msys-runtime-dir "bash.exe")
+    "bash")
   "The psimacs bash executable.")
 
 
 (defconst psimacs/config/msys-env-root-dir
-  (psimacs/file-system/concat-directory psimacs/config/msys-root-dir
-    (if (getenv "MSYS2_ENV")
-      (getenv "MSYS2_ENV")
-      "ucrt64"))
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-directory psimacs/config/msys-root-dir
+        (if (getenv "MSYS2_ENV")
+            (getenv "MSYS2_ENV")
+          "ucrt64"))
+    "/usr")
   "The psimacs environment root directory.")
+
+(defconst psimacs/config/msys-env-share-dir
+    (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "share")
+  "The psimacs actual msys environment share directory.")
 
 (defconst psimacs/config/msys-env-info-dir
     (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "share/info")
@@ -3487,7 +3529,9 @@ The  [[https://en.wikipedia.org/wiki/PDF][PDF-files]] viewer to use.
   "The psimacs pdf viewer directory.")
 
 (defconst psimacs/config/pdf-viewer-runtime
-  (psimacs/file-system/concat-file psimacs/config/pdf-viewer-dir "SumatraPDF-3.2-64.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/pdf-viewer-dir "SumatraPDF-3.2-64.exe")
+    "sumatrapdf")
   "The psimacs pdf viewer executable.")
 #+end_src
 
@@ -3531,11 +3575,15 @@ Basically two spell checkers are usable with *Emacs*. Either [[https://github.co
 ;; Spell checking with hunspell
 ;;
 (defconst psimacs/config/spell-checker-hunspell-runtime
-  (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "hunspell.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "hunspell.exe")
+    "hunspell")
   "The hunspell executable to use.")
 
 (defconst psimacs/config/spell-checker-aspell-runtime
-  (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "aspell.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "aspell.exe")
+    "aspell")
   "The aspell executable to use.")
 
 (defconst psimacs/config/spell-checker-hunspell-extra-args '("-i" "utf-8")       "Extra hunspell arguments.")
@@ -3553,7 +3601,10 @@ Basically two spell checkers are usable with *Emacs*. Either [[https://github.co
   "The psimacs spell checker dictionary directory for hunspell.")
 
 (defconst psimacs/config/spell-checker-aspell-dir
-  (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "lib/aspell-0.60")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "lib/aspell-0.60")
+    (psimacs/file-system/concat-directory psimacs/config/msys-env-share-dir "aspell")
+    )
   "The psimacs spell checker dictionary directory for aspell.")
 
 (defconst psimacs/config/spell-checker-hunspell-german-dict "de_DE"
@@ -3674,10 +3725,13 @@ i.e. a directories in which [[https://github.com/bbatsov/projectile][Projectile]
 (psimacs/file-system/make-directory psimacs/config/project-content-dir)
 
 (defconst psimacs/config/project-search-path
-    `("~/projects/source"
-      "d:/projects/source"
-       ,psimacs/config/project-content-dir
-      )
+  (if psimacs/system/is-win32-p
+      `("~/projects/source"
+        "d:/projects/source"
+        ,psimacs/config/project-content-dir
+        )
+      `("~/projects/source"
+        ))
     "The psimacs project search path.")
 #+end_src
 
@@ -3691,7 +3745,9 @@ Printing relies on an installed [[https://www.ghostscript.com/][Ghostscript]] in
 ;;
 (defconst psimacs/config/ghostscript-exe
   ;(psimacs/file-system/concat-file  psimacs/config/system-utils-dir "gs/gs9.53.3/bin/gswin64c.exe")
-  (psimacs/file-system/concat-file  psimacs/config/msys-env-runtime-dir "gs.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file  psimacs/config/msys-env-runtime-dir "gs.exe")
+    "gs")
   "The psimacs ghost script executable.")
 #+end_src
 
@@ -3747,36 +3803,46 @@ pathes. Therefore our Windows OS [[https://www.python.org/][Python]] should alwa
 
 This is pretty ugly, but different python installation might be in use on different machines."
     (interactive)
-    (let ((py3-10  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python310"))
-          (py3-11  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python311"))
-          (py3-12  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python312"))
-          (py3-13  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python313"))
-          (py3-14  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python314"))
-          (py3-15  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python315"))
-          (py3-16  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python316"))
-          (py3-17  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python317"))
-          (py3-18  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python318"))
-          (py3-19  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python319"))
-          (py3-20  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python320"))
-          (py3-21  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python321"))
-          (py-dir nil)
-         )
+    (if psimacs/system/is-win32-p
+        (if (getenv "VIRTUAL_ENV")
+            (psimacs/file-system/concat-directory (getenv "VIRTUAL_ENV") "Scripts")
+          (let ((py3-10  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python310"))
+                (py3-11  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python311"))
+                (py3-12  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python312"))
+                (py3-13  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python313"))
+                (py3-14  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python314"))
+                (py3-15  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python315"))
+                (py3-16  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python316"))
+                (py3-17  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python317"))
+                (py3-18  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python318"))
+                (py3-19  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python319"))
+                (py3-20  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python320"))
+                (py3-21  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Python321"))
+                (py-dir nil)
+               )
 
-        (or (getenv "EMACS_PYTHON")
-            (cond
-                  ((file-exists-p py3-12 ) py3-21)
-                  ((file-exists-p py3-11 ) py3-20)
-                  ((file-exists-p py3-10 ) py3-19)
-                  ((file-exists-p py3-12 ) py3-18)
-                  ((file-exists-p py3-11 ) py3-17)
-                  ((file-exists-p py3-10 ) py3-16)
-                  ((file-exists-p py3-12 ) py3-15)
-                  ((file-exists-p py3-11 ) py3-14)
-                  ((file-exists-p py3-10 ) py3-13)
-                  ((file-exists-p py3-12 ) py3-12)
-                  ((file-exists-p py3-11 ) py3-11)
-                  ((file-exists-p py3-10 ) py3-10)
-            ))
+              (or (getenv "EMACS_PYTHON")
+                  (cond
+                        ((file-exists-p py3-12 ) py3-21)
+                        ((file-exists-p py3-11 ) py3-20)
+                        ((file-exists-p py3-10 ) py3-19)
+                        ((file-exists-p py3-12 ) py3-18)
+                        ((file-exists-p py3-11 ) py3-17)
+                        ((file-exists-p py3-10 ) py3-16)
+                        ((file-exists-p py3-12 ) py3-15)
+                        ((file-exists-p py3-11 ) py3-14)
+                        ((file-exists-p py3-10 ) py3-13)
+                        ((file-exists-p py3-12 ) py3-12)
+                        ((file-exists-p py3-11 ) py3-11)
+                        ((file-exists-p py3-10 ) py3-10)
+                  ))
+          )
+        )
+      ;; Linux
+      (if (getenv "VIRTUAL_ENV")
+          (psimacs/file-system/concat-directory (getenv "VIRTUAL_ENV") "bin")
+        psimacs/config/msys-runtime-dir
+      )
     )
 )
 
@@ -3786,13 +3852,14 @@ This is pretty ugly, but different python installation might be in use on differ
   "The psimacs used python installation directory.")
 
 (defconst psimacs/config/python-runtime-dir
-  (if (getenv "VIRTUAL_ENV")
-    (psimacs/file-system/concat-directory psimacs/config/python-install-dir "Scripts")
-    psimacs/config/python-install-dir)
+  psimacs/config/python-install-dir
   "The psimacs used python runtime directory.")
 
 (defconst psimacs/config/python-scripts-dir
-  (psimacs/file-system/concat-directory psimacs/config/python-install-dir "Scripts")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-directory psimacs/config/python-install-dir "Scripts")
+    psimacs/config/python-runtime-dir
+  )
   "The psimacs used python scripts directory.")
 
 (defconst psimacs/config/python-extensions-dir
@@ -3804,47 +3871,69 @@ This is pretty ugly, but different python installation might be in use on differ
   "The python mako template cache directory used by psimacs.")
 
 (defconst psimacs/config/python-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-runtime-dir "python.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-runtime-dir "python.exe")
+    "python3")
   "The psimacs used python runtime.")
 
 (defconst psimacs/config/ipython-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "ipython3.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "ipython3.exe")
+    "ipython3")
   "The psimacs used ipython runtime.")
 
 (defconst psimacs/config/jupyter-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "jupyter.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "jupyter.exe")
+    "jupyter")
   "The psimacs used jupyter runtime.")
 
 (defconst psimacs/config/flake8-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "flake8.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "flake8.exe")
+    "flake8")
   "The psimacs used python flake8 runtime.")
 
 (defconst psimacs/config/pylint-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pylint.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pylint.exe")
+    "pylint")
   "The psimacs used python pylint runtime.")
 
 (defconst psimacs/config/mypy-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "mypy.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "mypy.exe")
+    "mypy")
   "The psimacs used python mypy runtime.")
 
 (defconst psimacs/config/pyflakes-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pyflakes.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pyflakes.exe")
+    "pyflakes")
   "The psimacs used python pyflakes runtime.")
 
 (defconst psimacs/config/autoflake-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "autoflake.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "autoflake.exe")
+    "autoflake")
   "The psimacs used python autoflake runtime.")
 
 (defconst psimacs/config/black-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "black.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "black.exe")
+    "black")
   "The psimacs used python black runtime.")
 
 (defconst psimacs/config/yapf-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "yapf.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "yapf.exe")
+    "yapf")
   "The psimacs used python yapf runtime.")
 
 (defconst psimacs/config/pyls-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pyls.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "pyls.exe")
+    "pyls")
   "The psimacs used python pyls runtime.")
 #+end_src
 
@@ -3855,7 +3944,9 @@ This is pretty ugly, but different python installation might be in use on differ
 ;; bibtex configuration constans
 ;;
 (defconst psimacs/config/isbn-meta-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "isbn_meta.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "isbn_meta.exe")
+    "isbn_meta")
   "The psimacs used python runtime.")
 #+end_src
 
@@ -3869,19 +3960,27 @@ It must be alongside with installed with [[https://www.python.org/][Python]].
 ;; Sphinx configuration constants
 ;;
 (defconst psimacs/config/sphinx-apidoc-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-apidoc.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-apidoc.exe")
+    "sphinx-apidoc")
   "The psimacs used sphinx-apidoc runtime.")
 
 (defconst psimacs/config/sphinx-autogen-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-autogen.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-autogen.exe")
+    "sphinx-autogen")
   "The psimacs used sphinx-autogen runtime.")
 
 (defconst psimacs/config/sphinx-build-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-build.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-build.exe")
+    "sphinx-build")
   "The psimacs used sphinx-build runtime.")
 
 (defconst psimacs/config/sphinx-quickstart-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-quickstart.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "sphinx-quickstart.exe")
+    "sphinx-quickstart")
   "The psimacs used sphinx-quickstart runtime.")
 
 (defcustom psimacs/config/sphinx/html-theme "sphinx_rtd_theme"
@@ -3952,7 +4051,9 @@ It must be alongside with installed with [[https://www.python.org/][Python]].
   "The psimacs pandoc tool directory.")
 
 (defconst psimacs/config/pandoc-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/pandoc-dir "pandoc.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/pandoc-dir "pandoc.exe")
+    "pandoc")
   "The psimacs used pandoc runtime.")
 #+end_src
 
@@ -4050,7 +4151,9 @@ The portable [[https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0df
   "The psimacs java runtime directory.")
 
 (defconst psimacs/config/java-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/java-runtime-dir "javaw.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/java-runtime-dir "javaw.exe")
+    "java")
   "The psimacs java executable.")
 #+end_src
 
@@ -4068,11 +4171,15 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
   "The psimacs git runtime directory.")
 
 (defconst psimacs/config/git-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/git-runtime-dir "git.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/git-runtime-dir "git.exe")
+    "git")
   "The psimacs git executable.")
 
 (defconst psimacs/config/gitk-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/git-runtime-dir "gitk.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/git-runtime-dir "gitk.exe")
+    "gitk")
   "The psimacs gitk executable.")
 #+end_src
 
@@ -4090,7 +4197,9 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
   "The psimacs Graphviz directory.")
 
 (defconst psimacs/config/graphviz-runtime-dot-exe
-  (psimacs/file-system/concat-file psimacs/config/graphviz-runtime-dir "dot.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/graphviz-runtime-dir "dot.exe")
+    "dot")
   "The psimacs Graphviz dot executable.")
 #+end_src
 
@@ -4107,27 +4216,39 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
   "The psimacs CMake directory.")
 
 (defconst psimacs/config/cmake-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmake.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmake.exe")
+    "cmake")
   "The psimacs CMake cmake runtime file.")
 
 (defconst psimacs/config/ctest-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "ctest.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "ctest.exe")
+    "ctest")
   "The psimacs CMake ctest runtime file.")
 
 (defconst psimacs/config/cpack-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cpack.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cpack.exe")
+    "cpack")
   "The psimacs CMake cpack runtime file.")
 
 (defconst psimacs/config/cmcldeps-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmcldeps.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmcldeps.exe")
+    "cmcldeps")
   "The psimacs CMake cmcldeps runtime file.")
 
 (defconst psimacs/config/cmake-gui-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmake-gui.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/cmake-runtime-dir "cmake-gui.exe")
+    "cmake-gui")
   "The psimacs CMake cmake-gui runtime file.")
 
 (defconst psimacs/config/cmake-format-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "cmake-format.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/python-scripts-dir "cmake-format.exe")
+    "cmake-format")
   "The psimacs used cmake-format runtime.")
 #+end_src
 
@@ -4140,7 +4261,9 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
 ;; B2 tool configuration constants
 ;;
 (defconst psimacs/config/b2-root-dir
-  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "b2")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "b2")
+    psimacs/config/msys-env-root-dir)
   "The psimacs b2 root directory.")
 
 (defconst psimacs/config/b2-runtime-dir
@@ -4148,7 +4271,9 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
   "The psimacs b2 runtime directory.")
 
 (defconst psimacs/config/b2-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/b2-runtime-dir "b2.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/b2-runtime-dir "b2.exe")
+    "b2")
   "The psimacs b2 runtime file.")
 
 (defconst psimacs/config/b2-share-dir
@@ -4177,43 +4302,63 @@ Some usefule references for C++:
   "The psimacs clang directory.")
 
 (defconst psimacs/config/clang-c-compiler-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang.exe")
+    "clang")
   "The psimacs clang executable.")
 
 (defconst psimacs/config/clang-c++-compiler-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang++.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang++.exe")
+    "clang++")
   "The psimacs clang++ executable.")
 
 (defconst psimacs/config/clang-cl-compiler-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-cl.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-cl.exe")
+    "clang-cl")
   "The psimacs clang-cl executable.")
 
 (defconst psimacs/config/clangd-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clangd.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clangd.exe")
+    "clangd")
   "The psimacs clangd executable.")
 
 (defconst psimacs/config/clang-format-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-format.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-format.exe")
+    "clang-format")
   "The psimacs clang-format executable.")
 
 (defconst psimacs/config/clang-include-fixer-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-include-fixer.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-include-fixer.exe")
+    "clang-include-fixer")
   "The psimacs clang-include-fixer executable.")
 
 (defconst psimacs/config/clang-tidy-runtime-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-tidy.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-tidy.exe")
+    "clang-tidy")
   "The psimacs clang-tidy executable.")
 
 (defconst psimacs/config/clang-check-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-check.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-check.exe")
+    "clang-check")
   "The psimacs clang-check executable.")
 
 (defconst psimacs/config/clang-rename-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-rename.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-rename.exe")
+    "clang-rename")
   "The psimacs clang-rename executable.")
 
 (defconst psimacs/config/clang-refactor-exe
-  (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-refactor.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/clang-runtime-dir "clang-refactor.exe")
+    "clang-refactor")
   "The psimacs clang-refactor executable.")
 #+end_src
 
@@ -4385,7 +4530,9 @@ Websites built with [[https://gohugo.io/][Hugo]] are extremely fast and secure. 
 ;; Hugo static website generator
 ;;
 (defconst psimacs/config/hugo-site-generator-runtime
-  (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "hugo.exe")
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/msys-env-runtime-dir "hugo.exe")
+    "hugo")
   "The hugo executable to use.")
 #+end_src
 
@@ -4574,7 +4721,9 @@ Specifying =:straight t= is unnecessary if you set =straight-use-package-by-defa
 ;;
 ;; No more ':straight t' necessary anymore
 ;;
+(defvar straight-use-package-by-default)
 (setq straight-use-package-by-default t)
+;(setq straight-fix-flycheck t)
 #+end_src
 
 Any code that relates to /[[https://wikemacs.org/wiki/Package.el][package.el]]/ should be removed; for example, references to =package-initialize=,
@@ -4818,6 +4967,7 @@ The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hac
 (use-package gcmh
     :diminish
     :custom
+        (gcmh-idle-delay 1000)
         (gcmh-low-cons-threshold psimacs/config/gc-cons-threshold)
         ;;(gcmh-verbose t)
     :hook
@@ -4877,38 +5027,45 @@ Basically, we stay with the default *Emacs* keyboard configuration. We swallow t
 keys as far as possible. We will use them for =<super>= and =<hyper>= prefix keys for *Psimacs* own key bindings.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
-;;
-;; Base keyboard configuration: Stay with the defaults, but swallow <lwindow>, <rwindow> ans <apps> if possible
-;;
-(setq w32-alt-is-meta t                ;; The meta modifier is interpreted as the Alt key (the default)
-      ;;w32-register-hot-key [M-tab]   ;; Allow a key sequence M-tab to be seen by Emacs instead of being grabbed by
-                                       ;; Windows. Normal Windows handling is probably the better option :-)
+(if psimacs/system/is-win32-p
+    (progn
+      ;;
+      ;; Base keyboard configuration: Stay with the defaults, but swallow <lwindow>, <rwindow> ans <apps> if possible
+      ;;
+      (setq w32-alt-is-meta t                ;; The meta modifier is interpreted as the Alt key (the default)
+            ;;w32-register-hot-key [M-tab]   ;; Allow a key sequence M-tab to be seen by Emacs instead of being grabbed by
+                                             ;; Windows. Normal Windows handling is probably the better option :-)
 
 
 
-      ;;w32-capslock-is-shiftlock t    ;; The CapsLock key will affect non-character keys as well, as if you pressed
-                                       ;; the Shift key while typing the non-character key.
+            ;;w32-capslock-is-shiftlock t    ;; The CapsLock key will affect non-character keys as well, as if you pressed
+                                             ;; the Shift key while typing the non-character key.
 
-      w32-enable-caps-lock t           ;; If the variable w32-enable-caps-lock is set to a nil value, the CapsLock
-                                       ;; key produces the symbol capslock instead of the shifted version of they keys.
-                                       ;; The default value is t.
+            w32-enable-caps-lock t           ;; If the variable w32-enable-caps-lock is set to a nil value, the CapsLock
+                                             ;; key produces the symbol capslock instead of the shifted version of they keys.
+                                             ;; The default value is t.
 
-      w32-enable-num-lock t            ;; If w32-enable-num-lock is nil, the NumLock key will produce the symbol
-                                       ;; kp-numlock. The default is t, which causes NumLock to work as expected:
-                                       ;; toggle the meaning of the keys on the numeric keypad.
+            w32-enable-num-lock t            ;; If w32-enable-num-lock is nil, the NumLock key will produce the symbol
+                                             ;; kp-numlock. The default is t, which causes NumLock to work as expected:
+                                             ;; toggle the meaning of the keys on the numeric keypad.
 
-      32-recognize-altgr t             ;; Whether the <AltGr> key (if it exists on your keyboard), or its equivalent,
-                                       ;; the combination of the right <Alt> and left <Ctrl> keys pressed together,
-                                       ;; is recognized as the <AltGr> key. The default is t, which means these keys
-                                       ;; produce AltGr; setting it to nil causes <AltGr> or the equivalent key
-                                       ;; combination to be interpreted as the combination of <Ctrl> and <Meta>
-                                       ;; modifiers.
+            32-recognize-altgr t             ;; Whether the <AltGr> key (if it exists on your keyboard), or its equivalent,
+                                             ;; the combination of the right <Alt> and left <Ctrl> keys pressed together,
+                                             ;; is recognized as the <AltGr> key. The default is t, which means these keys
+                                             ;; produce AltGr; setting it to nil causes <AltGr> or the equivalent key
+                                             ;; combination to be interpreted as the combination of <Ctrl> and <Meta>
+                                             ;; modifiers.
 
-      w32-pass-lwindow-to-system nil   ;; the <lwindow> key is silently swallowed by Emacs, and not passed to Windows.
-      w32-pass-rwindow-to-system nil   ;; the <rwindow> key is silently swallowed by Emacs, and not passed to Windows.
-      w32-pass-apps-to-system nil      ;; the    <apps> key is silently swallowed by Emacs, and not passed to Windows.
+            w32-pass-lwindow-to-system nil   ;; the <lwindow> key is silently swallowed by Emacs, and not passed to Windows.
+            w32-pass-rwindow-to-system nil   ;; the <rwindow> key is silently swallowed by Emacs, and not passed to Windows.
+            w32-pass-apps-to-system nil      ;; the    <apps> key is silently swallowed by Emacs, and not passed to Windows.
 
-      w32-scroll-lock-modifier nil     ;; Do not specialize the scroll lock key
+            w32-scroll-lock-modifier nil     ;; Do not specialize the scroll lock key
+      )
+    )
+  (progn
+    nil
+  )
 )
 #+end_src
 
@@ -4917,16 +5074,33 @@ keys as far as possible. We will use them for =<super>= and =<hyper>= prefix key
 *Psimacs* uses the =<super>= and =<hyper>= key prefixes for all of its own key bindings.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
-;;
-;; <lwindow>, <rwindow> and <apps>
-;;
-(setq  w32-lwindow-modifier 'super
-       w32-rwindow-modifier 'super
-       w32-apps-modifier    'hyper
+(if psimacs/system/is-win32-p
+    (progn
+      ;;
+      ;; <lwindow>, <rwindow> and <apps>
+      ;;
+      (setq  w32-lwindow-modifier 'super
+             w32-rwindow-modifier 'super
+             w32-apps-modifier    'hyper
+      )
+
+      (w32-register-hot-key [s-])
+      (w32-register-hot-key [H-])
+    )
+  (progn
+    ;; on nowadays linux, <windows> key is usually configured to Super
+      
+    ;; menu key as hyper (Note: for H-s, you need to release <menu> key before pressing 's')
+    (define-key key-translation-map [menu] 'event-apply-hyper-modifier) ;H-
+    (define-key key-translation-map [apps] 'event-apply-hyper-modifier)
+
+    ;; by default, Emacs bind <menu> to execute-extended-command (same as M-x)
+    ;; now <menu> defined as 'hyper, we need to press <menu> twice to get <H-menu>
+    (global-set-key (kbd "<H-menu>") 'execute-extended-command)
+  )
 )
 
-(w32-register-hot-key [s-])
-(w32-register-hot-key [H-])
+
 
 ;; (defun psimacs/config/prefix-key-test-super ()
 ;;   (interactive)
@@ -5427,18 +5601,31 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 ;;
 (set-charset-priority 'unicode)
 (set-locale-environment "en_US.UTF-8")
+
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)         ; configured by prefer-coding-system
 (set-keyboard-coding-system 'utf-8)         ; configured by prefer-coding-system
-(set-selection-coding-system 'utf-16-le)    ; important on windows os
-(set-clipboard-coding-system 'utf-16-le)    ; included by set-selection-coding-system
-(w32-set-system-coding-system 'utf-8)
+
+(when psimacs/system/is-win32-p
+    (set-selection-coding-system 'utf-16-le)    ; important on windows os
+    (set-clipboard-coding-system 'utf-16-le)    ; included by set-selection-coding-system
+
+    (w32-set-system-coding-system 'utf-8)
+)
+
 (set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
 (setq locale-coding-system 'utf-8)
 (set-file-name-coding-system 'utf-8)
 (set-language-environment "UTF-8")          ; How to permanently choose a encoding system in emacs for opening and saving
-(setq default-process-coding-system '(utf-8-dos . utf-8-dos))
+
+(when psimacs/system/is-win32-p
+    (setq default-process-coding-system '(utf-8-dos . utf-8-dos))
+)
+
+(when psimacs/system/is-linux-p
+    (setq x-select-enable-clipboard t)
+)
 #+end_src
 
 ** Emacs server
@@ -5465,29 +5652,42 @@ References:
    (getenv "EMACS_SERVER_FILE")
    "The active server file.")
 
-(when (and psimacs/system/is-gui-p
-           psimacs/system/is-win32-p
-           (or (not psimacs/config/found-server-file)
-               (equal psimacs/config/found-server-file psimacs/config/server-file)))
-   (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
-   (add-hook 'kill-emacs-hook
-             (lambda ()
-               (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
+(if psimacs/system/is-win32-p
+    (progn
+      (when (and psimacs/system/is-gui-p
+                 (or (not psimacs/config/found-server-file)
+                     (equal psimacs/config/found-server-file psimacs/config/server-file)))
+         (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
+         (add-hook 'kill-emacs-hook
+                   (lambda ()
+                     (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
 
-    (unless (file-directory-p psimacs/config/server-dir)
-        (make-directory psimacs/config/server-dir t)
+          (unless (file-directory-p psimacs/config/server-dir)
+              (make-directory psimacs/config/server-dir t)
+          )
+
+          (require 'server)
+
+          (unless (server-running-p)
+              (defun server-ensure-safe-dir (dir) "Noop" t)   ; Suppress error "directory
+                                                              ; ~/.emacs.d/server is unsafe"
+                                                              ; on windows.
+
+              (message "server-start")
+              (server-start)
+          )
+      )
+
     )
-
-    (require 'server)
-
-    (unless (server-running-p)
-        (defun server-ensure-safe-dir (dir) "Noop" t)   ; Suppress error "directory
-                                                        ; ~/.emacs.d/server is unsafe"
-                                                        ; on windows.
-
+  (unless (daemonp)
+    (when psimacs/system/is-gui-p
+      (require 'server)
+      (unless (server-running-p)
         (message "server-start")
         (server-start)
-    )
+      )
+    )    
+  )
 )
 #+end_src
 
@@ -5935,8 +6135,14 @@ See also:
 - [[https://www.emacswiki.org/emacs/NoTabs][No Tabs]]
 - [[https://www.emacswiki.org/emacs/TabsAreEvil][Tabs Are Evil]]
 - [[http://ergoemacs.org/emacs/emacs_tabs_space_indentation_setup.html][Tabs, Space, Indentation Setup]]
+- [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]]
 
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Set the standard indentation
+;;
+(setq-default standard-indent 4)
+
 ;;
 ;; Always insert space characters instead of tab characters.
 ;;
@@ -5956,7 +6162,7 @@ Use of standard tab width, that is the length of the =TAB= character.
 ;;
 ;; We interpret a TAB character with a length of 8 space characters
 ;;
-(setq-default tab-width 8)
+(setq-default tab-width 4)
 #+end_src
 
 Tab stop positions: =M-i=, i.e. =tab-to-tab-stop= moves to the next position.
@@ -5969,6 +6175,31 @@ Tab stop positions: =M-i=, i.e. =tab-to-tab-stop= moves to the next position.
 ;; between the last and penultimate elements
 ;;
 (setq tab-stop-list '(4 8))
+#+end_src
+
+
+[[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]] is a minor mode that 
+highlights indentation levels via font-lock. 
+Indent widths are dynamically discovered, which means this correctly highlights in any mode, regardless of 
+indent width, even in languages with non-uniform indentation such as Haskell. 
+By default, this mode also inspects your theme dynamically, and automatically chooses appropriate colors 
+for highlighting. This mode works properly around hard tabs and mixed indentation, and it behaves well 
+in large buffers.
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; highlight-indent-guides
+;;
+(use-package highlight-indent-guides
+  :hook ((prog-mode . (lambda ()
+                      (highlight-indent-guides-mode)
+                      (highlight-indent-guides-auto-set-faces))))
+  :custom
+      (highlight-indent-guides-auto-odd-face-perc 5)
+  :config
+      (setq highlight-indent-guides-method 'character
+            highlight-indent-guides-responsive 'top)
+)
 #+end_src
 
 *** Lock file
@@ -10561,7 +10792,8 @@ Some more information about spell checking can be found in the following referen
   ;; if MSYS2.
   ;;
   (unless psimacs/internal/spell-checker-use-aspell
-    (when (and (file-directory-p psimacs/config/spell-checker-hunspell-personal-dir)
+    (when (and psimacs/system/is-win32-p
+               (file-directory-p psimacs/config/spell-checker-hunspell-personal-dir)
                (file-directory-p psimacs/config/spell-checker-hunspell-dir))
       (dolist (f (directory-files psimacs/config/spell-checker-hunspell-personal-dir nil "^.*\\.\\(aff\\|dic\\)$"))
         (let ((src-file (concat psimacs/config/spell-checker-hunspell-personal-dir f))
@@ -12511,6 +12743,12 @@ YASnippets:
     :config
         (yasnippet-snippets-initialize)
 )
+
+
+(use-package doom-snippets
+    :after yasnippet
+    :straight (doom-snippets :type git :host github :repo "hlissner/doom-snippets" :files ("*.el" "*"))
+)
 #+end_src
 
 ** Auto-YASnippet
@@ -13762,8 +14000,15 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
                             ";" psimacs/config/image-magick-dir "modules/filters"
                         ))
 
-        (setq imagex-convert-command  (concat psimacs/config/image-magick-dir  "convert.exe"))
-        (setq imagex-identify-command (concat psimacs/config/image-magick-dir "identify.exe"))
+        (if psimacs/system/is-win32-p
+            (progn
+              (setq imagex-convert-command  (concat psimacs/config/image-magick-dir  "convert.exe"))
+              (setq imagex-identify-command (concat psimacs/config/image-magick-dir "identify.exe"))
+            )
+          (progn
+            (setq imagex-convert-command  "convert")
+            (setq imagex-identify-command "identify")
+          ))
 
     :after hydra
     :bind (
@@ -15608,7 +15853,21 @@ Reference:
                                              (delete-overlay ov)))))
         )
 )
+#+end_src
 
+** JSON
+
+Reference:
+- [[https://github.com/json-emacs/json-mode][json-mode.el]]
+- [[https://github.com/Sterlingg/json-snatcher][json-snatcher]]
+
+#+begin_src emacs-lisp :tangle config/init-advanced-json.el :var file-description="Advanced JSON setup"
+;;
+;; Support for JSON
+;;
+(use-package json-mode
+  :mode (("\\.json\\'" . json-mode))
+)
 #+end_src
 
 ** Deft
@@ -17411,6 +17670,22 @@ In this section the key bindings for the *Psimacs* [[https://code.orgmode.org/bz
 )
 #+end_src
 
+*** Visual Alignment for Tables
+
+Package  [[https://github.com/casouri/valign][valign]] provides visual alignment for Org Mode, Markdown 
+and table.el tables on GUI Emacs. It can properly align tables containing variable-pitch font, CJK characters 
+and images. Meanwhile, the text-based alignment generated by Org mode (or Markdown mode) is left untouched.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+(use-package valign
+  :hook
+      (org-mode . valign-mode)
+      (markdown-mode . valign-mode)
+  :config
+      (setq valign-fancy-bar 1)
+)
+#+end_src
+
 *** Org-ref: citations, cross-references, etc...
 
 [[https://github.com/jkitchin/org-ref][org-ref]] makes it easy to insert citations, cross-references, indexes and glossaries as
@@ -17944,7 +18219,7 @@ The following commands are defined only if point is in an org-babel source block
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
 ;;
 ;; Configuration of emacs-jupyter
-;;
+
 (use-package zmq)
 (use-package jupyter
     :after ox-ipynb
@@ -19463,7 +19738,7 @@ servers, and for websocket servers to accept connections from websocket clients.
 ;; Graphical frontend for your org-roam Zettelkasten.
 ;;
 (use-package org-roam-ui
-    :straight (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    ;:straight (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
     :after org-roam
     :hook (after-init . org-roam-ui-mode)
     :config
@@ -19720,12 +19995,39 @@ References:
 - [[https://cdn.comparitech.com/wp-content/uploads/2018/08/Comparitech-Powershell-cheatsheet.pdf][PowerShell Cheat Sheet (PDF)]]
 - [[https://download.microsoft.com/download/2/1/2/2122F0B9-0EE6-4E6D-BFD6-F9DCD27C07F9/WS12_QuickRef_Download_Files/PowerShell_LangRef_v3.pdf][Microsoft PowerShell Cheat Sheet (PDF)]]
 - [[https://gist.github.com/pcgeek86/336e08d1a09e3dd1a8f0a30a9fe61c8a][PowerShell Cheat Sheet / Quick Reference]]
+- [[https://github.com/akermu/emacs-libvterm][emacs-libvterm]]
+- [[https://github.com/suonlight/multi-vterm][multi-vterm]]
+- [[https://github.com/atomontage/xterm-color][xterm-color]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
 ;;
 ;; PowerShell
 ;;
 (use-package powershell)
+#+end_src
+
+** VTerm
+
+#+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
+;;
+;; vterm
+;;
+(when psimacs/system/is-linux-p
+    (use-package vterm
+      :defer t
+      :if psimacs/system/is-linux-p
+    )
+
+    ;;
+    ;; multi-vterm
+    ;;
+    (use-package multi-vterm
+      :after vterm
+      :defer t
+      :if psimacs/system/is-linux-p
+      :straight (:build t)
+    )
+)
 #+end_src
 
 ** Various Shells
