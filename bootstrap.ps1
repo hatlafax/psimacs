@@ -180,6 +180,9 @@ if ($help -or $h)
     echo '      Unblock-File -Path .\bootstrap.ps1'
     echo '      .\bootstrap.ps1 -help'
     echo ""
+    echo "ToDo:"
+    echo "  Missing installation of font file Symbola.otf"
+    echo "  https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip"
     return
 }
 
@@ -1048,6 +1051,9 @@ if (-not $nopython)
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'source $projectPath/venv/Scripts/activate'               | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        'PATH="$(cygpath -u $PATH)"'                              | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        'export PATH'                                             | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         "export MSYS2_ENV=$msys_env_arg"                          | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'export EMACS_PYTHON=$projectPath/venv'                   | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'export VIRTUAL_ENV=$projectPath/venv'                    | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
@@ -1100,6 +1106,9 @@ if (-not $nopython)
         'export workPath=$projectPath/work'                       | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'source $projectPath/venv/Scripts/activate'               | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        'PATH="$(cygpath -u $PATH)"'                              | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        'export PATH'                                             | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         "export MSYS2_ENV=$msys_env_arg"                          | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'export EMACS_PYTHON=$projectPath/venv'                   | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append

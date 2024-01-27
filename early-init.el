@@ -96,7 +96,7 @@ If nil, only the `early-init.el' file is omitted from the code generation proces
 ;;
 ;; Synchronization procedure constants.
 ;;
-(defconst psimacs/config/synchronize-at-startup t
+(defconst psimacs/config/synchronize-at-startup nil
   "If this flag is t the `early-init.el' file synchronizes the configuration with Dropbox.
 
 The local configuration can be synchronized with a mirror configuration on Dropbox.

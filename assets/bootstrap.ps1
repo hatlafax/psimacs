@@ -33,6 +33,7 @@ param (
     [switch]$nofontsinstall    = $false,
     [switch]$allnerdfonts      = $false,
     [switch]$noalltheicons     = $false,
+    [switch]$nonerdicons       = $false,
     [switch]$noorgthemes       = $false,
     [switch]$nocontent         = $false,
     [switch]$nonpm             = $false
@@ -153,7 +154,8 @@ if ($help -or $h)
     echo "                           most recent packages. Recommendet only for experts."
     echo "      -nofontsinstall    : Do not install any fonts in the Windows system."
     echo "      -allnerdfonts      : Install all of the Nerd fonts, instead of a subset."
-    echo "      -noalltheicons     : Do not install the 'all_the_icons.ttf' fonts."
+    echo "      -noalltheicons     : Do not install the 'all_the_icons' TTF fonts."
+    echo "      -nonerdicons       : Do not install the 'nonerdicons' TTF fonts."
     echo "      -noorgthemes       : Do not install the org themes."
     echo "      -nocontent         : Do not create the boilerplate content folder."
     echo "    Deinstallation"
@@ -178,6 +180,9 @@ if ($help -or $h)
     echo '      Unblock-File -Path .\bootstrap.ps1'
     echo '      .\bootstrap.ps1 -help'
     echo ""
+    echo "ToDo:"
+    echo "  Missing installation of font file Symbola.otf"
+    echo "  https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip"
     return
 }
 
@@ -1046,6 +1051,9 @@ if (-not $nopython)
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'source $projectPath/venv/Scripts/activate'               | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        'PATH="$(cygpath -u $PATH)"'                              | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        'export PATH'                                             | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         "export MSYS2_ENV=$msys_env_arg"                          | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'export EMACS_PYTHON=$projectPath/venv'                   | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'export VIRTUAL_ENV=$projectPath/venv'                    | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
@@ -1098,6 +1106,9 @@ if (-not $nopython)
         'export workPath=$projectPath/work'                       | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'source $projectPath/venv/Scripts/activate'               | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        'PATH="$(cygpath -u $PATH)"'                              | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        'export PATH'                                             | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         "export MSYS2_ENV=$msys_env_arg"                          | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'export EMACS_PYTHON=$projectPath/venv'                   | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
@@ -1792,7 +1803,7 @@ if (-not $nofontsinstall)
     $dirs += "$msys_env_share\fonts\OTF"
     $dirs += "$msys_env_share\fonts\TTF"
 
-    $all_the_icons_dir  = "temp_ati"
+    $all_the_icons_dir  = "temp-all-the-icons"
     $all_the_icons_path = "$psimacs\$all_the_icons_dir"
 
     if (-not $noalltheicons)
@@ -1804,6 +1815,20 @@ if (-not $nofontsinstall)
         & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $all_the_icons_url $all_the_icons_dir"
 
         $dirs += "$all_the_icons_path/fonts"
+    }
+
+    $nerd_icons_dir  = "temp-nerd-icons"
+    $nerd_icons_path = "$psimacs\$nerd_icons_dir"
+
+    if (-not $nonerdicons)
+    {
+        echo "Cloning temporary nerd-icons repository ..."
+
+        $nerd_icons_url = "https://github.com/rainstormstudio/nerd-icons.el.git"
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $nerd_icons_url $nerd_icons_dir"
+
+        $dirs += "$nerd_icons_path/fonts"
     }
 
     foreach ($dir in $dirs)
@@ -1824,6 +1849,13 @@ if (-not $nofontsinstall)
         echo "Removing temporary all-the-icons repository ..."
 
         Remove-Item -Recurse -Force "$all_the_icons_path"
+    }
+
+    if ( test-path -PathType container $nerd_icons_path )
+    {
+        echo "Removing temporary nerd-icons repository ..."
+
+        Remove-Item -Recurse -Force "$nerd_icons_path"
     }
 }
 
