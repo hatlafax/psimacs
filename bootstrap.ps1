@@ -1051,6 +1051,10 @@ if (-not $nopython)
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'source $projectPath/venv/Scripts/activate'               | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        'if [[ "$VIRTUAL_ENV_PROMPT" != "" ]]; then'              | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        '    PS1="${VIRTUAL_ENV_PROMPT}${PS1:-}"'                 | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        'fi'                                                      | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
+        ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'PATH="$(cygpath -u $PATH)"'                              | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         'export PATH'                                             | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $activate_0_bash -encoding ascii -width 200 -append
@@ -1106,6 +1110,10 @@ if (-not $nopython)
         'export workPath=$projectPath/work'                       | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'source $projectPath/venv/Scripts/activate'               | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        'if [[ "$VIRTUAL_ENV_PROMPT" != "" ]]; then'              | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        '    PS1="${VIRTUAL_ENV_PROMPT}${PS1:-}"'                 | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
+        'fi'                                                      | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         ''                                                        | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'PATH="$(cygpath -u $PATH)"'                              | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
         'export PATH'                                             | out-file -filepath $ipython_0_bash -encoding ascii -width 200 -append
