@@ -2,102 +2,130 @@
 
 * psimacs - Yet another Emacs configuration
 
-[[https://github.com/hatlafax/psimacs][https://img.shields.io/badge/Psimacs-0.1-red.svg?style=plastic]]
-[[https://www.gnu.org/software/emacs/][https://img.shields.io/badge/GNU%20Emacs-27.2-green.svg?style=plastic]]
+[[https://github.com/hatlafax/psimacs][https://img.shields.io/badge/Psimacs-2.0-red.svg?style=plastic]]
+[[https://www.gnu.org/software/emacs/][https://img.shields.io/badge/GNU%20Emacs-29.1-green.svg?style=plastic]]
 [[https://www.gnu.org/licenses/gpl-3.0][https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=plastic]]
 
 #+HTML:</div>
 
-This is an attempt to create a /modern/ *Emacs* configuration from the ground up. It has the following objectives:
+This is an attempt to create a *Emacs* configuration from the ground up. It has the following objectives:
 
-- Use of modern packages and styles. It should be an *Emacs* of the 21. century.
 - Literally programming style. The complete configuration is written in one [[https://orgmode.org/][org-mode]] file.
-- Primarily target Windows operating system. The reason is that I am solely work on Windows and so I do not
+- Primarily targets the Windows operating system. The reason is that I am solely working on Windows, and so I do not
   know much about the details of other systems.
 - Simple to use.
+- Provides bootstrapping of used tools.
 - [[https://github.com/raxod502/straight.el][Straight]] package manager.
 - Support of [[https://www.dropbox.com/][Dropbox]] configuration sharing.
-- No [[https://github.com/emacs-evil/evil][evil]]. Probably a very good package, that many people do like. However, I am trained with the classic
-  *Emacs* keyboard handling and I am used to it.
+- Classic *Emacs* keyboard handling.
 - Use of [[https://github.com/justbur/emacs-which-key][which-key]]. This is a game changer for me.
 - Use of [[https://github.com/abo-abo/hydra][hydra]]. And another beautiful package that I like a lot.
-- Use of [[https://github.com/abo-abo/swiper][ivy]]. I started with ivy and I am quite comfortable with it. Likely, [[https://www.gnu.org/software/emacs/manual/html_mono/ido.html][ido]] and  [[https://github.com/emacs-helm/helm][helm]] are also worth trying.
+- Use of [[https://github.com/abo-abo/swiper][ivy]]. I started with ivy and I am quite comfortable with it. Likely, [[https://www.gnu.org/software/emacs/manual/html_mono/ido.html][ido]], [[https://github.com/emacs-helm/helm][helm]] and the more recent incarnations are also worth trying.
 - Use of [[https://github.com/bbatsov/projectile][projectile]]. Another great package that I am used to.
 - Use of [[http://company-mode.github.io/][company]]. Great text completion framework.
 - Use of [[https://github.com/peter-milliken/ELSE][ELSE]] for programming.
 - Use of [[https://github.com/joaotavora/yasnippet][yasnippet]].
-- Focus on org, programming and [[https://www.gnu.org/software/auctex/][LaTeX]] text writing.
-- And many, many more...
+- Focus on ORG, programming and [[https://www.gnu.org/software/auctex/][LaTeX]] text writing.
 
 * Motivation
 
 A lot of *Emacs* configurations can be found on the Internet. Many of them are well crafted and could be used out of
-the box. Especially, the great *Emacs* distributions like [[https://www.spacemacs.org/][Spacemacs]], [[https://github.com/hlissner/doom-emacs][Doom-Emacs]] and [[https://github.com/seagle0128/.emacs.d][Centaur-Emacs]] are worth giving a try.
-But I wanted to craft my own configuration that is tailored to my needs and that allowed me to learn more about the
-vast *Emacs* universe. My configuration it not perfect for everyone and it will not be able to compete against the big
+the box. Especially, the great *Emacs* distributions like [[https://www.spacemacs.org/][Spacemacs]], [[https://github.com/hlissner/doom-emacs][Doom-Emacs]] and [[https://github.com/seagle0128/.emacs.d][Centaur-Emacs]] are worth giving it a try.
+But I wanted to craft my own configuration that is tailored to my needs and that allows me to learn more about the
+vast *Emacs* universe. My configuration it not perfect for everyone, and it will not be able to compete against the big
 frameworks that are build by a lot of talented people. So feel free to use it or blame it. I am fine with it.
 
 The name *Psimacs* is arbitrarily. I was in search for a catchy name with just one syllable in front of the *macs*.
 
 * Installation
+** Windows
+The Powershell script =bootstrap.ps1= is able to bootstrap *Psimacs* and all its dependencies into
+the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
 
-At first, install [[https://www.gnu.org/software/emacs/download.html][Emacs]] for Windows, e.g. 28.2 to =c:/utils/Emacs= and then install the primary dependencies of this
-configuration. Create shortcuts for =runemacs.exe= and =emacsclientw.exe=. Both shortcuts should start *Emacs* from the
-home directory and the client should be called as:
-=C:\utils\Emacs\bin\emacsclientw.exe -n -a C:\utils\Emacs\bin\runemacs.exe -c=
+Download the raw =booststrap.ps1= file into a temporary directory and run
 
-The main dependencies for *Psimacs* are:
-- Python :: Install e.g. [[https://www.python.org/downloads/][Python]] 3.10.8 to =c:/utils/Python310=.
-- Msys2 :: Install [[https://www.msys2.org/][MSYS2]] to =c:/utils/msys64=.
+#+begin_src
+.\booststrap,ps1
+#+end_src
 
-This configuration uses *Emacs* >= 27 and is tested with  *Emacs* = 28.2. Clone the git repository into your *.emcas.d*
-directory:
+in a Powershell console.
 
-#+begin_example
-mv ~/.emacs.d ~/.emacs.d.bak
-git clone https://github.com/hatlafax/psimacs.git ~/.emacs.d
-#+end_example
+The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimacs= directory:
 
-Now install dependency packages for Python:
+| Tools        | Remarks                                                                                                  |
+|--------------+----------------------------------------------------------------------------------------------------------|
+| [[https://www.msys2.org/][MSYS2]]        | *Psimacs* uses the *Emacs* provided by [[https://www.msys2.org/][MSYS2]]. |
+| [[https://conemu.github.io/][ConEmu]]       | Optionally, *Psimacs* can install the [[https://conemu.github.io/][ConEmu]] console emulation. Use option =-conemu= to install the console. |
+| [[https://openjdk.org/][Java]]         | *Psimacs* installs the GPL OpenJDK Java distribution provided by Oracle.                                   |
+| [[https://languagetool.org][LanguageTool]] | [[https://languagetool.org][LanguageTool]] is a spell and grammar checker supported by *Psimacs*.                                        |
+| [[https://pandoc.org/][pandoc]]       | *Psimacs* uses the universal document converter [[https://pandoc.org/][Pandoc]].                                                    |
+| [[https://plantuml.com][plantUML]]     | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
+| [[https://www.python.org/][python]]       | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
+| [[https://www.sumatrapdfreader.org][SumatraPDF]]   | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
+|--------------+----------------------------------------------------------------------------------------------------------|
 
-#+begin_example
-cd c:/utils/python310
-python -m pip install pip --upgrade
+To get detail help on the options =bootstrap.ps1= provides run:
 
-cd c:/utils/Python310/Scripts
-pip install -r ~/.emacs.d/assets/dependencies/python/requirements.txt
-#+end_example
+#+begin_src
+.\booststrap.ps1 --help
+#+end_src
 
-Next, install dependency packages for MSYS2. Open the /MSYS2 MinGW 64-bit/ shell and run the following commands:
+On bootstrapping *Psimacs* installs the most recent versions of the tools that are known to work
+properly in the context of *Psimacs*. Any other tools used by *Psimacs* are installed within the
+[[https://www.msys2.org/][MSYS2]] environment, e.g. [[https://www.doxygen.nl/][doxygen]], [[https://www.graphviz.org/][graphviz]] or [[https://mermaid.js.org/][mermaid]].
 
-#+begin_example
-pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
-#+end_example
+The bootstrapping operation tries hard to not modify the target system outside of =%HOME%\psimacs= directory,
+but there are some exceptions:
 
-Remark: Configure =requirements.txt= as your likeing before running the installation.
+- In case that no =%HOME%= variable is defined inside of the active environment, a variable =%HOME%= is created
+  and set to value =c:\home\%UserName%=. After that, the =%HOME%= directory is created, if it does not already exists.
+- Bootstrapping installs a number of font files into the user's font directory.
+- A raw python installation is performed into the local =%HOME%\psimacs= directory. The official python installer does
+  modify the registry, which cannot be avoided easily.
+- A number of desktop shortcuts are created.
 
-Finally, just run *Emacs*.
+After bootstrapping, the [[https://github.com/raxod502/straight.el][Straight]] based *Psimacs* configuration is performed on the very first startup
+of *Psimacs*. This process takes a couple of minutes and asks two times for confirmation to allow the download of
+1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary,
+2. for the [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] icons.
 
-The only file really needed is the =early-init.el= file. On startup, it reads the file =init.org= and extracts all the
-initialization code into the main =init.el= and various additionally =config/init-*.el= files. The created =init.el=
-file is then read and evaluated in the further startup procedure. The =init.el= file loads the other =config/init-*.el=
-files on evaluation.
+*Attention:*
+- At least 22 GByte of free disk space is used by the default *Psimacs* installation!
+- Performing a *Psimacs* bootstrapping operation is at one's own risk!
 
-Never edit transient file =init.el= or =config/init-*.el= directly. They will be overridden by the next run of
-*Psimacs*. Instead modify the =init.org= file to change your configuration.
+*Remark:* Windows Powershell typically restricts the execution of scripts. You can
+take the following measures in order to get the =bootstrap.ps1= script running:
+- Set a proper execution policy for powershell scripts with respect to the user profile:
 
-You can create a HTML document =init.html= of this file by simply typing =C-c C-e h h= in the *Emacs* buffer for
-this file. It is recommended to use this =init.html= for browser reading.
-This configuration uses *Emacs* >= 27. Clone the git repository into your *.emcas.d* directory
+  #+begin_src powershell
+Get-ExecutionPolicy -list
+Set-ExecutionPolicy -ExecutionPolicy unrestricted -Scope CurrentUser
+  #+end_src
+
+- Downloaded powershell scripts are blocked and not allowed to executed. They need to be unlocked:
+
+  #+begin_src powershell
+Unblock-File -Path .\bootstrap.ps1
+  #+end_src
+
+Maybe, better ways exists for these problems ;-)
+
+** Linux
+Currently, Linux systems are not supported by Psimacs.
+
+** MacOS
+Currently, MacOS is also not supported by Psimacs.
+
 
 * Usage
 
-The full documentation of the configuration can be found in the =init.org= file. 
+The full documentation of the configuration can be found in the =init.org= file.
 The Org exported html file can be visited [[https://hatlafax.github.io/psimacs][here]].
 
 * Dependencies
 
-*Psimacs* does have a number of dependencies to unfold its full potential. The file =init.org= details about them.
+*Psimacs* does have a number of dependencies to unfold its full potential. The files =bootstrap.ps1= and
+=init.org= details about them.
 
 * Disclaimer
 

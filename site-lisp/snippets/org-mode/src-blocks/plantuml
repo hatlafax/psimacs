@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: plantuml
+# key: <plantuml
+# --
+#+name: ${1:name}
+#+begin_src plantuml :file ./images/${2:plantuml}/$1.png
+@start${5:$$(yas-choose-value '("uml" "json" "yaml" "ebnf" "regex" "salt" "ditaa" "wbs" "mindmap" "gantt"))}
+$0
+@end$5
+#+end_src
+#+begin_export org
+#+attr_html: :width ${3:500}px
+#+end_export
+#+attr_latex: :float nil :width 0.8\textwidth :height 0.33\textheight :placement [!h] :options keepaspectratio=true
+#+caption: ${4:caption}.
