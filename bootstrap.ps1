@@ -21,7 +21,7 @@ param (
     [switch]$noplantuml        = $false,
     [switch]$uninstall         = $false,
     [switch]$force             = $false,
-    [string]$psimacsbranch     = "develop",
+    [string]$psimacsbranch     = "master",
     [switch]$noprivatefile     = $false,
     [switch]$nopsimacsdocu     = $false,
     [string]$username          = "YOUR NAME",
@@ -142,7 +142,7 @@ if ($help -or $h)
     echo "      -noplantuml        : Do not install the PlantUML tool."
     echo "    Psimacs"
     echo "      -psimacsbranch     : The specific branch, tag or commit to clone. Currently this is defaulted to branch"
-    echo "                           'develop' which is the Emacs 29 development branch of Psimacs."
+    echo "                           'master' which is the Emacs 29 current branch of Psimacs."
     echo "      -noprivatefile     : Do not create the 'private' directectory with an 'init-private.el' file."
     echo "      -nopsimacsdocu     : Do not create desktop shortcuts to the HTML documentation files."
     echo "      -username          : The user name written to the 'init-private.el' file."
