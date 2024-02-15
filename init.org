@@ -5137,11 +5137,11 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 
 | Prefix command  | Description               |
 |-----------------+---------------------------|
-| =H-SPC= =s-SPC=     | Hydras                    |
-| =H-h= =s-h=         | Help                      |
-| =H-c= =s-c=         | common user commands      |
-| =H-x= =s-x=         | common execution commands |
-| =H-m= =H-,= =s-m= =s-,= | special user commands     |
+| =H-SPC=         | Hydras                    |
+| =H-h=           | Help                      |
+| =H-c=           | common user commands      |
+| =H-x=           | common execution commands |
+| =H-m=           | special user commands     |
 |-----------------+---------------------------|
 
 
@@ -5160,15 +5160,15 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 (global-set-key (kbd "H-c"  ) psimacs/config/global-key-map/common)
 (global-set-key (kbd "H-x"  ) psimacs/config/global-key-map/execute)
 
-(global-set-key (kbd "s-SPC") psimacs/config/global-key-map/hydra)
-(global-set-key (kbd "s-h"  ) psimacs/config/global-key-map/help)
-(global-set-key (kbd "s-c"  ) psimacs/config/global-key-map/common)
-(global-set-key (kbd "s-x"  ) psimacs/config/global-key-map/execute)
+;(global-set-key (kbd "s-SPC") psimacs/config/global-key-map/hydra)
+;(global-set-key (kbd "s-h"  ) psimacs/config/global-key-map/help)
+;(global-set-key (kbd "s-c"  ) psimacs/config/global-key-map/common)
+;(global-set-key (kbd "s-x"  ) psimacs/config/global-key-map/execute)
 
 (global-set-key (kbd "H-m" ) psimacs/config/global-key-map/special)
-(global-set-key (kbd "H-," ) psimacs/config/global-key-map/special)
-(global-set-key (kbd "s-m" ) psimacs/config/global-key-map/special)
-(global-set-key (kbd "s-," ) psimacs/config/global-key-map/special)
+;(global-set-key (kbd "H-," ) psimacs/config/global-key-map/special)
+;(global-set-key (kbd "s-m" ) psimacs/config/global-key-map/special)
+;(global-set-key (kbd "s-," ) psimacs/config/global-key-map/special)
 
 (defun psimacs/config/greetings ()
    "Print hello to message buffer."
@@ -14611,9 +14611,10 @@ See also:
           ;)
         )
 
-    :hook (
-            (dap-stopped . (lambda (arg) (call-interactively #'dap-hydra)))
-          )
+    ;; currently I do not like that the hydra is always shown
+    ;:hook (
+    ;        (dap-stopped . (lambda (arg) (call-interactively #'dap-hydra)))
+    ;      )
     :bind (:map dap-mode-map
            ("<f5>"     . dap-debug)
            ("M-<f5>"   . dap-debug-last)
