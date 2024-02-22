@@ -4457,6 +4457,10 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 (defconst psimacs/config/dap-breakpoints-file
   (psimacs/file-system/concat-file psimacs/config/session-dir ".dap-breakpoints")
   "The psimacs dap-mode breakpoints file.")
+
+(defconst psimacs/config/dap-ui-repl-history-dir
+  psimacs/config/session-dir
+  "The psimacs dap-mode repl history directory.")
 #+end_src
 
 ** Transient
@@ -14592,7 +14596,8 @@ See also:
     :commands (dap-mode dap-debug dap-debug-edit-template dap-auto-configure-mode)
     :config
         (dap-auto-configure-mode)
-        (setq dap-breakpoints-file psimacs/config/dap-breakpoints-file)
+        (setq dap-breakpoints-file    psimacs/config/dap-breakpoints-file)
+        (setq dap-ui-repl-history-dir psimacs/config/dap-ui-repl-history-dir)
 
         ;;(setq dap-auto-configure-features '(sessions locals tooltip))
         ;;(setq dap-auto-configure-features '(sessions locals breakpoints expressions controls tooltip))
