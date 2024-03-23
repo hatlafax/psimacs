@@ -801,7 +801,7 @@ After this function is finished the two directories are identical."
              (file-exists-p json-path))
         (progn
           (require 'json)
-          (cdr (assoc 'path (car (json-read-file json-path))))) nil))	 
+          (cdr (assoc 'path (car (json-read-file json-path))))) nil))
 )
 
 ;;
