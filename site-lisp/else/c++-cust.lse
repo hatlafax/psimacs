@@ -14,23 +14,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                                           ;;
-;; C++ ENTRY PART                                                            ;;
+;;                                                                           ;;
+;; MODIFICATIONS                                                             ;;
+;; =============                                                             ;;
 ;;                                                                           ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-DELETE LANGUAGE C++
-DEFINE LANGUAGE C++
-    /INITIAL_STRING="{compilation-unit}"
-    /PUNCTUATION_CHARACTERS="*;().,"
-    /VALID_IDENTIFIER_CHARACTERS="a-zA-Z_0-9-"
-    /INDENT_SIZE=4
 
-END DEFINE
-
-
-DELETE PLACEHOLDER "COMPILATION-UNIT"
+DELETE PLACEHOLDER "translation-unit"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "COMPILATION-UNIT"
+DEFINE PLACEHOLDER "translation-unit"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -46,86 +39,290 @@ DEFINE PLACEHOLDER "COMPILATION-UNIT"
 END DEFINE
 
 
-DELETE PLACEHOLDER "SOURCE-FILE-UNIT"
+DELETE PLACEHOLDER "includes"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "SOURCE-FILE-UNIT"
+DEFINE PLACEHOLDER "includes"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
-    /TYPE=NONTERMINAL
+    /TYPE=MENU
 
-    "[file-documentation]"
-    ""
     "[std-include]..."
     "[boost-include]..."
-    ""
     "[qt-include]..."
     "[opensg-include]..."
-    ""
     "[generic-include]..."
-    ""
     "{file-include}"
 
-
 END DEFINE
 
 
-DELETE PLACEHOLDER "HEADER-FILE-UNIT"
+DELETE PLACEHOLDER "system-lib-string"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "HEADER-FILE-UNIT"
+DEFINE PLACEHOLDER "system-lib-string"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
-    /TYPE=NONTERMINAL
+    /TYPE=MENU
 
-    "[file-documentation]"
-
-END DEFINE
-
-
-DELETE PLACEHOLDER "INLINE-FILE-UNIT"
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER "INLINE-FILE-UNIT"
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "[file-documentation]"
+    "<{name}>"
+    "<{std-header-menu}>"
+    "<{qt-header-menu}>"
+    "<{opensg-header-menu}>"
+    "<{boost-header-menu}>"
 
 END DEFINE
-
-
-DELETE PLACEHOLDER "TEST-FILE-UNIT"
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER "TEST-FILE-UNIT"
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "[file-documentation]"
-
-END DEFINE
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                                           ;;
-;; C++ INCLUDES                                                              ;;
+;;                                                                           ;;
+;; ADDITIONS                                                                 ;;
+;; =========                                                                 ;;
 ;;                                                                           ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-DELETE PLACEHOLDER "STD-INCLUDE"
+
+;;
+;; Termninals
+;;
+
+DELETE PLACEHOLDER "name"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "STD-INCLUDE"
+DEFINE PLACEHOLDER "name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid name"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "description"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "description"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a description"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "title"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "title"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a title"
+
+END DEFINE
+
+
+;;
+;; Runtime evaluation
+;;
+
+DELETE PLACEHOLDER "yyyy"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "yyyy"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-year
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid year: YYYY"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "dd-mm-yyyy"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "dd-mm-yyyy"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-date
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid date: DD.MM.YYYY"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "filename"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "filename"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-buffer-name
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid filename."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "base-filename"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "base-filename"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-buffer-basename
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid filename."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "author"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "author"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TRANSFORM=psimacs/else/transform-insert-author
+    /TYPE=NONTERMINAL
+
+    "Please enter a valid author name."
+
+END DEFINE
+
+
+;;
+;; Licensing
+;;
+
+DELETE PLACEHOLDER "licenser"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "licenser"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "(c) [yyyy] Johannes Brunen <jbrunen@gmx.de>"
+    "(c) [yyyy] Johannes Brunen <hatlafax@gmx.de>"
+    "(c) [yyyy] Hatlafax <hatlafax@gmx.de>"
+    "(c) [yyyy] Johannes Brunen <Brunen.Johannes@scheidt-bachmann.de>"
+    "(c) [yyyy] Scheidt & Bachmann GmbH, Mönchengladbach"
+    "(c) [yyyy] Fare Collection Systems GmbH, Mönchengladbach"
+    "{text}"
+
+END DEFINE
+
+
+;;
+;; Units
+;;
+
+DELETE PLACEHOLDER "source-file-unit"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "source-file-unit"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[file-documentation]"
+    ""
+    "[top-level-item]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "header-file-unit"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "header-file-unit"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[file-documentation]"
+    ""
+    "[top-level-item]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "inline-file-unit"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "inline-file-unit"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[file-documentation]"
+    ""
+    "[top-level-item]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "test-file-unit"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "test-file-unit"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[file-documentation]"
+    ""
+    "[top-level-item]..."
+
+END DEFINE
+
+
+;;
+;; C++ includes
+;;
+
+DELETE PLACEHOLDER "std-include"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "std-include"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -138,9 +335,9 @@ DEFINE PLACEHOLDER "STD-INCLUDE"
 END DEFINE
 
 
-DELETE PLACEHOLDER "QT-INCLUDE"
+DELETE PLACEHOLDER "qt-include"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "QT-INCLUDE"
+DEFINE PLACEHOLDER "qt-include"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -153,9 +350,9 @@ DEFINE PLACEHOLDER "QT-INCLUDE"
 END DEFINE
 
 
-DELETE PLACEHOLDER "OPENSG-INCLUDE"
+DELETE PLACEHOLDER "opensg-include"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "OPENSG-INCLUDE"
+DEFINE PLACEHOLDER "opensg-include"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -168,9 +365,9 @@ DEFINE PLACEHOLDER "OPENSG-INCLUDE"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-INCLUDE"
+DELETE PLACEHOLDER "boost-include"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-INCLUDE"
+DEFINE PLACEHOLDER "boost-include"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -183,9 +380,9 @@ DEFINE PLACEHOLDER "BOOST-INCLUDE"
 END DEFINE
 
 
-DELETE PLACEHOLDER "GENERIC-INCLUDE"
+DELETE PLACEHOLDER "generic-include"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "GENERIC-INCLUDE"
+DEFINE PLACEHOLDER "generic-include"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -198,9 +395,9 @@ DEFINE PLACEHOLDER "GENERIC-INCLUDE"
 END DEFINE
 
 
-DELETE PLACEHOLDER "SOURCE-FILE-INCLUDE"
+DELETE PLACEHOLDER "source-file-include"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "SOURCE-FILE-INCLUDE"
+DEFINE PLACEHOLDER "source-file-include"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -212,45 +409,14 @@ DEFINE PLACEHOLDER "SOURCE-FILE-INCLUDE"
 
 END DEFINE
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                                           ;;
-;; C++ DOCUMENTATION                                                         ;;
-;;                                                                           ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-DELETE PLACEHOLDER "FILE-DOCUMENTATION"
+;;
+;; C++ file type extensions
+;;
+
+DELETE PLACEHOLDER "header-extension-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "FILE-DOCUMENTATION"
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-
-    "/**"
-    "    \file         {filename}"
-    "    \page         {name} [title]"
-    "    \brief        {description}"
-    ""
-    "    \author       {author}"
-    "    \date         {dd-mm-yyyy}"
-    ""
-    "    \copyright    (c) Scheidt & Bachmann GmbH, {yyyy} {licenser}"
-    "*/"
-
-END DEFINE
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                                           ;;
-;; C++ LOW LEVEL                                                             ;;
-;;                                                                           ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-DELETE PLACEHOLDER "HEADER-EXTENSION-MENU"
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER "HEADER-EXTENSION-MENU"
+DEFINE PLACEHOLDER "header-extension-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -266,9 +432,9 @@ DEFINE PLACEHOLDER "HEADER-EXTENSION-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "SOURCE-EXTENSION-MENU"
+DELETE PLACEHOLDER "source-extension-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "SOURCE-EXTENSION-MENU"
+DEFINE PLACEHOLDER "source-extension-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -285,9 +451,9 @@ DEFINE PLACEHOLDER "SOURCE-EXTENSION-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "INLINE-EXTENSION-MENU"
+DELETE PLACEHOLDER "inline-extension-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "INLINE-EXTENSION-MENU"
+DEFINE PLACEHOLDER "inline-extension-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -302,9 +468,38 @@ DEFINE PLACEHOLDER "INLINE-EXTENSION-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "KEYWORD-MENU"
+;;
+;; C++ keywords
+;;
+
+DELETE PLACEHOLDER "pre-proc-keyword-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "KEYWORD-MENU"
+DEFINE PLACEHOLDER "pre-proc-keyword-menu"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "define"
+    "error"
+    "if"
+    "ifdef"
+    "ifndef"
+    "include"
+    "line"
+    "pragma"
+    "pragma once"
+    "undef"
+    "{identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "keyword-menu"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "keyword-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -447,9 +642,9 @@ DEFINE PLACEHOLDER "KEYWORD-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "STD-SYMBOLS-MENU"
+DELETE PLACEHOLDER "std-symbols-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "STD-SYMBOLS-MENU"
+DEFINE PLACEHOLDER "std-symbols-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -2220,9 +2415,10 @@ DEFINE PLACEHOLDER "STD-SYMBOLS-MENU"
 
 END DEFINE
 
-DELETE PLACEHOLDER "STD-HEADER-MENU"
+
+DELETE PLACEHOLDER "std-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "STD-HEADER-MENU"
+DEFINE PLACEHOLDER "std-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -2367,9 +2563,278 @@ DEFINE PLACEHOLDER "STD-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-HEADER-MENU"
+;;
+;; Doxygen
+;;
+
+DELETE PLACEHOLDER "file-documentation"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-HEADER-MENU"
+DEFINE PLACEHOLDER "file-documentation"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "/**"
+    "    \file         {filename}"
+    "    \page         {name} [title]"
+    "    \brief        {description}"
+    ""
+    "    \author       {author}"
+    "    \date         {dd-mm-yyyy}"
+    ""
+    "    \copyright    {licenser}"
+    "*/"
+
+END DEFINE
+
+
+;;
+;; Doxygen keywords
+;;
+
+DELETE PLACEHOLDER "doxygen-command-menu"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "doxygen-command-menu"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "\a"
+    "\addindex"
+    "\addtogroup"
+    "\anchor"
+    "\arg"
+    "\attention"
+    "\author"
+    "\authors"
+    "\b"
+    "\brief"
+    "\bug"
+    "\c"
+    "\callergraph"
+    "\callgraph"
+    "\category"
+    "\cite"
+    "\class"
+    "\code"
+    "\collaborationgraph"
+    "\concept"
+    "\cond"
+    "\copybrief"
+    "\copydetails"
+    "\copydoc"
+    "\copyright"
+    "\date"
+    "\def"
+    "\defgroup"
+    "\deprecated"
+    "\details"
+    "\diafile"
+    "\dir"
+    "\directorygraph"
+    "\docbookinclude"
+    "\docbookonly"
+    "\dontinclude"
+    "\dot"
+    "\dotfile"
+    "\doxyconfig"
+    "\e"
+    "\else"
+    "\elseif"
+    "\em"
+    "\emoji"
+    "\endcode"
+    "\endcond"
+    "\enddocbookonly"
+    "\enddot"
+    "\endhtmlonly"
+    "\endif"
+    "\endinternal"
+    "\endlatexonly"
+    "\endlink"
+    "\endmanonly"
+    "\endmsc"
+    "\endparblock"
+    "\endrtfonly"
+    "\endsecreflist"
+    "\endverbatim"
+    "\enduml"
+    "\endxmlonly"
+    "\enum"
+    "\example"
+    "\exception"
+    "\extends"
+    "\f("
+    "\f)"
+    "\f$"
+    "\f["
+    "\f]"
+    "\f{"
+    "\f}"
+    "\file"
+    "\fileinfo"
+    "\fn"
+    "\groupgraph"
+    "\headerfile"
+    "\hidecallergraph"
+    "\hidecallgraph"
+    "\hidecollaborationgraph"
+    "\hidedirectorygraph"
+    "\hidegroupgraph"
+    "\hideincludedbygraph"
+    "\hideincludegraph"
+    "\hideinheritancegraph"
+    "\hideinlinesource"
+    "\hiderefby"
+    "\hiderefs"
+    "\hideinitializer"
+    "\htmlinclude"
+    "\htmlonly"
+    "\idlexcept"
+    "\if"
+    "\ifnot"
+    "\image"
+    "\implements"
+    "\important"
+    "\include"
+    "\includedoc"
+    "\includedbygraph"
+    "\includegraph"
+    "\includelineno"
+    "\ingroup"
+    "\inheritancegraph"
+    "\internal"
+    "\invariant"
+    "\interface"
+    "\latexinclude"
+    "\latexonly"
+    "\li"
+    "\line"
+    "\lineinfo"
+    "\link"
+    "\mainpage"
+    "\maninclude"
+    "\manonly"
+    "\memberof"
+    "\module"
+    "\msc"
+    "\mscfile"
+    "\n"
+    "\name"
+    "\namespace"
+    "\noop"
+    "\nosubgrouping"
+    "\note"
+    "\overload"
+    "\p"
+    "\package"
+    "\page"
+    "\par"
+    "\paragraph"
+    "\param"
+    "\parblock"
+    "\post"
+    "\pre"
+    "\private"
+    "\privatesection"
+    "\property"
+    "\protected"
+    "\protectedsection"
+    "\protocol"
+    "\public"
+    "\publicsection"
+    "\pure"
+    "\qualifier"
+    "\raisewarning"
+    "\ref"
+    "\refitem"
+    "\related"
+    "\relates"
+    "\relatedalso"
+    "\relatesalso"
+    "\remark"
+    "\remarks"
+    "\result"
+    "\return"
+    "\returns"
+    "\retval"
+    "\rtfinclude"
+    "\rtfonly"
+    "\sa"
+    "\secreflist"
+    "\section"
+    "\see"
+    "\short"
+    "\showdate"
+    "\showinitializer"
+    "\showinlinesource"
+    "\showrefby"
+    "\showrefs"
+    "\since"
+    "\skip"
+    "\skipline"
+    "\snippet"
+    "\snippetdoc"
+    "\snippetlineno"
+    "\static"
+    "\startuml"
+    "\struct"
+    "\subpage"
+    "\subsection"
+    "\subsubsection"
+    "\tableofcontents"
+    "\test"
+    "\throw"
+    "\throws"
+    "\todo"
+    "\tparam"
+    "\typedef"
+    "\union"
+    "\until"
+    "\var"
+    "\verbatim"
+    "\verbinclude"
+    "\version"
+    "\vhdlflow"
+    "\warning"
+    "\weakgroup"
+    "\xmlinclude"
+    "\xmlonly"
+    "\xrefitem"
+    "\$"
+    "\@"
+    "\\"
+    "\&"
+    "\~"
+    "\<"
+    "\="
+    "\>"
+    "\#"
+    "\%"
+    "\""
+    "\."
+    "\::"
+    "\|"
+    "\--"
+    "\---"
+
+END DEFINE
+
+
+;;
+;; Special headers
+;;
+
+
+DELETE PLACEHOLDER "boost-header-menu"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "boost-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -2521,9 +2986,9 @@ DEFINE PLACEHOLDER "BOOST-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PRIMARY-HEADER-MENU"
+DELETE PLACEHOLDER "boost-primary-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PRIMARY-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-primary-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="Primary boost headers"
@@ -2693,9 +3158,9 @@ DEFINE PLACEHOLDER "BOOST-PRIMARY-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ACCUMULATORS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-accumulators-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ACCUMULATORS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-accumulators-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="accumulators"
@@ -2788,9 +3253,9 @@ DEFINE PLACEHOLDER "BOOST-ACCUMULATORS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ALGORITHM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-algorithm-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ALGORITHM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-algorithm-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -2872,9 +3337,9 @@ DEFINE PLACEHOLDER "BOOST-ALGORITHM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ALIGN-HEADER-MENU"
+DELETE PLACEHOLDER "boost-align-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ALIGN-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-align-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="align"
@@ -2902,9 +3367,9 @@ DEFINE PLACEHOLDER "BOOST-ALIGN-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ANY-HEADER-MENU"
+DELETE PLACEHOLDER "boost-any-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ANY-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-any-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="any"
@@ -2921,9 +3386,9 @@ DEFINE PLACEHOLDER "BOOST-ANY-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ARCHIVE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-archive-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ARCHIVE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-archive-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="archive"
@@ -2998,9 +3463,9 @@ DEFINE PLACEHOLDER "BOOST-ARCHIVE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ASIO-HEADER-MENU"
+DELETE PLACEHOLDER "boost-asio-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ASIO-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-asio-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="asio"
@@ -3294,9 +3759,9 @@ DEFINE PLACEHOLDER "BOOST-ASIO-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ASSERT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-assert-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ASSERT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-assert-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="assert"
@@ -3310,9 +3775,9 @@ DEFINE PLACEHOLDER "BOOST-ASSERT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ASSIGN-HEADER-MENU"
+DELETE PLACEHOLDER "boost-assign-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ASSIGN-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-assign-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="assign"
@@ -3340,9 +3805,9 @@ DEFINE PLACEHOLDER "BOOST-ASSIGN-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ATOMIC-HEADER-MENU"
+DELETE PLACEHOLDER "boost-atomic-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ATOMIC-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-atomic-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="atomic"
@@ -3363,9 +3828,9 @@ DEFINE PLACEHOLDER "BOOST-ATOMIC-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-BEAST-HEADER-MENU"
+DELETE PLACEHOLDER "boost-beast-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-BEAST-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-beast-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="beast"
@@ -3523,9 +3988,9 @@ DEFINE PLACEHOLDER "BOOST-BEAST-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-BIMAP-HEADER-MENU"
+DELETE PLACEHOLDER "boost-bimap-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-BIMAP-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-bimap-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="bimap"
@@ -3608,9 +4073,9 @@ DEFINE PLACEHOLDER "BOOST-BIMAP-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-BIND-HEADER-MENU"
+DELETE PLACEHOLDER "boost-bind-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-BIND-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-bind-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="bind"
@@ -3631,9 +4096,9 @@ DEFINE PLACEHOLDER "BOOST-BIND-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-BLANK-HEADER-MENU"
+DELETE PLACEHOLDER "boost-blank-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-BLANK-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-blank-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="blank"
@@ -3647,9 +4112,9 @@ DEFINE PLACEHOLDER "BOOST-BLANK-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CALLABLE_TRAITS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-callable_traits-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CALLABLE_TRAITS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-callable_traits-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="callable_traits"
@@ -3697,9 +4162,9 @@ DEFINE PLACEHOLDER "BOOST-CALLABLE_TRAITS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CHARCONV-HEADER-MENU"
+DELETE PLACEHOLDER "boost-charconv-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CHARCONV-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-charconv-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="charconv"
@@ -3717,9 +4182,9 @@ DEFINE PLACEHOLDER "BOOST-CHARCONV-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CHRONO-HEADER-MENU"
+DELETE PLACEHOLDER "boost-chrono-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CHRONO-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-chrono-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="chrono"
@@ -3762,9 +4227,9 @@ DEFINE PLACEHOLDER "BOOST-CHRONO-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CIRCULAR_BUFFER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-circular_buffer-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CIRCULAR_BUFFER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-circular_buffer-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="circular_buffer"
@@ -3782,9 +4247,9 @@ DEFINE PLACEHOLDER "BOOST-CIRCULAR_BUFFER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-COBALT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-cobalt-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-COBALT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-cobalt-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="cobalt"
@@ -3822,9 +4287,9 @@ DEFINE PLACEHOLDER "BOOST-COBALT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-COMPAT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-compat-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-COMPAT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-compat-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="compat"
@@ -3838,9 +4303,9 @@ DEFINE PLACEHOLDER "BOOST-COMPAT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-COMPATIBILITY-HEADER-MENU"
+DELETE PLACEHOLDER "boost-compatibility-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-COMPATIBILITY-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-compatibility-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="compatibility"
@@ -3869,9 +4334,9 @@ DEFINE PLACEHOLDER "BOOST-COMPATIBILITY-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-COMPUTE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-compute-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-COMPUTE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-compute-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="compute"
@@ -4128,9 +4593,9 @@ DEFINE PLACEHOLDER "BOOST-COMPUTE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CONCEPT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-concept-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CONCEPT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-concept-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="concept"
@@ -4151,9 +4616,9 @@ DEFINE PLACEHOLDER "BOOST-CONCEPT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CONFIG-HEADER-MENU"
+DELETE PLACEHOLDER "boost-config-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CONFIG-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-config-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="config"
@@ -4250,9 +4715,9 @@ DEFINE PLACEHOLDER "BOOST-CONFIG-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CONTAINER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-container-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CONTAINER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-container-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="container"
@@ -4318,9 +4783,9 @@ DEFINE PLACEHOLDER "BOOST-CONTAINER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CONTEXT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-context-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CONTEXT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-context-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="context"
@@ -4351,9 +4816,9 @@ DEFINE PLACEHOLDER "BOOST-CONTEXT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CONTRACT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-contract-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CONTRACT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-contract-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="contract"
@@ -4384,9 +4849,9 @@ DEFINE PLACEHOLDER "BOOST-CONTRACT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CONVERT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-convert-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CONVERT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-convert-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="convert"
@@ -4407,9 +4872,9 @@ DEFINE PLACEHOLDER "BOOST-CONVERT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-CORE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-core-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-CORE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-core-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="core"
@@ -4470,9 +4935,9 @@ DEFINE PLACEHOLDER "BOOST-CORE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-COROUTINE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-coroutine-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-COROUTINE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-coroutine-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="coroutine"
@@ -4500,9 +4965,9 @@ DEFINE PLACEHOLDER "BOOST-COROUTINE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-COROUTINE2-HEADER-MENU"
+DELETE PLACEHOLDER "boost-coroutine2-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-COROUTINE2-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-coroutine2-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="coroutine2"
@@ -4520,9 +4985,9 @@ DEFINE PLACEHOLDER "BOOST-COROUTINE2-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-DATE_TIME-HEADER-MENU"
+DELETE PLACEHOLDER "boost-date_time-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-DATE_TIME-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-date_time-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="date_time"
@@ -4638,9 +5103,9 @@ DEFINE PLACEHOLDER "BOOST-DATE_TIME-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-DESCRIBE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-describe-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-DESCRIBE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-describe-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="describe"
@@ -4665,9 +5130,9 @@ DEFINE PLACEHOLDER "BOOST-DESCRIBE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-DLL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-dll-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-DLL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-dll-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="dll"
@@ -4690,9 +5155,9 @@ DEFINE PLACEHOLDER "BOOST-DLL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-DYNAMIC_BITSET-HEADER-MENU"
+DELETE PLACEHOLDER "boost-dynamic_bitset-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-DYNAMIC_BITSET-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-dynamic_bitset-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="dynamic_bitset"
@@ -4709,9 +5174,9 @@ DEFINE PLACEHOLDER "BOOST-DYNAMIC_BITSET-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ENDIAN-HEADER-MENU"
+DELETE PLACEHOLDER "boost-endian-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ENDIAN-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-endian-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="endian"
@@ -4728,9 +5193,9 @@ DEFINE PLACEHOLDER "BOOST-ENDIAN-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-EXCEPTION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-exception-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-EXCEPTION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-exception-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="exception"
@@ -4763,9 +5228,9 @@ DEFINE PLACEHOLDER "BOOST-EXCEPTION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FIBER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-fiber-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FIBER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-fiber-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="fiber"
@@ -4818,9 +5283,9 @@ DEFINE PLACEHOLDER "BOOST-FIBER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FILESYSTEM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-filesystem-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FILESYSTEM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-filesystem-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="filesystem"
@@ -4841,9 +5306,9 @@ DEFINE PLACEHOLDER "BOOST-FILESYSTEM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FLYWEIGHT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-flyweight-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FLYWEIGHT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-flyweight-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="flyweight"
@@ -4884,9 +5349,9 @@ DEFINE PLACEHOLDER "BOOST-FLYWEIGHT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FOREACH-HEADER-MENU"
+DELETE PLACEHOLDER "boost-foreach-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FOREACH-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-foreach-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="foreach"
@@ -4900,9 +5365,9 @@ DEFINE PLACEHOLDER "BOOST-FOREACH-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FORMAT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-format-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FORMAT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-format-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="format"
@@ -4927,9 +5392,9 @@ DEFINE PLACEHOLDER "BOOST-FORMAT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FUNCTION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-function-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FUNCTION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-function-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="function"
@@ -4957,9 +5422,9 @@ DEFINE PLACEHOLDER "BOOST-FUNCTION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FUNCTIONAL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-functional-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FUNCTIONAL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-functional-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="functional"
@@ -4984,9 +5449,9 @@ DEFINE PLACEHOLDER "BOOST-FUNCTIONAL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FUNCTION_TYPES-HEADER-MENU"
+DELETE PLACEHOLDER "boost-function_types-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FUNCTION_TYPES-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-function_types-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="function_types"
@@ -5019,9 +5484,9 @@ DEFINE PLACEHOLDER "BOOST-FUNCTION_TYPES-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-FUSION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-fusion-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-FUSION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-fusion-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="fusion"
@@ -5504,9 +5969,9 @@ DEFINE PLACEHOLDER "BOOST-FUSION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-GEOMETRY-HEADER-MENU"
+DELETE PLACEHOLDER "boost-geometry-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-GEOMETRY-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-geometry-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="geometry"
@@ -6285,9 +6750,9 @@ DEFINE PLACEHOLDER "BOOST-GEOMETRY-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-GIL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-gil-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-GIL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-gil-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="gil"
@@ -6473,9 +6938,9 @@ DEFINE PLACEHOLDER "BOOST-GIL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-GRAPH-HEADER-MENU"
+DELETE PLACEHOLDER "boost-graph-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-GRAPH-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-graph-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="graph"
@@ -6687,9 +7152,9 @@ DEFINE PLACEHOLDER "BOOST-GRAPH-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-HANA-HEADER-MENU"
+DELETE PLACEHOLDER "boost-hana-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-HANA-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-hana-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="hana"
@@ -7101,9 +7566,9 @@ DEFINE PLACEHOLDER "BOOST-HANA-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-HEAP-HEADER-MENU"
+DELETE PLACEHOLDER "boost-heap-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-HEAP-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-heap-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="heap"
@@ -7124,9 +7589,9 @@ DEFINE PLACEHOLDER "BOOST-HEAP-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-HISTOGRAM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-histogram-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-HISTOGRAM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-histogram-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="histogram"
@@ -7186,9 +7651,9 @@ DEFINE PLACEHOLDER "BOOST-HISTOGRAM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-HOF-HEADER-MENU"
+DELETE PLACEHOLDER "boost-hof-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-HOF-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-hof-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="hof"
@@ -7252,9 +7717,9 @@ DEFINE PLACEHOLDER "BOOST-HOF-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ICL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-icl-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ICL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-icl-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="icl"
@@ -7360,9 +7825,9 @@ DEFINE PLACEHOLDER "BOOST-ICL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-INTEGER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-integer-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-INTEGER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-integer-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="integer"
@@ -7386,9 +7851,9 @@ DEFINE PLACEHOLDER "BOOST-INTEGER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-INTERPROCESS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-interprocess-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-INTERPROCESS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-interprocess-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="interprocess"
@@ -7517,9 +7982,9 @@ DEFINE PLACEHOLDER "BOOST-INTERPROCESS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-INTRUSIVE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-intrusive-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-INTRUSIVE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-intrusive-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="io"
@@ -7576,9 +8041,9 @@ DEFINE PLACEHOLDER "BOOST-INTRUSIVE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-IO-HEADER-MENU"
+DELETE PLACEHOLDER "boost-io-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-IO-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-io-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="io"
@@ -7596,9 +8061,9 @@ DEFINE PLACEHOLDER "BOOST-IO-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-IOSTREAMS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-iostreams-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-IOSTREAMS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-iostreams-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="iostreams"
@@ -7667,9 +8132,9 @@ DEFINE PLACEHOLDER "BOOST-IOSTREAMS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-ITERATOR-HEADER-MENU"
+DELETE PLACEHOLDER "boost-iterator-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-ITERATOR-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-iterator-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="iterator"
@@ -7706,9 +8171,9 @@ DEFINE PLACEHOLDER "BOOST-ITERATOR-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-JSON-HEADER-MENU"
+DELETE PLACEHOLDER "boost-json-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-JSON-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-json-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="json"
@@ -7765,9 +8230,9 @@ DEFINE PLACEHOLDER "BOOST-JSON-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LAMBDA-HEADER-MENU"
+DELETE PLACEHOLDER "boost-lambda-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LAMBDA-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-lambda-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="lambda"
@@ -7792,9 +8257,9 @@ DEFINE PLACEHOLDER "BOOST-LAMBDA-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LAMBDA2-HEADER-MENU"
+DELETE PLACEHOLDER "boost-lambda2-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LAMBDA2-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-lambda2-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="lambda2"
@@ -7808,9 +8273,9 @@ DEFINE PLACEHOLDER "BOOST-LAMBDA2-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LEAF-HEADER-MENU"
+DELETE PLACEHOLDER "boost-leaf-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LEAF-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-leaf-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="leaf"
@@ -7839,9 +8304,9 @@ DEFINE PLACEHOLDER "BOOST-LEAF-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LEXICAL_CAST-HEADER-MENU"
+DELETE PLACEHOLDER "boost-lexical_cast-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LEXICAL_CAST-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-lexical_cast-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="lexical_cast"
@@ -7856,9 +8321,9 @@ DEFINE PLACEHOLDER "BOOST-LEXICAL_CAST-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LOCALE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-locale-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LOCALE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-locale-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="locale"
@@ -7900,9 +8365,9 @@ DEFINE PLACEHOLDER "BOOST-LOCALE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LOCAL_FUNCTION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-local_function-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LOCAL_FUNCTION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-local_function-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="local_function"
@@ -7947,9 +8412,9 @@ DEFINE PLACEHOLDER "BOOST-LOCAL_FUNCTION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LOCKFREE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-lockfree-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LOCKFREE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-lockfree-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="lockfree"
@@ -7966,9 +8431,9 @@ DEFINE PLACEHOLDER "BOOST-LOCKFREE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LOG-HEADER-MENU"
+DELETE PLACEHOLDER "boost-log-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LOG-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-log-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="log"
@@ -8183,9 +8648,9 @@ DEFINE PLACEHOLDER "BOOST-LOG-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-LOGIC-HEADER-MENU"
+DELETE PLACEHOLDER "boost-logic-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-LOGIC-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-logic-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="logic"
@@ -8200,9 +8665,9 @@ DEFINE PLACEHOLDER "BOOST-LOGIC-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MATH-HEADER-MENU"
+DELETE PLACEHOLDER "boost-math-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MATH-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-math-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="math"
@@ -8499,9 +8964,9 @@ DEFINE PLACEHOLDER "BOOST-MATH-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-METAPARSE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-metaparse-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-METAPARSE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-metaparse-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="metaparse"
@@ -8830,9 +9295,9 @@ DEFINE PLACEHOLDER "BOOST-METAPARSE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MOVE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-move-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MOVE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-move-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="move"
@@ -8860,9 +9325,9 @@ DEFINE PLACEHOLDER "BOOST-MOVE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MP11-HEADER-MENU"
+DELETE PLACEHOLDER "boost-mp11-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MP11-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-mp11-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="mp11"
@@ -8889,9 +9354,9 @@ DEFINE PLACEHOLDER "BOOST-MP11-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MPI-HEADER-MENU"
+DELETE PLACEHOLDER "boost-mpi-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MPI-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-mpi-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="mpi"
@@ -8944,9 +9409,9 @@ DEFINE PLACEHOLDER "BOOST-MPI-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MPL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-mpl-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MPL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-mpl-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="mpl"
@@ -10003,9 +10468,9 @@ DEFINE PLACEHOLDER "BOOST-MPL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MSM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-msm-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MSM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-msm-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="msm"
@@ -10072,9 +10537,9 @@ DEFINE PLACEHOLDER "BOOST-MSM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MULTIPRECISION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-multiprecision-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MULTIPRECISION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-multiprecision-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="multiprecision"
@@ -10136,9 +10601,9 @@ DEFINE PLACEHOLDER "BOOST-MULTIPRECISION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MULTI_ARRAY-HEADER-MENU"
+DELETE PLACEHOLDER "boost-multi_array-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MULTI_ARRAY-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-multi_array-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="multi_array"
@@ -10167,9 +10632,9 @@ DEFINE PLACEHOLDER "BOOST-MULTI_ARRAY-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MULTI_INDEX-HEADER-MENU"
+DELETE PLACEHOLDER "boost-multi_index-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MULTI_INDEX-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-multi_index-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="multi_index"
@@ -10202,9 +10667,9 @@ DEFINE PLACEHOLDER "BOOST-MULTI_INDEX-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MULTI_INDEX_CONTAINER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-multi_index_container-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MULTI_INDEX_CONTAINER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-multi_index_container-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="multi_index_container"
@@ -10218,9 +10683,9 @@ DEFINE PLACEHOLDER "BOOST-MULTI_INDEX_CONTAINER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-MYSQL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-mysql-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-MYSQL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-mysql-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="mysql"
@@ -10341,9 +10806,9 @@ DEFINE PLACEHOLDER "BOOST-MYSQL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-NOWIDE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-nowide-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-NOWIDE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-nowide-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="nowide"
@@ -10372,9 +10837,9 @@ DEFINE PLACEHOLDER "BOOST-NOWIDE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-NUMERIC-HEADER-MENU"
+DELETE PLACEHOLDER "boost-numeric-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-NUMERIC-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-numeric-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="numeric"
@@ -10644,9 +11109,9 @@ DEFINE PLACEHOLDER "BOOST-NUMERIC-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-OPTIONAL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-optional-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-OPTIONAL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-optional-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="optional"
@@ -10663,9 +11128,9 @@ DEFINE PLACEHOLDER "BOOST-OPTIONAL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-OUTCOME-HEADER-MENU"
+DELETE PLACEHOLDER "boost-outcome-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-OUTCOME-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-outcome-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="outcome"
@@ -10730,9 +11195,9 @@ DEFINE PLACEHOLDER "BOOST-OUTCOME-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PARAMETER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-parameter-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PARAMETER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-parameter-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="parameter"
@@ -10847,9 +11312,9 @@ DEFINE PLACEHOLDER "BOOST-PARAMETER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PENDING-HEADER-MENU"
+DELETE PLACEHOLDER "boost-pending-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PENDING-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-pending-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="pending"
@@ -10878,9 +11343,9 @@ DEFINE PLACEHOLDER "BOOST-PENDING-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PFR-HEADER-MENU"
+DELETE PLACEHOLDER "boost-pfr-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PFR-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-pfr-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="pfr"
@@ -10905,9 +11370,9 @@ DEFINE PLACEHOLDER "BOOST-PFR-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PHOENIX-HEADER-MENU"
+DELETE PLACEHOLDER "boost-phoenix-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PHOENIX-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-phoenix-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="phoenix"
@@ -11014,9 +11479,9 @@ DEFINE PLACEHOLDER "BOOST-PHOENIX-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-POLYGON-HEADER-MENU"
+DELETE PLACEHOLDER "boost-polygon-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-POLYGON-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-polygon-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="polygon"
@@ -11066,9 +11531,9 @@ DEFINE PLACEHOLDER "BOOST-POLYGON-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-POLY_COLLECTION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-poly_collection-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-POLY_COLLECTION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-poly_collection-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="poly_collection"
@@ -11088,9 +11553,9 @@ DEFINE PLACEHOLDER "BOOST-POLY_COLLECTION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-POOL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-pool-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-POOL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-pool-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="pool"
@@ -11108,9 +11573,9 @@ DEFINE PLACEHOLDER "BOOST-POOL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PREDEF-HEADER-MENU"
+DELETE PLACEHOLDER "boost-predef-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PREDEF-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-predef-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="predef"
@@ -11258,9 +11723,9 @@ DEFINE PLACEHOLDER "BOOST-PREDEF-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PREPROCESSOR-HEADER-MENU"
+DELETE PLACEHOLDER "boost-preprocessor-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PREPROCESSOR-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-preprocessor-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="preprocessor"
@@ -11538,9 +12003,9 @@ DEFINE PLACEHOLDER "BOOST-PREPROCESSOR-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PROCESS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-process-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PROCESS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-process-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="process"
@@ -11610,9 +12075,9 @@ DEFINE PLACEHOLDER "BOOST-PROCESS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PROGRAM_OPTIONS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-program_options-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PROGRAM_OPTIONS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-program_options-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="program_options"
@@ -11637,9 +12102,9 @@ DEFINE PLACEHOLDER "BOOST-PROGRAM_OPTIONS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PROPERTY_MAP-HEADER-MENU"
+DELETE PLACEHOLDER "boost-property_map-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PROPERTY_MAP-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-property_map-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="property_map"
@@ -11669,9 +12134,9 @@ DEFINE PLACEHOLDER "BOOST-PROPERTY_MAP-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PROPERTY_TREE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-property_tree-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PROPERTY_TREE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-property_tree-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="property_tree"
@@ -11695,9 +12160,9 @@ DEFINE PLACEHOLDER "BOOST-PROPERTY_TREE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PROTO-HEADER-MENU"
+DELETE PLACEHOLDER "boost-proto-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PROTO-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-proto-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="proto"
@@ -11764,9 +12229,9 @@ DEFINE PLACEHOLDER "BOOST-PROTO-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PTR_CONTAINER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-ptr_container-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PTR_CONTAINER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-ptr_container-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="ptr_container"
@@ -11806,9 +12271,9 @@ DEFINE PLACEHOLDER "BOOST-PTR_CONTAINER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-PYTHON-HEADER-MENU"
+DELETE PLACEHOLDER "boost-python-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-PYTHON-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-python-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="python"
@@ -11974,9 +12439,9 @@ DEFINE PLACEHOLDER "BOOST-PYTHON-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-QVM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-qvm-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-QVM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-qvm-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="qvm"
@@ -12067,9 +12532,9 @@ DEFINE PLACEHOLDER "BOOST-QVM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-RANDOM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-random-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-RANDOM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-random-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="random"
@@ -12137,9 +12602,9 @@ DEFINE PLACEHOLDER "BOOST-RANDOM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-RANGE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-range-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-RANGE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-range-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="range"
@@ -12280,9 +12745,9 @@ DEFINE PLACEHOLDER "BOOST-RANGE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-RATIO-HEADER-MENU"
+DELETE PLACEHOLDER "boost-ratio-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-RATIO-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-ratio-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="ratio"
@@ -12301,9 +12766,9 @@ DEFINE PLACEHOLDER "BOOST-RATIO-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-REDIS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-redis-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-REDIS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-redis-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="redis"
@@ -12333,9 +12798,9 @@ DEFINE PLACEHOLDER "BOOST-REDIS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-REGEX-HEADER-MENU"
+DELETE PLACEHOLDER "boost-regex-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-REGEX-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-regex-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="regex"
@@ -12451,9 +12916,9 @@ DEFINE PLACEHOLDER "BOOST-REGEX-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SAFE_NUMERICS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-safe_numerics-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SAFE_NUMERICS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-safe_numerics-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="safe_numerics"
@@ -12490,9 +12955,9 @@ DEFINE PLACEHOLDER "BOOST-SAFE_NUMERICS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SCOPE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-scope-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SCOPE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-scope-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="scope"
@@ -12515,9 +12980,9 @@ DEFINE PLACEHOLDER "BOOST-SCOPE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SERIALIZATION-HEADER-MENU"
+DELETE PLACEHOLDER "boost-serialization-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SERIALIZATION-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-serialization-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="serialization"
@@ -12609,9 +13074,9 @@ DEFINE PLACEHOLDER "BOOST-SERIALIZATION-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SIGNALS2-HEADER-MENU"
+DELETE PLACEHOLDER "boost-signals2-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SIGNALS2-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-signals2-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="signals2"
@@ -12645,9 +13110,9 @@ DEFINE PLACEHOLDER "BOOST-SIGNALS2-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SMART_PTR-HEADER-MENU"
+DELETE PLACEHOLDER "boost-smart_ptr-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SMART_PTR-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-smart_ptr-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="smart_ptr"
@@ -12686,9 +13151,9 @@ DEFINE PLACEHOLDER "BOOST-SMART_PTR-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SORT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-sort-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SORT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-sort-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="sort"
@@ -12740,9 +13205,9 @@ DEFINE PLACEHOLDER "BOOST-SORT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SPIRIT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-spirit-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SPIRIT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-spirit-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="spirit"
@@ -13645,9 +14110,9 @@ DEFINE PLACEHOLDER "BOOST-SPIRIT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-STACKTRACE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-stacktrace-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-STACKTRACE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-stacktrace-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="stacktrace"
@@ -13665,9 +14130,9 @@ DEFINE PLACEHOLDER "BOOST-STACKTRACE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-STATECHART-HEADER-MENU"
+DELETE PLACEHOLDER "boost-statechart-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-STATECHART-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-statechart-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="statechart"
@@ -13700,9 +14165,9 @@ DEFINE PLACEHOLDER "BOOST-STATECHART-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-STATIC_STRING-HEADER-MENU"
+DELETE PLACEHOLDER "boost-static_string-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-STATIC_STRING-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-static_string-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="static_string"
@@ -13717,9 +14182,9 @@ DEFINE PLACEHOLDER "BOOST-STATIC_STRING-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-STL_INTERFACES-HEADER-MENU"
+DELETE PLACEHOLDER "boost-stl_interfaces-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-STL_INTERFACES-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-stl_interfaces-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="stl_interfaces"
@@ -13738,9 +14203,9 @@ DEFINE PLACEHOLDER "BOOST-STL_INTERFACES-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-SYSTEM-HEADER-MENU"
+DELETE PLACEHOLDER "boost-system-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-SYSTEM-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-system-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="system"
@@ -13767,9 +14232,9 @@ DEFINE PLACEHOLDER "BOOST-SYSTEM-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TEST-HEADER-MENU"
+DELETE PLACEHOLDER "boost-test-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TEST-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-test-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="test"
@@ -13892,9 +14357,9 @@ DEFINE PLACEHOLDER "BOOST-TEST-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-THREAD-HEADER-MENU"
+DELETE PLACEHOLDER "boost-thread-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-THREAD-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-thread-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="thread"
@@ -14040,9 +14505,9 @@ DEFINE PLACEHOLDER "BOOST-THREAD-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TIMER-HEADER-MENU"
+DELETE PLACEHOLDER "boost-timer-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TIMER-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-timer-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="timer"
@@ -14058,9 +14523,9 @@ DEFINE PLACEHOLDER "BOOST-TIMER-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TTI-HEADER-MENU"
+DELETE PLACEHOLDER "boost-tti-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TTI-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-tti-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="tti"
@@ -14104,9 +14569,9 @@ DEFINE PLACEHOLDER "BOOST-TTI-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TUPLE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-tuple-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TUPLE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-tuple-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="tuple"
@@ -14121,9 +14586,9 @@ DEFINE PLACEHOLDER "BOOST-TUPLE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TYPEOF-HEADER-MENU"
+DELETE PLACEHOLDER "boost-typeof-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TYPEOF-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-typeof-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="typeof"
@@ -14162,9 +14627,9 @@ DEFINE PLACEHOLDER "BOOST-TYPEOF-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TYPE_ERASURE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-type_erasure-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TYPE_ERASURE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-type_erasure-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="type_erasure"
@@ -14211,9 +14676,9 @@ DEFINE PLACEHOLDER "BOOST-TYPE_ERASURE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TYPE_INDEX-HEADER-MENU"
+DELETE PLACEHOLDER "boost-type_index-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TYPE_INDEX-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-type_index-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="type_index"
@@ -14235,9 +14700,9 @@ DEFINE PLACEHOLDER "BOOST-TYPE_INDEX-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-TYPE_TRAITS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-type_traits-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-TYPE_TRAITS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-type_traits-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="type_traits"
@@ -14418,9 +14883,9 @@ DEFINE PLACEHOLDER "BOOST-TYPE_TRAITS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-UNITS-HEADER-MENU"
+DELETE PLACEHOLDER "boost-units-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-UNITS-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-units-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="units"
@@ -14737,9 +15202,9 @@ DEFINE PLACEHOLDER "BOOST-UNITS-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-UNORDERED-HEADER-MENU"
+DELETE PLACEHOLDER "boost-unordered-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-UNORDERED-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-unordered-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="unordered"
@@ -14770,9 +15235,9 @@ DEFINE PLACEHOLDER "BOOST-UNORDERED-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-URL-HEADER-MENU"
+DELETE PLACEHOLDER "boost-url-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-URL-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-url-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="url"
@@ -14887,9 +15352,9 @@ DEFINE PLACEHOLDER "BOOST-URL-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-UTILITY-HEADER-MENU"
+DELETE PLACEHOLDER "boost-utility-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-UTILITY-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-utility-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="utility"
@@ -14919,9 +15384,9 @@ DEFINE PLACEHOLDER "BOOST-UTILITY-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-UUID-HEADER-MENU"
+DELETE PLACEHOLDER "boost-uuid-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-UUID-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-uuid-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="uuid"
@@ -14946,9 +15411,9 @@ DEFINE PLACEHOLDER "BOOST-UUID-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-VARIANT-HEADER-MENU"
+DELETE PLACEHOLDER "boost-variant-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-VARIANT-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-variant-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="variant"
@@ -14975,9 +15440,9 @@ DEFINE PLACEHOLDER "BOOST-VARIANT-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-VMD-HEADER-MENU"
+DELETE PLACEHOLDER "boost-vmd-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-VMD-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-vmd-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="vmd"
@@ -15053,9 +15518,9 @@ DEFINE PLACEHOLDER "BOOST-VMD-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-WAVE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-wave-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-WAVE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-wave-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="wave"
@@ -15127,9 +15592,9 @@ DEFINE PLACEHOLDER "BOOST-WAVE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-WINAPI-HEADER-MENU"
+DELETE PLACEHOLDER "boost-winapi-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-WINAPI-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-winapi-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="winapi"
@@ -15200,9 +15665,9 @@ DEFINE PLACEHOLDER "BOOST-WINAPI-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-XPRESSIVE-HEADER-MENU"
+DELETE PLACEHOLDER "boost-xpressive-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-XPRESSIVE-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-xpressive-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="xpressive"
@@ -15234,9 +15699,9 @@ DEFINE PLACEHOLDER "BOOST-XPRESSIVE-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "BOOST-YAP-HEADER-MENU"
+DELETE PLACEHOLDER "boost-yap-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BOOST-YAP-HEADER-MENU"
+DEFINE PLACEHOLDER "boost-yap-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION="yap"
@@ -15255,9 +15720,9 @@ DEFINE PLACEHOLDER "BOOST-YAP-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "OPENSG-HEADER-MENU"
+DELETE PLACEHOLDER "opensg-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "OPENSG-HEADER-MENU"
+DEFINE PLACEHOLDER "opensg-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -17277,9 +17742,9 @@ DEFINE PLACEHOLDER "OPENSG-HEADER-MENU"
 END DEFINE
 
 
-DELETE PLACEHOLDER "QT-HEADER-MENU"
+DELETE PLACEHOLDER "qt-header-menu"
     /LANGUAGE="C++"
-DEFINE PLACEHOLDER "QT-HEADER-MENU"
+DEFINE PLACEHOLDER "qt-header-menu"
     /LANGUAGE="C++"
     /NOAUTO_SUBSTITUTE
     /DESCRIPTION=""
@@ -19062,418 +19527,5 @@ DEFINE PLACEHOLDER "QT-HEADER-MENU"
     "QtXmlPatterns/QtXmlPatterns"
     "QtXmlPatterns/QtXmlPatternsDepends"
     "QtXmlPatterns/QtXmlPatternsVersion"
-
-END DEFINE
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                                           ;;
-;; DOXYGEN                                                                   ;;
-;;                                                                           ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-DELETE PLACEHOLDER "DOXYGEN-COMMAND-MENU"
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER "DOXYGEN-COMMAND-MENU"
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-
-    "\a"
-    "\addindex"
-    "\addtogroup"
-    "\anchor"
-    "\arg"
-    "\attention"
-    "\author"
-    "\authors"
-    "\b"
-    "\brief"
-    "\bug"
-    "\c"
-    "\callergraph"
-    "\callgraph"
-    "\category"
-    "\cite"
-    "\class"
-    "\code"
-    "\collaborationgraph"
-    "\concept"
-    "\cond"
-    "\copybrief"
-    "\copydetails"
-    "\copydoc"
-    "\copyright"
-    "\date"
-    "\def"
-    "\defgroup"
-    "\deprecated"
-    "\details"
-    "\diafile"
-    "\dir"
-    "\directorygraph"
-    "\docbookinclude"
-    "\docbookonly"
-    "\dontinclude"
-    "\dot"
-    "\dotfile"
-    "\doxyconfig"
-    "\e"
-    "\else"
-    "\elseif"
-    "\em"
-    "\emoji"
-    "\endcode"
-    "\endcond"
-    "\enddocbookonly"
-    "\enddot"
-    "\endhtmlonly"
-    "\endif"
-    "\endinternal"
-    "\endlatexonly"
-    "\endlink"
-    "\endmanonly"
-    "\endmsc"
-    "\endparblock"
-    "\endrtfonly"
-    "\endsecreflist"
-    "\endverbatim"
-    "\enduml"
-    "\endxmlonly"
-    "\enum"
-    "\example"
-    "\exception"
-    "\extends"
-    "\f("
-    "\f)"
-    "\f$"
-    "\f["
-    "\f]"
-    "\f{"
-    "\f}"
-    "\file"
-    "\fileinfo"
-    "\fn"
-    "\groupgraph"
-    "\headerfile"
-    "\hidecallergraph"
-    "\hidecallgraph"
-    "\hidecollaborationgraph"
-    "\hidedirectorygraph"
-    "\hidegroupgraph"
-    "\hideincludedbygraph"
-    "\hideincludegraph"
-    "\hideinheritancegraph"
-    "\hideinlinesource"
-    "\hiderefby"
-    "\hiderefs"
-    "\hideinitializer"
-    "\htmlinclude"
-    "\htmlonly"
-    "\idlexcept"
-    "\if"
-    "\ifnot"
-    "\image"
-    "\implements"
-    "\important"
-    "\include"
-    "\includedoc"
-    "\includedbygraph"
-    "\includegraph"
-    "\includelineno"
-    "\ingroup"
-    "\inheritancegraph"
-    "\internal"
-    "\invariant"
-    "\interface"
-    "\latexinclude"
-    "\latexonly"
-    "\li"
-    "\line"
-    "\lineinfo"
-    "\link"
-    "\mainpage"
-    "\maninclude"
-    "\manonly"
-    "\memberof"
-    "\module"
-    "\msc"
-    "\mscfile"
-    "\n"
-    "\name"
-    "\namespace"
-    "\noop"
-    "\nosubgrouping"
-    "\note"
-    "\overload"
-    "\p"
-    "\package"
-    "\page"
-    "\par"
-    "\paragraph"
-    "\param"
-    "\parblock"
-    "\post"
-    "\pre"
-    "\private"
-    "\privatesection"
-    "\property"
-    "\protected"
-    "\protectedsection"
-    "\protocol"
-    "\public"
-    "\publicsection"
-    "\pure"
-    "\qualifier"
-    "\raisewarning"
-    "\ref"
-    "\refitem"
-    "\related"
-    "\relates"
-    "\relatedalso"
-    "\relatesalso"
-    "\remark"
-    "\remarks"
-    "\result"
-    "\return"
-    "\returns"
-    "\retval"
-    "\rtfinclude"
-    "\rtfonly"
-    "\sa"
-    "\secreflist"
-    "\section"
-    "\see"
-    "\short"
-    "\showdate"
-    "\showinitializer"
-    "\showinlinesource"
-    "\showrefby"
-    "\showrefs"
-    "\since"
-    "\skip"
-    "\skipline"
-    "\snippet"
-    "\snippetdoc"
-    "\snippetlineno"
-    "\static"
-    "\startuml"
-    "\struct"
-    "\subpage"
-    "\subsection"
-    "\subsubsection"
-    "\tableofcontents"
-    "\test"
-    "\throw"
-    "\throws"
-    "\todo"
-    "\tparam"
-    "\typedef"
-    "\union"
-    "\until"
-    "\var"
-    "\verbatim"
-    "\verbinclude"
-    "\version"
-    "\vhdlflow"
-    "\warning"
-    "\weakgroup"
-    "\xmlinclude"
-    "\xmlonly"
-    "\xrefitem"
-    "\$"
-    "\@"
-    "\\"
-    "\&"
-    "\~"
-    "\<"
-    "\="
-    "\>"
-    "\#"
-    "\%"
-    "\""
-    "\."
-    "\::"
-    "\|"
-    "\--"
-    "\---"
-
-END DEFINE
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                                           ;;
-;; FUNDAMENTALS                                                              ;;
-;;                                                                           ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-DELETE PLACEHOLDER TEXT
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER TEXT
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=TERMINAL
-
-    "Please enter a valid text"
-
-END DEFINE
-
-
-DELETE PLACEHOLDER NAME
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER NAME
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=TERMINAL
-
-    "Please enter a valid name"
-
-END DEFINE
-
-
-DELETE PLACEHOLDER DESCRIPTION
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER DESCRIPTION
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=TERMINAL
-
-    "Please enter a description"
-
-END DEFINE
-
-
-DELETE PLACEHOLDER TITLE
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER TITLE
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=TERMINAL
-
-    "Please enter a title"
-
-END DEFINE
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                                           ;;
-;; RUNTIME EVAL                                                              ;;
-;;                                                                           ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-DELETE PLACEHOLDER YYYY
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER YYYY
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TRANSFORM=psimacs/else/transform-insert-year
-    /TYPE=NONTERMINAL
-
-    "Please enter a valid year: YYYY"
-
-END DEFINE
-
-
-DELETE PLACEHOLDER "DD-MM-YYYY"
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER "DD-MM-YYYY"
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TRANSFORM=psimacs/else/transform-insert-date
-    /TYPE=NONTERMINAL
-
-    "Please enter a valid date: DD.MM.YYYY"
-
-END DEFINE
-
-
-DELETE PLACEHOLDER FILENAME
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER FILENAME
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TRANSFORM=psimacs/else/transform-insert-buffer-name
-    /TYPE=NONTERMINAL
-
-    "Please enter a valid filename."
-
-END DEFINE
-
-
-DELETE PLACEHOLDER "BASE-FILENAME"
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER "BASE-FILENAME"
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TRANSFORM=psimacs/else/transform-insert-buffer-basename
-    /TYPE=NONTERMINAL
-
-    "Please enter a valid filename."
-
-END DEFINE
-
-
-DELETE PLACEHOLDER AUTHOR
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER AUTHOR
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TRANSFORM=psimacs/else/transform-insert-author
-    /TYPE=NONTERMINAL
-
-    "Please enter a valid author name."
-
-END DEFINE
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                                           ;;
-;; MISCELLANEOUS                                                             ;;
-;;                                                                           ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-DELETE PLACEHOLDER LICENSER
-    /LANGUAGE="C++"
-DEFINE PLACEHOLDER LICENSER
-    /LANGUAGE="C++"
-    /NOAUTO_SUBSTITUTE
-    /DESCRIPTION=""
-    /DUPLICATION=VERTICAL
-    /SEPARATOR=""
-    /TYPE=MENU
-
-    "Johannes Brunen <jbrunen@gmx.de>"
-    "Johannes Brunen <hatlafax@gmx.de>"
-    "Hatlafax <hatlafax@gmx.de>"
-    "Johannes Brunen <Brunen.Johannes@scheidt-bachmann.de>"
-    "(c) [YYYY] Scheidt & Bachmann GmbH, Mönchengladbach"
-    "{text}"
 
 END DEFINE
