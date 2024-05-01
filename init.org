@@ -2623,6 +2623,19 @@ Auto saving is performed by *Psimacs* a lot.
   "The psimacs auto save directory.")
 #+end_src
 
+** Dirvish
+
+The directory [[https://github.com/alexluigit/dirvish][dirvish]] stores its runtime files.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for dirvish
+;;
+(defconst psimacs/config/dirvish-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "dirvish")
+  "The psimacs dirvish directory.")
+#+end_src
+
 ** Bookmarking
 
 *Psimacs* uses the [[https://github.com/joodland/bm][Visible bookmarks in buffer (bm)]] for bookmarking.
@@ -5568,7 +5581,7 @@ References about customization:
     (load custom-file)
 )
 
-(add-hook 'kill-emacs-query-functions 'custom-prompt-customize-unsaved-options)
+;;(add-hook 'kill-emacs-query-functions 'custom-prompt-customize-unsaved-options)
 #+end_src
 
 ** Encoding system
@@ -9135,6 +9148,34 @@ Some usefule key bindings and commands:
 )
 #+end_src
 
+
+*** Dired-Sidebar
+
+[[https://github.com/jojojames/dired-sidebar][Dired-sidebar]] is a sidebar enhancement for dired.
+
+#+begin_src emacs-lisp :tangle config/init-basic-handling.el
+;;
+;; A fancy sidebar for dired
+;;
+(use-package dired-sidebar
+    :commands (dired-sidebar-toggle-sidebar)
+    ;:init
+    ;    (add-hook 'dired-sidebar-mode-hook
+    ;      (lambda ()
+    ;        (unless (file-remote-p default-directory)
+    ;           (auto-revert-mode))))
+    ;:config
+    ;  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+    ;  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+    ;  (setq dired-sidebar-subtree-line-prefix "__")
+    ;  (setq dired-sidebar-theme 'vscode)
+    ;  (setq dired-sidebar-use-term-integration t)
+    ;  (setq dired-sidebar-use-custom-font t)
+    :bind
+        ("C-c C-s" . dired-sidebar-toggle-sidebar)
+)
+#+end_src
+
 *** CANCELED Testing Dirvish
 
 #+begin_src emacs-lisp :tangle no config/init-basic-handling.el
@@ -9199,6 +9240,7 @@ Some usefule key bindings and commands:
         (dirvish-attributes '(all-the-icons collapse subtree-state vc-state git-msg))
 
     :config
+        (setq dirvish-cache-dir psimacs/config/dirvish-dir)
 
         ;; Enable mouse drag-and-drop files to other applications
         (setq dired-listing-switches
@@ -9239,6 +9281,48 @@ Some usefule key bindings and commands:
        ("M-s" . dirvish-setup-menu)
        ("M-e" . dirvish-emerge-menu)
        ("M-j" . dirvish-fd-jump))
+)
+
+(use-package dirvish
+  :init
+  (dirvish-override-dired-mode)
+  :custom
+  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("m" "/mnt/"                       "Drives")
+     ("t" "~/.local/share/Trash/files/" "TrashCan")))
+  :config
+  (setq dirvish-cache-dir psimacs/config/dirvish-dir)
+  ;; (dirvish-peek-mode) ; Preview files in minibuffer
+  ;; (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+  (setq dirvish-mode-line-format
+        '(:left (sort symlink) :right (omit yank index)))
+  (setq dirvish-attributes
+        '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg))
+  (setq delete-by-moving-to-trash t)
+  (setq dired-listing-switches
+        "-l --almost-all --human-readable --group-directories-first --no-group")
+  :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+  (("C-c f" . dirvish-fd)
+   :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
+   ("a"   . dirvish-quick-access)
+   ("f"   . dirvish-file-info-menu)
+   ("y"   . dirvish-yank-menu)
+   ("N"   . dirvish-narrow)
+   ("^"   . dirvish-history-last)
+   ("h"   . dirvish-history-jump) ; remapped `describe-mode'
+   ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+   ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+   ("TAB" . dirvish-subtree-toggle)
+   ("M-f" . dirvish-history-go-forward)
+   ("M-b" . dirvish-history-go-backward)
+   ("M-l" . dirvish-ls-switches-menu)
+   ("M-m" . dirvish-mark-menu)
+   ("M-t" . dirvish-layout-toggle)
+   ("M-s" . dirvish-setup-menu)
+   ("M-e" . dirvish-emerge-menu)
+   ("M-j" . dirvish-fd-jump))
 )
 #+end_src
 
@@ -16647,7 +16731,7 @@ The following are basic [[https://code.orgmode.org/bzg/org-mode][org-mode]] sett
         ;;
         (setq
             org-todo-keywords '(
-                (sequence "TODO(t/!)" "WORK(w/!)" "WAIT(a/!)" "HOLD(h@/!)" "|" "DONE(d/!)" "STOP(s@/!)")
+                (sequence "TODO(t/!)" "WORK(w/!)" "WAIT(a/!)" "HOLD(h@/!)" "PR(p@/!)" "MERGING(m@/!)" "|" "DONE(d/!)" "STOP(s@/!)" "MERGED(d/!)")
                 (sequence "REPORT(r/!)" "BUG(b/!)" "FEEDBACK(f@/!)" "WAITING(i@/!)" "VERIFY(v@/!)" "KNOWNCAUSE(k@/!)" "|" "FIXED(x/!)")
                 (sequence "|" "CANCELED(c@/!)" "DELEGATED(e@/!)")
             )
@@ -16659,6 +16743,9 @@ The following are basic [[https://code.orgmode.org/bzg/org-mode][org-mode]] sett
                 ("WORK"         . (:foreground "LawnGreen" :weight bold))
                 ("WAIT"         . (:foreground "DeepPink"  :weight bold))
                 ("HOLD"         . (:foreground "DeepPink"  :weight bold))
+                ("PR"           . (:foreground "DeepPink"  :weight bold))
+                ("MERGING"      . (:foreground "LawnGreen" :weight bold))
+                ("MERGED"       . (:foreground "DimGray"   :weight bold)) ;(org-done))
                 ("DONE"         . (:foreground "DimGray"   :weight bold)) ;(org-done))
                 ("STOP"         . (:foreground "DimGray"   :weight bold)) ;(org-done))
 
@@ -16746,8 +16833,11 @@ A list of useful tags is predefined by *Psimacs*.
                 ("work"         . (:foreground "OrangeRed"))
                 ("wait"         . (:foreground "OrangeRed"))
                 ("hold"         . (:foreground "OrangeRed"))
+                ("pr"           . (:foreground "OrangeRed"))
+                ("merging"      . (:foreground "OrangeRed"))
                 ("done"         . (:foreground "OrangeRed"))
                 ("stop"         . (:foreground "OrangeRed"))
+                ("merged"       . (:foreground "OrangeRed"))
                 ("report"       . (:foreground "OrangeRed"))
                 ("bug"          . (:foreground "OrangeRed"))
                 ("feedback"     . (:foreground "OrangeRed"))
@@ -16781,8 +16871,7 @@ A list of useful tags is predefined by *Psimacs*.
 
         ;; Available key shortcuts for further tags.
         ;; h j k u
-        ;; G M N Q U
-        ;; 0
+        ;; G N U
 
         (setq org-tag-persistent-alist
             '(
@@ -16844,8 +16933,11 @@ A list of useful tags is predefined by *Psimacs*.
                 ("work"         . ?W)
                 ("wait"         . ?A)
                 ("hold"         . ?H)
+                ("pr"           . ?Q)
+                ("merging"      . ?M)
                 ("done"         . ?D)
                 ("stop"         . ?S)
+                ("merged"       . ?0)
 
                 ("report"       . ?R)
                 ("bug"          . ?B)
@@ -16906,24 +16998,27 @@ For each /ToDo/-state a corresponding /tag/ is defined above. This section defin
     :config
         (setq org-todo-state-tags-triggers
             (quote (
-                (""            ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") (""           . nil))
-                ("TODO"                 ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("todo"       . t))
-                ("WORK"        ("todo")          ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("work"       . t))
-                ("WAIT"        ("todo") ("work")          ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("wait"       . t))
-                ("HOLD"        ("todo") ("work") ("wait")          ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("hold"       . t))
-                ("DONE"        ("todo") ("work") ("wait") ("hold")          ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("done"       . t))
-                ("STOP"        ("todo") ("work") ("wait") ("hold") ("done")          ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("stop"       . t))
+                (""            ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") (""           . nil))
+                ("TODO"                 ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("todo"       . t))
+                ("WORK"        ("todo")          ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("work"       . t))
+                ("WAIT"        ("todo") ("work")          ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("wait"       . t))
+                ("HOLD"        ("todo") ("work") ("wait")          ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("hold"       . t))
+                ("PR"          ("todo") ("work") ("wait") ("hold")        ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("pr"         . t))
+                ("MERGING"     ("todo") ("work") ("wait") ("hold") ("pr")             ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("merging"    . t))
+                ("DONE"        ("todo") ("work") ("wait") ("hold") ("pr") ("merging")          ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("done"       . t))
+                ("STOP"        ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done")          ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("stop"       . t))
+                ("MERGED"      ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop")            ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("merged"     . t))
 
-                ("REPORT"      ("todo") ("work") ("wait") ("hold") ("done") ("stop")            ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("report"     . t))
-                ("BUG"         ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report")         ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("bug"        . t))
-                ("FEEDBACK"    ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug")              ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("feedback"   . t))
-                ("WAITING"     ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback")             ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("waiting"    . t))
-                ("VERIFY"      ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting")            ("knowncause") ("fixed") ("canceled") ("delegated") ("verify"    . t))
-                ("KNOWNCAUSE"  ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify")                ("fixed") ("canceled") ("delegated") ("knowncause" . t))
-                ("FIXED"       ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause")           ("canceled") ("delegated") ("fixed"      . t))
+                ("REPORT"      ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged")            ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("report"     . t))
+                ("BUG"         ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report")         ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("bug"        . t))
+                ("FEEDBACK"    ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug")              ("waiting") ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("feedback"   . t))
+                ("WAITING"     ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback")             ("verify") ("knowncause") ("fixed") ("canceled") ("delegated") ("waiting"    . t))
+                ("VERIFY"      ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting")            ("knowncause") ("fixed") ("canceled") ("delegated") ("verify"     . t))
+                ("KNOWNCAUSE"  ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify")                ("fixed") ("canceled") ("delegated") ("knowncause" . t))
+                ("FIXED"       ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause")           ("canceled") ("delegated") ("fixed"      . t))
 
-                ("CANCELED"    ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed")              ("delegated") ("canceled"   . t))
-                ("DELEGATED"   ("todo") ("work") ("wait") ("hold") ("done") ("stop") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled")               ("delegated"  . t))
+                ("CANCELED"    ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed")              ("delegated") ("canceled"   . t))
+                ("DELEGATED"   ("todo") ("work") ("wait") ("hold") ("pr") ("merging") ("done") ("stop") ("merged") ("report") ("bug") ("feedback") ("waiting") ("verify") ("knowncause") ("fixed") ("canceled")               ("delegated"  . t))
             ))
         )
 )
@@ -17980,6 +18075,8 @@ Prettify headings and plain lists in Org mode. Package [[https://github.com/inte
         ;        ("WORK"         . ?☐)
         ;        ("WAIT"         . ?☐)
         ;        ("HOLD"         . ?☐)
+        ;        ("PR"           . ?☐)
+        ;        ("MERGE"        . ?☐)
         ;        ("DONE"         . ?✔)
         ;        ("STOP"         . ?☐)
         ;
