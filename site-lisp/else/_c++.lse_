@@ -1,0 +1,5218 @@
+;; Copyright (C) 2024 Johannes Brunen
+;;
+;; Author: Johannes Brunen <hatlafax@gmx.de>,
+;;
+;; $Date: 2024/03/07 $
+;; Version: 1.0
+;; Keywords: language sensitive abbreviation template placeholder token
+;;
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation version 3, 29 June 2007.
+;;
+
+DELETE LANGUAGE C++
+DEFINE LANGUAGE C++
+    /INITIAL_STRING="{translation-unit}"
+    /PUNCTUATION_CHARACTERS="*;().,"
+    /VALID_IDENTIFIER_CHARACTERS="a-zA-Z_0-9-"
+    /INDENT_SIZE=4
+
+END DEFINE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                                           ;;
+;; Termninals                                                                ;;
+;;                                                                           ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+DELETE PLACEHOLDER "pre-proc-arg"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pre-proc-arg"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid preprocessor argument"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "number"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "number"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid number"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=", "
+    /TYPE=TERMINAL
+
+    "Please enter a valid identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "scoped-identifier-terminal"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "scoped-identifier-terminal"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid scoped-identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid type-identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid field-identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "statement-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "statement-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid statement-identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "namespace-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "namespace-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid namespace-identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR="::"
+    /TYPE=TERMINAL
+
+    "Please enter a valid attribute-identifier"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "text"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "text"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid text"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "partition-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "partition-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid partition-name"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "macro-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "macro-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=VERTICAL
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+
+    "Please enter a valid partition-name"
+
+END DEFINE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                                           ;;
+;; Menus                                                                     ;;
+;;                                                                           ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+DELETE PLACEHOLDER "top-level-item"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "top-level-item"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "includes"/PLACEHOLDER
+    "function-definition"/PLACEHOLDER
+    "linkage-specification"/PLACEHOLDER
+    "declaration"/PLACEHOLDER
+    "export-declaration"/PLACEHOLDER
+    "import-declaration"/PLACEHOLDER
+    "statement"/PLACEHOLDER
+    "type-definition"/PLACEHOLDER
+    "empty-declaration"/PLACEHOLDER
+    "namespace-definition"/PLACEHOLDER
+    "concept-definition"/PLACEHOLDER
+    "using-declaration"/PLACEHOLDER
+    "alias-declaration"/PLACEHOLDER
+    "static-assert-declaration"/PLACEHOLDER
+    "template-declaration"/PLACEHOLDER
+    "template-instantiation"/PLACEHOLDER
+    "constructor-or-destructor-definition"/PLACEHOLDER
+    "operator-cast-definition"/PLACEHOLDER
+    "operator-cast-declaration"/PLACEHOLDER
+    "module-declaration"/PLACEHOLDER
+    "pre-proc-directive"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "char-literal"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "char-literal"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "'[text]'"
+    "L'[text]'"
+    "u'[text]'"
+    "U'[text]'"
+    "u8'[text]'"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    ""[text]""
+    "L"[text]""
+    "u"[text]""
+    "U"[text]""
+    "u8"[text]""
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "raw-string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "raw-string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "R"[text]""
+    "LR"[text]""
+    "uR"[text]""
+    "UR"[text]""
+    "u8R"[text]""
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "string | system-lib-string | identifier argument-list?"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "string | system-lib-string | identifier argument-list?"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "string"/PLACEHOLDER
+    "system-lib-string"/PLACEHOLDER
+    "{identifier} [argument-list]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "pre-proc-directive"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pre-proc-directive"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "includes"/PLACEHOLDER
+    "#include {string | system-lib-string | identifier argument-list?}"
+    "#define {identifier} [pre-proc-params] [pre-proc-arg]"
+    "#undef {identifier}"
+    "#if {pre-proc-arg}"
+    "#ifdef {identifier}"
+    "#ifndef {identifier}"
+    "#elif {pre-proc-arg}"
+    "#else"
+    "#endif"
+    "#pragma once"
+    "#{pre-proc-keyword-menu} [pre-proc-arg]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier | ..."
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier | ..."
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "identifier"/PLACEHOLDER
+    "..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "compound-statement | try-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "compound-statement | try-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "compound-statement"/PLACEHOLDER
+    "try-statement"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "declarator-function"/PLACEHOLDER
+    "field-declarator-function"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declarator | init-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declarator | init-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "declarator"/PLACEHOLDER
+    "init-declarator"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declarator | abstract-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declarator | abstract-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "declarator"/PLACEHOLDER
+    "abstract-declarator"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER "storage-class-specifier | type-qualifier | attribute-specifier | ms-declspec-modifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "storage-class-specifier | type-qualifier | attribute-specifier | ms-declspec-modifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=HORIZONTAL
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "storage-class-specifier"/PLACEHOLDER
+    "type-qualifier"/PLACEHOLDER
+    "attribute-specifier"/PLACEHOLDER
+    "ms-declspec-modifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-definition | declaration | compound-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-definition | declaration | compound-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "function-definition"/PLACEHOLDER
+    "declaration"/PLACEHOLDER
+    "compound-statement"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "ms-call-modifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "ms-call-modifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "__cdecl"
+    "__clrcall"
+    "__stdcall"
+    "__fastcall"
+    "__thiscall"
+    "__vectorcall"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "ms-pointer-modifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "ms-pointer-modifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "__restrict"
+    "__uptr"
+    "__sptr"
+    "_unaligned"
+    "__unaligned"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "pointer-declarator"/PLACEHOLDER
+    "function-declarator"/PLACEHOLDER
+    "array-declarator"/PLACEHOLDER
+    "parenthesized-declarator"/PLACEHOLDER
+    "identifier"/PLACEHOLDER
+    "reference-declarator"/PLACEHOLDER
+    "scoped-identifier"/PLACEHOLDER
+    "template-function"/PLACEHOLDER
+    "operator-name"/PLACEHOLDER
+    "destructor-name"/PLACEHOLDER
+    "structured-binding-declarator"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression | *"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression | *"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "expression"/PLACEHOLDER
+    "*"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-qualifier | virtual-specifier | & | && | no-except | requires-clause | throw-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-qualifier | virtual-specifier | & | && | no-except | requires-clause | throw-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "type-qualifier"/PLACEHOLDER
+    "virtual-specifier"/PLACEHOLDER
+    "&"
+    "&&"
+    "no-except"/PLACEHOLDER
+    "requires-clause"/PLACEHOLDER
+    "throw-specifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "pointer-field-declarator"/PLACEHOLDER
+    "function-field-declarator"/PLACEHOLDER
+    "array-field-declarator"/PLACEHOLDER
+    "parenthesized-field-declarator"/PLACEHOLDER
+    "field-identifier"/PLACEHOLDER
+    "reference-field-declarator"/PLACEHOLDER
+    "template-method"/PLACEHOLDER
+    "operator-name"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "pointer-type-declarator"/PLACEHOLDER
+    "function-type-declarator"/PLACEHOLDER
+    "array-type-declarator"/PLACEHOLDER
+    "parenthesized-type-declarator"/PLACEHOLDER
+    "type-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "abstract-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "abstract-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "abstract-pointer-declarator"/PLACEHOLDER
+    "abstract-function-declarator"/PLACEHOLDER
+    "abstract-array-declarator"/PLACEHOLDER
+    "abstract-parenthesized-declarator"/PLACEHOLDER
+    "abstract-reference-declarator"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-qualifier | & | && | no-except | throw-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-qualifier | & | && | no-except | throw-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "type-qualifier"/PLACEHOLDER
+    "&"
+    "&&"
+    "no-except"/PLACEHOLDER
+    "throw-specifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "initializer-list | expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "initializer-list | expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "initializer-list"/PLACEHOLDER
+    "expression"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression | initializer-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression | initializer-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "expression"/PLACEHOLDER
+    "initializer-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "init-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "init-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{declarator} = {initializer-list | expression}"
+    "{declarator} {argument-list | initializer-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "storage-class-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "storage-class-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "extern"
+    "static"
+    "register"
+    "inline"
+    "thread_local"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-qualifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-qualifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "const"
+    "volatile"
+    "restrict"
+    "_Atomic"
+    "mutable"
+    "constexpr"
+    "constinit"
+    "consteval"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "struct-specifier"/PLACEHOLDER
+    "union-specifier"/PLACEHOLDER
+    "class-specifier"/PLACEHOLDER
+    "enum-specifier"/PLACEHOLDER
+    "dependent-type"/PLACEHOLDER
+    "decl-type"/PLACEHOLDER
+    "sized-type-specifier"/PLACEHOLDER
+    "primitive-type"/PLACEHOLDER
+    "auto"
+    "scoped-type-identifier"/PLACEHOLDER
+    "type-identifier"/PLACEHOLDER
+    "template-type"/PLACEHOLDER
+    "placeholder-type-specifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class | struct"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class | struct"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "class"
+    "struct"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class-name enum-base-clause? enumerator-list? | enumerator-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class-name enum-base-clause? enumerator-list? | enumerator-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{class-name} [enum-base-clause] [enumerator-list]"
+    "enumerator-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "enum-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "enum-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "enum [class | struct]"
+    "class-name enum-base-clause? enumerator-list? | enumerator-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "auto | decl-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "auto | decl-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "auto"
+    "decl-type"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class-name | class-name? virtual-specifier? base-class-clause? field-declaration-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class-name | class-name? virtual-specifier? base-class-clause? field-declaration-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "class-name"/PLACEHOLDER
+    "[class-name] [virtual-specifier] [base-class-clause] {field-declaration-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression | auto"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression | auto"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "expression"/PLACEHOLDER
+    "auto"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "signed | unsigned | long | short"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "signed | unsigned | long | short"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "signed"
+    "unsigned"
+    "long"
+    "short"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-declaration-list-item"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-declaration-list-item"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "field-declaration"/PLACEHOLDER
+    "template-declaration"/PLACEHOLDER
+    "function-definition"/PLACEHOLDER
+    "function-declaration"/PLACEHOLDER
+    "operator-cast-declaration"/PLACEHOLDER
+    "friend-declaration"/PLACEHOLDER
+    "access-specifier"/PLACEHOLDER
+    "alias-declaration"/PLACEHOLDER
+    "using-declaration"/PLACEHOLDER
+    "type-definition"/PLACEHOLDER
+    "static-assert-declaration"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "bitfield-clause | initializer-list | = (expression | initializer-list)"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "bitfield-clause | initializer-list | = (expression | initializer-list)"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "bitfield-clause"/PLACEHOLDER
+    "initializer-list"/PLACEHOLDER
+    "= {expression}"
+    "initializer-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "compound-statement | try-statement | default-method-clause | delete-method-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "compound-statement | try-statement | default-method-clause | delete-method-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "compound-statement"/PLACEHOLDER
+    "try-statement"/PLACEHOLDER
+    "default-method-clause"/PLACEHOLDER
+    "delete-method-clause"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "virtual | explicit-function-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "virtual | explicit-function-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "virtual"
+    "explicit-function-specifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "case-statement"/PLACEHOLDER
+    "non-case-statement"/PLACEHOLDER
+    "attribute-statement"/PLACEHOLDER
+    "for-range-loop"/PLACEHOLDER
+    "try-statement"/PLACEHOLDER
+    "throw-statement"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "non-case-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "non-case-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "labeled-statement"/PLACEHOLDER
+    "compound-statement"/PLACEHOLDER
+    "expression-statement"/PLACEHOLDER
+    "if-statement"/PLACEHOLDER
+    "switch-statement"/PLACEHOLDER
+    "do-statement"/PLACEHOLDER
+    "while-statement"/PLACEHOLDER
+    "for-statement"/PLACEHOLDER
+    "return-statement"/PLACEHOLDER
+    "break-statement"/PLACEHOLDER
+    "continue-statement"/PLACEHOLDER
+    "goto-statement"/PLACEHOLDER
+    "co-return-statement"/PLACEHOLDER
+    "co-yield-statement"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "case-statement | non-case-statement | for-range-loop | try-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "case-statement | non-case-statement | for-range-loop | try-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "case-statement"/PLACEHOLDER
+    "non-case-statement"/PLACEHOLDER
+    "for-range-loop"/PLACEHOLDER
+    "try-statement"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "case expression | default"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "case expression | default"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "case {expression}"
+    "default"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "non-case-statement | attribute-statement | declaration | type-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "non-case-statement | attribute-statement | declaration | type-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "non-case-statement"/PLACEHOLDER
+    "attribute-statement"/PLACEHOLDER
+    "declaration"/PLACEHOLDER
+    "type-definition"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression | comma-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression | comma-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "expression"/PLACEHOLDER
+    "comma-expression"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declaration | (expression | comma-expression)?;"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declaration | (expression | comma-expression)?;"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "declaration"/PLACEHOLDER
+    "[expression | comma-expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "return-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "return-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "return [expression | comma-expression];"
+    "return {initializer-list};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "conditional-expression"/PLACEHOLDER
+    "assignment-expression"/PLACEHOLDER
+    "binary-expression"/PLACEHOLDER
+    "unary-expression"/PLACEHOLDER
+    "update-expression"/PLACEHOLDER
+    "cast-expression"/PLACEHOLDER
+    "pointer-expression"/PLACEHOLDER
+    "sizeof-expression"/PLACEHOLDER
+    "co-await-expression"/PLACEHOLDER
+    "requires-expression"/PLACEHOLDER
+    "subscript-expression"/PLACEHOLDER
+    "call-expression"/PLACEHOLDER
+    "field-expression"/PLACEHOLDER
+    "compound-literal-expression"/PLACEHOLDER
+    "identifier"/PLACEHOLDER
+    "number"/PLACEHOLDER
+    "string"/PLACEHOLDER
+    "True"/PLACEHOLDER
+    "False"/PLACEHOLDER
+    "NULL"
+    "concatenated-string"/PLACEHOLDER
+    "char-literal"/PLACEHOLDER
+    "parenthesized-expression"/PLACEHOLDER
+    "template-function"/PLACEHOLDER
+    "scoped-identifier"/PLACEHOLDER
+    "operator-name"/PLACEHOLDER
+    "new-expression"/PLACEHOLDER
+    "delete-expression"/PLACEHOLDER
+    "lambda-expression"/PLACEHOLDER
+    "parameter-pack-expansion"/PLACEHOLDER
+    "nullptr"
+    "this"
+    "raw-string"/PLACEHOLDER
+    "user-defined-literal"/PLACEHOLDER
+    "param-pack"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "update-op | ="
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "update-op | ="
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "update-op"/PLACEHOLDER
+    "="
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "assignment-expression-types"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "assignment-expression-types"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "identifier"/PLACEHOLDER
+    "call-expression"/PLACEHOLDER
+    "field-expression"/PLACEHOLDER
+    "pointer-expression"/PLACEHOLDER
+    "subscript-expression"/PLACEHOLDER
+    "parenthesized-expression"/PLACEHOLDER
+    "scoped-namespace-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "unary-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "unary-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "!"
+    "+"
+    "-"
+    "~"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "binary-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "binary-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{expression} {+ - / % *} {expression}"
+    "{expression} {|| &&} {expression}"
+    "{expression} {| ^ & << >>} {expression}"
+    "{expression} {== != < <= > >= <=>} {expression}"
+    "{expression} {++ --} {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "update-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "update-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{++ --}{expression}"
+    "{expression}{++ --}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression | (type-descriptor)"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression | (type-descriptor)"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "expression"/PLACEHOLDER
+    "({type-descriptor})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "sizeof-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "sizeof-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "sizeof {expression | (type-descriptor)}"
+    "sizeof ... ({identifier})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "requirement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "requirement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{return-type-requirement};"
+    "{requires-clause};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "call-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "call-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{expression} {argument-list}"
+    "{primitive-type} {argument-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "destructor-name | template-method"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "destructor-name | template-method"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "destructor-name"/PLACEHOLDER
+    "template-method"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{expression} {. ->} {field-identifier}"
+    "{expression} {. ->} {destructor-name | template-method}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-identifier | template-type | scoped-type-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-identifier | template-type | scoped-type-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "type-identifier"/PLACEHOLDER
+    "template-type"/PLACEHOLDER
+    "scoped-type-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "compound-literal-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "compound-literal-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "({type-descriptor}) {initializer-list}"
+    "{type-identifier | template-type | scoped-type-identifier} {initializer-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "subscript-designator | field-designator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "subscript-designator | field-designator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "subscript-designator"/PLACEHOLDER
+    "field-designator"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "raw-string | string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "raw-string | string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "raw-string"/PLACEHOLDER
+    "string"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "number | char-literal | string | raw-string | concatenated-string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "number | char-literal | string | raw-string | concatenated-string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "number"/PLACEHOLDER
+    "char-literal"/PLACEHOLDER
+    "string"/PLACEHOLDER
+    "raw-string"/PLACEHOLDER
+    "concatenated-string"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "type-identifier"/PLACEHOLDER
+    "scoped-type-identifier"/PLACEHOLDER
+    "template-type"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "virtual-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "virtual-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "final"
+    "override"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "explicit-function-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "explicit-function-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "explicit"
+    "explicit ({expression})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "access | virtual"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "access | virtual"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "access"/PLACEHOLDER
+    "virtual"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "scoped-type-identifier | type-identifier | sized-type-specifier | primitive-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "scoped-type-identifier | type-identifier | sized-type-specifier | primitive-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "scoped-type-identifier"/PLACEHOLDER
+    "type-identifier"/PLACEHOLDER
+    "sized-type-specifier"/PLACEHOLDER
+    "primitive-type"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-declaration-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-declaration-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "empty-declaration"/PLACEHOLDER
+    "alias-declaration"/PLACEHOLDER
+    "declaration"/PLACEHOLDER
+    "template-declaration"/PLACEHOLDER
+    "friend-declaration"/PLACEHOLDER
+    "function-definition"/PLACEHOLDER
+    "concept-definition"/PLACEHOLDER
+    "constructor-or-destructor-definition"/PLACEHOLDER
+    "operator-cast-definition"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "constraint"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "constraint"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "True"/PLACEHOLDER
+    "False"/PLACEHOLDER
+    "class-name"/PLACEHOLDER
+    "parenthesized-expression"/PLACEHOLDER
+    "lambda-expression"/PLACEHOLDER
+    "requires-expression"/PLACEHOLDER
+    "constraint-conjuction"/PLACEHOLDER
+    "constraint-disjunction"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-parameter"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-parameter"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "parameter-declaration"/PLACEHOLDER
+    "optional-parameter-declaration"/PLACEHOLDER
+    "type-parameter-declaration"/PLACEHOLDER
+    "variadic-parameter-declaration"/PLACEHOLDER
+    "optional-type-parameter-declaration"/PLACEHOLDER
+    "variadic-type-parameter-declaration"/PLACEHOLDER
+    "template-template-parameter-declaration"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-parameter-declaration | variadic-type-parameter-declaration | optional-type-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-parameter-declaration | variadic-type-parameter-declaration | optional-type-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "type-parameter-declaration"/PLACEHOLDER
+    "variadic-type-parameter-declaration"/PLACEHOLDER
+    "optional-type-parameter-declaration"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "typename | class"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "typename | class"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "typename"
+    "class"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "variadic-declarator | reference-variadic-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "variadic-declarator | reference-variadic-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "variadic-declarator"/PLACEHOLDER
+    "reference-variadic-declarator"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "namespace-identifier | template-type | scoped-namespace-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "namespace-identifier | template-type | scoped-namespace-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "namespace-identifier"/PLACEHOLDER
+    "template-type"/PLACEHOLDER
+    "scoped-namespace-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(namespace-identifier | template-type | scoped-namespace-identifier)? ::operator | operator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(namespace-identifier | template-type | scoped-namespace-identifier)? ::operator | operator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "(namespace-identifier | template-type | scoped-namespace-identifier)? ::operator"/PLACEHOLDER
+    "operator"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-identifier | scoped-field-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-identifier | scoped-field-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "field-identifier"/PLACEHOLDER
+    "scoped-field-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "initializer-list | argument-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "initializer-list | argument-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "initializer-list"/PLACEHOLDER
+    "argument-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "initializer-pair | expression | initializer-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "initializer-pair | expression | initializer-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "initializer-pair"/PLACEHOLDER
+    "expression"/PLACEHOLDER
+    "initializer-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "storage-class-specifier | type-qualifier | attribute-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "storage-class-specifier | type-qualifier | attribute-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "storage-class-specifier"/PLACEHOLDER
+    "type-qualifier"/PLACEHOLDER
+    "attribute-specifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class | struct | union"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class | struct | union"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "class"
+    "struct"
+    "union"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declaration | function-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declaration | function-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "declaration"/PLACEHOLDER
+    "function-definition"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declaration | function-definition | (class | struct | union)? class-name;"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declaration | function-definition | (class | struct | union)? class-name;"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "declaration"/PLACEHOLDER
+    "function-definition"/PLACEHOLDER
+    "[class | struct | union] {class-name};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-identifier | scoped-type-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-identifier | scoped-type-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "type-identifier"/PLACEHOLDER
+    "scoped-type-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier | scoped-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier | scoped-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "identifier"/PLACEHOLDER
+    "scoped-identifier"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-descriptor | type-descriptor-parameter-pack-expansion | expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-descriptor | type-descriptor-parameter-pack-expansion | expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "type-descriptor"/PLACEHOLDER
+    "type-descriptor-parameter-pack-expansion"/PLACEHOLDER
+    "expression"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "compound-statement | = (identifier | scoped-identifier);"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "compound-statement | = (identifier | scoped-identifier);"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "compound-statement"/PLACEHOLDER
+    "= {identifier | scoped-identifier};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "namespace | enum"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "namespace | enum"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=" "
+    /TYPE=MENU
+
+    "namespace"
+    "enum"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "string | raw-string | concatenated-string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "string | raw-string | concatenated-string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "string"/PLACEHOLDER
+    "raw-string"/PLACEHOLDER
+    "concatenated-string"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "module-name attribute* | : access"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "module-name attribute* | : access"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{module-name} [attribute]..."
+    ": {access}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "module-name | header-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "module-name | header-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "module-name"/PLACEHOLDER
+    "header-name"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier (.identifier)* module-partition? | module-partition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier (.identifier)* module-partition? | module-partition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{identifier} [.identifier]... [module-partition]"
+    "module-partition"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declaration | expression-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declaration | expression-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "declaration"/PLACEHOLDER
+    "expression-statement"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "= expression | initializer-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "= expression | initializer-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "= expression"/PLACEHOLDER
+    "initializer-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(declaration | expression-statement)? (expression | comma-expression) | declaration { declaration-specifiers declarator (= expression | initializer-list) }"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(declaration | expression-statement)? (expression | comma-expression) | declaration { declaration-specifiers declarator (= expression | initializer-list) }"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "[declaration | expression-statement] {expression | comma-expression}"
+    "{declaration} {declaration-specifiers} {declarator} {= expression | initializer-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "alias-declaration | type-definition | declaration | (expression | comma-expression)?;"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "alias-declaration | type-definition | declaration | (expression | comma-expression)?;"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "alias-declaration"/PLACEHOLDER
+    "type-definition"/PLACEHOLDER
+    "declaration"/PLACEHOLDER
+    "[expression | comma-expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "balanced-tokens"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "balanced-tokens"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "{[balanced-tokens]...}"
+    "[[balanced-tokens]...]"
+    "([balanced-tokens]...)"
+    "attribute-identifier"/PLACEHOLDER
+    "++ --"/PLACEHOLDER
+    "+ - / % *"/PLACEHOLDER
+    "|| &&"/PLACEHOLDER
+    "| ^ & << >>"/PLACEHOLDER
+    "update-op"/PLACEHOLDER
+    "number"/PLACEHOLDER
+    "string"/PLACEHOLDER
+    "raw-string"/PLACEHOLDER
+    "char-literal"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "argument-list | initializer-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "argument-list | initializer-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "argument-list"/PLACEHOLDER
+    "initializer-list"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(, ,SEP-1<expression>)? | ,SEP-1<expression> | ''"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(, ,SEP-1<expression>)? | ,SEP-1<expression> | ''"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "[, ,SEP-1<expression>]"
+    "{expression}..."
+    ""
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "namespace-identifier | template-type | scoped-namespace-identifier | decl-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "namespace-identifier | template-type | scoped-namespace-identifier | decl-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "namespace-identifier"/PLACEHOLDER
+    "template-type"/PLACEHOLDER
+    "scoped-namespace-identifier"/PLACEHOLDER
+    "decl-type"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-identifier | operator-name | destructor-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-identifier | operator-name | destructor-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "field-identifier"/PLACEHOLDER
+    "operator-name"/PLACEHOLDER
+    "destructor-name"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier | operator-name | destructor-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier | operator-name | destructor-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "identifier"/PLACEHOLDER
+    "operator-name"/PLACEHOLDER
+    "destructor-name"/PLACEHOLDER
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parameter-declaration | optional-parameter-declaration | variadic-parameter-declaration | ..."
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parameter-declaration | optional-parameter-declaration | variadic-parameter-declaration | ..."
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "parameter-declaration"/PLACEHOLDER
+    "optional-parameter-declaration"/PLACEHOLDER
+    "variadic-parameter-declaration"/PLACEHOLDER
+    "..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "access"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "access"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "public"
+    "private"
+    "protected"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "True"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "True"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "TRUE"
+    "true"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "False"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "False"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "FALSE"
+    "false"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "primitive-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "primitive-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "bool"
+    "char"
+    "int"
+    "float"
+    "double"
+    "void"
+    "size_t"
+    "ssize_t"
+    "intptr_t"
+    "uintptr_t"
+    "charptr_t"
+    "int8_t"
+    "int16_t"
+    "int32_t"
+    "int64_t"
+    "uint8_t"
+    "uint16_t"
+    "uint32_t"
+    "uint64_t"
+    "char8_t"
+    "char16_t"
+    "char32_t"
+    "char64_t"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "op-literal"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "op-literal"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "update-op"/PLACEHOLDER
+    "++ --"/PLACEHOLDER
+    "="
+    "+ - / % *"/PLACEHOLDER
+    "^ ~ & | << >>"/PLACEHOLDER
+    "== != < <= > >= <=>"/PLACEHOLDER
+    "! || &&"/PLACEHOLDER
+    "-> ['*']"
+    "()"
+    "[]"
+    "{new | delete}['[]']"
+    "co_await"
+    """ {identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "new | delete"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "new | delete"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "new"
+    "delete"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "::new | new"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "::new | new"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "::new"
+    "new"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "::delete | delete"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "::delete | delete"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "::delete"
+    "delete"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "= &"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "= &"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "="
+    "&"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "* &"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "* &"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "*"
+    "&"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "& &&"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "& &&"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "&"
+    "&&"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "* / %"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "* / %"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "*"
+    "/"
+    "%"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "+ - / % *"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "+ - / % *"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "+"
+    "-"
+    "/"
+    "%"
+    "*"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "* / % + - & ^ | << >>"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "* / % + - & ^ | << >>"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "*"
+    "/"
+    "%"
+    "+"
+    "-"
+    "&"
+    "^"
+    "|"
+    "<<"
+    ">>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "|| &&"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "|| &&"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "||"
+    "&&"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "! || &&"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "! || &&"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "!"
+    "||"
+    "&&"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "++ --"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "++ --"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "++"
+    "--"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "| ^ & << >>"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "| ^ & << >>"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "|"
+    "^"
+    "&"
+    "<<"
+    ">>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "^ ~ & | << >>"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "^ ~ & | << >>"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "^"
+    "~"
+    "&"
+    "|"
+    "<<"
+    ">>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "== != < <= > >= <=>"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "== != < <= > >= <=>"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "=="
+    "!="
+    "<"
+    "<="
+    ">"
+    ">="
+    "<=>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER ". ->"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER ". ->"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "."
+    "->"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "; : , ... :: . ->"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "; : , ... :: . ->"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    ";"
+    ":"
+    ","
+    "..."
+    "::"
+    "."
+    "->"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "includes"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "includes"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "see c++-cust.lse"
+
+END DEFINE
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                                           ;;
+;; Non-Terminals                                                             ;;
+;;                                                                           ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+DELETE PLACEHOLDER "translation-unit"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "translation-unit"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[top-level-item]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "pre-proc-params"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pre-proc-params"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "( {identifier | ...}...)"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "system-lib-string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "system-lib-string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "<{text}>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declarator-function"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declarator-function"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[attribute]... [ms-call-modifier] {declaration-specifiers} {declarator} {compound-statement | try-statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-declarator-function"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-declarator-function"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[attribute]... [virtual] {declaration-specifiers} {field-declarator} {compound-statement | try-statement | default-method-clause | delete-method-clause}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "virtual"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "virtual"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "virtual"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[attribute]... {declaration-specifiers} {declarator | init-declarator};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[virtual | explicit-function-specifier] {function-declarator};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "typedef [type-qualifier]... {type-specifier} {type-declarator};"
+
+END DEFINE
+Johannes
+
+DELETE PLACEHOLDER "declaration-specifiers"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "declaration-specifiers"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[storage-class-specifier | type-qualifier | attribute-specifier | ms-declspec-modifier]..."
+    "{type-specifier}"
+    "[storage-class-specifier | type-qualifier | attribute-specifier | ms-declspec-modifier]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "linkage-specification"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "linkage-specification"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "extern {string} {function-definition | declaration | compound-statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "__attribute__({argument-list})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "ms-declspec-modifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "ms-declspec-modifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "__declspec({identifier})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "ms-based-modifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "ms-based-modifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "__based {argument-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "pointer-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pointer-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[ms-based-modifier] * [ms-pointer-modifier] [type-qualifier] {declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{declarator} {parameter-list} {function-specifiers} [attribute-specifier]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "array-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "array-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{declarator}[[type-qualifier]... [expression | *]]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parenthesized-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parenthesized-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({declarator})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "reference-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "reference-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{& &&} {declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "structured-binding-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "structured-binding-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[{identifier}...]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-specifiers"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-specifiers"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[type-qualifier | virtual-specifier | & | && | no-except | requires-clause | throw-specifier]... [trailing-return-type]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "pointer-field-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pointer-field-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[ms-based-modifier] * [ms-pointer-modifier]... [type-qualifier]... {field-declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-field-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-field-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{field-declarator} {parameter-list} {function-specifiers}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "array-field-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "array-field-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{field-declarator}[[type-qualifier]... [expression | *]]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parenthesized-field-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parenthesized-field-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({field-declarator})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "reference-field-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "reference-field-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{& &&} {field-declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "pointer-type-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pointer-type-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[ms-based-modifier] * [ms-pointer-modifier]... [type-qualifier]... {type-declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "function-type-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "function-type-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{type-declarator} {parameter-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "array-type-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "array-type-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{type-declarator}[[type-qualifier]... [expression | *]]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parenthesized-type-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parenthesized-type-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({type-declarator})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "abstract-pointer-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "abstract-pointer-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "*[type-qualifier]... [abstract-declarator]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "abstract-array-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "abstract-array-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[abstract-declarator][[type-qualifier]... [expression | *]]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "abstract-parenthesized-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "abstract-parenthesized-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({abstract-declarator})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "abstract-reference-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "abstract-reference-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{& &&} [abstract-declarator]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "abstract-function-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "abstract-function-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[abstract-declarator] {parameter-list} [type-qualifier | & && | no-except | throw-specifier]... [trailing-return-type]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "compound-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "compound-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{"
+    "    [top-level-item]..."
+    "}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "struct-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "struct-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "struct {class-specification}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "union-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "union-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "union {class-specification}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "class {class-specification}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "dependent-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "dependent-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "typename {type-specifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "placeholder-type-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "placeholder-type-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{type-specifier} {auto | decl-type}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "class-specification"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "class-specification"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[ms-declspec-modifier] [attribute]... {class-name | class-name? virtual-specifier? base-class-clause? field-declaration-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "decl-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "decl-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "decltype({expression | auto})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "sized-type-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "sized-type-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{signed | unsigned | long | short}... [primitive-type]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "enumerator-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "enumerator-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{ [enumerator]... }"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-declaration-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-declaration-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{ [field-declaration-list-item]... }"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[attribute]... [virtual] {declaration-specifiers} [field-declarator]..."
+    "[bitfield-clause | initializer-list | = (expression | initializer-list)];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "bitfield-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "bitfield-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ": {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "= expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "= expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "= {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "enumerator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "enumerator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "{identifier} [= expression]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parameter-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parameter-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "([parameter-declaration | optional-parameter-declaration | variadic-parameter-declaration | ...]...)"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[attribute]... {declaration-specifiers} [declarator | abstract-declarator]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{attribute}... {case-statement | non-case-statement | for-range-loop | try-statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "labeled-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "labeled-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{statement-identifier} : {statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "expression-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "expression-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[expression | comma-expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "else-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "else-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "else {statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "constexpr"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "constexpr"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "constexpr"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "if-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "if-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "if [constexpr] {condition-clause} {statement} [else-statement]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "switch-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "switch-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "switch {condition-clause} {compound-statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "case-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "case-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{case expression | default} : [non-case-statement | attribute-statement | declaration | type-definition]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "while-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "while-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "while {condition-clause} {statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "do-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "do-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "do {statement} while {parenthesized-expression};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "for-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "for-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "for({declaration | (expression | comma-expression)?;} [expression]; [expression | comma-expression]) {statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "break-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "break-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "break;"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "continue-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "continue-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "continue;"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "goto-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "goto-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "goto {statement-identifier};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "co-return-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "co-return-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "co_return [expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "co-yield-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "co-yield-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "co_yield {expression};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "param-pack"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "param-pack"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "comma-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "comma-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{expression}, {expression | comma-expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "conditional-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "conditional-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{expression} ? {expression} : {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "assignment-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "assignment-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{assignment-expression-types} {update-op | =} {expression | initializer-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "pointer-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "pointer-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{* &} {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "cast-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "cast-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({type-descriptor}) {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-descriptor"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-descriptor"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "[type-qualifier]... {type-specifier} [type-qualifier]... [abstract-declarator]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "co-await-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "co-await-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "co_await {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "requires-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "requires-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "requires [parameter-list] { [requirement]... }"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "simple-requirement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "simple-requirement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[expression | comma-expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-requirement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-requirement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "typename {class-name};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "noexcept"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "noexcept"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "noexcept"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "compound-requirement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "compound-requirement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{ {expression} } [noexcept] [return-type-requirement];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "return-type-requirement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "return-type-requirement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "-> {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "subscript-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "subscript-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{expression}[{expression}]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "argument-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "argument-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "([expression | initializer-list]...)"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parenthesized-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parenthesized-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({expression | comma-expression})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "initializer-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "initializer-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{ [initializer-pair | expression | initializer-list]... }"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "initializer-pair"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "initializer-pair"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{subscript-designator | field-designator}... = {expression | initializer-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "subscript-designator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "subscript-designator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[{expression}]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-designator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-designator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ".{field-identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "macro"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "macro"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{macro-name} [argument-list]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "concatenated-string"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "concatenated-string"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{raw-string | string}..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "user-defined-literal"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "user-defined-literal"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{number | char-literal | string | raw-string | concatenated-string} {identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "empty-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "empty-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[attribute]... {type-specifier};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(access | virtual)* class-name ...?"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(access | virtual)* class-name ...?"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "[access | virtual]... {class-name}[...]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "base-class-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "base-class-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ": [attribute]... {(access | virtual)* class-name ...?}..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "enum-base-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "enum-base-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ": {scoped-type-identifier | type-identifier | sized-type-specifier | primitive-type}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "template {template-parameter-list} [requires-clause] {template-declaration-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "requires-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "requires-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "requires {constraint}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "constraint-conjuction"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "constraint-conjuction"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{constraint} && {constraint}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "constraint-disjunction"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "constraint-disjunction"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{constraint} || {constraint}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-instantiation"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-instantiation"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "template [declaration-specifiers] {declarator};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-parameter-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-parameter-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "<[template-parameter]>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-template-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-template-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "template {template-parameter-list}"
+    "{type-parameter-declaration | variadic-type-parameter-declaration | optional-type-parameter-declaration}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{typename | class} [type-identifier]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "optional-type-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "optional-type-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{typename | class} [type-identifier] = {type-specifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "variadic-type-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "variadic-type-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{typename | class}{...} [type-identifier]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "optional-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "optional-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{declaration-specifiers} [declarator] = {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "variadic-parameter-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "variadic-parameter-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{declaration-specifiers} {variadic-declarator | reference-variadic-declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "reference-variadic-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "reference-variadic-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{& &&} {variadic-declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "variadic-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "variadic-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "... [identifier]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(namespace-identifier | template-type | scoped-namespace-identifier)? ::operator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(namespace-identifier | template-type | scoped-namespace-identifier)? ::operator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[namespace-identifier | template-type | scoped-namespace-identifier]::operator"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "operator-cast"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "operator-cast"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{(namespace-identifier | template-type | scoped-namespace-identifier)? ::operator | operator} {declaration-specifiers} {abstract-declarator}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-initializer-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-initializer-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ": {field-initializer}..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "field-initializer"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "field-initializer"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "{field-identifier | scoped-field-identifier} {initializer-list | argument-list}[param-pack]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "operator-cast-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "operator-cast-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[storage-class-specifier | type-qualifier | attribute-specifier]..."
+    "[virtual | explicit-function-specifier]"
+    "{operator-cast}"
+    "{compound-statement | try-statement | default-method-clause | delete-method-clause}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "operator-cast-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "operator-cast-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[virtual | explicit-function-specifier] {operator-cast} [= expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "constructor-or-destructor-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "constructor-or-destructor-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[storage-class-specifier | type-qualifier | attribute-specifier]..."
+    "[virtual | explicit-function-specifier]"
+    "{function-declarator}"
+    "[field-initializer-list]"
+    "{compound-statement | try-statement | default-method-clause | delete-method-clause}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "default-method-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "default-method-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "= default;"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "delete-method-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "delete-method-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "= delete;"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "friend-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "friend-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "friend {declaration | function-definition | (class | struct | union)? class-name;}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "access-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "access-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{access}:"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "trailing-return-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "trailing-return-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "-> [type-qualifier] {type-specifier} [abstract-declarator]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(expression?)"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(expression?)"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "([expression])"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "no-except"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "no-except"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "noexcept [(expression?)]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "throw-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "throw-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "throw ([type-descriptor])"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-type"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-type"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{type-identifier | scoped-type-identifier} {template-argument-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-method"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-method"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{field-identifier | scoped-field-identifier} {template-argument-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-function"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-function"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{identifier | scoped-identifier} {template-argument-list}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-argument-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-argument-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "<[type-descriptor | type-descriptor-parameter-pack-expansion | expression]...>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "type-descriptor-parameter-pack-expansion"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "type-descriptor-parameter-pack-expansion"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{type-descriptor}{...}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "concept-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "concept-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "concept {identifier} = {expression};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "inline"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "inline"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "inline"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER ":: inline? identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER ":: inline? identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ":: [inline] {identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier (:: inline? identifier)*"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier (:: inline? identifier)*"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{identifier} [:: inline? identifier]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "namespace-definition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "namespace-definition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[inline] namespace [identifier (:: inline? identifier)*]"
+    "{compound-statement | = (identifier | scoped-identifier);}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "using-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "using-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "using [namespace | enum] {identifier | scoped-identifier};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "alias-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "alias-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "using {type-identifier} [attribute]... = {type-descriptor};"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER ", (string | raw-string | concatenated-string)"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER ", (string | raw-string | concatenated-string)"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ", {string | raw-string | concatenated-string}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "static-assert-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "static-assert-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "static_assert ( {expression} [, (string | raw-string | concatenated-string)] );"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "module-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "module-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "module [module-name attribute* | : access];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "export-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "export-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "export {top-level-item}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "import-declaration"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "import-declaration"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "import {module-name | header-name} [attribute]...;"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER ".identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER ".identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ".{identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "identifier (.identifier)* module-partition?"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "identifier (.identifier)* module-partition?"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{identifier}[.identifier]... [module-partition]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "module-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "module-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{identifier}[.identifier]... [module-partition]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "module-partition"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "module-partition"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ": {partition-name} { {identifier} }"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "condition-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "condition-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "({(declaration | expression-statement)? (expression | comma-expression) | declaration { declaration-specifiers declarator (= expression | initializer-list) }})"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "for-range-loop"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "for-range-loop"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "for ("
+    "[alias-declaration | type-definition | declaration | (expression | comma-expression)?;]"
+    "{declaration-specifiers} {declarator} : {expression | initializer-list} )"
+    "{statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "throw-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "throw-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "throw [expression];"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "try-statement"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "try-statement"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "try"
+    "{compound-statement}"
+    "{catch-clause}..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "catch-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "catch-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "catch {parameter-list}"
+    "{compound-statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[[[attribute-name attribute-args?]...[param-pack]]]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute-args"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute-args"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "([balanced-tokens]...)"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute-name attribute-args?"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute-name attribute-args?"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=NONTERMINAL
+
+    "{attribute-name} [attribute-args]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "::attribute-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "::attribute-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=HORIZONTAL
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "::{attribute-identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "attribute-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "attribute-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{attribute-identifier}[::attribute-identifier]..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "new-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "new-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{::new | new} [argument-list] {type-specifier} [new-declarator] [argument-list | initializer-list]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "new-declarator"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "new-declarator"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[{expression}] [new-declarator]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "'[]'"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "'[]'"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "delete-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "delete-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{::delete | delete} ['[]'] {expression}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-parameter-list requires-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "template-parameter-list requires-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{template-parameter-list} {requires-clause}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "lambda-expression"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "lambda-expression"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{lambda-capture-specifier} [template-parameter-list requires-clause] [abstract-function-declarator] {compound-statement}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER ", ,SEP-1<expression>"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER ", ,SEP-1<expression>"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    ", {expression}..."
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "(= &) (, ,SEP-1<expression>)? | ,SEP-1<expression> | ''"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "(= &) (, ,SEP-1<expression>)? | ,SEP-1<expression> | ''"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{= &} {(, ,SEP-1<expression>)? | ,SEP-1<expression> | ''}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "lambda-capture-specifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "lambda-capture-specifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[{(= &) (, ,SEP-1<expression>)? | ,SEP-1<expression> | ''}]"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "parameter-pack-expansion"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "parameter-pack-expansion"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{expression}{...}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "scoped-field-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "scoped-field-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[namespace-identifier | template-type | scoped-namespace-identifier | decl-type]::{field-identifier | operator-name | destructor-name}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "scoped-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "scoped-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[namespace-identifier | template-type | scoped-namespace-identifier]::{identifier | operator-name | destructor-name}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "scoped-type-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "scoped-type-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "[namespace-identifier | template-type | scoped-namespace-identifier]::{type-identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "scoped-namespace-identifier"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "scoped-namespace-identifier"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "(namespace-identifier | template-type | scoped-namespace-identifier)?::{namespace-identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "'*'"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "'*'"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "*"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "operator-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "operator-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "operator{op-literal}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "destructor-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "destructor-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "~{identifier}"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "header-name"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "header-name"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "<{text}>"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "update-op"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "update-op"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "{* / % + - & ^ | << >>} ="
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "block-comment"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "block-comment"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "/*!"
+    " "
+    " */"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "line-comment"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "line-comment"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "//"
+    "//"
+    "//"
+
+END DEFINE

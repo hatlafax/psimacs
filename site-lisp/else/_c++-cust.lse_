@@ -77,6 +77,22 @@ DEFINE PLACEHOLDER "system-lib-string"
 
 END DEFINE
 
+
+DELETE PLACEHOLDER "catch-clause"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "catch-clause"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+
+    "catch {catch-parameter-list}"
+    "{compound-statement}"
+
+END DEFINE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                                           ;;
 ;;                                                                           ;;
@@ -464,6 +480,73 @@ DEFINE PLACEHOLDER "inline-extension-menu"
     ".inl"
     ".inc"
     ".ipp"
+
+END DEFINE
+
+
+;;
+;; Exceptions
+;;
+DELETE PLACEHOLDER "catch-parameter-list"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "catch-parameter-list"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+
+    "([catch-parameter-options]...)"
+
+END DEFINE
+
+
+DELETE PLACEHOLDER "catch-parameter-options"
+    /LANGUAGE="C++"
+DEFINE PLACEHOLDER "catch-parameter-options"
+    /LANGUAGE="C++"
+    /NOAUTO_SUBSTITUTE
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=", "
+    /TYPE=MENU
+
+    "parameter-declaration"/PLACEHOLDER
+    "optional-parameter-declaration"/PLACEHOLDER
+    "variadic-parameter-declaration"/PLACEHOLDER
+    "..."
+    "std::exception& e"
+    "std::logic_error& e"
+    "std::invalid_argument& e"
+    "std::domain_error& e"
+    "std::length_error& e"
+    "std::out_of_range& e"
+    "std::future_error& e"
+    "std::runtime_error& e"
+    "std::range_error& e"
+    "std::overflow_error& e"
+    "std::underflow_error& e"
+    "std::regex_error& e"
+    "std::system_error& e"
+    "std::ios_base::failure& e"
+    "std::filesystem::filesystem_error& e"
+    "std::tx_exception& e"
+    "std::nonexistent_local_time& e"
+    "std::ambiguous_local_time& e"
+    "std::format_error& e"
+    "std::bad_typeid& e"
+    "std::bad_cast& e"
+    "std::bad_any_cast& e"
+    "std::bad_optional_access& e"
+    "std::bad_expected_access& e"
+    "std::bad_weak_ptr& e"
+    "std::bad_function_call& e"
+    "std::bad_alloc& e"
+    "std::bad_array_new_length& e"
+    "std::bad_exception& e"
+    "std::ios_base::failure& e"
+    "std::bad_variant_access& e"
 
 END DEFINE
 
