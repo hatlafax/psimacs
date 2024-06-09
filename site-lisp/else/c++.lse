@@ -29,93 +29,6 @@ DEFINE LANGUAGE c++
 END DEFINE
 
 
-DELETE PLACEHOLDER "typedef-name"
-    /LANGUAGE="c++"
-DEFINE PLACEHOLDER "typedef-name"
-    /LANGUAGE="c++"
-    /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-    "identifier"/PLACEHOLDER
-    "simple-template-id"/PLACEHOLDER
-END DEFINE
-
-
-DELETE PLACEHOLDER "namespace-name"
-    /LANGUAGE="c++"
-DEFINE PLACEHOLDER "namespace-name"
-    /LANGUAGE="c++"
-    /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-    "identifier"/PLACEHOLDER
-    "namespace-alias"/PLACEHOLDER
-END DEFINE
-
-
-DELETE PLACEHOLDER "namespace-alias"
-    /LANGUAGE="c++"
-DEFINE PLACEHOLDER "namespace-alias"
-    /LANGUAGE="c++"
-    /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-    "{identifier}"
-END DEFINE
-
-
-DELETE PLACEHOLDER "class-name"
-    /LANGUAGE="c++"
-DEFINE PLACEHOLDER "class-name"
-    /LANGUAGE="c++"
-    /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=MENU
-    "identifier"/PLACEHOLDER
-    "simple-template-id"/PLACEHOLDER
-END DEFINE
-
-
-DELETE PLACEHOLDER "enum-name"
-    /LANGUAGE="c++"
-DEFINE PLACEHOLDER "enum-name"
-    /LANGUAGE="c++"
-    /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-    "{identifier}"
-END DEFINE
-
-
-DELETE PLACEHOLDER "template-name"
-    /LANGUAGE="c++"
-DEFINE PLACEHOLDER "template-name"
-    /LANGUAGE="c++"
-    /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
-    /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
-    /TYPE=NONTERMINAL
-    "{identifier}"
-END DEFINE
-
-
 DELETE PLACEHOLDER "n-char"
     /LANGUAGE="c++"
 DEFINE PLACEHOLDER "n-char"
@@ -2811,7 +2724,7 @@ DEFINE PLACEHOLDER "for-range-declaration"
     /SEPARATOR=""
     /TYPE=MENU
     "[attribute-specifier]... {decl-specifier-seq} {declarator}"
-    "[attribute-specifier]... {decl-specifier-seq} [ref-qualifier] [ {identifier}... ]"
+    "structured-binding-declaration"/PLACEHOLDER
 END DEFINE
 
 
@@ -2903,6 +2816,7 @@ DEFINE PLACEHOLDER "name-declaration"
     "block-declaration"/PLACEHOLDER
     "nodeclspec-function-declaration"/PLACEHOLDER
     "function-definition"/PLACEHOLDER
+    "friend-type-declaration"/PLACEHOLDER
     "template-declaration"/PLACEHOLDER
     "deduction-guide"/PLACEHOLDER
     "linkage-specification"/PLACEHOLDER
@@ -2979,6 +2893,49 @@ DEFINE PLACEHOLDER "alias-declaration"
 END DEFINE
 
 
+DELETE PLACEHOLDER "attributed-identifier"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "attributed-identifier"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "{identifier} [attribute-specifier]..."
+END DEFINE
+
+
+DELETE PLACEHOLDER "attributed-identifier-list"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "attributed-identifier-list"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "attributed-identifier"/PLACEHOLDER
+    "{attributed-identifier-list} , {attributed-identifier}"
+END DEFINE
+
+
+DELETE PLACEHOLDER "structured-binding-declaration"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "structured-binding-declaration"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "[attribute-specifier]... {decl-specifier-seq} [ref-qualifier] [ {attributed-identifier-list} ]"
+END DEFINE
+
+
 DELETE PLACEHOLDER "simple-declaration"
     /LANGUAGE="c++"
 DEFINE PLACEHOLDER "simple-declaration"
@@ -2991,7 +2948,22 @@ DEFINE PLACEHOLDER "simple-declaration"
     /TYPE=MENU
     "{decl-specifier-seq} [init-declarator-list] ;"
     "[attribute-specifier]... {decl-specifier-seq} {init-declarator-list} ;"
-    "[attribute-specifier]... {decl-specifier-seq} [ref-qualifier] [ {identifier}... ] {initializer} ;"
+    "{structured-binding-declaration} {initializer} ;"
+END DEFINE
+
+
+DELETE PLACEHOLDER "static-assert-message"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "static-assert-message"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "{unevaluated-string}"
+    "constant-expression"/PLACEHOLDER
 END DEFINE
 
 
@@ -3119,6 +3091,21 @@ DEFINE PLACEHOLDER "explicit-specifier"
     /TYPE=MENU
     "explicit( {constant-expression} )"
     "explicit"
+END DEFINE
+
+
+DELETE PLACEHOLDER "typedef-name"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "typedef-name"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "identifier"/PLACEHOLDER
+    "simple-template-id"/PLACEHOLDER
 END DEFINE
 
 
@@ -3832,7 +3819,36 @@ DEFINE PLACEHOLDER "function-body"
     "[ctor-initializer] {compound-statement}"
     "function-try-block"/PLACEHOLDER
     "= default;"
+    "deleted-function-body"/PLACEHOLDER
+END DEFINE
+
+
+DELETE PLACEHOLDER "deleted-function-body"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "deleted-function-body"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
     "= delete;"
+    "= delete( {unevaluated-string} );"
+END DEFINE
+
+
+DELETE PLACEHOLDER "enum-name"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "enum-name"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "{identifier}"
 END DEFINE
 
 
@@ -3996,6 +4012,21 @@ DEFINE PLACEHOLDER "using-enum-declarator"
 END DEFINE
 
 
+DELETE PLACEHOLDER "namespace-name"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "namespace-name"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "identifier"/PLACEHOLDER
+    "namespace-alias"/PLACEHOLDER
+END DEFINE
+
+
 DELETE PLACEHOLDER "namespace-definition"
     /LANGUAGE="c++"
 DEFINE PLACEHOLDER "namespace-definition"
@@ -4078,7 +4109,7 @@ DEFINE PLACEHOLDER "nested-namespace-definition"
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "namespace {enclosing-namespace-specifier} [nested-inline] {identifier} { {namespace-body} }"
+    "namespace {enclosing-namespace-specifier} :: [inline] {identifier} { {namespace-body} }"
 END DEFINE
 
 
@@ -4093,7 +4124,7 @@ DEFINE PLACEHOLDER "enclosing-namespace-specifier"
     /SEPARATOR=""
     /TYPE=MENU
     "identifier"/PLACEHOLDER
-    "{enclosing-namespace-specifier} [nested-inline] {identifier}"
+    "{enclosing-namespace-specifier} :: [inline] {identifier}"
 END DEFINE
 
 
@@ -4108,6 +4139,20 @@ DEFINE PLACEHOLDER "namespace-body"
     /SEPARATOR=""
     /TYPE=NONTERMINAL
     "[declaration]..."
+END DEFINE
+
+
+DELETE PLACEHOLDER "namespace-alias"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "namespace-alias"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "{identifier}"
 END DEFINE
 
 
@@ -4244,10 +4289,10 @@ DELETE PLACEHOLDER "attribute-specifier"
 DEFINE PLACEHOLDER "attribute-specifier"
     /LANGUAGE="c++"
     /NOAUTO_SUBSTITUTE
-    /SUBSTITUTE_COUNT=1
-    /DESCRIPTION=""
+    /SUBSTITUTE_COUNT=10
+    /DESCRIPTION="Some text"
     /DUPLICATION=CONTEXT_DEPENDENT
-    /SEPARATOR=""
+    /SEPARATOR=", "
     /TYPE=MENU
     "[[ [attribute-using-prefix] {attribute-list} ]]"
     "alignment-specifier"/PLACEHOLDER
@@ -4534,6 +4579,21 @@ DEFINE PLACEHOLDER "-module-fragment"
 END DEFINE
 
 
+DELETE PLACEHOLDER "class-name"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "class-name"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "identifier"/PLACEHOLDER
+    "simple-template-id"/PLACEHOLDER
+END DEFINE
+
+
 DELETE PLACEHOLDER "class-specifier"
     /LANGUAGE="c++"
 DEFINE PLACEHOLDER "class-specifier"
@@ -4634,6 +4694,7 @@ DEFINE PLACEHOLDER "member-declaration"
     /TYPE=MENU
     "[attribute-specifier]... [decl-specifier-seq] [member-declarator-list] ;"
     "function-definition"/PLACEHOLDER
+    "friend-type-declaration"/PLACEHOLDER
     "using-declaration"/PLACEHOLDER
     "using-enum-declaration"/PLACEHOLDER
     "static-assert-declaration"/PLACEHOLDER
@@ -4719,6 +4780,51 @@ DEFINE PLACEHOLDER "pure-specifier"
     /SEPARATOR=""
     /TYPE=NONTERMINAL
     "= 0"
+END DEFINE
+
+
+DELETE PLACEHOLDER "friend-type-declaration"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "friend-type-declaration"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "friend {friend-type-specifier-list} ;"
+END DEFINE
+
+
+DELETE PLACEHOLDER "friend-type-specifier-list"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "friend-type-specifier-list"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "{friend-type-specifier} [three-dots]"
+    "{friend-type-specifier-list} , {friend-type-specifier} [three-dots]"
+END DEFINE
+
+
+DELETE PLACEHOLDER "friend-type-specifier"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "friend-type-specifier"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "simple-type-specifier"/PLACEHOLDER
+    "elaborated-type-specifier"/PLACEHOLDER
+    "typename-specifier"/PLACEHOLDER
 END DEFINE
 
 
@@ -5179,6 +5285,20 @@ DEFINE PLACEHOLDER "template-id"
     "simple-template-id"/PLACEHOLDER
     "{operator-function-id} < [template-argument-list] >"
     "{literal-operator-id} < [template-argument-list] >"
+END DEFINE
+
+
+DELETE PLACEHOLDER "template-name"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "template-name"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "{identifier}"
 END DEFINE
 
 
@@ -5688,6 +5808,20 @@ DEFINE PLACEHOLDER "defined-macro-expression"
 END DEFINE
 
 
+DELETE PLACEHOLDER "h-preprocessing-token"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "h-preprocessing-token"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "Enter any preprocessing-token other than >."
+END DEFINE
+
+
 DELETE PLACEHOLDER "header-name-tokens"
     /LANGUAGE="c++"
 DEFINE PLACEHOLDER "header-name-tokens"
@@ -5853,3 +5987,5 @@ DEFINE PLACEHOLDER "ms-declspec-modifier"
     /TYPE=NONTERMINAL
     "__declspec( {identifier} )"
 END DEFINE
+
+
