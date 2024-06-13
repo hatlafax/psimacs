@@ -15975,6 +15975,39 @@ Reference:
 )
 #+end_src
 
+** ELSE Grammar Compiler
+
+ELSE, the Emacs Language Sensitive Editor, is a system for template generation 
+aimed at reducing the amount of user typing and to operate seamlessly with a minimum of
+interference to the user.
+ELSE is implemented as a minor mode and can work with any major mode. As ELSE is
+invoked the first time for each major mode, it will load a template file specific to that mode.
+
+The ELSE grammar compiler is a tool written specifically to generate these ELSE template files
+from an [[https://www.antlr.org/][ANTLR]] language grammar specification.
+
+The tools provided in this section provide a simple workflow for working on a ANTLR grammar
+file and creating a final ELSE template file ready to use in *Psimacs*.
+
+Reference:
+- [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE-grammar-compiler]]
+- [[https://github.com/hatlafax/ELSE][ELSE fork by me]]
+- [[https://github.com/peter-milliken/ELSE][ELSE]]
+- [[https://www.antlr.org/][ANTLR]]
+
+This simplistic ANTLRv4 major mode implementation allows to work on a ANTLRv4 file buffer. It provides
+syntax highlighting and supports the special /annotation system/ that has been added to the ANTLRv4 specification
+in order to provide extra meta information for the ELSE framework.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-antlrv4.el :var file-description="Advanced ANTLRv4 setup"
+;;
+;; Support for ANTLRv4
+;;
+(use-package antlrv4-mode
+  :straight nil
+)
+#+end_src
+
 ** Deft
 
 [[https://github.com/jrblevin/deft][Deft]] is an Emacs mode for quickly browsing, filtering, and editing directories
@@ -20125,6 +20158,18 @@ References:
 
 ** VTerm
 
+References:
+- [[https://www.leonerd.org.uk/code/libvterm/][libvterm]]
+- [[https://github.com/neovim/libvterm?tab=readme-ov-file][libvterm]]
+- [[https://github.com/akermu/emacs-libvterm][emacs-libvterm]]
+- [[https://docs.doomemacs.org/v21.12/modules/term/vterm/][:term vterm]]
+
+- [[https://github.com/suonlight/multi-vterm][multi-vterm]]
+- [[https://www.youtube.com/watch?v=4IAe3-YN-Wo][Emacs vterm terminal and multi-vterm install]]
+- [[https://irreal.org/blog/?p=10651][Emacs As A Terminal Multiplexer]]
+- [[https://www.youtube.com/watch?v=X8c_TrGfYcM][Using Emacs instead of tmux]]
+
+
 #+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
 ;;
 ;; vterm
@@ -20162,6 +20207,14 @@ References:
 ;;
 ;; Functions that starts various shells
 ;;
+(defun psimacs/shell/spawn-shell (name)
+  "Create a new shell buffer."  
+  (interactive "MNname of shell buffer to create: ")
+  (pop-to-buffer (get-buffer-create (generate-new-buffer-name name)))
+  (shell (current-buffer))
+)
+
+
 (defun psimacs/shell/run-bash ()
   "Run a bash interactive shell."
   (interactive)
