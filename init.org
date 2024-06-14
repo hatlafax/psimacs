@@ -2736,6 +2736,26 @@ Template =.lse=-files of the [[https://github.com/peter-milliken/ELSE][Emacs Lan
 (defconst psimacs/config/else-mako-template-dir
   (psimacs/file-system/concat-directory psimacs/config/else-python-dir "mako")
   "The psimacs else python mako template directory.")
+
+(defconst psimacs/config/ELSE-grammar-compiler-dir
+  "~/ELSE-grammar-compiler"
+  "The psimacs ELSE grammar compiler directory.")
+
+(defconst psimacs/config/ebnv-convert-dir
+  (psimacs/file-system/concat-directory psimacs/config/ELSE-grammar-compiler-dir "tools/ebnf-convert")
+  "The psimacs ebnf grammar converter directory.")
+
+(defconst psimacs/config/ebnv-railroad-dir
+  (psimacs/file-system/concat-directory psimacs/config/ELSE-grammar-compiler-dir "tools/railroad")
+  "The psimacs ebnf railroad directory.")
+
+(defconst psimacs/config/ebnv-convert-jar-file
+  (psimacs/file-system/concat-file psimacs/config/ebnv-convert-dir "ebnf-convert.war")
+  "The psimacs ebnf grammar converter jar file.")
+
+(defconst psimacs/config/ebnf-railroad-jar-file
+  (psimacs/file-system/concat-file psimacs/config/ebnv-railroad-dir "rr.war")
+  "The psimacs ebnf railroad jar file.")
 #+end_src
 
 ** Emacs client/server
@@ -14002,6 +14022,74 @@ This derivation of the `else-compile-buffer' function additionally saves the poi
             psimacs/config/copyright/author
         )
 
+        (defun psimacs/internal/create-visualization-from-grammar ()
+          (interactive)
+          (let (
+                  (grammar-copy-file (concat (file-name-sans-extension (buffer-file-name)) "-tmp" (file-name-extension (buffer-file-name) t)))
+                  (ebnf-file (concat (file-name-sans-extension (buffer-file-name)) ".ebnf"))
+                  (html-file (concat (file-name-sans-extension (buffer-file-name)) ".html"))
+                  (old-buffer (current-buffer))
+               )
+
+            (when (file-exists-p grammar-copy-file)
+              (delete-file grammar-copy-file)
+            )
+
+            (when (file-exists-p ebnf-file)
+              (delete-file ebnf-file)
+            )
+
+            (when (file-exists-p html-file)
+              (delete-file html-file)
+            )
+
+            (with-temp-buffer
+              (insert-buffer-substring old-buffer)
+
+               (goto-char (point-min))
+
+              ;; remove all annotation lines
+              (delete-matching-lines "^[[:blank:]]*annotations[[:blank:]]*(.*")
+
+              (write-region (point-min)
+                            (point-max) grammar-copy-file t)
+            )
+
+            (when (file-exists-p grammar-copy-file)
+              (shell-command
+                        (concat
+                            psimacs/config/java-runtime-exe
+                            " -jar "
+                           psimacs/config/ebnv-convert-jar-file
+                            " -noinline "
+                            grammar-copy-file
+                            " > "
+                            ebnf-file))
+
+              (when (file-exists-p ebnf-file)
+                (shell-command
+                        (concat
+                            psimacs/config/java-runtime-exe
+                            " -jar "
+                            psimacs/config/ebnf-railroad-jar-file
+                            " -keeprecursion -nofactoring -noinline -html "
+                            ebnf-file
+                            " > "
+                            html-file))
+
+                (delete-file ebnf-file)
+
+                (when (file-exists-p html-file)
+                  ;(browse-url html-file)
+                  (eaf-open-browser-other-window (concat "file://" html-file))
+                )
+              )
+              (delete-file grammar-copy-file)
+            )
+          )
+        )
+
+
     :after hydra
 
     ;; Disable automatic else-mode activation. If active, there are problems with org-mode building
@@ -14133,7 +14221,8 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
 )
 #+end_src
 
-** Emacs Application Framework :noexport:
+
+** Emacs Application Framework
 
 The package [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] provides a free/libre and open-source extensible framework that
 revolutionizes the graphical capabilities of Emacs, the key to ultimately Live in Emacs.
@@ -14145,7 +14234,6 @@ doors to the ecosystems of Python, Qt5, and even JavaScript. EAF extends Emacs t
 world of modern graphics, but still preserving the extensibility and customizability of
 Emacs, it will be the key to ultimately Live in Emacs.
 #+end_quote
-
 
 #+begin_src emacs-lisp :tangle config/init-advanced-eaf-mode.el :var file-description="Advanced eaf-mode setup"
 ;;
@@ -14179,11 +14267,13 @@ Emacs, it will be the key to ultimately Live in Emacs.
   :straight (eaf :type git :host github :repo "emacs-eaf/emacs-application-framework"
                  :files ("*")
                  :post-build '(psimacs/config/python-runtime-exe "install-eaf.py" "--install-core-deps"))
-  :config (when psimacs/system/is-windows-nt-flag
-            (setq eaf-config-location psimacs/config/eaf-config-location)
-            (setq eaf-python-command psimacs/config/python-runtime-exe)
-            (setq eaf-wm-name "windows")
-          )
+  :config 
+    (when psimacs/system/is-win32-p
+      (setq eaf-wm-name "windows")
+    )
+
+    (setq eaf-config-location psimacs/config/eaf-config-location)
+    (setq eaf-python-command psimacs/config/python-runtime-exe)
 )
 
 (use-package eaf-demo
@@ -14205,6 +14295,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
             )
   :custom (eaf-browser-continue-where-left-off t)
           (eaf-browser-enable-adblocker t)
+          ;(browse-url-browser-function 'eaf-open-browser)
           ;; ToDo: EAF does not work currently, Please Solve
           ;; https://github.com/emacs-eaf/emacs-application-framework/issues/943
           ;; (browse-url-browser-function 'eaf-open-browser)
@@ -14219,6 +14310,8 @@ Emacs, it will be the key to ultimately Live in Emacs.
           ;(setq eaf-browser-enable-plugin nil)
           ;(setq eaf-browser-enable-javascript nil)
           ;(setq eaf-camera-save-path "new/path/")
+          (setq eaf-browser-dark-mode-theme 'light)
+          ;(setq eaf-browser-dark-mode nil)
 )
 
 (use-package eaf-pdf-viewer
