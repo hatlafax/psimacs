@@ -2737,24 +2737,32 @@ Template =.lse=-files of the [[https://github.com/peter-milliken/ELSE][Emacs Lan
   (psimacs/file-system/concat-directory psimacs/config/else-python-dir "mako")
   "The psimacs else python mako template directory.")
 
-(defconst psimacs/config/ELSE-grammar-compiler-dir
+(defconst psimacs/config/else-grammar-compiler-dir
   "~/ELSE-grammar-compiler"
   "The psimacs ELSE grammar compiler directory.")
 
-(defconst psimacs/config/ebnv-convert-dir
-  (psimacs/file-system/concat-directory psimacs/config/ELSE-grammar-compiler-dir "tools/ebnf-convert")
+(defconst psimacs/config/else-grammar-compiler-out-dir
+  (psimacs/file-system/concat-directory psimacs/config/else-grammar-compiler-dir "out")
+  "The psimacs ELSE grammar compiler output directory.")
+
+(defconst psimacs/config/else-grammar-compiler-py
+  (psimacs/file-system/concat-file psimacs/config/else-grammar-compiler-dir "Antlr4ToElseCompiler.py")
+  "The psimacs ELSE grammar compiler python programm.")
+
+(defconst psimacs/config/ebnf-convert-dir
+  (psimacs/file-system/concat-directory psimacs/config/else-grammar-compiler-dir "tools/ebnf-convert")
   "The psimacs ebnf grammar converter directory.")
 
-(defconst psimacs/config/ebnv-railroad-dir
-  (psimacs/file-system/concat-directory psimacs/config/ELSE-grammar-compiler-dir "tools/railroad")
+(defconst psimacs/config/ebnf-railroad-dir
+  (psimacs/file-system/concat-directory psimacs/config/else-grammar-compiler-dir "tools/railroad")
   "The psimacs ebnf railroad directory.")
 
-(defconst psimacs/config/ebnv-convert-jar-file
-  (psimacs/file-system/concat-file psimacs/config/ebnv-convert-dir "ebnf-convert.war")
+(defconst psimacs/config/ebnf-convert-jar-file
+  (psimacs/file-system/concat-file psimacs/config/ebnf-convert-dir "ebnf-convert.war")
   "The psimacs ebnf grammar converter jar file.")
 
 (defconst psimacs/config/ebnf-railroad-jar-file
-  (psimacs/file-system/concat-file psimacs/config/ebnv-railroad-dir "rr.war")
+  (psimacs/file-system/concat-file psimacs/config/ebnf-railroad-dir "rr.war")
   "The psimacs ebnf railroad jar file.")
 #+end_src
 
@@ -14022,74 +14030,6 @@ This derivation of the `else-compile-buffer' function additionally saves the poi
             psimacs/config/copyright/author
         )
 
-        (defun psimacs/internal/create-visualization-from-grammar ()
-          (interactive)
-          (let (
-                  (grammar-copy-file (concat (file-name-sans-extension (buffer-file-name)) "-tmp" (file-name-extension (buffer-file-name) t)))
-                  (ebnf-file (concat (file-name-sans-extension (buffer-file-name)) ".ebnf"))
-                  (html-file (concat (file-name-sans-extension (buffer-file-name)) ".html"))
-                  (old-buffer (current-buffer))
-               )
-
-            (when (file-exists-p grammar-copy-file)
-              (delete-file grammar-copy-file)
-            )
-
-            (when (file-exists-p ebnf-file)
-              (delete-file ebnf-file)
-            )
-
-            (when (file-exists-p html-file)
-              (delete-file html-file)
-            )
-
-            (with-temp-buffer
-              (insert-buffer-substring old-buffer)
-
-               (goto-char (point-min))
-
-              ;; remove all annotation lines
-              (delete-matching-lines "^[[:blank:]]*annotations[[:blank:]]*(.*")
-
-              (write-region (point-min)
-                            (point-max) grammar-copy-file t)
-            )
-
-            (when (file-exists-p grammar-copy-file)
-              (shell-command
-                        (concat
-                            psimacs/config/java-runtime-exe
-                            " -jar "
-                           psimacs/config/ebnv-convert-jar-file
-                            " -noinline "
-                            grammar-copy-file
-                            " > "
-                            ebnf-file))
-
-              (when (file-exists-p ebnf-file)
-                (shell-command
-                        (concat
-                            psimacs/config/java-runtime-exe
-                            " -jar "
-                            psimacs/config/ebnf-railroad-jar-file
-                            " -keeprecursion -nofactoring -noinline -html "
-                            ebnf-file
-                            " > "
-                            html-file))
-
-                (delete-file ebnf-file)
-
-                (when (file-exists-p html-file)
-                  ;(browse-url html-file)
-                  (eaf-open-browser-other-window (concat "file://" html-file))
-                )
-              )
-              (delete-file grammar-copy-file)
-            )
-          )
-        )
-
-
     :after hydra
 
     ;; Disable automatic else-mode activation. If active, there are problems with org-mode building
@@ -16098,6 +16038,160 @@ in order to provide extra meta information for the ELSE framework.
 ;;
 (use-package antlrv4-mode
   :straight nil
+  :config
+        (defun psimacs/antlrv4/create-else-grammar ()
+          "Create a ELSE language specification from the ANTLRv4 grammar found in the current buffer."
+          (interactive)
+          (when (eq major-mode 'antlrv4-mode)
+            (save-buffer)
+            (save-excursion
+              (let* (
+                      (language (psimacs/ui/internal/select-from-item-list "Provide a target language: " '(
+                        "ada" "c" "c++" "cmake" "csharp" "emacs-lisp" "java" "javascript" "latex"
+                       "modelica" "php" "typescript" "ecmascript" "python" "pascal" "rust" "scala"
+                       "clojure" "golang" "dot" "erlang" "html" "prolog" "restructuredtext" "ruby"
+                       "texinfo"
+                      ) 2))
+                      (f-dir  (file-name-directory buffer-file-name))
+                      (f-name (file-name-nondirectory buffer-file-name))
+                      (out-dir psimacs/config/else-grammar-compiler-out-dir)
+                      (out-file (concat psimacs/config/else-grammar-compiler-out-dir language ".lse"))
+                      (res-file (concat psimacs/config/else-lse-dir language ".lse"))
+                      (bck-file (concat psimacs/config/else-lse-dir language ".lse~"))
+                      (placeholder nil)
+                    )
+
+                (when (re-search-backward "^\\([[:alnum:]_-]+\\)[[:space:]]*$" nil t)
+                  (setq placeholder (match-string 1))
+                )
+
+                (make-directory psimacs/config/else-grammar-compiler-out-dir t)
+                (when (file-exists-p out-file)
+                  (delete-file out-file)
+                )
+
+                ;(message "%s"
+                (shell-command
+                    (concat
+                        psimacs/config/python-runtime-exe
+                        " "
+                        psimacs/config/else-grammar-compiler-py
+                        " -i " f-dir " -o " out-dir " -l " language " -p '*(){}[].,;:'" " -I 'a-zA-Z_0-9-' " f-name
+                    )
+                )
+
+                (when (file-exists-p out-file)
+                  (when (file-exists-p res-file)
+                    (while (file-exists-p bck-file)
+                      (setq bck-file (concat bck-file "~"))
+                    )
+                    (rename-file res-file bck-file)
+                  )
+                  
+                  (let ((res-file-buffer (get-file-buffer res-file)))
+                    (copy-file out-file res-file)
+                    (if res-file-buffer
+                        (progn
+                          (revert-buffer res-file-buffer t t)
+                          (pop-to-buffer res-file-buffer)
+                        )
+                      (find-file-other-window res-file)
+                    )
+
+                    (goto-char (point-min))
+                    (else-compile-buffer)
+
+                    (message "placeholder = %s" placeholder)
+
+                    (when placeholder
+                      (goto-char (point-min))
+                      (re-search-forward (concat "DEFINE PLACEHOLDER[[:blank:]]+\"?" placeholder "\"?[[:blank:]]*$") nil t)
+                      (recenter 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+
+        (defun psimacs/antlrv4/create-visualization-from-grammar ()
+          "Create a HTML visualization of the ANTLRv4 grammar found in the current buffer."
+          (interactive)
+          (when (eq major-mode 'antlrv4-mode)
+            (save-buffer)
+            (let (
+                    (grammar-copy-file (concat (file-name-sans-extension (buffer-file-name)) "-tmp" (file-name-extension (buffer-file-name) t)))
+                    (ebnf-file (concat (file-name-sans-extension (buffer-file-name)) ".ebnf"))
+                    (html-file (concat (file-name-sans-extension (buffer-file-name)) ".html"))
+                    (old-buffer (current-buffer))
+                 )
+
+              (when (file-exists-p grammar-copy-file)
+                (delete-file grammar-copy-file)
+              )
+
+              (when (file-exists-p ebnf-file)
+                (delete-file ebnf-file)
+              )
+
+              (when (file-exists-p html-file)
+                (delete-file html-file)
+              )
+
+              (with-temp-buffer
+                (insert-buffer-substring old-buffer)
+
+                 (goto-char (point-min))
+
+                ;; remove all annotation lines
+                (delete-matching-lines "^[[:blank:]]*annotations[[:blank:]]*(.*")
+
+                (write-region (point-min)
+                              (point-max) grammar-copy-file t)
+              )
+
+              (when (file-exists-p grammar-copy-file)
+                (shell-command
+                          (concat
+                              psimacs/config/java-runtime-exe
+                              " -jar "
+                             psimacs/config/ebnf-convert-jar-file
+                              " -noinline "
+                              grammar-copy-file
+                              " > "
+                              ebnf-file))
+
+                (when (file-exists-p ebnf-file)
+                  (shell-command
+                          (concat
+                              psimacs/config/java-runtime-exe
+                              " -jar "
+                              psimacs/config/ebnf-railroad-jar-file
+                              " -keeprecursion -nofactoring -noinline -html "
+                              ebnf-file
+                              " > "
+                              html-file))
+
+                  (delete-file ebnf-file)
+
+                  (when (file-exists-p html-file)
+                    ;(browse-url html-file)
+                    (eaf-open-browser-other-window (concat "file://" html-file))
+                  )
+                )
+                (delete-file grammar-copy-file)
+              )
+            )
+          )
+        )
+
+  :bind (
+           :map antlrv4-mode-map
+           ("C-c C-c"     . psimacs/antlrv4/create-else-grammar)
+           ("C-c C-v"     . psimacs/antlrv4/create-visualization-from-grammar)
+        )
+
 )
 #+end_src
 
@@ -20302,7 +20396,7 @@ References:
 ;;
 (defun psimacs/shell/spawn-shell (name)
   "Create a new shell buffer."  
-  (interactive "MNname of shell buffer to create: ")
+  (interactive "Mname of shell buffer to create: ")
   (pop-to-buffer (get-buffer-create (generate-new-buffer-name name)))
   (shell (current-buffer))
 )
@@ -20686,6 +20780,13 @@ Move region (`transient-mark-mode' active) or current line arg lines up."
 *** Find selection forward
 
 #+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
+(defalias 'psimacs/internal/get-clipboard-data
+  (cond ((fboundp 'w32-get-clipboard-data) 'w32-get-clipboard-data)
+        ((fboundp 'x-get-clipboard) 'x-get-clipboard)
+        (t nil)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle config/init-utility-functions.el :var file-description="Utility functions setup"
 ;;
 ;; Find selection forward
 ;;
@@ -20693,7 +20794,7 @@ Move region (`transient-mark-mode' active) or current line arg lines up."
     "Find text cut buffer forward."
     (interactive "")
     (let (sel len)
-        (setq sel (w32-get-clipboard-data))
+        (setq sel (psimacs/internal/get-clipboard-data))
         (setq len (length sel))
         (search-forward sel)
         (deactivate-mark)
@@ -20715,7 +20816,7 @@ Move region (`transient-mark-mode' active) or current line arg lines up."
     "Find text cut buffer backward."
     (interactive "")
     (let (sel len)
-        (setq sel (w32-get-clipboard-data))
+        (setq sel (psimacs/internal/get-clipboard-data))
         (setq len (length sel))
         (search-backward sel)
         (deactivate-mark)
