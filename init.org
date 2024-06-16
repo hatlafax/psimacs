@@ -46,50 +46,78 @@ See also:
 
 ** Installation
 
-Install [[https://www.gnu.org/software/emacs/download.html][Emacs]] for Windows into a preferred directory, e.g. =c:/utils/Emacs=.
+*** Windows
+The Powershell script =bootstrap.ps1= is able to bootstrap *Psimacs* and all its dependencies into
+the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
 
-Create desktop shortcuts for =runemacs.exe= and =emacsclientw.exe=. Both shortcuts should start *Emacs* from the
-user's home directory. The *Emacs* client should be called with the following command:
+Download the raw =booststrap.ps1= file into a temporary directory and run
 
-#+begin_src example
-C:\utils\Emacs\bin\emacsclientw.exe -n -a C:\utils\Emacs\bin\runemacs.exe -c
+#+begin_src
+.\booststrap.ps1
 #+end_src
 
-*Psimacs* does have a couple of dependencies. Install them first to avoid configuration problems.
-The main dependencies are:
+in a Powershell console.
 
-- Python :: Install e.g. [[https://www.python.org/downloads/][Python]] 3.10.8 to =c:/utils/Python310=.
-- Msys2 :: Install [[https://www.msys2.org/][MSYS2]] to =c:/utils/msys64=.
+The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimacs= directory:
 
-This configuration uses *Emacs 28.2*. Clone the git repository into your *~/.emcas.d*
-directory:
+| Tools        | Remarks                                                                                                  |
+|--------------+----------------------------------------------------------------------------------------------------------|
+| [[https://www.msys2.org/][MSYS2]]        | *Psimacs* uses the *Emacs* provided by [[https://www.msys2.org/][MSYS2]]. |
+| [[https://conemu.github.io/][ConEmu]]       | Optionally, *Psimacs* can install the [[https://conemu.github.io/][ConEmu]] console emulation. Use option =-conemu= to install the console. |
+| [[https://openjdk.org/][Java]]         | *Psimacs* installs the GPL OpenJDK Java distribution provided by Oracle.                                   |
+| [[https://languagetool.org][LanguageTool]] | [[https://languagetool.org][LanguageTool]] is a spell and grammar checker supported by *Psimacs*.                                        |
+| [[https://pandoc.org/][pandoc]]       | *Psimacs* uses the universal document converter [[https://pandoc.org/][Pandoc]].                                                    |
+| [[https://plantuml.com][plantUML]]     | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
+| [[https://www.python.org/][python]]       | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
+| [[https://www.sumatrapdfreader.org][SumatraPDF]]   | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
+| [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]]   | Tool allowing to create ELSE language specification files.                                                                 |
+|--------------+----------------------------------------------------------------------------------------------------------|
 
-#+begin_example
-mv ~/.emacs.d ~/.emacs.d.bak
-git clone https://github.com/hatlafax/psimacs.git ~/.emacs.d
-#+end_example
+To get detail help on the options =bootstrap.ps1= provides run:
 
-Now install dependency packages for Python:
+#+begin_src
+.\booststrap.ps1 --help
+#+end_src
 
-#+begin_example
-cd c:/utils/python310
-python -m pip install pip --upgrade
+On bootstrapping *Psimacs* installs the most recent versions of the tools that are known to work
+properly in the context of *Psimacs*. Any other tools used by *Psimacs* are installed within the
+[[https://www.msys2.org/][MSYS2]] environment, e.g. [[https://www.doxygen.nl/][doxygen]], [[https://www.graphviz.org/][graphviz]] or [[https://mermaid.js.org/][mermaid]].
 
+The bootstrapping operation tries hard to not modify the target system outside of =%HOME%\psimacs= directory,
+but there are some exceptions:
 
-cd c:/utils/Python310/Scripts
-pip install -r ~/.emacs.d/assets/dependencies/python/requirements.txt
-#+end_example
+- In case that no =%HOME%= variable is defined inside of the active environment, a variable =%HOME%= is created
+  and set to value =c:\home\%UserName%=. After that, the =%HOME%= directory is created, if it does not already exists.
+- Bootstrapping installs a number of font files into the user's font directory.
+- A raw python installation is performed into the local =%HOME%\psimacs= directory. The official python installer does
+  modify the registry, which cannot be avoided easily.
+- A number of desktop shortcuts are created.
 
-Next, install dependency packages for MSYS2. Open the /MSYS2 MinGW 64-bit/ shell and run the following commands:
+After bootstrapping, the [[https://github.com/raxod502/straight.el][Straight]] based *Psimacs* configuration is performed on the very first startup
+of *Psimacs*. This process takes a couple of minutes and asks two times for confirmation to allow the download of
+1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary,
+2. for the [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] icons.
 
-#+begin_example
-#pacman -S - < ~/.emacs.d/assets/dependencies/msys2/requirements.txt
-pacman -S $(cat ~/.emacs.d/assets/dependencies/msys2/requirements.txt | cut -d' ' -f1)
-#+end_example
+*Attention:*
+- At least 22 GByte of free disk space is used by the default *Psimacs* installation!
+- Performing a *Psimacs* bootstrapping operation is at one's own risk!
 
-Remarks:
-- It is also possible use virtual Python environments.
-- Adapting the two =requirements.txt= might be worth the effort, since these two represent my personal settings.
+*Remark:* Windows Powershell typically restricts the execution of scripts. You can
+take the following measures in order to get the =bootstrap.ps1= script running:
+- Set a proper execution policy for powershell scripts with respect to the user profile:
+
+  #+begin_src powershell
+Get-ExecutionPolicy -list
+Set-ExecutionPolicy -ExecutionPolicy unrestricted -Scope CurrentUser
+  #+end_src
+
+- Downloaded powershell scripts are blocked and not allowed to executed. They need to be unlocked:
+
+  #+begin_src powershell
+Unblock-File -Path .\bootstrap.ps1
+  #+end_src
+
+Maybe, better ways exists for these problems ;-)
 
 Finally, just run *Emacs*.
 
@@ -103,6 +131,27 @@ run of *Psimacs*. Instead modify the =init.org= file in order to change your con
 
 You can create a HTML document =init.html= from the =init.org= file by simply typing =C-c C-e h h= in the *Emacs* buffer for
 this file. It is recommended to use this =init.html= for browser reading.
+
+*** Linux
+
+*Psimacs* is able to run on Ubuntu 24.04 LTS. Currently, no automatic installation method for bootstrapping
+*Psimacs* exists on this platform.
+
+Install the following parts:
+
+| Part                  | Source                                                   | Installation                                                                            | Destination / Remark                                                       |
+|-----------------------+----------------------------------------------------------+-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------|
+| *Psimacs*               | =https://github.com/hatlafax/psimacs=                      | =git clone https://github.com/hatlafax/psimacs.git=                                       | =~/psimacs/psimacs=                                                          |
+| *LanguageTool*          | =https://languagetool.org/download/=                       | =https://languagetool.org/download/LanguageTool-6.4.zip=                                  | =~/psimacs/LanguageTool=                                                     |
+| *Antlr*                 | =https://www.antlr.org/download/antlr-4.13.1-complete.jar= | copy file.                                                                              | =~/psimacs/Antlr=                                                            |
+| *ELSE-grammar-compiler* | =https://github.com/hatlafax/ELSE-grammar-compiler=        | =git clone https://github.com/hatlafax/ELSE-grammar-compiler.git=                         | =~/psimacs/ELSE-grammar-compiler=                                            |
+| *Sumatra PDF*           | =https://www.sumatrapdfreader.org/free-pdf-reader=         | with /snap/ over the /App Center/ of Ubuntu.                                                |                                                                            |
+| Various tools         | ubuntu package manager                                   | see =~/psimacs/psimas/assets/dependencies/ubuntu/linux/requirements_ubuntu_installed.txt= | This file contains all modules that were installed when writing this text. |
+| *Python* packages       | pip tool                                                 | see  =~/psimacs/psimas/assets/dependencies/ubuntu/python/requirements_linux_versions.txt= | This file contains all packages installed when writing this text.          |
+|-----------------------+----------------------------------------------------------+-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------|
+
+A virtual python environment is used and created by running =python3 -m venv ./python-0/venv/=. This virtual python environment is activated before starting *Psimacs*.
+There are better methods, but that worked for me.
 
 ** Usage
 
@@ -155,8 +204,8 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 ** Limitations / Known Issues
 
 - Tested on *Windows* operating system only.
-- *Linux* support is planned for the future.
-- *WSL2* support is planned for the future.
+- *Linux* support is just started recently on Ubuntu 24.04 LTS.
+- *WSL2* support is planned for the future and might work already with the support of the Ubuntu platform.
 - This configuration has a very long Startup time. *Emacs client* usage is strongly recommended.
 
 ** License (GPL v3)
@@ -2738,7 +2787,7 @@ Template =.lse=-files of the [[https://github.com/peter-milliken/ELSE][Emacs Lan
   "The psimacs else python mako template directory.")
 
 (defconst psimacs/config/else-grammar-compiler-dir
-  "~/ELSE-grammar-compiler"
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "ELSE-grammar-compiler")
   "The psimacs ELSE grammar compiler directory.")
 
 (defconst psimacs/config/else-grammar-compiler-out-dir
@@ -14207,7 +14256,7 @@ Emacs, it will be the key to ultimately Live in Emacs.
   :straight (eaf :type git :host github :repo "emacs-eaf/emacs-application-framework"
                  :files ("*")
                  :post-build '(psimacs/config/python-runtime-exe "install-eaf.py" "--install-core-deps"))
-  :config 
+  :config
     (when psimacs/system/is-win32-p
       (setq eaf-wm-name "windows")
     )
@@ -16010,7 +16059,7 @@ Reference:
 
 ** ELSE Grammar Compiler
 
-ELSE, the Emacs Language Sensitive Editor, is a system for template generation 
+ELSE, the Emacs Language Sensitive Editor, is a system for template generation
 aimed at reducing the amount of user typing and to operate seamlessly with a minimum of
 interference to the user.
 ELSE is implemented as a minor mode and can work with any major mode. As ELSE is
@@ -16031,6 +16080,13 @@ Reference:
 This simplistic ANTLRv4 major mode implementation allows to work on a ANTLRv4 file buffer. It provides
 syntax highlighting and supports the special /annotation system/ that has been added to the ANTLRv4 specification
 in order to provide extra meta information for the ELSE framework.
+
+#+attr_html: :class styledtable
+| Key binding | Command                                               | Description                                                                                |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------|
+| =C-c C-c=     | =M-x psimacs/antlrv4/create-else-grammar=               | Create a ELSE language specification from the ANTLRv4 grammar found in the current buffer. |
+| =C-c C-v=     | =M-x psimacs/antlrv4/create-visualization-from-grammar= | Create a HTML visualization of the ANTLRv4 grammar found in the current buffer.            |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-antlrv4.el :var file-description="Advanced ANTLRv4 setup"
 ;;
@@ -16087,7 +16143,7 @@ in order to provide extra meta information for the ELSE framework.
                     )
                     (rename-file res-file bck-file)
                   )
-                  
+
                   (let ((res-file-buffer (get-file-buffer res-file)))
                     (copy-file out-file res-file)
                     (if res-file-buffer
@@ -20395,7 +20451,7 @@ References:
 ;; Functions that starts various shells
 ;;
 (defun psimacs/shell/spawn-shell (name)
-  "Create a new shell buffer."  
+  "Create a new shell buffer."
   (interactive "Mname of shell buffer to create: ")
   (pop-to-buffer (get-buffer-create (generate-new-buffer-name name)))
   (shell (current-buffer))
@@ -22519,7 +22575,7 @@ References:
         (setq major-mode-remap-alist (treesit-auto--build-major-mode-remap-alist))
   )
 
-  
+
 
   ;(add-to-list 'major-mode-remap-alist '(c-mode      . c-ts-mode))
   ;(add-to-list 'major-mode-remap-alist '(c++-mode    . c++-ts-mode))
@@ -22533,7 +22589,7 @@ References:
 
   (add-hook 'prog-mode-hook 'run-non-ts-hooks)
 
-  (setq treesit-font-lock-level 4) 
+  (setq treesit-font-lock-level 4)
 
   (use-package combobulate
       :straight nil
