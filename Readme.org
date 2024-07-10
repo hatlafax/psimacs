@@ -63,6 +63,7 @@ The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimac
 | [[https://plantuml.com][plantUML]]     | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
 | [[https://www.python.org/][python]]       | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
 | [[https://www.sumatrapdfreader.org][SumatraPDF]]   | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
+| [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]]   | Tool allowing to create ELSE language specification files.                                                                 |
 |--------------+----------------------------------------------------------------------------------------------------------|
 
 To get detail help on the options =bootstrap.ps1= provides run:
@@ -112,7 +113,25 @@ Unblock-File -Path .\bootstrap.ps1
 Maybe, better ways exists for these problems ;-)
 
 ** Linux
-Currently, Linux systems are not supported by Psimacs.
+
+*Psimacs* is able to run on Ubuntu 24.04 LTS. Currently, no automatic installation method for bootstrapping
+*Psimacs* exists on this platform.
+
+Install the following parts:
+
+| Part                  | Source                                                   | Installation                                                                            | Destination / Remark                                                       |
+|-----------------------+----------------------------------------------------------+-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------|
+| *Psimacs*               | =https://github.com/hatlafax/psimacs=                      | =git clone https://github.com/hatlafax/psimacs.git=                                       | =~/psimacs/psimacs=                                                          |
+| *LanguageTool*          | =https://languagetool.org/download/=                       | =https://languagetool.org/download/LanguageTool-6.4.zip=                                  | =~/psimacs/LanguageTool=                                                     |
+| *Antlr*                 | =https://www.antlr.org/download/antlr-4.13.1-complete.jar= | copy file.                                                                              | =~/psimacs/Antlr=                                                            |
+| *ELSE-grammar-compiler* | =https://github.com/hatlafax/ELSE-grammar-compiler=        | =git clone https://github.com/hatlafax/ELSE-grammar-compiler.git=                         | =~/psimacs/ELSE-grammar-compiler=                                            |
+| *Sumatra PDF*           | =https://www.sumatrapdfreader.org/free-pdf-reader=         | with /snap/ over the /App Center/ of Ubuntu.                                                |                                                                            |
+| Various tools         | ubuntu package manager                                   | see =~/psimacs/psimas/assets/dependencies/ubuntu/linux/requirements_ubuntu_installed.txt= | This file contains all modules that were installed when writing this text. |
+| *Python* packages       | pip tool                                                 | see  =~/psimacs/psimas/assets/dependencies/ubuntu/python/requirements_linux_versions.txt= | This file contains all packages installed when writing this text.          |
+|-----------------------+----------------------------------------------------------+-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------|
+
+A virtual python environment is used and created by running =python3 -m venv ./python-0/venv/=. This virtual python environment is activated before starting *Psimacs*.
+There are better methods, but that worked for me.
 
 ** MacOS
 Currently, MacOS is also not supported by Psimacs.
@@ -140,7 +159,7 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 * Limitations / Known Issues
 
 - Tested on Windows operating system only
-
+- Linux usage on Ubuntu 24.04 LTS is only started recently and does have some rough edges.
 * License (GPL v3)
 
 Copyright (C) 2020-2021 Johannes Brunen (hatlafax@gmx.de)

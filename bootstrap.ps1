@@ -1470,6 +1470,15 @@ if (! (Test-Path $init_el -PathType Leaf) )
         }
     }
 
+    if (! (Test-Path $else_grammar_compiler_git) )
+    {
+        echo "Cloning ELSE grammar compiler..."
+
+        $else_grammar_compiler_url = "https://github.com/hatlafax/ELSE-grammar-compiler.git"
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $else_grammar_compiler_url ELSE-grammar-compiler"
+    }
+
     if (! (Test-Path "$psimacs_0_cmd" -PathType Leaf) )
     {
         $psimacs_cmd = "$psimacs\psimacs.cmd"
@@ -1603,6 +1612,18 @@ if (! (Test-Path $init_el -PathType Leaf) )
         }
     }
 }
+
+$else_grammar_compiler_git = "$psimacs\ELSE-grammar-compiler\.git"
+
+if (! (Test-Path $else_grammar_compiler_git) )
+{
+    echo "Cloning ELSE grammar compiler..."
+
+    $else_grammar_compiler_url = "https://github.com/hatlafax/ELSE-grammar-compiler.git"
+
+    & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $else_grammar_compiler_url ELSE-grammar-compiler"
+}
+
 
 if (-not $nopython)
 {
