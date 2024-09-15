@@ -16094,6 +16094,7 @@ in order to provide extra meta information for the ELSE framework.
 ;;
 (use-package antlrv4-mode
   :straight nil
+  :mode "\\.g4\\'"
   :config
         (defun psimacs/antlrv4/create-else-grammar ()
           "Create a ELSE language specification from the ANTLRv4 grammar found in the current buffer."
@@ -16132,7 +16133,7 @@ in order to provide extra meta information for the ELSE framework.
                         psimacs/config/python-runtime-exe
                         " "
                         psimacs/config/else-grammar-compiler-py
-                        " -i " f-dir " -o " out-dir " -l " language " -p '*(){}[].,;:'" " -I 'a-zA-Z_0-9-' " f-name
+                        " -i " f-dir " -o " out-dir " -l " language " -p '*(){}[].,;:'" " -I 'a-zA-Z_0-9-' " "-x " f-name
                     )
                 )
 
@@ -16247,7 +16248,6 @@ in order to provide extra meta information for the ELSE framework.
            ("C-c C-c"     . psimacs/antlrv4/create-else-grammar)
            ("C-c C-v"     . psimacs/antlrv4/create-visualization-from-grammar)
         )
-
 )
 #+end_src
 
