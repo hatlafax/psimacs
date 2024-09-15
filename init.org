@@ -16984,6 +16984,17 @@ The following are basic [[https://code.orgmode.org/bzg/org-mode][org-mode]] sett
             )
         )
 
+        (defun psimacs/org/hack/fix-org-cycle-error ()
+          "Hack function to unfreeze the sub-tree folding in org-mode."
+          (interactive)
+            (let ((P0 (point))(P1 (point-min)) (P2 (point-max)))
+              (save-buffer)
+              (kill-region P1 P2)
+              (yank)
+              (goto-char P0)
+            )
+        )
+
         (add-hook 'org-clock-out-hook 'psimacs/internal/org-remove-empty-drawer-on-clock-out 'append)
 
 )
