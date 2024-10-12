@@ -141,9 +141,9 @@ DEFINE PLACEHOLDER preprocessing_token
     /SEPARATOR=""
     /TYPE=MENU
     "header_name"/PLACEHOLDER
-    "import_keyword"/PLACEHOLDER
-    "module_keyword"/PLACEHOLDER
-    "export_keyword"/PLACEHOLDER
+    "import"
+    "module"
+    "export"
     "identifier"/PLACEHOLDER
     "pp_number"/PLACEHOLDER
     "character_literal"/PLACEHOLDER
@@ -406,9 +406,11 @@ DEFINE PLACEHOLDER keyword
     "friend"
     "goto"
     "if"
+    "import"
     "inline"
     "int"
     "long"
+    "module"
     "mutable"
     "namespace"
     "new"
@@ -447,9 +449,6 @@ DEFINE PLACEHOLDER keyword
     "volatile"
     "wchar_t"
     "while"
-    "import_keyword"/PLACEHOLDER
-    "module_keyword"/PLACEHOLDER
-    "export_keyword"/PLACEHOLDER
 END DEFINE
 
 
@@ -893,7 +892,7 @@ DEFINE PLACEHOLDER character_literal
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[encoding_prefix]\'{c_char}... \'"
+    "[encoding_prefix]\'{c_char}...\'"
 END DEFINE
 
 
@@ -1098,8 +1097,8 @@ DEFINE PLACEHOLDER decimal_floating_point_literal
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{fractional_constant}[exponent_part][floating_point_suffix]"
-    "{digit_sequence} {exponent_part}[floating_point_suffix]"
+    "{fractional_constant} [exponent_part][floating_point_suffix]"
+    "{digit_sequence}{exponent_part}[floating_point_suffix]"
 END DEFINE
 
 
@@ -1245,7 +1244,7 @@ DEFINE PLACEHOLDER string_literal
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[encoding_prefix]"[s_char]... ""
+    "[encoding_prefix]"[s_char]...""
     "[encoding_prefix]R{raw_string}"
 END DEFINE
 
@@ -1322,6 +1321,21 @@ DEFINE PLACEHOLDER d_char
 END DEFINE
 
 
+DELETE PLACEHOLDER unevaluated_string
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER unevaluated_string
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    ""[s_char]...""
+    "R{raw_string}"
+END DEFINE
+
+
 DELETE PLACEHOLDER boolean_literal
     /LANGUAGE="c++"
 DEFINE PLACEHOLDER boolean_literal
@@ -1395,8 +1409,8 @@ DEFINE PLACEHOLDER user_defined_floating_point_literal
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{fractional_constant}[exponent_part] {ud_suffix}"
-    "{digit_sequence} {exponent_part}{ud_suffix}"
+    "{fractional_constant}[exponent_part]{ud_suffix}"
+    "{digit_sequence}{exponent_part}{ud_suffix}"
     "{hexadecimal_prefix}{hexadecimal_fractional_constant}{binary_exponent_part}{ud_suffix}"
     "{hexadecimal_prefix}{hexadecimal_digit_sequence}{binary_exponent_part}{ud_suffix}"
 END DEFINE
@@ -1572,7 +1586,7 @@ DEFINE PLACEHOLDER pack_index_expression
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{id_expression}... [ {constant_expression} ]"
+    "{id_expression}... [{constant_expression}]"
 END DEFINE
 
 
@@ -1586,8 +1600,8 @@ DEFINE PLACEHOLDER lambda_expression
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{lambda_introducer} [attribute_specifier]...{lambda_declarator} {compound_statement}"
-    "{lambda_introducer} <{template_parameter_list}>[requires_clause][attribute_specifier]...{lambda_declarator} {compound_statement}"
+    "{lambda_introducer} [attribute_specifier]... {lambda_declarator} {compound_statement}"
+    "{lambda_introducer}<{template_parameter_list}> [requires_clause] [attribute_specifier]... {lambda_declarator} {compound_statement}"
 END DEFINE
 
 
@@ -1615,10 +1629,10 @@ DEFINE PLACEHOLDER lambda_declarator
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{lambda_specifier}... [noexcept_specifier][attribute_specifier]... [trailing_return_type]"
+    "{lambda_specifier}... [noexcept_specifier] [attribute_specifier]... [trailing_return_type]"
     "{noexcept_specifier} [attribute_specifier]... [trailing_return_type]"
     "trailing_return_type"/PLACEHOLDER
-    "({parameter_declaration_clause})[lambda_specifier]... [noexcept_specifier][attribute_specifier]... [trailing_return_type][requires_clause]"
+    "({parameter_declaration_clause}) [lambda_specifier]... [noexcept_specifier] [attribute_specifier]... [trailing_return_type] [requires_clause]"
 END DEFINE
 
 
@@ -1741,8 +1755,8 @@ DEFINE PLACEHOLDER init_capture
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[three_dots] {identifier} {initializer}"
-    "[and_three_dots] {identifier} {initializer}"
+    "[three_dots]{identifier} {initializer}"
+    "[and_three_dots]{identifier} {initializer}"
 END DEFINE
 
 
@@ -1757,8 +1771,8 @@ DEFINE PLACEHOLDER fold_expression
     /SEPARATOR=""
     /TYPE=MENU
     "({cast_expression} {fold_operator}...)"
-    "(...{fold_operator} {cast_expression})"
-    "({cast_expression} {fold_operator}...{fold_operator} {cast_expression})"
+    "(... {fold_operator} {cast_expression})"
+    "({cast_expression} {fold_operator}... {fold_operator} {cast_expression} )"
 END DEFINE
 
 
@@ -1890,7 +1904,7 @@ DEFINE PLACEHOLDER type_requirement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "typename[nested_name_specifier] {type_name};"
+    "typename [nested_name_specifier] {type_name};"
 END DEFINE
 
 
@@ -1904,7 +1918,7 @@ DEFINE PLACEHOLDER compound_requirement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{{expression}} [noexcept][return_type_requirement];"
+    "{{expression}} [noexcept] [return_type_requirement];"
 END DEFINE
 
 
@@ -1975,20 +1989,20 @@ DEFINE PLACEHOLDER postfix_expression
     /SEPARATOR=""
     /TYPE=MENU
     "primary_expression"/PLACEHOLDER
-    "{postfix_expression} [[expression_list]]"
-    "{postfix_expression} ([expression_list])"
-    "{simple_type_specifier} ([expression_list])"
-    "{typename_specifier} ([expression_list])"
+    "{postfix_expression}[[expression_list]]"
+    "{postfix_expression}([expression_list])"
+    "{simple_type_specifier}([expression_list])"
+    "{typename_specifier}([expression_list])"
     "{simple_type_specifier} {braced_init_list}"
     "{typename_specifier} {braced_init_list}"
-    "{postfix_expression} [dot_template] {id_expression}"
-    "{postfix_expression} [arrow_template] {id_expression}"
-    "{postfix_expression} ++"
-    "{postfix_expression} --"
-    "dynamic_cast<{type_id} >({expression})"
-    "static_cast<{type_id} >({expression})"
-    "reinterpret_cast<{type_id} >({expression})"
-    "const_cast<{type_id} >({expression})"
+    "{postfix_expression}[dot_template] {id_expression}"
+    "{postfix_expression}[arrow_template] {id_expression}"
+    "{postfix_expression}++"
+    "{postfix_expression}--"
+    "dynamic_cast<{type_id}>({expression})"
+    "static_cast<{type_id}>({expression})"
+    "reinterpret_cast<{type_id}>({expression})"
+    "const_cast<{type_id}>({expression})"
     "typeid({expression})"
     "typeid({type_id})"
 END DEFINE
@@ -2019,13 +2033,13 @@ DEFINE PLACEHOLDER unary_expression
     /SEPARATOR=""
     /TYPE=MENU
     "postfix_expression"/PLACEHOLDER
-    "{unary_operator}{cast_expression}"
+    "{unary_operator} {cast_expression}"
     "++{cast_expression}"
     "--{cast_expression}"
     "await_expression"/PLACEHOLDER
     "sizeof {unary_expression}"
     "sizeof({type_id})"
-    "sizeof...( {identifier} )"
+    "sizeof...({identifier})"
     "alignof({type_id})"
     "noexcept_expression"/PLACEHOLDER
     "new_expression"/PLACEHOLDER
@@ -2104,8 +2118,8 @@ DEFINE PLACEHOLDER new_expression
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[nesting_operator]new [new_placement] {new_type_id} [new_initializer]"
-    "[nesting_operator]new [new_placement] ( {type_id})[new_initializer]"
+    "[nesting_operator] new[new_placement]{new_type_id} [new_initializer]"
+    "[nesting_operator] new[new_placement]({type_id})[new_initializer]"
 END DEFINE
 
 
@@ -2119,7 +2133,7 @@ DEFINE PLACEHOLDER new_placement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "( {expression_list} )"
+    "({expression_list})"
 END DEFINE
 
 
@@ -2162,8 +2176,8 @@ DEFINE PLACEHOLDER noptr_new_declarator
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[[expression]][attribute_specifier]..."
-    "{noptr_new_declarator} [ {constant_expression} ][attribute_specifier]..."
+    "[[expression]] [attribute_specifier]..."
+    "{noptr_new_declarator}[{constant_expression}] [attribute_specifier]..."
 END DEFINE
 
 
@@ -2192,7 +2206,7 @@ DEFINE PLACEHOLDER delete_expression
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[nesting_operator] delete{cast_expression}"
+    "[nesting_operator] delete {cast_expression}"
     "[nesting_operator] delete[] {cast_expression}"
 END DEFINE
 
@@ -2208,7 +2222,7 @@ DEFINE PLACEHOLDER cast_expression
     /SEPARATOR=""
     /TYPE=MENU
     "unary_expression"/PLACEHOLDER
-    "( {type_id}) {cast_expression}"
+    "({type_id}) {cast_expression}"
 END DEFINE
 
 
@@ -2224,7 +2238,7 @@ DEFINE PLACEHOLDER pm_expression
     /TYPE=MENU
     "cast_expression"/PLACEHOLDER
     "{pm_expression}.* {cast_expression}"
-    "{pm_expression} ->* {cast_expression}"
+    "{pm_expression}->* {cast_expression}"
 END DEFINE
 
 
@@ -2272,7 +2286,7 @@ DEFINE PLACEHOLDER shift_expression
     /SEPARATOR=""
     /TYPE=MENU
     "additive_expression"/PLACEHOLDER
-    "{shift_expression} <<{additive_expression}"
+    "{shift_expression} << {additive_expression}"
     "{shift_expression} >> {additive_expression}"
 END DEFINE
 
@@ -2303,7 +2317,7 @@ DEFINE PLACEHOLDER relational_expression
     /SEPARATOR=""
     /TYPE=MENU
     "compare_expression"/PLACEHOLDER
-    "{relational_expression} <{compare_expression}"
+    "{relational_expression} < {compare_expression}"
     "{relational_expression} > {compare_expression}"
     "{relational_expression} <= {compare_expression}"
     "{relational_expression} >= {compare_expression}"
@@ -2337,7 +2351,7 @@ DEFINE PLACEHOLDER and_expression
     /SEPARATOR=""
     /TYPE=MENU
     "equality_expression"/PLACEHOLDER
-    "{and_expression} &{equality_expression}"
+    "{and_expression} & {equality_expression}"
 END DEFINE
 
 
@@ -2382,7 +2396,7 @@ DEFINE PLACEHOLDER logical_and_expression
     /SEPARATOR=""
     /TYPE=MENU
     "inclusive_or_expression"/PLACEHOLDER
-    "{logical_and_expression} &&{inclusive_or_expression}"
+    "{logical_and_expression} && {inclusive_or_expression}"
 END DEFINE
 
 
@@ -2412,7 +2426,7 @@ DEFINE PLACEHOLDER conditional_expression
     /SEPARATOR=""
     /TYPE=MENU
     "logical_or_expression"/PLACEHOLDER
-    "{logical_or_expression} ? {expression}: {assignment_expression}"
+    "{logical_or_expression} ? {expression} : {assignment_expression}"
 END DEFINE
 
 
@@ -2526,13 +2540,13 @@ DEFINE PLACEHOLDER statement
     /SEPARATOR=""
     /TYPE=MENU
     "labeled_statement"/PLACEHOLDER
-    "[attribute_specifier]...{expression_statement}"
-    "[attribute_specifier]...{compound_statement}"
-    "[attribute_specifier]...{selection_statement}"
-    "[attribute_specifier]...{iteration_statement}"
-    "[attribute_specifier]...{jump_statement}"
+    "[attribute_specifier]... {expression_statement}"
+    "[attribute_specifier]... {compound_statement}"
+    "[attribute_specifier]... {selection_statement}"
+    "[attribute_specifier]... {iteration_statement}"
+    "[attribute_specifier]... {jump_statement}"
     "declaration_statement"/PLACEHOLDER
-    "[attribute_specifier]...{try_block}"
+    "[attribute_specifier]... {try_block}"
 END DEFINE
 
 
@@ -2563,7 +2577,7 @@ DEFINE PLACEHOLDER condition
     /SEPARATOR=""
     /TYPE=MENU
     "expression"/PLACEHOLDER
-    "[attribute_specifier]...{decl_specifier_seq} {declarator} {brace_or_equal_initializer}"
+    "[attribute_specifier]... {decl_specifier_seq} {declarator} {brace_or_equal_initializer}"
 END DEFINE
 
 
@@ -2577,9 +2591,9 @@ DEFINE PLACEHOLDER label
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[attribute_specifier]...{identifier}:"
-    "[attribute_specifier]... case{constant_expression}:"
-    "[attribute_specifier]...default:"
+    "[attribute_specifier]... {identifier} :"
+    "[attribute_specifier]... case {constant_expression}:"
+    "[attribute_specifier]... default:"
 END DEFINE
 
 
@@ -2621,7 +2635,7 @@ DEFINE PLACEHOLDER compound_statement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{ [statement]... [label]...}"
+    "{[statement]... [label]...}"
 END DEFINE
 
 
@@ -2663,11 +2677,11 @@ DEFINE PLACEHOLDER selection_statement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[if_constexpr] ([init_statement] {condition} ) {statement}"
-    "[if_constexpr] ([init_statement] {condition} ) {statement} else{statement}"
+    "[if_constexpr] ([init_statement] {condition}) {statement}"
+    "[if_constexpr] ([init_statement] {condition}) {statement} else {statement}"
     "[if_exlamation_mark] consteval {compound_statement}"
-    "[if_exlamation_mark] consteval {compound_statement} else{statement}"
-    "switch([init_statement] {condition} ) {statement}"
+    "[if_exlamation_mark] consteval {compound_statement} else {statement}"
+    "switch([init_statement] {condition}) {statement}"
 END DEFINE
 
 
@@ -2681,10 +2695,10 @@ DEFINE PLACEHOLDER iteration_statement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "while( {condition} ) {statement}"
+    "while({condition}) {statement}"
     "do {statement} while({expression});"
-    "for( {init_statement} [condition]; [expression] ) {statement}"
-    "for([init_statement] {for_range_declaration}: {for_range_initializer} ) {statement}"
+    "for({init_statement} [condition]; [expression]) {statement}"
+    "for([init_statement] {for_range_declaration} : {for_range_initializer}) {statement}"
 END DEFINE
 
 
@@ -2698,7 +2712,7 @@ DEFINE PLACEHOLDER for_range_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[attribute_specifier]...{decl_specifier_seq} {declarator}"
+    "[attribute_specifier]... {decl_specifier_seq} {declarator}"
     "structured_binding_declaration"/PLACEHOLDER
 END DEFINE
 
@@ -2775,6 +2789,7 @@ DEFINE PLACEHOLDER declaration
     /TYPE=MENU
     "name_declaration"/PLACEHOLDER
     "special_declaration"/PLACEHOLDER
+    "special_declaration_flat"/PLACEHOLDER
 END DEFINE
 
 
@@ -2788,7 +2803,7 @@ DEFINE PLACEHOLDER name_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "block_declaration"/PLACEHOLDER
+    "{block_declaration}"
     "nodeclspec_function_declaration"/PLACEHOLDER
     "function_definition"/PLACEHOLDER
     "friend_type_declaration"/PLACEHOLDER
@@ -2818,9 +2833,9 @@ DEFINE PLACEHOLDER special_declaration
 END DEFINE
 
 
-DELETE PLACEHOLDER block_declaration
+DELETE PLACEHOLDER special_declaration_flat
     /LANGUAGE="c++"
-DEFINE PLACEHOLDER block_declaration
+DEFINE PLACEHOLDER special_declaration_flat
     /LANGUAGE="c++"
     /NOAUTO_SUBSTITUTE
     /SUBSTITUTE_COUNT=1
@@ -2828,7 +2843,12 @@ DEFINE PLACEHOLDER block_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "simple_declaration"/PLACEHOLDER
+    "extern template {declaration}"
+    "template {declaration}"
+    "template<> {declaration}"
+    "export {name_declaration}"
+    "export {[declaration]...}"
+    "export {module_import_declaration} {block_declaration} {simple_declaration}"
     "asm_declaration"/PLACEHOLDER
     "namespace_alias_definition"/PLACEHOLDER
     "using_declaration"/PLACEHOLDER
@@ -2850,7 +2870,7 @@ DEFINE PLACEHOLDER nodeclspec_function_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[attribute_specifier]...{declarator};"
+    "[attribute_specifier]... {declarator};"
 END DEFINE
 
 
@@ -2864,7 +2884,7 @@ DEFINE PLACEHOLDER alias_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "using {identifier}[attribute_specifier]... = {defining_type_id};"
+    "using {identifier} [attribute_specifier]... = {defining_type_id};"
 END DEFINE
 
 
@@ -2878,7 +2898,7 @@ DEFINE PLACEHOLDER attributed_identifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{identifier}[attribute_specifier]..."
+    "{identifier} [attribute_specifier]..."
 END DEFINE
 
 
@@ -2907,7 +2927,7 @@ DEFINE PLACEHOLDER structured_binding_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[attribute_specifier]...{decl_specifier_seq} [ref_qualifier][ {attributed_identifier_list} ]"
+    "[attribute_specifier]... {decl_specifier_seq} [ref_qualifier] [{attributed_identifier_list}]"
 END DEFINE
 
 
@@ -2922,7 +2942,7 @@ DEFINE PLACEHOLDER simple_declaration
     /SEPARATOR=""
     /TYPE=MENU
     "{decl_specifier_seq} [init_declarator_list];"
-    "[attribute_specifier]...{decl_specifier_seq} {init_declarator_list};"
+    "[attribute_specifier]... {decl_specifier_seq} {init_declarator_list};"
     "{structured_binding_declaration} {initializer};"
 END DEFINE
 
@@ -2937,7 +2957,7 @@ DEFINE PLACEHOLDER static_assert_message
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{unevaluated_string}"
+    "unevaluated_string"/PLACEHOLDER
     "constant_expression"/PLACEHOLDER
 END DEFINE
 
@@ -2953,7 +2973,7 @@ DEFINE PLACEHOLDER static_assert_declaration
     /SEPARATOR=""
     /TYPE=MENU
     "static_assert({constant_expression});"
-    "static_assert({constant_expression}, {static_assert_message} );"
+    "static_assert({constant_expression}, {static_assert_message});"
 END DEFINE
 
 
@@ -3158,7 +3178,7 @@ DEFINE PLACEHOLDER simple_type_specifier
     /SEPARATOR=""
     /TYPE=MENU
     "[nested_name_specifier] {type_name}"
-    "{nested_name_specifier} template{simple_template_id}"
+    "{nested_name_specifier} template {simple_template_id}"
     "computed_type_specifier"/PLACEHOLDER
     "placeholder_type_specifier"/PLACEHOLDER
     "[nested_name_specifier] {template_name}"
@@ -3220,7 +3240,7 @@ DEFINE PLACEHOLDER pack_index_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{typedef_name}...[ {constant_expression} ]"
+    "{typedef_name} ...[{constant_expression}]"
 END DEFINE
 
 
@@ -3265,7 +3285,7 @@ DEFINE PLACEHOLDER placeholder_type_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[type_constraint]auto"
+    "[type_constraint] auto"
     "[type_constraint] decltype(auto)"
 END DEFINE
 
@@ -3342,8 +3362,8 @@ DEFINE PLACEHOLDER noptr_declarator
     /TYPE=MENU
     "{declarator_id} [attribute_specifier]..."
     "{noptr_declarator} {parameters_and_qualifiers}"
-    "{noptr_declarator} [[constant_expression]][attribute_specifier]..."
-    "( {ptr_declarator} )"
+    "{noptr_declarator} [[constant_expression]] [attribute_specifier]..."
+    "({ptr_declarator})"
 END DEFINE
 
 
@@ -3357,7 +3377,7 @@ DEFINE PLACEHOLDER parameters_and_qualifiers
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "({parameter_declaration_clause})[cv_qualifier]... [ref_qualifier][noexcept_specifier][attribute_specifier]..."
+    "({parameter_declaration_clause}) [cv_qualifier]... [ref_qualifier] [noexcept_specifier] [attribute_specifier]..."
 END DEFINE
 
 
@@ -3385,9 +3405,9 @@ DEFINE PLACEHOLDER ptr_operator
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "* [attribute_specifier]... [cv_qualifier]..."
-    "& [attribute_specifier]..."
-    "&& [attribute_specifier]..."
+    "*[attribute_specifier]... [cv_qualifier]..."
+    "&[attribute_specifier]..."
+    "&&[attribute_specifier]..."
     "{nested_name_specifier} * [attribute_specifier]... [cv_qualifier]..."
     "[ms_based_modifier] * [attribute_specifier]... [ms_pointer_modifier]... [cv_qualifier]..."
     "[ms_based_modifier] {nested_name_specifier} * [attribute_specifier]... [ms_pointer_modifier]... [cv_qualifier]..."
@@ -3448,7 +3468,7 @@ DEFINE PLACEHOLDER declarator_id
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[three_dots] {id_expression}"
+    "[three_dots]{id_expression}"
 END DEFINE
 
 
@@ -3522,8 +3542,8 @@ DEFINE PLACEHOLDER noptr_abstract_declarator
     /SEPARATOR=""
     /TYPE=MENU
     "[noptr_abstract_declarator] {parameters_and_qualifiers}"
-    "[noptr_abstract_declarator][[constant_expression]][attribute_specifier]..."
-    "( {ptr_abstract_declarator} )"
+    "[noptr_abstract_declarator] [[constant_expression]] [attribute_specifier]..."
+    "({ptr_abstract_declarator})"
 END DEFINE
 
 
@@ -3612,9 +3632,9 @@ DEFINE PLACEHOLDER parameter_declaration
     /SEPARATOR=""
     /TYPE=MENU
     "[attribute_specifier]... [this] {decl_specifier_seq} {declarator}"
-    "[attribute_specifier]...{decl_specifier_seq} {declarator} = {initializer_clause}"
+    "[attribute_specifier]... {decl_specifier_seq} {declarator} = {initializer_clause}"
     "[attribute_specifier]... [this] {decl_specifier_seq} [abstract_declarator]"
-    "[attribute_specifier]...{decl_specifier_seq} [abstract_declarator] = {initializer_clause}"
+    "[attribute_specifier]... {decl_specifier_seq} [abstract_declarator] = {initializer_clause}"
 END DEFINE
 
 
@@ -3629,7 +3649,7 @@ DEFINE PLACEHOLDER initializer
     /SEPARATOR=""
     /TYPE=MENU
     "brace_or_equal_initializer"/PLACEHOLDER
-    "( {expression_list} )"
+    "({expression_list})"
 END DEFINE
 
 
@@ -3687,8 +3707,8 @@ DEFINE PLACEHOLDER braced_init_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{{initializer_list} [comma] }"
-    "{{designated_initializer_list} [comma] }"
+    "{{initializer_list}[comma]}"
+    "{{designated_initializer_list}[comma]}"
     ""/PLACEHOLDER
 END DEFINE
 
@@ -3703,8 +3723,8 @@ DEFINE PLACEHOLDER initializer_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{initializer_clause} [three_dots]"
-    "{initializer_list}, {initializer_clause} [three_dots]"
+    "{initializer_clause}[three_dots]"
+    "{initializer_list}, {initializer_clause}[three_dots]"
 END DEFINE
 
 
@@ -3809,7 +3829,7 @@ DEFINE PLACEHOLDER deleted_function_body
     /SEPARATOR=""
     /TYPE=MENU
     "= delete;"
-    "= delete( {unevaluated_string} );"
+    "= delete({unevaluated_string});"
 END DEFINE
 
 
@@ -3837,7 +3857,7 @@ DEFINE PLACEHOLDER enum_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{enum_head} { [enumerator_list] }"
+    "{enum_head} {[enumerator_list]}"
     "{enum_head} {{enumerator_list}, }"
 END DEFINE
 
@@ -3852,7 +3872,7 @@ DEFINE PLACEHOLDER enum_head
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{enum_key} [attribute_specifier]... [enum_head_name][enum_base]"
+    "{enum_key} [attribute_specifier]... [enum_head_name] [enum_base]"
 END DEFINE
 
 
@@ -3880,7 +3900,7 @@ DEFINE PLACEHOLDER opaque_enum_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{enum_key} [attribute_specifier]...{enum_head_name} [enum_base];"
+    "{enum_key} [attribute_specifier]... {enum_head_name} [enum_base];"
 END DEFINE
 
 
@@ -3954,7 +3974,7 @@ DEFINE PLACEHOLDER enumerator
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{identifier}[attribute_specifier]..."
+    "{identifier} [attribute_specifier]..."
 END DEFINE
 
 
@@ -4056,7 +4076,7 @@ DEFINE PLACEHOLDER named_namespace_definition
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[inline]namespace[attribute_specifier]...{identifier} {{namespace_body}}"
+    "[inline] namespace [attribute_specifier]... {identifier} {{namespace_body}}"
 END DEFINE
 
 
@@ -4070,7 +4090,7 @@ DEFINE PLACEHOLDER unnamed_namespace_definition
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[inline]namespace[attribute_specifier]...{{namespace_body}}"
+    "[inline] namespace [attribute_specifier]... {{namespace_body}}"
 END DEFINE
 
 
@@ -4084,7 +4104,7 @@ DEFINE PLACEHOLDER nested_namespace_definition
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "namespace{enclosing_namespace_specifier}::[inline] {identifier} {{namespace_body}}"
+    "namespace {enclosing_namespace_specifier}:: [inline] {identifier} {{namespace_body}}"
 END DEFINE
 
 
@@ -4099,7 +4119,7 @@ DEFINE PLACEHOLDER enclosing_namespace_specifier
     /SEPARATOR=""
     /TYPE=MENU
     "identifier"/PLACEHOLDER
-    "{enclosing_namespace_specifier}::[inline] {identifier}"
+    "{enclosing_namespace_specifier}:: [inline] {identifier}"
 END DEFINE
 
 
@@ -4141,7 +4161,7 @@ DEFINE PLACEHOLDER namespace_alias_definition
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "namespace{identifier} = {qualified_namespace_specifier};"
+    "namespace {identifier} = {qualified_namespace_specifier};"
 END DEFINE
 
 
@@ -4169,7 +4189,7 @@ DEFINE PLACEHOLDER using_directive
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[attribute_specifier]... using namespace[nested_name_specifier] {namespace_name};"
+    "[attribute_specifier]... using namespace [nested_name_specifier] {namespace_name};"
 END DEFINE
 
 
@@ -4197,8 +4217,8 @@ DEFINE PLACEHOLDER using_declarator_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{using_declarator} [three_dots]"
-    "{using_declarator_list}, {using_declarator} [three_dots]"
+    "{using_declarator}[three_dots]"
+    "{using_declarator_list}, {using_declarator}[three_dots]"
 END DEFINE
 
 
@@ -4240,7 +4260,7 @@ DEFINE PLACEHOLDER asm_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[attribute_specifier]... asm( {balanced_token_seq} );"
+    "[attribute_specifier]... asm({balanced_token_seq});"
 END DEFINE
 
 
@@ -4254,7 +4274,7 @@ DEFINE PLACEHOLDER linkage_specification
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "extern {unevaluated_string} { [declaration]...}"
+    "extern {unevaluated_string} {[declaration]...}"
     "extern {unevaluated_string} {name_declaration}"
 END DEFINE
 
@@ -4269,8 +4289,59 @@ DEFINE PLACEHOLDER attribute_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[[[attribute_using_prefix] {attribute_list} ]]"
+    "[[[attribute_using_prefix] {attribute_list}]]"
     "alignment_specifier"/PLACEHOLDER
+    "standard_attribute_specifier"/PLACEHOLDER
+    "msvc_attribute_specifier"/PLACEHOLDER
+END DEFINE
+
+
+DELETE PLACEHOLDER standard_attribute_specifier
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER standard_attribute_specifier
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "[[noreturn]]"
+    "[[carries_dependency]]"
+    "[[deprecated]]"
+    "[[deprecated("reason")]]"
+    "[[fallthrough]]"
+    "[[maybe_unused]]"
+    "[[nodiscard]]"
+    "[[nodiscard("reason")]]"
+    "[[likely]]"
+    "[[unlikely]]"
+    "[[no_unique_address]]"
+    "[assume(expression)]]"
+    "[[indeterminate]]"
+    "[[optimize_for_synchronized]]"
+END DEFINE
+
+
+DELETE PLACEHOLDER msvc_attribute_specifier
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER msvc_attribute_specifier
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "[[gsl::suppress(rules)]]"
+    "[[msvc::flatten]]"
+    "[[msvc::forceinline]]"
+    "[[msvc::forceinline_calls]]"
+    "[[msvc::intrinsic]]"
+    "[[msvc::noinline]]"
+    "[[msvc::noinline_calls]]"
+    "[[msvc::no_tls_guard]]"
+    "[[msvc::no_unique_address]]"
 END DEFINE
 
 
@@ -4284,8 +4355,8 @@ DEFINE PLACEHOLDER alignment_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=", "
     /TYPE=MENU
-    "alignas( {type_id} [three_dots] )"
-    "alignas({constant_expression} [three_dots] )"
+    "alignas({type_id}[three_dots])"
+    "alignas({constant_expression}[three_dots])"
 END DEFINE
 
 
@@ -4359,7 +4430,7 @@ DEFINE PLACEHOLDER attribute_scoped_token
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{attribute_namespace}:: {identifier}"
+    "{attribute_namespace}::{identifier}"
 END DEFINE
 
 
@@ -4387,7 +4458,7 @@ DEFINE PLACEHOLDER attribute_argument_clause
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "([balanced_token_seq] )"
+    "([balanced_token_seq])"
 END DEFINE
 
 
@@ -4430,9 +4501,9 @@ DEFINE PLACEHOLDER balanced_token
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "([balanced_token_seq] )"
+    "([balanced_token_seq])"
     "[[balanced_token_seq]]"
-    "{ [balanced_token_seq] }"
+    "{[balanced_token_seq]}"
     "non_balanced_token"/PLACEHOLDER
 END DEFINE
 
@@ -4447,7 +4518,7 @@ DEFINE PLACEHOLDER module_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[export_keyword] {module_keyword} {module_name} [module_partition][attribute_specifier]...;"
+    "[export_keyword] module {module_name} [module_partition] [attribute_specifier]...;"
 END DEFINE
 
 
@@ -4461,7 +4532,7 @@ DEFINE PLACEHOLDER module_name
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[module_name_qualifier]{identifier}"
+    "[module_name_qualifier] {identifier}"
 END DEFINE
 
 
@@ -4475,7 +4546,7 @@ DEFINE PLACEHOLDER module_partition
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=": "
     /TYPE=NONTERMINAL
-    ":[module_name_qualifier]{identifier}"
+    ": [module_name_qualifier] {identifier}"
 END DEFINE
 
 
@@ -4490,7 +4561,7 @@ DEFINE PLACEHOLDER module_name_qualifier
     /SEPARATOR=""
     /TYPE=MENU
     "{identifier}."
-    "{module_name_qualifier}{identifier}."
+    "{module_name_qualifier} {identifier}."
 END DEFINE
 
 
@@ -4505,8 +4576,8 @@ DEFINE PLACEHOLDER export_declaration
     /SEPARATOR=""
     /TYPE=MENU
     "export {name_declaration}"
-    "export { [declaration]...}"
-    "{export_keyword} {module_import_declaration}"
+    "export {[declaration]...}"
+    "export {module_import_declaration}"
 END DEFINE
 
 
@@ -4520,9 +4591,9 @@ DEFINE PLACEHOLDER module_import_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{import_keyword} {module_name} [attribute_specifier]...;"
-    "{import_keyword} {module_partition} [attribute_specifier]...;"
-    "{import_keyword} {header_name} [attribute_specifier]...;"
+    "import {module_name} [attribute_specifier]...;"
+    "import {module_partition} [attribute_specifier]...;"
+    "import {header_name} [attribute_specifier]...;"
 END DEFINE
 
 
@@ -4536,7 +4607,8 @@ DEFINE PLACEHOLDER global_module_fragment
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{module_keyword}; [declaration]..."
+    "module;"
+    "[declaration]..."
 END DEFINE
 
 
@@ -4550,7 +4622,8 @@ DEFINE PLACEHOLDER _module_fragment
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{module_keyword}: private; [declaration]..."
+    "module: private;"
+    "[declaration]..."
 END DEFINE
 
 
@@ -4579,7 +4652,7 @@ DEFINE PLACEHOLDER class_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{class_head} { [member_specification] }"
+    "{class_head} {[member_specification]}"
 END DEFINE
 
 
@@ -4593,7 +4666,7 @@ DEFINE PLACEHOLDER class_head
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{class_key} [attribute_specifier]...{class_head_name} [class_virt_specifier][base_clause]"
+    "{class_key} [attribute_specifier]... {class_head_name} [class_virt_specifier] [base_clause]"
     "{class_key} [attribute_specifier]... [base_clause]"
 END DEFINE
 
@@ -4653,7 +4726,7 @@ DEFINE PLACEHOLDER member_specification
     /SEPARATOR=""
     /TYPE=MENU
     "{member_declaration} [member_specification]"
-    "{access_specifier}:[member_specification]"
+    "{access_specifier}: [member_specification]"
 END DEFINE
 
 
@@ -4667,7 +4740,7 @@ DEFINE PLACEHOLDER member_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[attribute_specifier]... [decl_specifier_seq][member_declarator_list];"
+    "[attribute_specifier]... [decl_specifier_seq] [member_declarator_list];"
     "function_definition"/PLACEHOLDER
     "friend_type_declaration"/PLACEHOLDER
     "using_declaration"/PLACEHOLDER
@@ -4707,10 +4780,10 @@ DEFINE PLACEHOLDER member_declarator
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{declarator} [virt_specifier_seq][pure_specifier]"
+    "{declarator} [virt_specifier_seq] [pure_specifier]"
     "{declarator} {requires_clause}"
     "{declarator} [brace_or_equal_initializer]"
-    "[identifier][attribute_specifier]...: {constant_expression} [brace_or_equal_initializer]"
+    "[identifier] [attribute_specifier]...: {constant_expression} [brace_or_equal_initializer]"
 END DEFINE
 
 
@@ -4726,6 +4799,180 @@ DEFINE PLACEHOLDER virt_specifier_seq
     /TYPE=MENU
     "virt_specifier"/PLACEHOLDER
     "{virt_specifier_seq} {virt_specifier}"
+END DEFINE
+
+
+DELETE PLACEHOLDER "{b1} ∘ {b2} ∘ {b3}"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "{b1} ∘ {b2} ∘ {b3}"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "{b1}"
+    "{b2}"
+    "{b3}"
+END DEFINE
+
+
+DELETE PLACEHOLDER "{c1} ∘ {c2} ∘ {c3}"
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER "{c1} ∘ {c2} ∘ {c3}"
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=NONTERMINAL
+    "{c1}"
+    "{c2}"
+    "{c3}"
+END DEFINE
+
+
+DELETE PLACEHOLDER test_aaa
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER test_aaa
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=MENU
+    "{b1} ∘ {b2} ∘ {b3}"/PLACEHOLDER
+    "{c1} ∘ {c2} ∘ {c3}"/PLACEHOLDER
+    "{d1}{d2}{d3}"
+END DEFINE
+
+
+DELETE PLACEHOLDER b1
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER b1
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is b1"
+END DEFINE
+
+
+DELETE PLACEHOLDER b2
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER b2
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is b2"
+END DEFINE
+
+
+DELETE PLACEHOLDER b3
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER b3
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is b3"
+END DEFINE
+
+
+DELETE PLACEHOLDER c1
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER c1
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is c1"
+END DEFINE
+
+
+DELETE PLACEHOLDER c2
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER c2
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is c2"
+END DEFINE
+
+
+DELETE PLACEHOLDER c3
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER c3
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is c3"
+END DEFINE
+
+
+DELETE PLACEHOLDER d1
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER d1
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is d1"
+END DEFINE
+
+
+DELETE PLACEHOLDER d2
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER d2
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is d2"
+END DEFINE
+
+
+DELETE PLACEHOLDER d3
+    /LANGUAGE="c++"
+DEFINE PLACEHOLDER d3
+    /LANGUAGE="c++"
+    /NOAUTO_SUBSTITUTE
+    /SUBSTITUTE_COUNT=1
+    /DESCRIPTION=""
+    /DUPLICATION=CONTEXT_DEPENDENT
+    /SEPARATOR=""
+    /TYPE=TERMINAL
+    "This is d3"
 END DEFINE
 
 
@@ -4782,8 +5029,8 @@ DEFINE PLACEHOLDER friend_type_specifier_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{friend_type_specifier} [three_dots]"
-    "{friend_type_specifier_list}, {friend_type_specifier} [three_dots]"
+    "{friend_type_specifier}[three_dots]"
+    "{friend_type_specifier_list}, {friend_type_specifier}[three_dots]"
 END DEFINE
 
 
@@ -4869,8 +5116,8 @@ DEFINE PLACEHOLDER base_specifier_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{base_specifier} [three_dots]"
-    "{base_specifier_list}, {base_specifier} [three_dots]"
+    "{base_specifier}[three_dots]"
+    "{base_specifier_list}, {base_specifier}[three_dots]"
 END DEFINE
 
 
@@ -4898,9 +5145,9 @@ DEFINE PLACEHOLDER base_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[attribute_specifier]...{class_or_decltype}"
+    "[attribute_specifier]... {class_or_decltype}"
     "[attribute_specifier]... virtual [access_specifier] {class_or_decltype}"
-    "[attribute_specifier]...{access_specifier} [virtual] {class_or_decltype}"
+    "[attribute_specifier]... {access_specifier} [virtual] {class_or_decltype}"
 END DEFINE
 
 
@@ -4915,7 +5162,7 @@ DEFINE PLACEHOLDER class_or_decltype
     /SEPARATOR=""
     /TYPE=MENU
     "[nested_name_specifier] {type_name}"
-    "{nested_name_specifier} template{simple_template_id}"
+    "{nested_name_specifier} template {simple_template_id}"
     "decltype_specifier"/PLACEHOLDER
 END DEFINE
 
@@ -4960,8 +5207,8 @@ DEFINE PLACEHOLDER mem_initializer_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{mem_initializer} [three_dots]"
-    "{mem_initializer_list}, {mem_initializer} [three_dots]"
+    "{mem_initializer}[three_dots]"
+    "{mem_initializer_list}, {mem_initializer}[three_dots]"
 END DEFINE
 
 
@@ -4975,7 +5222,7 @@ DEFINE PLACEHOLDER mem_initializer
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{mem_initializer_id} ([expression_list])"
+    "{mem_initializer_id}([expression_list])"
     "{mem_initializer_id} {braced_init_list}"
 END DEFINE
 
@@ -5106,7 +5353,7 @@ DEFINE PLACEHOLDER template_head
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "template<{template_parameter_list}>[requires_clause]"
+    "template<{template_parameter_list}> [requires_clause]"
 END DEFINE
 
 
@@ -5165,7 +5412,7 @@ DEFINE PLACEHOLDER constraint_logical_and_expression
     /SEPARATOR=""
     /TYPE=MENU
     "primary_expression"/PLACEHOLDER
-    "{constraint_logical_and_expression} &&{primary_expression}"
+    "{constraint_logical_and_expression} && {primary_expression}"
 END DEFINE
 
 
@@ -5194,11 +5441,11 @@ DEFINE PLACEHOLDER type_parameter
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{type_parameter_key} [three_dots][identifier]"
+    "{type_parameter_key}[three_dots] [identifier]"
     "{type_parameter_key} [identifier] = {type_id}"
-    "{type_constraint} [three_dots][identifier]"
+    "{type_constraint}[three_dots] [identifier]"
     "{type_constraint} [identifier] = {type_id}"
-    "{template_head} {type_parameter_key} [three_dots][identifier]"
+    "{template_head} {type_parameter_key}[three_dots] [identifier]"
     "{template_head} {type_parameter_key} [identifier] = {id_expression}"
 END DEFINE
 
@@ -5229,7 +5476,7 @@ DEFINE PLACEHOLDER type_constraint
     /SEPARATOR=""
     /TYPE=MENU
     "[nested_name_specifier] {concept_name}"
-    "[nested_name_specifier] {concept_name} < [template_argument_list] >"
+    "[nested_name_specifier] {concept_name}<[template_argument_list]>"
 END DEFINE
 
 
@@ -5243,7 +5490,7 @@ DEFINE PLACEHOLDER simple_template_id
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{template_name} < [template_argument_list] >"
+    "{template_name}<[template_argument_list]>"
 END DEFINE
 
 
@@ -5258,8 +5505,8 @@ DEFINE PLACEHOLDER template_id
     /SEPARATOR=""
     /TYPE=MENU
     "simple_template_id"/PLACEHOLDER
-    "{operator_function_id} < [template_argument_list] >"
-    "{literal_operator_id} < [template_argument_list] >"
+    "{operator_function_id}<[template_argument_list]>"
+    "{literal_operator_id}<[template_argument_list]>"
 END DEFINE
 
 
@@ -5287,8 +5534,8 @@ DEFINE PLACEHOLDER template_argument_list
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "{template_argument} [three_dots]"
-    "{template_argument_list}, {template_argument} [three_dots]"
+    "{template_argument}[three_dots]"
+    "{template_argument_list}, {template_argument}[three_dots]"
 END DEFINE
 
 
@@ -5333,7 +5580,7 @@ DEFINE PLACEHOLDER deduction_guide
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[explicit_specifier] {template_name} ({parameter_declaration_clause})-> {simple_template_id};"
+    "[explicit_specifier] {template_name}({parameter_declaration_clause})-> {simple_template_id};"
 END DEFINE
 
 
@@ -5375,8 +5622,8 @@ DEFINE PLACEHOLDER typename_specifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "typename{nested_name_specifier} {identifier}"
-    "typename{nested_name_specifier} [template] {simple_template_id}"
+    "typename {nested_name_specifier} {identifier}"
+    "typename {nested_name_specifier} [template] {simple_template_id}"
 END DEFINE
 
 
@@ -5404,7 +5651,7 @@ DEFINE PLACEHOLDER explicit_instantiation
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[extern]template{declaration}"
+    "[extern] template {declaration}"
 END DEFINE
 
 
@@ -5474,7 +5721,7 @@ DEFINE PLACEHOLDER handler
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "catch( {exception_declaration} ) {compound_statement}"
+    "catch({exception_declaration}) {compound_statement}"
 END DEFINE
 
 
@@ -5488,8 +5735,8 @@ DEFINE PLACEHOLDER exception_declaration
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[attribute_specifier]...{type_specifier_seq} {declarator}"
-    "[attribute_specifier]...{type_specifier_seq} [abstract_declarator]"
+    "[attribute_specifier]... {type_specifier_seq} {declarator}"
+    "[attribute_specifier]... {type_specifier_seq} [abstract_declarator]"
     "..."
 END DEFINE
 
@@ -5534,7 +5781,7 @@ DEFINE PLACEHOLDER module_file
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[pp_global_module_fragment] {pp_module} [group][pp_private_module_fragment]"
+    "[pp_global_module_fragment] {pp_module} [group] [pp_private_module_fragment]"
 END DEFINE
 
 
@@ -5594,7 +5841,7 @@ DEFINE PLACEHOLDER group_part
     "control_line"/PLACEHOLDER
     "if_section"/PLACEHOLDER
     "text_line"/PLACEHOLDER
-    "# {conditionally_supported_directive}"
+    "#{conditionally_supported_directive}"
 END DEFINE
 
 
@@ -5608,17 +5855,17 @@ DEFINE PLACEHOLDER control_line
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "#include{preprocessing_token}...{new_line}"
+    "#include {preprocessing_token}... {new_line}"
     "pp_import"/PLACEHOLDER
-    "#define{identifier} {replacement_list} {new_line}"
-    "#define{identifier} {lparen} [identifier]... )[preprocessing_token]...{new_line}"
-    "#define{identifier} {lparen}...)[preprocessing_token]...{new_line}"
-    "#define{identifier} {lparen} {identifier}...,...)[preprocessing_token]...{new_line}"
+    "#define {identifier} {replacement_list} {new_line}"
+    "#define {identifier} {lparen} [identifier]... ) [preprocessing_token]... {new_line}"
+    "#define {identifier} {lparen} ...) [preprocessing_token]... {new_line}"
+    "#define {identifier} {lparen} {identifier}... ,...) [preprocessing_token]... {new_line}"
     "#undef {identifier} {new_line}"
-    "#line{preprocessing_token}...{new_line}"
-    "#error [preprocessing_token]...{new_line}"
-    "#warning [preprocessing_token]...{new_line}"
-    "#pragma [preprocessing_token]...{new_line}"
+    "#line {preprocessing_token}... {new_line}"
+    "#error [preprocessing_token]... {new_line}"
+    "#warning [preprocessing_token]... {new_line}"
+    "#pragma [preprocessing_token]... {new_line}"
     "# {new_line}"
 END DEFINE
 
@@ -5633,7 +5880,7 @@ DEFINE PLACEHOLDER if_section
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{if_group} [elif_groups][else_group] {endif_line}"
+    "{if_group} [elif_groups] [else_group] {endif_line}"
 END DEFINE
 
 
@@ -5694,7 +5941,7 @@ DEFINE PLACEHOLDER else_group
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "#else{new_line} [group]"
+    "#else {new_line} [group]"
 END DEFINE
 
 
@@ -5722,7 +5969,7 @@ DEFINE PLACEHOLDER text_line
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[preprocessing_token]...{new_line}"
+    "[preprocessing_token]... {new_line}"
 END DEFINE
 
 
@@ -5736,7 +5983,7 @@ DEFINE PLACEHOLDER conditionally_supported_directive
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "{preprocessing_token}...{new_line}"
+    "{preprocessing_token}... {new_line}"
 END DEFINE
 
 
@@ -5779,7 +6026,7 @@ DEFINE PLACEHOLDER defined_macro_expression
     /SEPARATOR=""
     /TYPE=MENU
     "defined {identifier}"
-    "defined( {identifier} )"
+    "defined({identifier})"
 END DEFINE
 
 
@@ -5808,7 +6055,7 @@ DEFINE PLACEHOLDER header_name_tokens
     /SEPARATOR=""
     /TYPE=MENU
     "string_literal"/PLACEHOLDER
-    "<{h_preprocessing_token}... >"
+    "<{h_preprocessing_token}...>"
 END DEFINE
 
 
@@ -5822,8 +6069,8 @@ DEFINE PLACEHOLDER has_include_expression
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "__has_include( {header_name} )"
-    "__has_include( {header_name_tokens} )"
+    "__has_include({header_name})"
+    "__has_include({header_name_tokens})"
 END DEFINE
 
 
@@ -5837,7 +6084,7 @@ DEFINE PLACEHOLDER has_attribute_expression
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "__has_cpp_attribute( {preprocessing_token}... )"
+    "__has_cpp_attribute({preprocessing_token}...)"
 END DEFINE
 
 
@@ -5865,7 +6112,7 @@ DEFINE PLACEHOLDER pp_module
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "[export] module[preprocessing_token]...; {new_line}"
+    "[export] module [preprocessing_token]...; {new_line}"
 END DEFINE
 
 
@@ -5879,9 +6126,9 @@ DEFINE PLACEHOLDER pp_import
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=MENU
-    "[export]import {header_name} [preprocessing_token]...; {new_line}"
-    "[export]import {header_name_tokens} [preprocessing_token]...; {new_line}"
-    "[export]import {preprocessing_token}...; {new_line}"
+    "[export] import {header_name} [preprocessing_token]...; {new_line}"
+    "[export] import {header_name_tokens} [preprocessing_token]...; {new_line}"
+    "[export] import {preprocessing_token}...; {new_line}"
 END DEFINE
 
 
@@ -5895,7 +6142,7 @@ DEFINE PLACEHOLDER va_replacement
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "__VA_OPT__([preprocessing_token]... )"
+    "__VA_OPT__([preprocessing_token]...)"
 END DEFINE
 
 
@@ -5960,7 +6207,7 @@ DEFINE PLACEHOLDER ms_declspec_modifier
     /DUPLICATION=CONTEXT_DEPENDENT
     /SEPARATOR=""
     /TYPE=NONTERMINAL
-    "__declspec( {identifier} )"
+    "__declspec({identifier})"
 END DEFINE
 
 
