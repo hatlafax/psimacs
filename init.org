@@ -60,18 +60,18 @@ in a Powershell console.
 
 The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimacs= directory:
 
-| Tools        | Remarks                                                                                                  |
-|--------------+----------------------------------------------------------------------------------------------------------|
-| [[https://www.msys2.org/][MSYS2]]        | *Psimacs* uses the *Emacs* provided by [[https://www.msys2.org/][MSYS2]]. |
-| [[https://conemu.github.io/][ConEmu]]       | Optionally, *Psimacs* can install the [[https://conemu.github.io/][ConEmu]] console emulation. Use option =-conemu= to install the console. |
-| [[https://openjdk.org/][Java]]         | *Psimacs* installs the GPL OpenJDK Java distribution provided by Oracle.                                   |
-| [[https://languagetool.org][LanguageTool]] | [[https://languagetool.org][LanguageTool]] is a spell and grammar checker supported by *Psimacs*.                                        |
-| [[https://pandoc.org/][pandoc]]       | *Psimacs* uses the universal document converter [[https://pandoc.org/][Pandoc]].                                                    |
-| [[https://plantuml.com][plantUML]]     | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
-| [[https://www.python.org/][python]]       | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
-| [[https://www.sumatrapdfreader.org][SumatraPDF]]   | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
-| [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]]   | Tool allowing to create ELSE language specification files.                                                                 |
-|--------------+----------------------------------------------------------------------------------------------------------|
+| Tools                 | Remarks                                                                                                  |
+|-----------------------+----------------------------------------------------------------------------------------------------------|
+| [[https://www.msys2.org/][MSYS2]]                 | *Psimacs* uses the *Emacs* provided by [[https://www.msys2.org/][MSYS2]].                                                                |
+| [[https://conemu.github.io/][ConEmu]]                | Optionally, *Psimacs* can install the [[https://conemu.github.io/][ConEmu]] console emulation. Use option =-conemu= to install the console. |
+| [[https://openjdk.org/][Java]]                  | *Psimacs* installs the GPL OpenJDK Java distribution provided by Oracle.                                   |
+| [[https://languagetool.org][LanguageTool]]          | [[https://languagetool.org][LanguageTool]] is a spell and grammar checker supported by *Psimacs*.                                        |
+| [[https://pandoc.org/][pandoc]]                | *Psimacs* uses the universal document converter [[https://pandoc.org/][Pandoc]].                                                    |
+| [[https://plantuml.com][plantUML]]              | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
+| [[https://www.python.org/][python]]                | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
+| [[https://www.sumatrapdfreader.org][SumatraPDF]]            | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
+| [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]] | Tool allowing to create ELSE language specification files.                                               |
+|-----------------------+----------------------------------------------------------------------------------------------------------|
 
 To get detail help on the options =bootstrap.ps1= provides run:
 
@@ -2079,7 +2079,7 @@ to it's documentation string.
     (defconst psimacs/config/initial-frame-pos-x  (round (* 28 (/ (nth 3 geometry) 100))))
     (defconst psimacs/config/initial-frame-pos-y  0)
     (defconst psimacs/config/initial-frame-size-x (round (* 60 (/ (nth 3 geometry) 100))))
-    (defconst psimacs/config/initial-frame-size-y (- (nth 4 geometry) 80))
+    (defconst psimacs/config/initial-frame-size-y (- (nth 4 geometry) 90))
 
     (defconst psimacs/config/default-frame-1-pos-x  0)
     (defconst psimacs/config/default-frame-1-pos-y  psimacs/config/initial-frame-pos-y)
@@ -5220,14 +5220,14 @@ that are really easy to trigger accidentally.
 
 For *Psimacs* own functions and goodies separate key prefix maps are defined:
 
-| Prefix command  | Description               |
-|-----------------+---------------------------|
-| =H-SPC=         | Hydras                    |
-| =H-h=           | Help                      |
-| =H-c=           | common user commands      |
-| =H-x=           | common execution commands |
-| =H-m=           | special user commands     |
-|-----------------+---------------------------|
+| Prefix command | Description               |
+|----------------+---------------------------|
+| =H-SPC=          | Hydras                    |
+| =H-h=            | Help                      |
+| =H-c=            | common user commands      |
+| =H-x=            | common execution commands |
+| =H-m=            | special user commands     |
+|----------------+---------------------------|
 
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
@@ -9021,7 +9021,7 @@ version of =list-buffers=. *IBuffer* colors the files by type and [[http://ergoe
 | =C-x C-b=     | =M-x ibuffer=          | Begin using IBuffer to edit a list of buffers. |
 | =C-x b=       | =M-x switch-to-buffer= | Switch to buffer, selected from list.          |
 | =C-x k=       | =M-x kill-buffer=      | Close the current buffer.                      |
-|             |                      |                                                |
+|-------------+----------------------+------------------------------------------------|
 
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
@@ -9454,14 +9454,14 @@ Additionally, creating a key binding for =persp-mode-map= will also activate the
 Since [[https://github.com/nex3/perspective-el][perspective]]  maintains distinct buffer lists for each [[https://github.com/nex3/perspective-el][perspective]], it helps to use a
 Perspective-aware buffer switcher.
 
-| Buffer switcher | Support                                                                                                                                                                                                                                                                                       |
-|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                   |
-| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
-| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                     |
-| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                    |
+| Buffer switcher | Support                                                                                                                                                                                                                                                                                                                    |
+|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ido             | Interactive Do (Ido, ido-mode), in particular its ido-switch-buffer command, is automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                                |
+| bs.el           | Perspective provides a wrapper for bs-show: =persp-bs-show=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
+| IBuffer         | Perspective provides a wrapper for ibuffer: =persp-ibuffer=. When this function is called normally, it shows a list of buffers filtered by the current perspective. With a prefix argument, it shows a list of buffers in all perspectives.                                                                                  |
+| Helm            | Perspective ships with buffer-listing advice for Helm, so Helm's buffer listing code should be automatically Perspective-aware when =persp-mode= is enabled.                                                                                                                                                                 |
 | Ivy / Counsel   | Perspective provides two commands for listing buffers using Ivy and Counsel: =persp-ivy-switch-buffer= and =persp-counsel-switch-buffer=. When these functions are called normally, they show a list of buffers filtered by the current perspective. With a prefix argument, they shows a list of buffers in all perspectives. |
-|-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 (use-package perspective
@@ -10190,51 +10190,51 @@ In addition, Ediff can apply a patch to a file and then let you step through bot
 patched and the original one, simultaneously, difference-by-difference.
 #+end_quote
 
-| Command                                           | Description                                                                                                                                                                                                                                                                                   |
-|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                            |
-| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                    |
-| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                       |
-| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                          |
-| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                          |
-| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                        |
-| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                      |
-| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                    |
-| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                  |
-| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                    |
-| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                  |
-| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                               |
-| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                               |
-| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                  |
-| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                        |
-| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                               |
+| Command                                           | Description                                                                                                                                                                                                                                                                                                                       |
+|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x ediff-files=                                   | Compare two files.                                                                                                                                                                                                                                                                                                                |
+| =M-x ediff=                                         | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-backup=                                  | Compare a file with its backup. If there are several numerical backups, use the latest. If the file is itself a backup, then compare it with its original.                                                                                                                                                                        |
+| =M-x ediff-current-file=                            | Compare the buffer with its file on disk. This function can be used as a safe version of revert-buffer.                                                                                                                                                                                                                           |
+| =M-x ediff-buffers=                                 | Compare two buffers.                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-files3=                                  | Compare three files.                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff3=                                        | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-buffers3=                                | Compare three buffers.                                                                                                                                                                                                                                                                                                            |
+| =M-x edirs=                                         | Compare files common to two directories.                                                                                                                                                                                                                                                                                          |
+| =M-x ediff-directories=                             | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edirs3=                                        | Compare files common to three directories.                                                                                                                                                                                                                                                                                        |
+| =M-x ediff-directories3=                            | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edir-revisions=                                | Compare versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                      |
+| =M-x ediff-directory-revisions=                     | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edir-merge-revisions=                          | Merge versions of files in a given directory. Ediff selects only the files that are under version control.                                                                                                                                                                                                                        |
+| =M-x ediff-merge-directory-revisions=               | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edir-merge-revisions-with-ancestor=            | Merge versions of files in a given directory using other versions as ancestors. Ediff selects only the files that are under version control.                                                                                                                                                                                      |
+| =M-x ediff-merge-directory-revisions-with-ancestor= | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-windows-wordwise=                        | Compare text visible in 2 windows word-by-word.                                                                                                                                                                                                                                                                                   |
+| =M-x ediff-windows-linewise=                        | Compare text visible in 2 windows line-by-line.                                                                                                                                                                                                                                                                                   |
+| =M-x ediff-regions-wordwise=                        | Compare regions word-by-word. The regions can come from the same buffer and they can even overlap. You will be asked to specify the buffers that contain the regions, which you want to compare. For each buffer, you will also be asked to mark the regions to be compared.                                                      |
+| =M-x ediff-regions-linewise=                        | Similar to ediff-windows-linewise, but compares the regions line-by-line. See ediff-windows-linewise for more details.                                                                                                                                                                                                            |
+| =M-x ediff-revision=                                | Compare versions of the current buffer, if the buffer is visiting a file under version control.                                                                                                                                                                                                                                   |
 | =M-x ediff-patch-file=                              | Patch a file or multiple files, then compare. Since the patch might be in a buffer or a file, you will be asked which is the case. To avoid this extra prompt, you can invoke this command with a prefix argument. With an odd prefix argument, Ediff assumes the patch is in a file; with an even argument, a buffer is assumed. |
-| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                             |
-| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                              |
-| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                             |
-| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                            |
-| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                       |
-| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                        |
-| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                       |
-| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                          |
-| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                 |
-| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                       |
-| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                   |
-| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                 |
-| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                          |
-|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-x epatch=                                        | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-patch-buffer=                            | Patch a buffer, then compare. The buffer being patched and the file visited by that buffer (if any) is not modified. The result of the patch appears in some other buffer that has the name ending with _patched.                                                                                                                 |
+| =M-x epatch-buffer=                                 | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-files=                             | Merge two files.                                                                                                                                                                                                                                                                                                                  |
+| =M-x ediff-merge=                                   | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-files-with-ancestor=               | Like ediff-merge, but with a third ancestor file.                                                                                                                                                                                                                                                                                 |
+| =M-x ediff-merge-with-ancestor=                     | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-buffers=                           | Merge two buffers.                                                                                                                                                                                                                                                                                                                |
+| =M-x ediff-merge-buffers-with-ancestor=             | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
+| =M-x edirs-merge=                                   | Merge files common to two directories.                                                                                                                                                                                                                                                                                            |
+| =M-x ediff-merge-directories=                       | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x edirs-merge-with-ancestor=                     | Same but using files in a third directory as ancestors.                                                                                                                                                                                                                                                                           |
+| =M-x ediff-merge-directories-with-ancestor=         | /dito/                                                                                                                                                                                                                                                                                                                              |
+| =M-x ediff-merge-revisions=                         | Merge two versions of the file visited by the current buffer.                                                                                                                                                                                                                                                                     |
+| =M-x ediff-merge-revisions-with-ancestor=           | Same but with ancestor.                                                                                                                                                                                                                                                                                                           |
+| =M-x ediff-documentation=                           | Brings up the [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] manual.                                                                                                                                                                                                                                                                                                       |
+| =M-x ediff-show-registry=                           | Brings up Ediff session registry. This feature enables you to quickly find and restart active Ediff sessions.                                                                                                                                                                                                                     |
+| =M-x eregistry=                                     | /dito/                                                                                                                                                                                                                                                                                                                              |
+|---------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 
 Remarks:
@@ -10279,7 +10279,7 @@ Remarks:
 | =ra=        | Restores the old contents of the current difference region in buffer A.                                                                                                                                                              |
 | =rb=        | Restores the old contents of the current difference region in buffer B.                                                                                                                                                              |
 | =rc=        | Restores the old contents of the current difference region in buffer C.                                                                                                                                                              |
-| =##=        | Tell Ediff to skip over regions that disagree among themselves only in the amount of white space and line breaks.                                                                                                                    |
+| =##=       | Tell Ediff to skip over regions that disagree among themselves only in the amount of white space and line breaks.                                                                                                                    |
 | =#c=        | Toggle case sensitivity in the diff program.                                                                                                                                                                                         |
 | =#h=        | Ediff prompts you to specify regular expressions for each variant. Difference regions where each variant’s region matches the corresponding regular expression will be skipped from then on.                                         |
 | =#f=        | Does dual job: it focuses on regions that match the corresponding regular expressions. All other regions will be skipped over.                                                                                                       |
@@ -10844,9 +10844,9 @@ Some more information about spell checking can be found in the following referen
 (use-package flyspell
   :diminish flyspell-mode
   :commands (
-          flyspell-accept-buffer-local-defs 
-          flyspell-get-word 
-          flyspell-do-correct 
+          flyspell-accept-buffer-local-defs
+          flyspell-get-word
+          flyspell-do-correct
           flyspell-goto-next-error
           psimacs/spell/setup-german-dic
           psimacs/spell/setup-english-dic
@@ -13649,7 +13649,7 @@ And the final [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard]] 
                                 (registers .  5)
                                ))
 
-        (setq dashboard-startupify-list 
+        (setq dashboard-startupify-list
                               '(dashboard-insert-banner
                                 ;dashboard-insert-newline
                                 ;dashboard-insert-banner-title
@@ -20216,6 +20216,67 @@ Org-ref cite: links and Org-cite citations.
 The package [[https://github.com/org-noter/org-noter][org-noter]] allows you to take notes in org-mode
 files that stay in sync with pdf document files. It integrates also with the org-roam package.
 
+Working with =org-noter=:
+
+#+attr_html: :class styledtable1
+| Key binding | Command                                    | Description                                                                    |
+|-------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-x n=       | =M-x org-noter=                              | Start ‘org-noter’ session.                                                     |
+|             | =M-x org-noter-start-from-dired=             | In Dired, open sessions for marked files or file at point.                     |
+|             | =M-x org-noter-set-doc-split-fraction=       | Set the fraction of the frame that the document window will occupy when split. |
+|             | =M-x org-noter-set-notes-window-location=    | Set the notes window default location for the current session.                 |
+|             | =M-x org-noter-create-skeleton=              | Create notes skeleton based on the outline of the document.                    |
+|             | =M-x org-noter-pdf-set-columns=              | Interactively set the COLUMN_EDGES property for the current heading.           |
+| =M-T=         | =M-x org-noter-toggle-notes-window-location= | Toggle between side- and bottom-notes window location.                         |
+| =M-q=         | =M-x org-noter-kill-session=                 | Kill an ‘org-noter’ session.                                                   |
+|-------------+--------------------------------------------+--------------------------------------------------------------------------------|
+|             | =M-x org-noter-set-hide-other=               | Toggle hiding other headings for the current session.                          |
+|             | =M-x org-noter-set-hide-other=               | Toggle hiding other headings for the current session.                          |
+|-------------+--------------------------------------------+--------------------------------------------------------------------------------|
+
+Keybindings for the *pdf buffer* in =org-noter-mode=:
+
+#+attr_html: :class styledtable1
+| Key binding               | Command                                               | Description                                                                                            |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =SPC= =n= =<PageDown>= =<down>=   |                                                       | To move forward in document.                                                                           |
+| =BACKSPACE= =p= =<PageUp>= =<up>= |                                                       | To move back in document.                                                                              |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =i=                         | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
+| =I=                         | =M-x org-noter-insert-precise-note-toggle-no-questions= | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
+| =C-i= =TAB=                   | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
+| =C-S-i= =M-TAB=               | =M-x org-noter-insert-note-toggle-no-questions=         | Inserts a note linked to the current page. Note is always create with the default title.               |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-p=                       | =M-x org-noter-sync-prev-note=                          | Go to the location of the previous note, in relation to where the point is.                            |
+| =M-n=                       | =M-x org-noter-sync-next-note=                          | Go to the location of the next note, in relation to where the point is.                                |
+| =M-.=                       | =M-x org-noter-sync-current-note=                       | Go the location of the selected note, in relation to where the point is.                               |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-M-p=                     | =M-x org-noter-sync-prev-page-or-chapter=               | Show previous page or chapter that has notes.                                                          |
+| =C-M-n=                     | =M-x org-noter-sync-next-page-or-chapter=               | Show next page or chapter that has notes.                                                              |
+| =C-M-.=                     | =M-x org-noter-sync-current-page-or-chapter=            | Show current page or chapter notes.                                                                    |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-T=                       | =M-x org-noter-toggle-notes-window-location=            | Toggle between side- and bottom-notes window location.                                                 |
+| =M-q=                       | =M-x org-noter-kill-session=                            | Kill an ‘org-noter’ session.                                                                           |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+
+
+Keybinding for the *org note buffer* in =org-noter-mode=:
+
+#+attr_html: :class styledtable1
+| Key binding | Command                                    | Description                                                                 |
+|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
+| =M-p=         | =M-x org-noter-sync-prev-note=               | Go to the location of the previous note, in relation to where the point is. |
+| =M-n=         | =M-x org-noter-sync-next-note=               | Go to the location of the next note, in relation to where the point is.     |
+| =M-.=         | =M-x org-noter-sync-current-note=            | Go the location of the selected note, in relation to where the point is.    |
+|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
+| =C-M-p=       | =M-x org-noter-sync-prev-page-or-chapter=    | Show previous page or chapter that has notes.                               |
+| =C-M-n=       | =M-x org-noter-sync-next-page-or-chapter=    | Show previous page or chapter that has notes.                               |
+| =C-M-.=       | =M-x org-noter-sync-current-page-or-chapter= | Show current page or chapter notes.                                         |
+|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
+| =M-T=         | =M-x org-noter-toggle-notes-window-location= | Toggle between side- and bottom-notes window location.                      |
+| =M-q=         | =M-x org-noter-kill-session=                 | Kill an ‘org-noter’ session.                                                |
+|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
+
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-noter.el :var file-description="Major Modes - org-noter setup"
 (use-package org-noter
     :straight
@@ -20225,13 +20286,51 @@ files that stay in sync with pdf document files. It integrates also with the org
          :files ("*.el" "modules/*.el"))
     :config
         (org-noter-enable-org-roam-integration)
+
+        (setq org-noter-arrow-background-color "cyan"
+              org-noter-arrow-foreground-color "black")
+
+    :bind (
+            ("H-x n"    . org-noter)
+
+            :map org-noter-doc-mode-map
+                ("i"        . org-noter-insert-precise-note)
+                ("I"        . org-noter-insert-precise-note-toggle-no-questions)
+                ("C-i"      . org-noter-insert-note)
+                ("C-S-i"    . org-noter-insert-note-toggle-no-questions)
+                ("<tab>"    . org-noter-insert-note)
+                ("M-<tab>"  . org-noter-insert-note-toggle-no-questions)
+
+                ("M-p"      . org-noter-sync-prev-note)
+                ("M-n"      . org-noter-sync-next-note)
+                ("M-."      . org-noter-sync-current-note)
+
+                ("C-M-p"    . org-noter-sync-prev-page-or-chapter)
+                ("C-M-n"    . org-noter-sync-next-page-or-chapter)
+                ("C-M-."    . org-noter-sync-current-page-or-chapter)
+
+                ("M-T"      . org-noter-toggle-notes-window-location)
+                ("M-q"      . org-noter-kill-session)
+
+
+            :map org-noter-notes-mode-map
+                ("M-p"      . org-noter-sync-prev-note)
+                ("M-n"      . org-noter-sync-next-note)
+                ("M-."      . org-noter-sync-current-note)
+
+                ("C-M-p"    . org-noter-sync-prev-page-or-chapter)
+                ("C-M-n"    . org-noter-sync-next-page-or-chapter)
+                ("C-M-."    . org-noter-sync-current-page-or-chapter)
+
+                ("M-T"      . org-noter-toggle-notes-window-location)
+                ("M-q"      . org-noter-kill-session)
+        )
+
 )
 #+end_src
 
 
 ** PlantUML Mode
-
-
 
 The package [[https://github.com/skuro/plantuml-mode][plantuml-mode]] provides access to the nice
 [[https://plantuml.com/en/][PlantUML]] tool that allows the generation of UML type of diagrams with
