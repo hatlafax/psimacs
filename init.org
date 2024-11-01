@@ -5110,8 +5110,7 @@ Basically, we stay with the default *Emacs* keyboard configuration. We swallow t
 keys as far as possible. We will use them for =<super>= and =<hyper>= prefix keys for *Psimacs* own key bindings.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
-(with-suppressed-warnings
-  (if psimacs/system/is-win32-p
+(if psimacs/system/is-win32-p
       (progn
         ;;
         ;; Base keyboard configuration: Stay with the defaults, but swallow <lwindow>, <rwindow> ans <apps> if possible
@@ -5150,7 +5149,6 @@ keys as far as possible. We will use them for =<super>= and =<hyper>= prefix key
     (progn
       nil
     )
-  )
 )
 #+end_src
 
@@ -5159,8 +5157,7 @@ keys as far as possible. We will use them for =<super>= and =<hyper>= prefix key
 *Psimacs* uses the =<super>= and =<hyper>= key prefixes for all of its own key bindings.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
-(with-suppressed-warnings
-  (if psimacs/system/is-win32-p
+(if psimacs/system/is-win32-p
       (progn
         ;;
         ;; <lwindow>, <rwindow> and <apps>
@@ -5184,7 +5181,6 @@ keys as far as possible. We will use them for =<super>= and =<hyper>= prefix key
       ;; now <menu> defined as 'hyper, we need to press <menu> twice to get <H-menu>
       (global-set-key (kbd "<H-menu>") 'execute-extended-command)
     )
-  )
 )
 
 ;; (defun psimacs/config/prefix-key-test-super ()
@@ -5697,9 +5693,7 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
     (set-selection-coding-system 'utf-16-le)    ; important on windows os
     (set-clipboard-coding-system 'utf-16-le)    ; included by set-selection-coding-system
 
-    (with-suppressed-warnings
-      (w32-set-system-coding-system 'utf-8)
-    )
+    (w32-set-system-coding-system 'utf-8)
 )
 
 (set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
@@ -20625,8 +20619,7 @@ References:
 (defun psimacs/shell/run-bash ()
   "Run a bash interactive shell."
   (interactive)
-  (with-suppressed-warnings
-    (let ((process-environment (cl-copy-list process-environment))
+  (let ((process-environment (cl-copy-list process-environment))
           (explicit-shell-file-name psimacs/config/msys-runtime-exe)
           (explicit-bash.exe-args '("--login" "-i"))
           (binary-process-input t)
@@ -20634,7 +20627,6 @@ References:
           )
       (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
       (shell "*bash*")
-    )
   )
 )
 
@@ -20660,8 +20652,7 @@ References:
 (defun psimacs/shell/run-ubuntu-bash ()
   "Run a WSL2 Ubuntu bash shell"
   (interactive)
-  (with-suppressed-warnings
-    (let ((process-environment (cl-copy-list process-environment))
+  (let ((process-environment (cl-copy-list process-environment))
           (explicit-shell-file-name "C:\\Windows\\System32\\bash.exe" )
           (explicit-bash.exe-args '("--login" "-i"))
           (binary-process-input t)
@@ -20669,7 +20660,6 @@ References:
           )
       (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
       (shell "*ubuntu bash*")
-    )
   )
 )
 #+end_src
@@ -21678,17 +21668,6 @@ References:
 
 #+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
 ;;
-;; Suppress annoying warnings
-;;      docstring wider than 120 characters
-;;      has wrong usage of unescaped single quotes (use \= or different quoting)
-;;
-(with-no-warnings
-#+end_src
-
-
-#+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
-
-;;
 ;; Hydra for various toggles
 ;;
 (defun psimacs/debug/toogle-debugging ()
@@ -22611,9 +22590,6 @@ _q_: quit_
 )
 #+end_src
 
-#+begin_src emacs-lisp :tangle config/init-hydras.el :var file-description="Hydras Setup"
-) ;; (with-suppressed-warnings...
-#+end_src
 
 * Key bindings
 
