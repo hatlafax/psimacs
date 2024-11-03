@@ -7,9 +7,9 @@
 #+options: toc:4 h:4 tags:nil
 #+export_exclude_tags: noexport
 #+html_head: <style type="text/css">
-#+html_head: .styledtable col:nth-of-type(1) { width: 15% }
-#+html_head: .styledtable col:nth-of-type(2) { width: 30% }
-#+html_head: .styledtable col:nth-of-type(3) { width: 55% }
+#+html_head: .styledtable  col:nth-of-type(1) { width: 15% }
+#+html_head: .styledtable  col:nth-of-type(2) { width: 30% }
+#+html_head: .styledtable  col:nth-of-type(3) { width: 55% }
 #+html_head: .styledtable1 col:nth-of-type(1) { width: 20% }
 #+html_head: .styledtable1 col:nth-of-type(2) { width: 50% }
 #+html_head: .styledtable1 col:nth-of-type(3) { width: 30% }
@@ -18,37 +18,44 @@
 
 * Introduction
 
-This is *Psimacs*, a imho /modern/ *Emacs* configuration build from the ground up using a [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] technique.
-The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded into a single [[https://orgmode.org/][org-mode]] file. This is
-the file that your are currently reading.
+This is *Psimacs*, an opionated *Emacs* configuration build from the ground up using a [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] style.
+The complete configuration [[https://www.gnu.org/software/emacs/manual/html_node/elisp/][Elisp]] code is embedded in a single [[https://orgmode.org/][org-mode]] file. This is the file that your are
+currently reading.
 
-Additionally, *Psimacs* allows the synchronization of the user's local *Emacs* configuration with a configuration
-repository residing on [[https://www.dropbox.com/][Dropbox]]. This comes quite handy if sharing of one configuration
-with multiple machines is desired.
+*Psimacs* tries to stick with the default *Emacs* keybindings, i.e. it does not provide a [[https://de.wikipedia.org/wiki/Vim][Vim]] layer.
 
-This document not only describes the *Psimacs* configuration, but also some additional information useful
-for working with *Emacs* in general. In this respect it serves as a kind of mind map for the author.
+*Psimacs* allows the synchronization of the user's local *Emacs* configuration with a configuration repository
+residing on [[https://www.dropbox.com/][Dropbox]]. This comes quite handy if sharing of one configuration with multiple machines is desired.
+
+This document not only describes the *Psimacs* configuration, but also additional information useful for working
+with *Emacs* in general. In this respect it serves as a kind of mindmap for the author.
+
+*Psimacs* uses the [[https://github.com/raxod502/straight.el][Straight]] package manager, it uses the [[https://github.com/abo-abo/swiper][Ivy]] completion stack and provides a good selection
+of packages that support coding and writing.
 
 ** Motivation
 
 A lot of *Emacs* configurations can be found on the Internet. Many of them are well crafted and could be used out of
-the box. Especially, the great *Emacs* distributions like [[https://www.spacemacs.org/][Spacemacs]], [[https://github.com/hlissner/doom-emacs][Doom-Emacs]] and [[https://github.com/seagle0128/.emacs.d][Centaur-Emacs]] are worth giving a try.
-But I wanted to craft my own configuration that is tailored to my needs and that allowed me to learn more about the
-vast *Emacs* universe. My configuration it not perfect for everyone and it will not be able to compete against the big
-frameworks that are build by a lot of talented people. So feel free to use it or blame it. I am fine with it.
+the box. Especially, the great *Emacs* frameworks like [[https://www.spacemacs.org/][Spacemacs]], [[https://github.com/hlissner/doom-emacs][Doom-Emacs]] and [[https://github.com/seagle0128/.emacs.d][Centaur-Emacs]], to name just a few,
+are worth giving a try. The author wanted to craft his own configuration that is tailored to his personal needs and
+that allowed learning more about the vast *Emacs* universe. This configuration it not perfect for everyone and it
+will not be able to compete against the big frameworks that are build by a lot of talented people.
+So feel free to use it or blame it. I am fine with it.
 
-Additionally, my configuration is Windows OS centric, i.e. it is developed and tested for use on Windows OS.
+This configuration is used on the Windows OS on top of [[https://www.msys2.org/][MSYS2]] stack as well as on Ubuntu Linux.
 
-The name *Psimacs* is arbitrarily. I was in search for a catchy name with just one syllable in front of the *macs*.
+The name *Psimacs* is arbitrarily. The author was in search for a catchy name with just one syllable in front of
+the *macs*.
 
 See also:
-- [[https://github.com/caisah/emacs.dz][A list of people with nice emacs config files]]
+- [[https://github.com/caisah/emacs.dz][A list of people with nice Emacs config files]]
 
 ** Installation
 
 *** Windows
-The Powershell script =bootstrap.ps1= is able to bootstrap *Psimacs* and all its dependencies into
-the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
+The Powershell script =bootstrap.ps1=, provided in the distribution, is able to bootstrap *Psimacs* and all of its
+dependencies into the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
+However, considerable disk space is required for the complete installation. *Psimacs* uses the [[https://www.msys2.org/][MSYS2]] *Emacs* program.
 
 Download the raw =booststrap.ps1= file into a temporary directory and run
 
@@ -73,7 +80,7 @@ The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimac
 | [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]] | Tool allowing to create ELSE language specification files.                                               |
 |-----------------------+----------------------------------------------------------------------------------------------------------|
 
-To get detail help on the options =bootstrap.ps1= provides run:
+To get detail help on the options =bootstrap.ps1= provides, do run:
 
 #+begin_src
 .\booststrap.ps1 --help
@@ -95,7 +102,7 @@ but there are some exceptions:
 
 After bootstrapping, the [[https://github.com/raxod502/straight.el][Straight]] based *Psimacs* configuration is performed on the very first startup
 of *Psimacs*. This process takes a couple of minutes and asks two times for confirmation to allow the download of
-1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary,
+1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary, and
 2. for the [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] icons.
 
 *Attention:*
@@ -162,15 +169,15 @@ The /category/ is used to structure the functions and variables by topic. As an 
 ** Dependencies
 
 The configuration does have many dependencies that could be installed separately, Some are mandatory and some are
-optional. By default, all non *Emacs* dependencies are expected to be installed into directory *c:/utils* on /Windows/.
+optional. By default, all non *Emacs* dependencies are expected to be installed into directory =$home/psimacs=.
 A global directory constant =psimacs/config/dependencies-dir= is used by the configuration for changing this default
 location conveniently.
 
 Install missing dependencies at the time you notice that they are missing. Most of the dependencies only apply to
 very narrow use cases.
 
-The two mentioned =requirements.txt= files for [[https://www.python.org/downloads/][Python]] and [[https://www.msys2.org/][MSYS2]] actually cover many of the cases. I try to tackle
-as many dependencies as possible with the MSYS2 installation.
+The two mentioned =requirements.txt= files for [[https://www.python.org/downloads/][Python]] and [[https://www.msys2.org/][MSYS2]] actually cover many of the cases.
+The author tries to tackle as many dependencies as possible with the MSYS2 installation.
 
 ** Great Emacs resources
 - [[https://www.damtp.cam.ac.uk/user/sje30/ess11/resources/emacs-refcard.pdf][Emacs RefCard]]
@@ -194,7 +201,7 @@ as many dependencies as possible with the MSYS2 installation.
 
 ** Disclaimer
 
-This is an *Emacs* beginners configuration and the usage is at one's own risk. It is not tested thoroughly. Please
+This is an opionated *Emacs* configuration and the usage is at one's own risk. It is not tested thoroughly. Please
 bear in mind.
 
 Many of the configuration settings are borrowed from other similar endeavors out there. Thank you to all of them.
@@ -203,10 +210,10 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 
 ** Limitations / Known Issues
 
-- Tested on *Windows* operating system only.
-- *Linux* support is just started recently on Ubuntu 24.04 LTS.
+- Tested on *Windows* and Ubuntu operating systems only.
+- *Linux* support has just started recently on Ubuntu 24.04 LTS.
 - *WSL2* support is planned for the future and might work already with the support of the Ubuntu platform.
-- This configuration has a very long Startup time. *Emacs client* usage is strongly recommended.
+- This configuration has a very long startup time. *Emacs client* usage is strongly recommended.
 
 ** License (GPL v3)
 
@@ -235,16 +242,18 @@ In the following sections some of these bindings are introduced.
 Beside of the predefined key bindings, however, *Psimacs* also has many of its own key bindings.
 The following two pages provides cheat sheats for these bindings:
 
-- [[https://hatlafax.github.io/psimacs/keybindings.html][List of all Psimacs Key Bindings]].
-- [[https://hatlafax.github.io/psimacs/sortedKeyBindings.html][Psimacs Keybindings on Topic.]]
+- [[https://hatlafax.github.io/psimacs/docs/keybindings.html][List of all Psimacs Key Bindings]].
+- [[https://hatlafax.github.io/psimacs/docs/sortedKeyBindings.html][Psimacs Keybindings on Topic.]]
 
-Additionally, *Psimacs* comes with many hydras, providing an alternative usage pattern.
-A /hydra/ for many of these /hydras/ can be activated by pressing =H-SPC H-SPC=.
+Additionally, *Psimacs* comes with many /hydras/, providing an alternative usage pattern.
+A parent /hydra/ for many of these /hydras/ can be activated by pressing =H-SPC H-SPC=, where
+=H-= is the =<apps>= leader key, which is the =menu= key on Windows, the key sitting on the right
+of the right =<meta>= keyboard key, i.e. the =RAlt= key.
 
 ** Basic movements
 
 The table that follows contain the basic movement commands with their corresponding
-key binding. In case that *Psimacs* has a differing binding, the *Psimacs* binding is
+key bindings. In case that *Psimacs* has a differing binding, the *Psimacs* binding is
 provided but the standard binding is given in the second column.
 
 References:
@@ -506,10 +515,16 @@ into [[https://orgmode.org/manual/Working-with-Source-Code.html][org]]. The [[ht
 
 Code block with =:tangle yes= or with =:tangle filename= are part of the configuration. However, any code block
 can be deactivated, i.e. omitted from the configuration, by using =:tangle no= in the
-block declaration.
+block declaration:
 
 #+begin_example
 #+begin_src emacs-lisp :tangle no
+(message "this should never be seen in the Message buffer!")
+#+end_src
+#+end_example
+
+#+begin_example
+#+begin_src emacs-lisp :tangle no early-init.el :var file-description="Early initialization"
 (message "this should never be seen in the Message buffer!")
 #+end_src
 #+end_example
@@ -540,8 +555,9 @@ which will enter enter the debugger on execution.
 
 ** References to Org-Mode markup
 
-An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic [[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail explanation about
-the markup rules used in [[https://orgmode.org][org-mode]] files.
+An [[https://writequit.org/denver-emacs/presentations/files/example.org.html][example org-mode file]] used to show basic
+[[https://orgmode.org][org-mode]] usage. [[https://orgmode.org/manual/Markup-for-Rich-Contents.html][Markup for Rich Contents]] gives detail
+explanation about the markup rules used in [[https://orgmode.org][org-mode]] files.
 
 ** References to Org-Mode
 
@@ -758,7 +774,7 @@ Edit -> New -> Binary Value -> "Scancode Map"
 | =Prnt Scrn= | 37 e0    |
 |-----------+----------|
 
-In case of a minimal Lenovo ThinkPad keyboad that does not have a =<Menu>=, i.e. =<Hyper>= key, but that have the =<Prnt-Scrn>= key positioned between
+In case of a minimal Lenovo ThinkPad keyboard that does not have a =<Menu>=, i.e. =<Hyper>= key, but that have the =<Prnt-Scrn>= key positioned between
 the =<Alt Gr>= and the =<Right-Ctrl>= keys the following layout might be an alternative, provided one can relinquish on the =<Capslock>= and the
 =<Prnt-Scrn>= keys. In this layout, the =<Left-Ctrl>= key is mapped to the =<Capslock>= key and the =<Menu>=, i.e. =<Hyper>= key is mapped to the =<Prnt-Scrn>=
 key.
@@ -843,7 +859,7 @@ Later in the initialization process the garbage collection procedure is even mor
       ;; be allocated for Lisp objects after one garbage collection in order to
       ;; trigger another garbage collection.
 
-      gc-cons-percentage 1.0
+      gc-cons-percentage 0.8
       ;; The value of this variable specifies the amount of consing before a
       ;; garbage collection occurs, as a fraction of the current heap size.
 )
@@ -963,6 +979,7 @@ some size constants early.
 ;; Conveniency byte size constants
 ;;
 (defconst   1KB 1024)
+(defconst 512KB (*  512 1KB))
 (defconst   1MB (* 1024 1KB))
 (defconst   1GB (* 1024 1MB))
 
@@ -992,7 +1009,7 @@ some size constants early.
 *** Primary initalization files and directories
 
 The primary initialization files and directories must be known by the initialization process early in time in order
-to allow the =early-init.el= to full fill its duty. These files are evaluated and/or synchronized with a possible
+to allow the =early-init.el= to fullfill its duty. These files are evaluated and/or synchronized with a possible
 /dropbox/ repository.
 
 #+begin_src emacs-lisp :tangle early-init.el
@@ -1066,6 +1083,10 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 (defconst psimacs/config/native-comp-dir
   (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "eln-cache")))
   "The psimacs native compilation eln directory.")
+
+(defconst psimacs/config/custom-themes-dir
+  (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "themes")))
+  "The psimacs custom themes directory.")
 #+end_src
 
 *** Copyright and author information
@@ -1073,7 +1094,7 @@ to allow the =early-init.el= to full fill its duty. These files are evaluated an
 Copyright information that should be inserted into all tangled code.
 
 #+begin_src emacs-lisp :tangle early-init.el
-(defconst psimacs/config/copyright/year       "2020-2024")
+(defconst psimacs/config/copyright/year       "2020-2025")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
 (defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
@@ -1090,37 +1111,62 @@ Copyright information that should be inserted into all tangled code.
 ;;
 ;; Psimacs default garbage collection parameters
 ;;
-(defconst psimacs/config/gc-cons-threshold 64MB
+(defconst psimacs/config/gc-cons-threshold 16MB
   "The default value to use for `gc-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst psimacs/config/gc-low-cons-threshold 1MB
+  "The default value to use for `gcmh-low-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst psimacs/config/gc-high-cons-threshold psimacs/config/gc-cons-threshold
+  "The default value to use for `gcmh-high-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
 
 (defconst psimacs/config/gc-cons-percentage 0.1
   "This variable specifies the amount of consing before garbage collection occurs.
-It is the fraction of the current heap size."
-)
+It is the fraction of the current heap size.")
 #+end_src
 
-*** Support for Native compilation
+*** Support for Byte and Native compilation
 
 As of /Emacs 28/ navtive elisp compilation is supported. The following code
 set the directory where the compiled files are stored.
 
 #+begin_src emacs-lisp :tangle early-init.el
 ;;
-;; Native compilation
+;; Byte and native compilation
 ;;
-(setq native-comp-async-report-warnings-errors nil)  ;; hide warnings
-(setq native-comp-deferred-compilation         nil)  ;; Obsolete since 29.1; use native-comp-jit-compilation instead.
-(setq native-comp-jit-compilation              t)
+(setq byte-compile-warnings '(not obsolete docstrings))
+(setq byte-compile-verbose nil)
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+
+(if (and (featurep 'native-compile)
+         (fboundp 'native-comp-available-p)
+         (native-comp-available-p))
+    ;; Activate `native-compile'
+    (setq native-comp-jit-compilation              t
+          native-comp-async-report-warnings-errors 'silent
+          native-comp-deferred-compilation         nil ; Obsolete since Emacs 29.1
+          native-comp-warning-on-missing-source    nil
+          package-native-compile                   t)
+  ;; Deactivate the `native-compile' feature if it is not available
+  (setq features (delq 'native-compile features)))
 
 ;;
 ;; Don't store eln files in ~/.emacs.d/eln-cache
 ;;
-(setq native-comp-eln-load-path (cdr native-comp-eln-load-path))
+(when (boundp 'native-comp-eln-load-path)
+  (startup-redirect-eln-cache psimacs/config/native-comp-dir))
+#+end_src
 
-(add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
-(startup-redirect-eln-cache             psimacs/config/native-comp-dir)
+** Custom Theme directory
+
+#+begin_src emacs-lisp :tangle early-init.el
+(setq custom-theme-directory psimacs/config/custom-themes-dir)
 #+end_src
 
 ** Some early optimization settings
@@ -1222,15 +1268,42 @@ ugly flashes of unstyled Emacs.
     ;; Premature redisplays can substantially affect startup times and produce
     ;; ugly flashes of unstyled Emacs.
     ;;
-    (setq-default inhibit-startup-screen  t
-                  inhibit-startup-message t
-                  inhibit-redisplay       t
-                  inhibit-message         t)
+    (setq inhibit-startup-screen            t
+          inhibit-startup-message           t
+          inhibit-startup-echo-area-message user-login-name
+          inhibit-redisplay                 t
+          inhibit-message                   t
+          initial-buffer-choice             nil
+          inhibit-startup-buffer-menu       t
+          inhibit-x-resources               t
+    )
+
+    ;;
+    ;; Disable bidirectional text scanning for a modest performance boost.
+    ;;
+    (setq-default bidi-display-reordering  'left-to-right
+                  bidi-paragraph-direction 'left-to-right)
+
+    ;;
+    ;; Give up some bidirectional functionality for slightly faster re-display.
+    ;;
+    (setq bidi-inhibit-bpa t)
+
+    ;;
+    ;; Remove "For information about GNU Emacs..." message at startup
+    ;;
+    (advice-add #'display-startup-echo-area-message :override #'ignore)
+
+    ;;
+    ;; Suppress the vanilla startup screen completely. We've disabled it with
+    ;; `inhibit-startup-screen', but it would still initialize anyway.
+    ;;
+    (advice-add #'display-startup-screen :override #'ignore)
 
     (add-hook 'window-setup-hook
         (lambda ()
-            (setq-default inhibit-redisplay nil
-                          inhibit-message nil)
+            (setq inhibit-redisplay nil
+                  inhibit-message nil)
             (redisplay)
         )
     )
@@ -1284,12 +1357,17 @@ ugly flashes of unstyled Emacs.
 ;;
 ;; Faster to disable these here (before they've been initialized)
 ;;
-(push '(menu-bar-lines . 0)   default-frame-alist)
-(push '(tool-bar-lines . 0)   default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+(push '(menu-bar-lines . 0)     default-frame-alist)
+(push '(tool-bar-lines . 0)     default-frame-alist)
+(push '(vertical-scroll-bars)   default-frame-alist)
+(push '(horizontal-scroll-bars) default-frame-alist)
 (when (featurep 'ns)
     (push '(ns-transparent-titlebar . t) default-frame-alist))
 (setq-default mode-line-format nil)
+
+(setq scroll-bar-mode nil)
+(when (fboundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1))
 
 ;(menu-bar-mode -1)
 ;(tool-bar-mode -1)
@@ -1322,11 +1400,22 @@ After initialization we set sensible GC parameters.
 ;;
 ;; Suppress file handlers operations at startup
 ;;
-(unless (or (daemonp) noninteractive init-file-debug)
+(unless (daemonp)
   ;; `file-name-handler-alist' is consulted on each call to `require' and `load'
-  (let ((old-value file-name-handler-alist))
-    (setq file-name-handler-alist nil)
-    (set-default-toplevel-value 'file-name-handler-alist file-name-handler-alist)
+  (let ((old-value (default-toplevel-value 'file-name-handler-alist)))
+    (set-default-toplevel-value
+     'file-name-handler-alist
+     ;; Determine the state of bundled libraries using calc-loaddefs.el.
+     ;; If compressed, retain the gzip handler in `file-name-handler-alist`.
+     ;; If compiled or neither, omit the gzip handler during startup for
+     ;; improved startup and package load time.
+     (if (eval-when-compile
+           (locate-file-internal "calc-loaddefs.el" load-path))
+         nil
+       (list (rassq 'jka-compr-handler old-value))))
+    ;; Ensure the new value persists through any current let-binding.
+    (set-default-toplevel-value 'file-name-handler-alist
+                                file-name-handler-alist)
 
     ;;
     ;; After initialization reset the file-name-handler-alist
@@ -1334,9 +1423,13 @@ After initialization we set sensible GC parameters.
     (add-hook 'emacs-startup-hook
               (lambda ()
                 "Recover file name handlers."
-                (setq file-name-handler-alist
-                      (delete-dups (append file-name-handler-alist old-value))))
-              )))
+                (set-default-toplevel-value
+                 'file-name-handler-alist
+                 ;; Merge instead of overwrite to preserve any changes made
+                 ;; since startup.
+                 (delete-dups (append file-name-handler-alist old-value))))
+              101))
+)
 #+end_src
 
 - Disable warnings generated when functions are redefined with defadvice
@@ -2068,7 +2161,18 @@ to it's documentation string.
 ;;
 ;; Define initial Emacs frame size and position...
 ;;
+
+;;
+;; Resizing the Emacs frame can be costly when changing the font. Disable this
+;; to improve startup times with fonts larger than the system default.
+;;
 (setq frame-resize-pixelwise t)
+
+;;
+;; However, do not resize windows pixelwise, as this can cause crashes in some
+;; cases when resizing too many windows at once or rapidly.
+;;
+(setq window-resize-pixelwise nil)
 
 (defconst psimacs/config/default-frame-offset 20)
 
@@ -2381,6 +2485,9 @@ The following boolean constants are defined for convenience.
 (defconst emacs/>=27p (>= emacs-major-version 27) "Emacs is 27 or above.")
 (defconst emacs/>=28p (>= emacs-major-version 28) "Emacs is 28 or above.")
 (defconst emacs/>=29p (>= emacs-major-version 29) "Emacs is 29 or above.")
+(defconst emacs/>=30p (>= emacs-major-version 30) "Emacs is 30 or above.")
+(defconst emacs/>=31p (>= emacs-major-version 31) "Emacs is 31 or above.")
+(defconst emacs/>=32p (>= emacs-major-version 32) "Emacs is 32 or above.")
 #+end_src
 
 ** Helper functions for assembling folders and files
@@ -4766,8 +4873,11 @@ To get running at all, the [[https://github.com/radian-software/straight.el][Str
 ;;
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
@@ -4835,8 +4945,10 @@ loading and =:defer t= for command triggered loading!
 
 *** Provide the diminish.el package
 
-[[https://github.com/emacsmirror/diminish][Diminish]] implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
 
+[[https://github.com/emacsmirror/diminish][Diminish]] implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
+When [[https://github.com/emacsmirror/diminish][diminish]] is installed, you can use the =:diminish= keyword in =use-package= calls. If diminish is not
+installed, the =:diminish= keyword does nothing.
 
 #+begin_src emacs-lisp :tangle config/init-package-manager.el
 ;;
@@ -4857,7 +4969,14 @@ The [[https://github.com/alezost/dim.el][dim]] package can be used to change the
 ;;
 ;; Allow better names for major and minor modes on the command line.
 ;;
-(use-package dim :demand t)
+(use-package dim
+  :demand t
+  :config
+    (dim-major-name 'scheme-mode "λ")
+    (dim-major-name 'help-mode "🄷")
+    (dim-minor-name 'isearch-mode " 🔎")
+    (dim-minor-name 'view-mode " 👀" 'view)
+)
 #+end_src
 
 *** Provide the bind-key.el package
@@ -4991,7 +5110,7 @@ are described in the [[https://www.gnu.org/software/emacs/manual/html_node/emacs
 
 Try to optimize *Psimacs* as much as possible (as far as my *Emacs* knowledge goes).
 
-*** Garbage collect when out of focus
+*** CANCELED Garbage collect when out of focus
 
 Let *Psimacs* perform garbage collection if it does not have the focus.
 
@@ -5014,7 +5133,7 @@ Let *Psimacs* perform garbage collection if it does not have the focus.
         (add-hook 'after-focus-change-function 'garbage-collect))))
 #+end_src
 
-*** Avoid garbage collection in minibuffer
+*** CANCELED Avoid garbage collection in minibuffer
 
 Avoid performing garbage collection operations when using the minibuffer. We do this by enlarging the
 garbage collection threshold.
@@ -5043,6 +5162,12 @@ Enforce a sneaky Garbage Collection strategy to minimize GC interference with th
 During normal use a high GC threshold is set. When idling GC is immediately triggered and a low threshold is set.
 The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hack)]] package provides us with this functionality.
 
+The GC introduces annoying pauses and stuttering into our Emacs experience,
+so we use  [[https://github.com/emacsmirror/gcmh][GCMH]] to stave off the GC while we're using Emacs, and provoke it
+when it's idle. However, if the idle delay is too long, we run the risk of
+runaway memory usage in busy sessions. If it's too low, then we may as well
+not be using gcmh at all.
+
 #+begin_src emacs-lisp :tangle config/init-basic-optimizations.el
 ;;
 ;; Use the garbage collector magic hack
@@ -5050,9 +5175,19 @@ The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hac
 (use-package gcmh
     :diminish
     :custom
-        (gcmh-idle-delay 1000)
-        (gcmh-low-cons-threshold psimacs/config/gc-cons-threshold)
-        ;;(gcmh-verbose t)
+        (gcmh-auto-idle-delay-factor 20)  ;; Factor to compute the idle delay when in idle-delay auto mode.
+                                          ;; The idle delay will be `gcmh-auto-idle-delay-factor' times the
+                                          ;; time the last non idle garbage collection time.
+        (gcmh-idle-delay 'auto)           ;; Idle time to wait in seconds before triggering GC.
+                                          ;; If `auto' this is auto computed based on
+                                          ;; `gcmh-auto-idle-delay-factor'.
+
+        (gcmh-verbose nil)                ;; If t, print a message when garbage collecting.
+
+
+        (gcmh-low-cons-threshold  psimacs/config/gc-low-cons-threshold)   ;; This is the GC threshold used while idling.
+        (gcmh-high-cons-threshold psimacs/config/gc-high-cons-threshold)  ;; This should be set to a value that makes GC
+                                                                          ;; unlikely but does not cause OS paging.
     :hook
         (emacs-startup . gcmh-mode)
 )
@@ -5060,19 +5195,14 @@ The [[https://github.com/emacsmirror/gcmh][GCMH (the Garbage Collector Magic Hac
 
 *** Process data exchange
 
-its clients.
-
-[[https://emacs-lsp.github.io/lsp-mode/][lsp-mode: Language Server Protocol Support for Emacs]], aims to provide IDE-like experience by providing optional
-integration with the most popular *Emacs* packages like [[https://company-mode.github.io/][company]], [[https://www.flycheck.org/en/latest/][flycheck]] and [[https://github.com/bbatsov/projectile][projectile]].
-
-Increase the amount of data which *Emacs* reads from the process. Again the *Emacs* default is too low 4K
+Increase the amount of data which *Emacs* reads from processes. Again the *Emacs* default is too low 4K
 considering that the some of the language server responses are in 800k - 3M range.
 
 #+begin_src emacs-lisp :tangle config/init-basic-optimizations.el
 ;;
 ;; lsp-mode optimization
 ;;
-(setq read-process-output-max 4MB)
+(setq read-process-output-max 1MB)
 #+end_src
 
 ** Keyboard configuration
@@ -5093,16 +5223,16 @@ Therefore key bindings such as =C-@= are quite difficult to type.
 Solutions:
 - Using the right control key
 
-#+begin_quote
+  #+begin_quote
   The trick is that you must type =AltGr= as the first key, and =Ctrl= must be the right control key,
   not the left one.
-#+end_quote
+  #+end_quote
 
 - Using =C-SPC= instead of =C-@=
 
-#+begin_quote
+  #+begin_quote
   It turns out that instead of =C-@= you can always type =C-SPC=.
-#+end_quote
+  #+end_quote
 
 *** Base configuration of the keyboard
 
@@ -5391,6 +5521,10 @@ In addition *Psimacs* installs the package [[https://gitlab.com/to1ne/use-packag
 This allows the the definition of a single [[https://github.com/abo-abo/hydra][hydra]] or a list of [[https://github.com/abo-abo/hydra][hydras]] with the same arguments that as =defhydra=
 does.
 
+References:
+- [[https://codeberg.org/MooersLab/emacs-hydra-examples][Examples of hydras for Emacs]]
+
+
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
 ;;
 ;; Additinally load package use-package-hydra to get :hydra support in use-package
@@ -5507,7 +5641,9 @@ port /LPT3/ in the configuration.
 ;;
 ;; Support for the printer-* commands
 ;;
-(setq printer-name "LPT3:")
+(when psimacs/system/is-win32-p
+  (setq printer-name "LPT3:")
+)
 #+end_src
 
 For the =ps-print-*= commands to work I needed to install [[https://www.ghostscript.com/][Ghostscript]]. First I tried the [[https://www.msys2.org/][MSYS2]] which I was not able
@@ -5519,29 +5655,32 @@ perfectly. In order to set this up I followed the [[https://www.gnu.org/software
 ;;
 ;; Support for the ps-print-* commands
 ;;
-(setq ps-printer-name t)
-(setq ps-lpr-command psimacs/config/ghostscript-exe)
-(setq ps-lpr-switches '("-q" "-dNOPAUSE" "-dBATCH" "-sDEVICE=mswinpr2" "-sPAPERSIZE=a4"))
+(when psimacs/system/is-win32-p
+  (setq ps-printer-name t)
+  (setq ps-lpr-command psimacs/config/ghostscript-exe)
+  (setq ps-lpr-switches '("-q" "-dNOPAUSE" "-dBATCH" "-sDEVICE=mswinpr2" "-sPAPERSIZE=a4"))
 
-;;
-;; Some extra printing customizations that I currently not use
-;;
-;; (setq ps-top-margin 0
-;;       ps-left-margin 0
-;;       ps-right-margin 0
-;;       ps-inter-column 0
-;;       ps-landscape-mode t
-;;       ps-number-of-columns 2
-;;       ps-paper-type 'a4
-;;       ps-font-size 8.25
-;;       ps-line-number t
-;;       ps-line-number-font-size 10
-;;       ps-line-number-step 10
-;;       ps-print-color-p 'black-white
-;;       ps-print-header nil
-;; )
-
+  ;;
+  ;; Some extra printing customizations that I currently not use
+  ;;
+  ;; (setq ps-top-margin 0
+  ;;       ps-left-margin 0
+  ;;       ps-right-margin 0
+  ;;       ps-inter-column 0
+  ;;       ps-landscape-mode t
+  ;;       ps-number-of-columns 2
+  ;;       ps-paper-type 'a4
+  ;;       ps-font-size 8.25
+  ;;       ps-line-number t
+  ;;       ps-line-number-font-size 10
+  ;;       ps-line-number-step 10
+  ;;       ps-print-color-p 'black-white
+  ;;       ps-print-header nil
+  ;; )
+)
 #+end_src
+
+** TODO Printing on Linux                                             :todo:
 
 ** Basic ELisp Libraries
 
@@ -5603,7 +5742,7 @@ Basically it provides a modern API for working with files and directories in *Em
 (use-package queue)
 #+end_src
 
-*** Alert an alternative notification interface
+*** CANCELED Alert an alternative notification interface
 
 Just use [[https://github.com/jwiegley/alert][alert]] instead of message to get a stylized customizable notification interface for *Emacs*.
 
@@ -5681,33 +5820,48 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 ;;
 ;;  that Emacs is totally UTF-8
 ;;
-(set-charset-priority 'unicode)
-(set-locale-environment "en_US.UTF-8")
+(when (fboundp 'set-charset-priority)
+  (set-charset-priority   'unicode)
+)
 
-(prefer-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)         ; configured by prefer-coding-system
-(set-keyboard-coding-system 'utf-8)         ; configured by prefer-coding-system
+;;
+;; Doomemacs says
+;;   'Contrary to what many Emacs users have in their configs, you don't need more
+;;   than this to make UTF-8 the default coding system:
+;;
+(set-language-environment      "UTF-8")     ; How to permanently choose a encoding system in emacs for opening and saving
+
+;(set-locale-environment "en_US.UTF-8")
+
+;(prefer-coding-system         'utf-8)
+(set-default-coding-systems    'utf-8)
+(set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
+(set-file-name-coding-system   'utf-8)
+(set-terminal-coding-system    'utf-8)      ; configured by prefer-coding-system
+(set-keyboard-coding-system    'utf-8)      ; configured by prefer-coding-system
 
 (when psimacs/system/is-win32-p
-    (set-selection-coding-system 'utf-16-le)    ; important on windows os
-    (set-clipboard-coding-system 'utf-16-le)    ; included by set-selection-coding-system
+    (set-selection-coding-system  'utf-16-le)    ; important on windows os
+    (set-clipboard-coding-system  'utf-16-le)    ; included by set-selection-coding-system
 
     (w32-set-system-coding-system 'utf-8)
 )
 
-(set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
-(setq locale-coding-system 'utf-8)
-(set-file-name-coding-system 'utf-8)
-(set-language-environment "UTF-8")          ; How to permanently choose a encoding system in emacs for opening and saving
+(when psimacs/system/is-linux-p
+    (set-selection-coding-system  'utf-8)
+    (set-clipboard-coding-system  'utf-8)
+
+    (setq select-enable-clipboard t)
+)
+
+(setq locale-coding-system     'utf-8)
 
 (when psimacs/system/is-win32-p
     (setq default-process-coding-system '(utf-8-dos . utf-8-dos))
 )
 
-(when psimacs/system/is-linux-p
-    (setq select-enable-clipboard t)
-)
+;; Set-language-environment sets default-input-method, which is unwanted.
+(setq default-input-method nil) ; this is the default  value
 #+end_src
 
 ** Emacs server
@@ -5761,6 +5915,7 @@ References:
       )
 
     )
+  ;; else linux ...
   (unless (daemonp)
     (when psimacs/system/is-gui-p
       (require 'server)
@@ -5806,6 +5961,27 @@ No distracting splash screen or annoying startup message :-)
 (setopt use-short-answers t)
 #+end_src
 
+*** Minibuffer/Completion settings
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el :var file-description="Basic user interface setup"
+(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
+(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
+(setopt completions-detailed t)                        ; Show annotations
+(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
+(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
+
+(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
+(setopt completions-max-height 20)                     ; This is arbitrary
+(setopt completions-detailed t)
+(setopt completions-format 'one-column)
+(setopt completions-group t)
+(setopt completion-auto-select 'second-tab)            ; Much more eager
+;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
+
+(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+#+end_src
+
+
 *** Bells
 
 Avoid annoying bells as described in [[https://www.emacswiki.org/emacs/AlarmBell][Alarm Bell]] on [[https://www.emacswiki.org][EmacsWiki]].
@@ -5837,6 +6013,10 @@ cursor in the active window only.
 
 (setq blink-cursor-delay    10
       blink-cursor-interval 0.7)
+
+;; Don't stretch the cursor to fit wide characters, it is disorienting,
+;; especially for tabs.
+(setq x-stretch-cursor nil)
 #+end_src
 
 *** Highlight current line
@@ -5909,24 +6089,48 @@ Beside the row I'd also like to see the column in the mode line.
 (column-number-mode)
 #+end_src
 
+*** Indicate buffer boundaries
+
+Show buffer top and bottom in the margin.
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
+#+end_src
+
 *** Scrolling
 
 Do not centre the point before scrolling. Scroll one line at a time (less "jumpy" than defaults).
 Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Textual-Scrolling.html#Textual-Scrolling][Textual Scrolling]] in the *Emacs* manual.
 
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
-;;
-;; Scrolling: Adjust to your likening...
-;;
-(setq scroll-step 1                                ; keyboard scroll: one line at a time
-      mouse-wheel-scroll-amount '(1 ((shift) . 1)) ; dito with wheel: one line at a time
-      mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
-      mouse-wheel-follow-mouse 't                  ; scroll window under mouse
-      scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
-      auto-window-vscroll nil
-      scroll-preserve-screen-position nil          ; this is not windows like, i.e. quite foreign
-      next-line-add-newlines nil                   ; Don't automatically add new lines when scrolling down at the bottom of a buffer.
-)
+  ;;
+  ;; Scrolling: Adjust to your likening...
+  ;;
+  (setq scroll-step 1                                ; keyboard scroll: one line at a time
+        scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
+        scroll-error-top-bottom t                    ; Move point to top/bottom of buffer before signaling a scrolling error.
+        ;; Keeps screen position if the scroll command moved it vertically out of the
+        ;; window.
+        scroll-preserve-screen-position nil          ; this is not windows like, i.e. quite foreign
+
+        ;; Enables faster scrolling through unfontified regions. This may result in
+        ;; brief periods of inaccurate syntax highlighting immediately after scrolling,
+        ;; which should quickly self-correct.
+        fast-but-imprecise-scrolling t
+
+        mouse-wheel-scroll-amount '(1 ((shift) . 1)) ; dito with wheel: one line at a time
+        mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
+        mouse-wheel-follow-mouse 't                  ; scroll window under mouse
+
+        ;; Reduce cursor lag by :
+        ;; 1. Prevent automatic adjustments to `window-vscroll' for long lines.
+        ;; 2. Resolve the issue of random half-screen jumps during scrolling.
+        auto-window-vscroll nil
+
+        next-line-add-newlines nil                   ; Don't automatically add new lines when scrolling down at the bottom of a buffer.
+  )
+
+  (pixel-scroll-precision-mode)                      ; Smooth scrolling
 #+end_src
 
 *** Smooth Scrolling
@@ -6009,6 +6213,17 @@ the command =revert-buffer= to load the new content of the file into *Psimacs*. 
 ;;
 ;; Avoid handy revert-buffer calls
 ;;
+;; Automatically reread from disk if the underlying file changes
+(setopt auto-revert-avoid-polling t)
+;; Some systems don't do file notifications well; see
+;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
+
+(setq revert-without-query (list ".")  ; Do not prompt
+      auto-revert-stop-on-user-input nil
+      auto-revert-verbose t)
+
 (global-auto-revert-mode t)
 
 ;;
@@ -6118,23 +6333,11 @@ Show an empty scratch buffer on startup.
 
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
 ;;
+;; Shave seconds off startup time by starting the scratch buffer in
+;; `fundamental-mode'
 ;; Show an empty scratch buffer on startup.
-;;
-(setq initial-scratch-message "")
-#+end_src
-
-*** Undo in commands :noexport:
-
-Fix undo in commands affecting the mark.
-
-See also:
-- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/The-Mark.html][The Mark -> mark-even-if-inactive]]
-- Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
-
-Remark: I have canceled the following setting. I am unsure about the right setting.
-
-#+begin_src emacs-lisp :tangle config/init-basic-ui.el
-(setq mark-even-if-inactive nil)
+(setq initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
 #+end_src
 
 *** No dialog boxes
@@ -6146,7 +6349,10 @@ the echo area and keyboard input.
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
 ;;
 ;; Prompts should go in the minibuffer, not in a GUI.
+;; Disable GUIs because they are inconsistent across systems, desktop
+;; environments, and themes, and they don't match the look of Emacs.
 ;;
+(setq use-file-dialog nil)
 (setq use-dialog-box nil)
 #+end_src
 
@@ -6465,7 +6671,7 @@ Font Lock mode is enabled by default in major modes that support it.
 )
 #+end_src
 
-**** Font-lock+ :noexport:
+**** CANCELED Font-lock+
 
 [[https://github.com/emacsmirror/font-lock-plus/blob/master/font-lock%2B.el][font-lock+]] provides enhancements to standard library [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][font-lock]] minor mode.
 
@@ -6558,7 +6764,7 @@ variable for that information.
 ;;
 ;; Theming setup
 ;;
-(defvar psimacs/config/default-theme "nimbus"
+(defvar psimacs/config/default-theme "modus-vivendi"
     "The theme that should be loaded on default.
 
 afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
@@ -6568,7 +6774,8 @@ moe-light, monokai, monokai-pro, sanityinc-tomorrow-day, sanityinc-tomorrow-nigh
 sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn, doom-one, doom-molokai, doom-vibrant,
 doom-oceanic-next, kaolin-dark, kaolin-aurora, kaolin-blossom, kaolin-breeze, kaolin-bubblegum, kaolin-light,
 kaolin-eclipse, kaolin-ocean, kaolin-galaxy, kaolin-valley-dark, kaolin-valley-light, kaolin-temple,
-vscode-dark-plus, nimbus.
+vscode-dark-plus, nimbus, modus-operandi, modus-operandi-tinted, modus-operandi-deuteranopia, modus-operandi-tritanopia,
+modus-vivendi, modus-vivendi-tinted, modus-vivendi-deuteranopia, modus-vivendi-tritanopia.
 ")
 
 (defvar psimacs/config/theme-is-light-colored t
@@ -6589,6 +6796,8 @@ The following themes are my favorites currently:
 
 | Theme                       |
 |-----------------------------|
+| =modus-vivendi=               |
+| =modus-operandi=              |
 | =nimbus=                      |
 | =kaolin-valley-dark=          |
 | =vscode-dark-plus=            |
@@ -6602,6 +6811,104 @@ For the time being, the =nimbus= is active in my configuration.
 
 See also:
 [[https://emacsthemes.com/][Emacs Themes]], [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Custom-Themes.html][Custom Themes Manual]], [[https://www.emacswiki.org/emacs/CustomThemes][EmacsWiki: Custom Themes]]
+
+
+#+begin_src emacs-lisp :tangle config/init-basic-themes.el
+(use-package modus-themes
+    :config
+        (let ((use-modus-theme nil))
+            (when (equal psimacs/config/default-theme "modus-operandi")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi-tinted")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi-deuteranopia")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi-tritanopia")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi-tinted")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi-deuteranopia")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-modus-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi-tritanopia")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-modus-theme t)
+            )
+
+            (when use-modus-theme
+                ;; Add all your customizations prior to loading the themes
+                (setq modus-themes-italic-constructs t
+                      modus-themes-bold-constructs nil)
+
+                ;; Maybe define some palette overrides, such as by using our presets
+                (setq modus-themes-common-palette-overrides
+                      modus-themes-preset-overrides-intense)
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi")
+                (load-theme 'modus-operandi t)
+                (message "loaded theme modus-operandi")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi-tinted")
+                (load-theme 'modus-operandi-tinted t)
+                (message "loaded theme modus-operandi-tinded")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi-deuteranopia")
+                (load-theme 'modus-operandi-deuteranopia t)
+                (message "loaded theme modus-operandi-deuteranopia")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-operandi-tritanopia")
+                (load-theme 'modus-operandi-tritanopia t)
+                (message "loaded theme modus-operandi-tritanopia")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi")
+                (load-theme 'modus-vivendi t)
+                (message "loaded theme modus-vivendi")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi-tinted")
+                (load-theme 'modus-vivendi-tinted t)
+                (message "loaded theme modus-vivendi-tinded")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi-deuteranopia")
+                (load-theme 'modus-vivendi-deuteranopia t)
+                (message "loaded theme modus-vivendi-deuteranopia")
+            )
+
+            (when (equal psimacs/config/default-theme "modus-vivendi-tritanopia")
+                (load-theme 'modus-vivendi-tritanopia t)
+                (message "loaded theme modus-vivendi-tritanopia")
+            )
+        )
+)
+#+end_src
 
 #+begin_src emacs-lisp :tangle config/init-basic-themes.el
 (use-package doom-themes
@@ -9977,7 +10284,7 @@ It is an enhancement of the build-in =M-x text-adjust-scale= command.
 )
 #+end_src
 
-*** Golden-Ratio for new buffers
+*** CANCELED Golden-Ratio for new buffers
 
 The package [[https://github.com/roman/golden-ratio.el][Golden-Ratio]] provides the /golden-ratio-mode/ that will automatically adjust buffers sizes to keep
 the golden ration.
@@ -10028,7 +10335,7 @@ which does have some problems to be convenient.
 (use-package zoom
     :diminish
     :config
-        (zoom-mode t)
+        ;;(zoom-mode t)
 
         (setq zoom-size '(0.618 . 0.618)
               zoom-ignored-major-modes '(which-key-mode
@@ -10036,6 +10343,7 @@ which does have some problems to be convenient.
     :bind (
          :map psimacs/config/global-key-map/special
               ("C-w +" . zoom)
+              ("C-w C-r" . zoom-mode)
         )
 )
 #+end_src
@@ -18340,6 +18648,19 @@ This transformer allows org syntax in the candidate strings."
 )
 #+end_src
 
+*** CANCELED Prettify headings with Org-Modern
+
+References:
+- [[https://lucidmanager.org/productivity/ricing-org-mode/][Ricing Org Mode: A Beautiful Writing Environment]]
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+(use-package org-modern
+    :after org
+    :config
+        (global-org-modern-mode)
+)
+#+end_src
+
 *** Prettify headings with Org-Superstar
 
 
@@ -18354,10 +18675,14 @@ Prettify headings and plain lists in Org mode. Package [[https://github.com/inte
 (use-package org-superstar
     :after org
     :config
+        ;; Stop cycling bullets to emphasize hierarchy of headlines.
+        (setq org-superstar-cycle-headline-bullets nil)
+
         ;(setq org-superstar-special-todo-items t)
 
         ;(setq org-superstar-headline-bullets-list '( "Ⅰ" "Ⅱ" "Ⅲ" "Ⅳ" "Ⅴ" "Ⅵ" "Ⅶ" "Ⅷ" "Ⅸ" "Ⅹ" ))
-        (setq org-superstar-headline-bullets-list '( "✸" "◆" "★" "▶" "✿" "✜" "■" "●" ))
+        ;(setq org-superstar-headline-bullets-list '("◉" ("🞛" ?◈) "○" "▷"))
+        (setq org-superstar-headline-bullets-list '( "■" "●" "✸" "◆" "★" "▷" "✿" "✜"))
         (setq org-superstar-item-bullet-alist '( (?* . ?☆) (?+ . ?•) (?- . ?▷) ))
 
         ;    ;; Document Title, (\huge)
@@ -22590,7 +22915,6 @@ _q_: quit_
 )
 #+end_src
 
-
 * Key bindings
 
 Additional key bindings for *Psimacs*:
@@ -22773,6 +23097,14 @@ References:
 
 )
 #+end_src
+
+* Interesting packages that could be handy
+
+- [[https://github.com/minad/vertico][Vertico]]
+- [[https://github.com/abo-abo/org-download][org-download]]
+- [[https://github.com/TobiasZawada/org-yt][org-yt]]
+- [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]]
+- [[https://github.com/ichernyshovvv/org-timeblock][org-timeblock]]
 
 * Byte compile configuration
 

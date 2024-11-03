@@ -4,7 +4,7 @@
 ;; Don't edit this file, edit init.org instead ...
 ;;
 
-;; Copyright (C) 2020-2024 Johannes Brunen (hatlafax)
+;; Copyright (C) 2020-2025 Johannes Brunen (hatlafax)
 
 ;; Author:  Johannes Brunen <hatlafax@gmx.de>
 ;; URL:     https://github.com/hatlafax/psimacs
@@ -45,7 +45,7 @@
       ;; be allocated for Lisp objects after one garbage collection in order to
       ;; trigger another garbage collection.
 
-      gc-cons-percentage 1.0
+      gc-cons-percentage 0.8
       ;; The value of this variable specifies the amount of consing before a
       ;; garbage collection occurs, as a fraction of the current heap size.
 )
@@ -120,6 +120,7 @@ Do not change it here!!!")
 ;; Conveniency byte size constants
 ;;
 (defconst   1KB 1024)
+(defconst 512KB (*  512 1KB))
 (defconst   1MB (* 1024 1KB))
 (defconst   1GB (* 1024 1MB))
 
@@ -216,7 +217,11 @@ Do not change it here!!!")
   (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "eln-cache")))
   "The psimacs native compilation eln directory.")
 
-(defconst psimacs/config/copyright/year       "2020-2024")
+(defconst psimacs/config/custom-themes-dir
+  (expand-file-name (file-name-as-directory (concat (file-name-as-directory psimacs/config/session-dir) "themes")))
+  "The psimacs custom themes directory.")
+
+(defconst psimacs/config/copyright/year       "2020-2025")
 (defconst psimacs/config/copyright/author     "Johannes Brunen")
 (defconst psimacs/config/copyright/pseudonyme "hatlafax")
 (defconst psimacs/config/copyright/email      "hatlafax@gmx.de")
@@ -227,30 +232,51 @@ Do not change it here!!!")
 ;;
 ;; Psimacs default garbage collection parameters
 ;;
-(defconst psimacs/config/gc-cons-threshold 64MB
+(defconst psimacs/config/gc-cons-threshold 16MB
   "The default value to use for `gc-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst psimacs/config/gc-low-cons-threshold 1MB
+  "The default value to use for `gcmh-low-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst psimacs/config/gc-high-cons-threshold psimacs/config/gc-cons-threshold
+  "The default value to use for `gcmh-high-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
 
 (defconst psimacs/config/gc-cons-percentage 0.1
   "This variable specifies the amount of consing before garbage collection occurs.
-It is the fraction of the current heap size."
-)
+It is the fraction of the current heap size.")
 
 ;;
-;; Native compilation
+;; Byte and native compilation
 ;;
-(setq native-comp-async-report-warnings-errors nil)  ;; hide warnings
-(setq native-comp-deferred-compilation         nil)  ;; Obsolete since 29.1; use native-comp-jit-compilation instead.
-(setq native-comp-jit-compilation              t)
+(setq byte-compile-warnings '(not obsolete docstrings))
+(setq byte-compile-verbose nil)
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+
+(if (and (featurep 'native-compile)
+         (fboundp 'native-comp-available-p)
+         (native-comp-available-p))
+    ;; Activate `native-compile'
+    (setq native-comp-jit-compilation              t
+          native-comp-async-report-warnings-errors 'silent
+          native-comp-deferred-compilation         nil ; Obsolete since Emacs 29.1
+          native-comp-warning-on-missing-source    nil
+          package-native-compile                   t)
+  ;; Deactivate the `native-compile' feature if it is not available
+  (setq features (delq 'native-compile features)))
 
 ;;
 ;; Don't store eln files in ~/.emacs.d/eln-cache
 ;;
-(setq native-comp-eln-load-path (cdr native-comp-eln-load-path))
+(when (boundp 'native-comp-eln-load-path)
+  (startup-redirect-eln-cache psimacs/config/native-comp-dir))
 
-(add-to-list 'native-comp-eln-load-path psimacs/config/native-comp-dir)
-(startup-redirect-eln-cache             psimacs/config/native-comp-dir)
+(setq custom-theme-directory psimacs/config/custom-themes-dir)
 
 ;;
 ;; Use lexical binding instead of dynamic binding.
@@ -292,15 +318,42 @@ It is the fraction of the current heap size."
     ;; Premature redisplays can substantially affect startup times and produce
     ;; ugly flashes of unstyled Emacs.
     ;;
-    (setq-default inhibit-startup-screen  t
-                  inhibit-startup-message t
-                  inhibit-redisplay       t
-                  inhibit-message         t)
+    (setq inhibit-startup-screen            t
+          inhibit-startup-message           t
+          inhibit-startup-echo-area-message user-login-name
+          inhibit-redisplay                 t
+          inhibit-message                   t
+          initial-buffer-choice             nil
+          inhibit-startup-buffer-menu       t
+          inhibit-x-resources               t
+    )
+
+    ;;
+    ;; Disable bidirectional text scanning for a modest performance boost.
+    ;;
+    (setq-default bidi-display-reordering  'left-to-right
+                  bidi-paragraph-direction 'left-to-right)
+
+    ;;
+    ;; Give up some bidirectional functionality for slightly faster re-display.
+    ;;
+    (setq bidi-inhibit-bpa t)
+
+    ;;
+    ;; Remove "For information about GNU Emacs..." message at startup
+    ;;
+    (advice-add #'display-startup-echo-area-message :override #'ignore)
+
+    ;;
+    ;; Suppress the vanilla startup screen completely. We've disabled it with
+    ;; `inhibit-startup-screen', but it would still initialize anyway.
+    ;;
+    (advice-add #'display-startup-screen :override #'ignore)
 
     (add-hook 'window-setup-hook
         (lambda ()
-            (setq-default inhibit-redisplay nil
-                          inhibit-message nil)
+            (setq inhibit-redisplay nil
+                  inhibit-message nil)
             (redisplay)
         )
     )
@@ -338,12 +391,17 @@ It is the fraction of the current heap size."
 ;;
 ;; Faster to disable these here (before they've been initialized)
 ;;
-(push '(menu-bar-lines . 0)   default-frame-alist)
-(push '(tool-bar-lines . 0)   default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+(push '(menu-bar-lines . 0)     default-frame-alist)
+(push '(tool-bar-lines . 0)     default-frame-alist)
+(push '(vertical-scroll-bars)   default-frame-alist)
+(push '(horizontal-scroll-bars) default-frame-alist)
 (when (featurep 'ns)
     (push '(ns-transparent-titlebar . t) default-frame-alist))
 (setq-default mode-line-format nil)
+
+(setq scroll-bar-mode nil)
+(when (fboundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1))
 
 ;(menu-bar-mode -1)
 ;(tool-bar-mode -1)
@@ -363,11 +421,22 @@ It is the fraction of the current heap size."
 ;;
 ;; Suppress file handlers operations at startup
 ;;
-(unless (or (daemonp) noninteractive init-file-debug)
+(unless (daemonp)
   ;; `file-name-handler-alist' is consulted on each call to `require' and `load'
-  (let ((old-value file-name-handler-alist))
-    (setq file-name-handler-alist nil)
-    (set-default-toplevel-value 'file-name-handler-alist file-name-handler-alist)
+  (let ((old-value (default-toplevel-value 'file-name-handler-alist)))
+    (set-default-toplevel-value
+     'file-name-handler-alist
+     ;; Determine the state of bundled libraries using calc-loaddefs.el.
+     ;; If compressed, retain the gzip handler in `file-name-handler-alist`.
+     ;; If compiled or neither, omit the gzip handler during startup for
+     ;; improved startup and package load time.
+     (if (eval-when-compile
+           (locate-file-internal "calc-loaddefs.el" load-path))
+         nil
+       (list (rassq 'jka-compr-handler old-value))))
+    ;; Ensure the new value persists through any current let-binding.
+    (set-default-toplevel-value 'file-name-handler-alist
+                                file-name-handler-alist)
 
     ;;
     ;; After initialization reset the file-name-handler-alist
@@ -375,9 +444,13 @@ It is the fraction of the current heap size."
     (add-hook 'emacs-startup-hook
               (lambda ()
                 "Recover file name handlers."
-                (setq file-name-handler-alist
-                      (delete-dups (append file-name-handler-alist old-value))))
-              )))
+                (set-default-toplevel-value
+                 'file-name-handler-alist
+                 ;; Merge instead of overwrite to preserve any changes made
+                 ;; since startup.
+                 (delete-dups (append file-name-handler-alist old-value))))
+              101))
+)
 
 ;;
 ;; Suppressing ad-handle-definition warnings
