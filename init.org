@@ -13734,7 +13734,7 @@ The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] g
 )
 #+end_src
 
-**** projectile-b2
+**** CANCELED projectile-b2
 
 Attention: This is work in progress and currently not publicly available.
 
@@ -17734,7 +17734,68 @@ Setup of the [[https://orgmode.org/manual/Agenda-Views.html][org agenda views]].
             )
           )
 
-        (psimacs/config/init-agenda-files)
+        (defvar psimacs/config/org-agenda--todo-keyword-regex
+          (reduce (lambda (cur acc)
+                    (concat acc "\\|" cur))
+                  (mapcar (lambda (entry) (concat "\\* " entry))
+                          '("TODO" "WORK" "WAIT" "HOLD" "PR" "MERGING" "MERGED" "DONE" "STOP" "REPORT" "BUG" "FEEDBACK" "WAITING" "VERIFY" "KNOWNCAUSE" "FIXED" "CANCELED" "DELEGATED")))
+          "Regex which filters all TODO keywords")
+
+        (defvar psimacs/config/org-agenda--last-months-regex
+          (let* ((y0 (string-to-number (format-time-string "%Y" (current-time))))
+                 (y1 y0)
+                 (y2 y0)
+                 (y3 y0)
+                 (y4 y0)
+                 (m0 (string-to-number (format-time-string "%d" (current-time))))
+                 (m1 (if (> m0 1) (- m0 1) (progn (setq y1 (- y0 1) y2 y1 y3 y2 y4 y3) 12)))
+                 (m2 (if (> m1 1) (- m1 1) (progn (setq y2 (- y0 1)       y3 y2 y4 y3) 12)))
+                 (m3 (if (> m2 1) (- m2 1) (progn (setq y3 (- y0 1)             y4 y3) 12)))
+                 (m4 (if (> m3 1) (- m3 1) (progn (setq y4 (- y0 1)                  ) 12)))
+                 (s0 (format "%d-%02d" y0 m0))
+                 (s1 (format "%d-%02d" y1 m1))
+                 (s2 (format "%d-%02d" y2 m2))
+                 (s3 (format "%d-%02d" y3 m3))
+                 (s4 (format "%d-%02d" y4 m4))
+                )
+            (reduce (lambda (cur acc)
+                    (concat acc "\\|" cur))
+                  `(,s4 ,s3 ,s2 ,s1 ,s0))))
+
+
+        (defun psimacs/config/org-agenda--calculate-files-for-regex (regex)
+          "Yields a fresh array with all files containing todos which match REGEX.
+
+        Uses grep to discover all files containing anything stored in
+        org-agenda--todo-keyword-regex."
+          (remove-if #'file-directory-p
+           (split-string
+            (shell-command-to-string
+             (concat "grep --include=\"*.org\" -rl -e '" regex "' " psimacs/config/roam-notes-dir))
+            "\n")))
+
+
+        (defun psimacs/config/org-agenda-all ()
+          "Use all files for org-agenda."
+          (interactive)
+          (psimacs/config/init-agenda-files)
+          (setq org-agenda-files (append org-agenda-files (list psimacs/config/roam-notes-dir))))
+
+        (defun psimacs/config/org-agenda-todos ()
+          "Use all files with TODO states."
+          (interactive)
+          (psimacs/config/init-agenda-files)
+          (setq org-agenda-files (append org-agenda-files (psimacs/config/org-agenda--calculate-files-for-regex psimacs/config/org-agenda--todo-keyword-regex))))
+
+        (defun psimacs/config/org-agenda-last-months ()
+          "Use all files which refer to the last few months."
+          (interactive)
+          (psimacs/config/init-agenda-files)
+          (setq org-agenda-files (append org-agenda-files (psimacs/config/org-agenda--calculate-files-for-regex psimacs/config/org-agenda--last-months-regex))))
+
+        (psimacs/config/org-agenda-last-months)
+        ;;(psimacs/config/init-agenda-files)
+
         (setq org-agenda-skip-unavailable-files t)
 
         (setq org-agenda-window-setup 'current-window)
