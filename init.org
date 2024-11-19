@@ -240,7 +240,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 In the following sections some of these bindings are introduced.
 
 Beside of the predefined key bindings, however, *Psimacs* also has many of its own key bindings.
-The following two pages provides cheat sheats for these bindings:
+The following two pages provides cheat sheets for these bindings:qqqq
 
 - [[https://hatlafax.github.io/psimacs/docs/keybindings.html][List of all Psimacs Key Bindings]].
 - [[https://hatlafax.github.io/psimacs/docs/sortedKeyBindings.html][Psimacs Keybindings on Topic.]]
@@ -3006,6 +3006,7 @@ your calendar.
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "references"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "research"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "notebooks"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "books"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "cookbooks"))
 
 (defconst psimacs/config/roam-templates-dir
@@ -6764,7 +6765,7 @@ variable for that information.
 ;;
 ;; Theming setup
 ;;
-(defvar psimacs/config/default-theme "modus-vivendi"
+(defvar psimacs/config/default-theme "ef-symbiosis"
     "The theme that should be loaded on default.
 
 afternoon, alect-light, alect-light-alt, alect-dark, alect-dark-alt, alect-black, alect-black-alt,
@@ -6775,7 +6776,9 @@ sanityinc-tomorrow-bright, sanityinc-tomorrow-eighties, toxi, zenburn, doom-one,
 doom-oceanic-next, kaolin-dark, kaolin-aurora, kaolin-blossom, kaolin-breeze, kaolin-bubblegum, kaolin-light,
 kaolin-eclipse, kaolin-ocean, kaolin-galaxy, kaolin-valley-dark, kaolin-valley-light, kaolin-temple,
 vscode-dark-plus, nimbus, modus-operandi, modus-operandi-tinted, modus-operandi-deuteranopia, modus-operandi-tritanopia,
-modus-vivendi, modus-vivendi-tinted, modus-vivendi-deuteranopia, modus-vivendi-tritanopia.
+modus-vivendi, modus-vivendi-tinted, modus-vivendi-deuteranopia, modus-vivendi-tritanopia,
+ef-day, ef-night, ef-light, ef-dark, ef-duo-light, ef-duo-dark, ef-maris-light, ef-maris-dark, ef-spring, ef-autumn, 
+ef-summer, ef-winter, ef-deuteranopia-dark, ef-symbiosis, leuven.
 ")
 
 (defvar psimacs/config/theme-is-light-colored t
@@ -6796,6 +6799,7 @@ The following themes are my favorites currently:
 
 | Theme                       |
 |-----------------------------|
+| =ef-symbiosis=               |
 | =modus-vivendi=               |
 | =modus-operandi=              |
 | =nimbus=                      |
@@ -6906,6 +6910,160 @@ See also:
                 (load-theme 'modus-vivendi-tritanopia t)
                 (message "loaded theme modus-vivendi-tritanopia")
             )
+        )
+)
+#+end_src
+
+
+#+begin_src emacs-lisp :tangle config/init-basic-themes.el
+(use-package ef-themes
+    :config
+        (let ((use-ef-theme nil))
+            (when (equal psimacs/config/default-theme "ef-day")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-light")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-duo-light")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-maris-light")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-spring")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-summer")
+                (setq psimacs/config/theme-is-light-colored t)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-night")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-dark")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-duo-dark")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-maris-dark")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-autumn")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-winter")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-deuteranopia-dark")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-symbiosis")
+                (setq psimacs/config/theme-is-light-colored nil)
+                (setq use-ef-theme t)
+            )
+
+            (when use-ef-theme
+                (setq ef-themes-mixed-fonts nil)
+                (setq ef-themes-variable-pitch-ui nil)
+            )
+
+            (when (equal psimacs/config/default-theme "ef-day")
+                (load-theme 'ef-day t)
+                (message "loaded theme ef-day")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-light")
+                (load-theme 'ef-light t)
+                (message "loaded theme ef-light")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-duo-light")
+                (load-theme 'ef-duo-light t)
+                (message "loaded theme ef-duo-light")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-maris-light")
+                (load-theme 'ef-maris-light t)
+                (message "loaded theme ef-maris-light")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-spring")
+                (load-theme 'ef-spring t)
+                (message "loaded theme ef-spring")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-summer")
+                (load-theme 'ef-summer t)
+                (message "loaded theme ef-summer")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-night")
+                (load-theme 'ef-night t)
+                (message "loaded theme ef-night")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-dark")
+                (load-theme 'ef-dark t)
+                (message "loaded theme ef-dark")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-duo-dark")
+                (load-theme 'ef-duo-dark t)
+                (message "loaded theme ef-duo-dark")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-maris-dark")
+                (load-theme 'ef-maris-dark t)
+                (message "loaded theme ef-maris-dark")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-autumn")
+                (load-theme 'ef-autumn t)
+                (message "loaded theme ef-autumn")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-winter")
+                (load-theme 'ef-winter t)
+                (message "loaded theme ef-winter")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-deuteranopia-dark")
+                (load-theme 'ef-deuteranopia-dark t)
+                (message "loaded theme ef-deuteranopia-dark")
+            )
+
+            (when (equal psimacs/config/default-theme "ef-symbiosis")
+                (load-theme 'ef-symbiosis t)
+                (message "loaded theme ef-symbiosis")
+            )
+
         )
 )
 #+end_src
@@ -7076,6 +7234,31 @@ See also:
             (setq psimacs/config/theme-is-light-colored nil)
             (load-theme 'nimbus t)
             (message "loaded theme nimbus")
+        )
+)
+#+end_src
+
+#+begin_src emacs-lisp :tangle config/init-basic-themes.el
+(use-package leuven-theme
+    :config
+        (when (equal psimacs/config/default-theme "leuven")
+            (setq psimacs/config/theme-is-light-colored t)
+
+            (setq leuven-scale-outline-headlines nil)
+            ;; For dark theme:
+            (setq leuven-dark-scale-outline-headlines nil)
+
+            (setq leuven-scale-org-agenda-structure nil)
+            (setq leuven-scale-org-document-title nil)
+            (setq leuven-scale-volatile-highlight nil)
+
+            ;; For dark theme:
+            (setq leuven-dark-scale-org-agenda-structure nil)
+            (setq leuven-dark-scale-org-document-title nil)
+            (setq leuven-dark-scale-volatile-highlight nil)
+
+            (load-theme 'leuven t)
+            (message "loaded theme leuven")
         )
 )
 #+end_src
@@ -9907,7 +10090,38 @@ Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesth
 (use-package centaur-tabs
     :demand
     :config
-        (centaur-tabs-mode t)
+        (defun centaur-tabs-hide-tab (x)
+          "Do no to show buffer X in tabs."
+          (let ((name (format "%s" x)))
+            (or
+             ;; Current window is not dedicated window.
+             (window-dedicated-p (selected-window))
+
+             ;; Buffer name not match below blacklist.
+             (string-prefix-p "*epc" name)
+             (string-prefix-p "*helm" name)
+             (string-prefix-p "*Helm" name)
+             (string-prefix-p "*Compile-Log*" name)
+             (string-prefix-p "*lsp" name)
+             (string-prefix-p "*company" name)
+             (string-prefix-p "*Flycheck" name)
+             (string-prefix-p "*tramp" name)
+             (string-prefix-p " *Mini" name)
+             (string-prefix-p "*help" name)
+             (string-prefix-p "*straight" name)
+             (string-prefix-p " *temp" name)
+             (string-prefix-p "*Help" name)
+             (string-prefix-p "20" name)
+             ;;(string-match "^[:digit:]\\{4\\}-[:digit:]\\{2\\}-[:digit:]\\{2\\}.*" name)
+
+             ;; Is not magit buffer.
+             (and (string-prefix-p "magit" name)
+                  (not (file-name-extension name)))
+             )))
+
+        
+
+        ;(centaur-tabs-mode t)
     :custom
         (centaur-tabs-gray-out-icons 'buffer)
         (centaur-tabs-style "rounded")
@@ -9918,8 +10132,8 @@ Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesth
         (centaur-tabs-buffer-groups-function #'centaur-tabs-projectile-buffer-groups)
   :bind
     (
-        ("s-p" . #'centaur-tabs-backward)
-        ("s-n" . #'centaur-tabs-forward)
+        ("H-<prior>" . #'centaur-tabs-backward)
+        ("H-<next>"  . #'centaur-tabs-forward)
     )
 )
 #+end_src
@@ -17313,6 +17527,20 @@ The following are basic [[https://code.orgmode.org/bzg/org-mode][org-mode]] sett
 
         (setq org-hide-emphasis-markers t)
 
+
+        ;; https://abode.karthinks.com/org-latex-preview/#org99ce71c
+        (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+        ;;(plist-put org-latex-preview-appearance-options :page-width 0.8)
+        (setq org-latex-preview-numbered t)
+        (setq org-latex-preview-live t)
+        ;;(add-hook 'org-mode-hook 'org-latex-preview-auto-mode)
+        ;; Block C-n, C-p etc from opening up previews when using auto-mode
+        ;;(setq org-latex-preview-auto-ignored-commands
+        ;;  '(next-line previous-line mwheel-scroll
+        ;;    scroll-up-command scroll-down-command))
+        ;;(setq org-latex-preview-live-debounce 0.25))
+
+
         (defun psimacs/internal/org-remove-empty-drawer-on-clock-out()
             (save-excursion
                 (beginning-of-line 0)
@@ -20162,7 +20390,7 @@ Brains:
                     "b" "book note" plain
                     (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "BookNoteTemplate.org"))
                     :if-new (
-                                file "book-notes/%<%Y-%m-%d>-${slug}.org"
+                                file "books/%<%Y-%m-%d>-${slug}.org"
                             )
                     :unnarrowed t
                 )
@@ -22969,7 +23197,7 @@ _q_: quit_
                 (
                     ("C-l" psimacs/hydra/vlf-large-files/body   "VLF Large File Support")
                     ("C-s" psimacs/hydra/straight/body          "Straight")
-                    ("m"   major-mode-hydra               "  Major Mode")
+;;                    ("m"   major-mode-hydra               "  Major Mode")
                 )
         )
     )
