@@ -158,7 +158,7 @@
  ("ox-pandoc" . "34e6ea97b586e20529d07158a73af3cf33cdd1d5")
  ("ox-rst" . "99fa790da55b57a3f2e9aa187493ba434a64250e")
  ("page-break-lines" . "247854f6a82b5c7ab5ae493eb5390c5079cd032d")
- ("parsebib" . "fb48634089b8795fd7695733aba5f06109cb4cf6")
+ ("parsebib" . "ace9df707108b17759c004c7387655277122d4c1")
  ("pastelmac-theme-el" . "bead21741e3f46f6506e8aef4469d4240a819389")
  ("pcache" . "507230d094cc4a5025fe09b62569ad60c71c4226")
  ("pcre2el" . "b4d846d80dddb313042131cf2b8fbf647567e000")
