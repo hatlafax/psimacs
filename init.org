@@ -353,14 +353,14 @@ References:
 | =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
 | =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-g=             | =M-x keyboard-quit=                     | Deselect current region.                                                                                                                                                                                                                             |
+| =C-g=             | =M-x psimacs/config/keyboard-quit-dwim= | When the region is active, disable it. When a minibuffer is open, but not focused, close the minibuffer. When the Completions buffer is selected, close it.
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
 | =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
 | =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
 | =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
 | =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
-| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer.                                                                                                                                                  |
+| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer. In every other case use the regular `keyboard-quit'."                                                                                            |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                                                                                                                         |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -2164,7 +2164,7 @@ to it's documentation string.
 
 ;;
 ;; Resizing the Emacs frame can be costly when changing the font. Disable this
-;; to improve startup times with fonts larger than the system default.
+;; to improve startup times with larger than the system default.
 ;;
 (setq frame-resize-pixelwise t)
 
@@ -2809,6 +2809,23 @@ Additionally the vanilla bookmark mode file is also defined in the =psimacs/conf
   (psimacs/file-system/concat-file psimacs/config/bookmarks-dir ".bookmarks")
   "The psimacs bookmarks file.")
 #+end_src
+
+** Multiple Cursors
+
+*Psimacs* supports package [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]]. This package
+uses a file that tracks two lists of commands: the run-once list and the run-for-all list. The package
+ask for some commands whether they are belonging to the first or second list, respectively.
+The following constant defines the file path for this command tracking file.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Constants used by Psimacs for multiple-cursors
+;;
+(defconst psimacs/config/multiple-cursor-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir ".mc-lists.el")
+  "The psimacs multiple-cursor command tracking file.")
+#+end_src
+
 
 ** Tramp
 
@@ -5405,6 +5422,51 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 (global-set-key (kbd "M-<f4>" ) 'psimacs/config/delete-frame)
 #+end_src
 
+*** Make C-g a bit more helpful
+
+=C-g= should behave more then expected:
+- When the region is active, disable it.
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
+- In every other case use the regular `keyboard-quit'."
+
+| Key binding | Command                                   | Description    |
+|-------------+-------------------------------------------+----------------|
+| =C-g=         | =M-x psimacs/config/keyboard-quit-dwim=   | Quit or abort. |
+|-------------+-------------------------------------------+----------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Make C-g a bit more helpful
+;;
+(defun psimacs/config/keyboard-quit-dwim ()
+  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+The generic `keyboard-quit' does not do the expected thing when
+the minibuffer is open.  Whereas we want it to close the
+minibuffer, even without explicitly focusing it.
+
+The DWIM behaviour of this command is as follows:
+
+- When the region is active, disable it.
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
+- In every other case use the regular `keyboard-quit'."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (keyboard-quit))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
+   ((> (minibuffer-depth) 0)
+    (abort-recursive-edit))
+   (t
+    (keyboard-quit)))
+)
+
+(define-key global-map (kbd "C-g") #'psimacs/config/keyboard-quit-dwim)
+#+end_src
+
 *** Cancels All
 
 Call command =keyboard-escape-quit= immediately on pressing key =H-g=.
@@ -5467,6 +5529,22 @@ Our own /Emacs/ code resides in one directory that must be added to the load pat
 )
 
 (add-to-list 'load-path psimacs/config/site-lisp-dir)
+#+end_src
+
+** Do not show those confusing warnings when installing packages
+
+When installing a new package, Emacs will show a buffer that contains any warnings 
+produced by the byte compiler. While this information is useful for developers, it 
+is highly confusing for users.
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Do not show those confusing warnings when installing packages
+;;
+(add-to-list 'display-buffer-alist
+             '("\\`\\*\\(Warnings\\|Compile-Log\\)\\*\\'"
+               (display-buffer-no-window)
+               (allow-no-window . t)))
 #+end_src
 
 ** Automatically compile outdated elips files
@@ -6235,13 +6313,18 @@ the command =revert-buffer= to load the new content of the file into *Psimacs*. 
 
 *** Delete seleted text when typing.
 
-This is standard behavior on the Windows Operating System platform.
+Virtually every program out there will delete the selected/highlighted
+text as soon as the user types something. 
+Emacs does not do this by default, even though it has the functionality
+available. Let us then enable it.
 
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
 ;;
 ;; Delete selected text when typing
 ;;
-(delete-selection-mode 1)
+(use-package delsel
+  :straight nil ; no need to install it as it is built-in
+  :hook (after-init . delete-selection-mode))
 #+end_src
 
 *** Line numbering
@@ -6556,9 +6639,11 @@ References:
 )
 #+end_src
 
-*** Unicode fonts
+*** Unicode 
 
-The package [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] provides font mappings in the Unicode 8.0 standard.
+
+The package [[https://github.com/rolandwalker/unicode-
+][unicode-fonts]] provides font mappings in the Unicode 8.0 standard.
 
 #+begin_quote
 Emacs maintains font mappings on a per-glyph basis, meaning that multiple fonts are used at the
@@ -6611,35 +6696,21 @@ About Unicode:
     :init
         (setq pcache-directory psimacs/config/pcache-dir)
         (unicode-fonts-setup)
-        ;;(when (member "DejaVu Sans Mono" (font-family-list))
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-8.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-9.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-10.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-11.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-12.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-14.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-16.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-18.0")
-        ;;(set-face-attribute 'default nil :font "DejaVu Sans Mono-20.0")
-        ;;)
-
-        ;(when (member "Hack" (font-family-list))
-        ;    (set-face-attribute 'default nil :font "Hack-10.0")
-        ;)
 
         (if (member "Hack Nerd Font Mono" (font-family-list))
-            (set-face-attribute 'default nil :font "Hack Nerd Font Mono-10.0")
-
-          (if (member "Hack" (font-family-list))
-              (set-face-attribute 'default nil :font "Hack-10.0")
-        ))
-
-        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono" nil 'append)
-        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Oblique" nil 'append)
-        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold" nil 'append)
-        ;;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans Mono Bold Oblique" nil 'append)
-        ;;(set-fontset-font "fontset-default" 'unicode "Consolas" nil)
-        ;;(set-fontset-font "fontset-default" 'unicode "Symbola" nil 'append)
+            (let ((mono-spaced-font "Hack Nerd Font Mono")
+                  (proportionately-spaced-font "Hack Nerd Font Propo"))
+              (set-face-attribute 'default nil :family mono-spaced-font :height 100)
+              (set-face-attribute 'fixed-pitch nil :family mono-spaced-font :height 1.0)
+              (set-face-attribute 'variable-pitch nil :family proportionately-spaced-font :height 1.0))
+            (if (member "DejaVu Sans Mono" (font-family-list))
+                (let ((mono-spaced-font "DejaVu Sans Mono")
+                      (proportionately-spaced-font "DejaVu Sans"))
+                  (set-face-attribute 'default nil :family mono-spaced-font :height 100)
+                  (set-face-attribute 'fixed-pitch nil :family mono-spaced-font :height 1.0)
+                  (set-face-attribute 'variable-pitch nil :family proportionately-spaced-font :height 1.0))
+            )
+        )
 )
 #+end_src
 
@@ -6811,7 +6882,7 @@ The following themes are my favorites currently:
 | =moe-dark=                    |
 |-----------------------------|
 
-For the time being, the =nimbus= is active in my configuration.
+For the time being, the =ef-symbiosis= is active in my configuration.
 
 See also:
 [[https://emacsthemes.com/][Emacs Themes]], [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Custom-Themes.html][Custom Themes Manual]], [[https://www.emacswiki.org/emacs/CustomThemes][EmacsWiki: Custom Themes]]
@@ -9614,6 +9685,37 @@ Some settings for build-in /Dired/.
     ;:custom ((dired-listing-switches "-agho --group-directories-first"))
     :config
         (setq dired-kill-when-opening-new-dired-buffer t)
+        (setq dired-recursive-copies                   'always)
+        (setq dired-recursive-deletes                  'always)
+        (setq delete-by-moving-to-trash                t)
+        (setq dired-dwim-target                        t)
+
+    :hook (
+        (dired-mode . dired-hide-details-mode)
+        (dired-mode . hl-line-mode)
+    )
+)
+
+(use-package dired-subtree
+    :after dired
+    :bind (
+        :map dired-mode-map
+        ("<tab>"     . dired-subtree-toggle)
+        ("TAB"       . dired-subtree-toggle)
+        ("<backtab>" . dired-subtree-remove)
+        ("S-TAB"     . dired-subtree-remove)
+    )
+    :config
+        (setq dired-subtree-use-backgrounds nil)
+)
+
+(use-package trashed
+    :commands (trashed)
+    :config
+        (setq trashed-action-confirmer 'y-or-n-p)
+        (setq trashed-use-header-line  t)
+        (setq trashed-sort-key         '("Date deleted" . t))
+        (setq trashed-date-format       "%Y-%m-%d %H:%M:%S")
 )
 #+end_src
 
@@ -10079,8 +10181,8 @@ Package [[https://github.com/ema2159/centaur-tabs][Centaur tabs]] provides aesth
 
 | Key binding | Command                   | Description                        |
 |-------------+---------------------------+------------------------------------|
-| =s-p=         | =M-x centaur-tabs-backward= | Select the previous available tab. |
-| =s-n=         | =M-x centaur-tabs-forward=  | Select the next available tab.     |
+| =H-<prior>= | =M-x centaur-tabs-backward= | Select the previous available tab. |
+| =H-<next>=  | =M-x centaur-tabs-forward=  | Select the next available tab.     |
 |-------------+---------------------------+------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
@@ -11068,45 +11170,125 @@ See also:
 - [[http://emacsrocks.com/e13.html][Emacs Rocks: Multiple cursors]]
 - [[http://pragmaticemacs.com/emacs/multiple-cursors/][Multiple cursors]],
 
+Remarks:
+- Notice that the number of cursors active can be seen in the modeline.
+- If you get out of multiple-cursors-mode and =yank= - it will =yank= only from the kill-ring of main cursor. To =yank= from the kill-rings of every cursor use =yank-rectangle=, normally found at =C-x r y=.
+
 #+attr_html: :class styledtable1
 | Key binding   | Command                                    | Description                                                                    |
 |---------------+--------------------------------------------+--------------------------------------------------------------------------------|
-| =H-m H-c e l=   | =M-x mc/edit-lines=                          | Add one cursor to each line of the active region.                              |
+| =H-m H-c m n=   | =M-x mc/mark-next-like-this=                 | Adds a cursor and region at the next part of the buffer forwards that matches the current region. If no region is selected, it will just add a cursor on the next line. |
+| =H-m H-c m p=   | =M-x mc/mark-previous-like-this=             | Adds a cursor and region at the next part of the buffer backwards that matches the current region. |
+| =H-m H-c m a=   | =M-x mc/mark-all-like-this=                  | Marks all parts of the buffer that matches the current region. |
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m H-c m w n=   | =M-x mc/mark-next-like-this-word= | Adds a cursor and region at the next part of the buffer forwards that matches the current region, if no region is selected it selects the word at the point. If no region is selected, it will mark the word and add a cursor at the next occurrence. |
+| =H-m H-c m w p=   | =M-x mc/mark-previous-like-this-word= | Adds a cursor and region at the next part of the buffer backwards that matches the current region, if no region is selected it selects the word at the point. |
+| =H-m H-c m W n=   | =M-x mc/mark-next-word-like-this= | Like mc/mark-next-like-this but only for whole words. |
+| =H-m H-c m W p=   | =M-x mc/mark-previous-word-like-this= | Like mc/mark-previous-like-this but only for whole words. |
+| =H-m H-c m w a=   | =M-x mc/mark-all-words-like-this= | Like mc/mark-all-like-this but only for whole words. |
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m H-c m s n=   | =M-x mc/mark-next-like-this-symbol= | Adds a cursor and region at the next part of the buffer forwards that matches the current region, if no region is selected it selects the symbol at the point. If no region is selected, it will mark the symbol and add a cursor at the next occurrence. |
+| =H-m H-c m s p=   | =M-x mc/mark-previous-like-this-symbol= | Adds a cursor and region at the next part of the buffer backwards that matches the current region, if no region is selected it selects the symbol at the point. |
+| =H-m H-c m S n=   | =M-x mc/mark-next-symbol-like-this= | Like mc/mark-next-like-this but only for whole symbols. |
+| =H-m H-c m S p=   | =M-x mc/mark-previous-symbol-like-this= | Like mc/mark-previous-like-this but only for whole symbols. |
+| =H-m H-c m s a=   | =M-x mc/mark-all-symbols-like-this= | Like mc/mark-all-like-this but only for whole symbols. |
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m H-c m f a=   | =M-x mc/mark-all-like-this-in-defun= | Marks all parts of the current defun that matches the current region.
+| =H-m H-c m f w a=   | =M-x mc/mark-all-words-like-this-in-defun= | Like mc/mark-all-like-this-in-defun but only for whole words.
+| =H-m H-c m f s a=   | =M-x mc/mark-all-symbols-like-this-in-defun= | Like mc/mark-all-like-this-in-defun but only for whole symbols. |
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m H-c m d a=   | =M-x mc/mark-all-dwim= | Tries to be smart about marking everything you want. Can be pressed multiple times.
+| =H-m H-c m m e=   | =M-x mc/mark-more-like-this-extended= | Use arrow keys to quickly mark/skip next/previous occurrences.
+| =C-S-<mouse-1>= | =M-x mc/add-cursor-on-click= | Add a new cursor at click position.  |
+| =H-m H-c m m=   | =M-x mc/mark-pop= | Set a cursor at the current point and move to the next (different) position on the mark stack. This allows for fine grained control over the placement of cursors.
+| =H-m H-c m r a=  | =M-x mc/mark-all-in-region= | Prompts for a string to match in the region, adding cursors to all of them.
+| =H-m H-c m t =   | =M-x mc/mark-sgml-tag-pair= | Mark the current opening and closing tag.
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m H-c u n=   | =M-x mc/unmark-next-like-this=               | Remove the next cursor furthest down in the buffer. |
+| =H-m H-c u p=   | =M-x mc/unmark-previous-like-this=           | Remove the previous cursor furthest up in the buffer. |
+| =H-m H-c s n=   | =M-x mc/skip-to-next-like-this= | Remove the cursor furthest down, marking the next occurrence down.
+| =H-m H-c s p=   | =M-x mc/skip-to-previous-like-this= | Remove the cursor furthest up, marking the next occurrence up.
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
+| =H-m H-c e l=   | =M-x mc/edit-lines=                          | Adds one cursor to each line in the current region. You can give it a positive or negative prefix to change how it behaves on too short lines. |
 | =H-m H-c e C-a= | =M-x mc/edit-beginnings-of-lines=            | Add one cursor to the beginning of each line in the active region.             |
 | =H-m H-c e C-e= | =M-x mc/edit-ends-of-lines=                  | Add one cursor to the end of each line in the active region.                   |
-| =H-m H-c i n=   | =M-x mc/insert-numbers=                      | Insert increasing numbers for each cursor, starting at 0.                      |
-| =H-m H-c m n=   | =M-x mc/mark-next-like-this=                 | Find and mark the next part of the buffer matching the currently active region |
-| =H-m H-c m p=   | =M-x mc/mark-previous-like-this=             | Find and mark the prev part of the buffer matching the currently active region |
-| =H-m H-c m a=   | =M-x mc/mark-all-like-this=                  | Find and mark all the parts of the buffer matching the currently active region |
-| =H-m H-c m d=   | =M-x mc/mark-all-symbols-like-this-in-defun= | Mark all symbols like this in defun.                                           |
-| =H-m H-c u n=   | =M-x mc/unmark-next-like-this=               | Deselect next part of the buffer matching the currently active region.         |
-| =H-m H-c u p=   | =M-x mc/unmark-previous-like-this=           | Deselect prev part of the buffer matching the currently active region.         |
-| =H-m H-c r r=   | =M-x mc/reverse-regions=                     |                                                                                |
-| =H-m H-c r s=   | =M-x mc/sort-regions=                        |                                                                                |
-| =H-m H-c h m=   | =M-x mc-hide-unmatched-lines-mode=           | Minor mode when enabled hides all lines where no cursors is.                   |
+| =H-m H-c i n=   | =M-x mc/insert-numbers=                      | Insert increasing numbers for each cursor, top to bottom. |
+| =H-m H-c i l=   | =M-x mc/insert-letters= | Insert increasing letters for each cursor, top to bottom.
+| =H-m H-c r s=   | =M-x mc/sort-regions=                        | Sort the marked regions alphabetically. |
+| =H-m H-c r r=   | =M-x mc/reverse-regions=                     | Reverse the order of the marked regions. If nothing is selected with just one cursor, it will flip the sexp at point and the one below it. |
+| =H-m H-c a r r =   | =M-x set-rectangular-region-anchor= | Think of this one as set-mark except you're marking a rectangular region.
+| =H-m H-c v a=   | =M-x mc/vertical-align= | Aligns all cursors vertically with a given CHARACTER to the one with the highest column number (the rightest). (Might not behave as intended if more than one cursors are on the same line.)
+| =H-m H-c v A=   | =M-x mc/vertical-align-with-space= | Aligns all cursors with whitespace like mc/vertical-align does.
 |---------------+--------------------------------------------+--------------------------------------------------------------------------------|
-
+| =<return>= | | Will make <return> insert a newline. |
+| =C-j= | |  Insert a newline in multiple-cursors-mode. |
+| =C-g= | |  To get out of multiple-cursors-mode. This will first disable multiple regions before disabling multiple cursors. |
+| =C-v= | =M-x mc/cycle-forward= |  Scroll the screen down to center on each cursor. |
+| =M-v= | =M-x mc/cycle-backward= |  Scroll the screen up to center on each cursor. |
+| =C-;= | =M-x mc-hide-unmatched-lines-mode= | Toggle hiding all lines without a cursor. |
+|---------------+--------------------------------------------+--------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-tools.el
 ;;
 ;; Multiple cursors for Emacs
 ;;
 (use-package multiple-cursors
+    :init
+        (setq mc/list-file psimacs/config/multiple-cursor-file)
+        ;(setq mc/always-run-for-all t)
+
     :bind (
+            ("C-S-<mouse-1>"   . mc/add-cursor-on-click)
+
             :map psimacs/config/global-key-map/special
-                ("H-c e l"   . mc/edit-lines)
-                ("H-c e C-a" . mc/edit-beginnings-of-lines)
-                ("H-c e C-e" . mc/edit-ends-of-lines)
-                ("H-c i n"   . mc/insert-numbers)
-                ("H-c m n"   . mc/mark-next-like-this)
-                ("H-c m p"   . mc/mark-previous-like-this)
-                ("H-c m a"   . mc/mark-all-like-this)
-                ("H-c m d"   . mc/mark-all-symbols-like-this-in-defun)
-                ("H-c u n"   . mc/unmark-next-like-this)
-                ("H-c u p"   . mc/unmark-previous-like-this)
-                ("H-c r r"   . mc/reverse-regions)
-                ("H-c r s"   . mc/sort-regions)
-                ("H-c h m"   . mc-hide-unmatched-lines-mode)
+            ("H-c m n"       . mc/mark-next-like-this)
+            ("H-c m p"       . mc/mark-previous-like-this)
+            ("H-c m a"       . mc/mark-all-like-this)
+
+            ("H-c m w n"     . mc/mark-next-like-this-word)
+            ("H-c m w p"     . mc/mark-previous-like-this-word)
+            ("H-c m W n"     . mc/mark-next-word-like-this)
+            ("H-c m W p"     . mc/mark-previous-word-like-this)
+            ("H-c m w a"     . mc/mark-all-words-like-this)
+
+            ("H-c m s n"     . mc/mark-next-like-this-symbol)
+            ("H-c m s p"     . mc/mark-previous-like-this-symbol)
+            ("H-c m S n"     . mc/mark-next-symbol-like-this)
+            ("H-c m S p"     . mc/mark-previous-symbol-like-this)
+            ("H-c m s a"     . mc/mark-all-symbols-like-this)
+
+            ("H-c m f a"     . mc/mark-all-like-this-in-defun)
+            ("H-c m f w a"   . mc/mark-all-words-like-this-in-defun)
+            ("H-c m f s a"   . mc/mark-all-symbols-like-this-in-defun)
+
+            ("H-c m d a"     . mc/mark-all-dwim)
+            ("H-c m m e"     . mc/mark-more-like-this-extended)
+
+            ("H-c m m"       . mc/mark-pop)
+            ("H-c m r a"     . mc/mark-all-in-region)
+            ("H-c m t "      . mc/mark-sgml-tag-pair)
+
+            ("H-c u n"       . mc/unmark-next-like-this)
+            ("H-c u p"       . mc/unmark-previous-like-this)
+            ("H-c s n"       . mc/skip-to-next-like-this)
+            ("H-c s p"       . mc/skip-to-previous-like-this)
+
+            ("H-c e l"       . mc/edit-lines)
+            ("H-c e C-a"     . mc/edit-beginnings-of-lines)
+            ("H-c e C-e"     . mc/edit-ends-of-lines)
+            ("H-c i n"       . mc/insert-numbers)
+            ("H-c i l"       . mc/insert-letters)
+            ("H-c r s"       . mc/sort-regions)
+            ("H-c r r"       . mc/reverse-regions)
+            ("H-c a r r "    . set-rectangular-region-anchor)
+            ("H-c v a"       . mc/vertical-align)
+            ("H-c v A"       . mc/vertical-align-with-space)
+
+            :map mc/keymap
+            ("C-v"   . mc/cycle-forward)
+            ("M-v"   . mc/cycle-backward)
+            ("C-;"   . mc-hide-unmatched-lines-mode)
+
             :map psimacs/config/global-key-map/hydra ("C-c" . psimacs/hydra/multiple-cursors/body)
           )
     :hydra (psimacs/hydra/multiple-cursors
@@ -16371,7 +16553,7 @@ different.
 See also:
 - [[https://www.gnu.org/software/emacs/manual/html_mono/ccmode.html][CC-Mode]], [[https://www.emacswiki.org/emacs/IndentingC][Indenting C]], [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Indentation-Commands.html][Indentation commands]], [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Styles.html#Styles][Styles]], [[https://en.wikipedia.org/wiki/Indent_style][Indent style]]
 
-***▶ Basic offset
+**** Basic offset
 
 #+begin_src emacs-lisp :tangle config/init-advanced-c++-mode.el :var file-description="Advanced c++-mode setup"
 ;;
@@ -16380,7 +16562,7 @@ See also:
 (setq-default c-basic-offset 4)
 #+end_src
 
-***▶ Guess Style
+**** Guess Style
 
 See also:
 - [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html#Guessing-the-Style][Guessing the Style]]
