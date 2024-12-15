@@ -2588,6 +2588,20 @@ INFO-FILE      : the info directory file into which NEW-INFO-ENTRY will be added
        ))))
 #+end_src
 
+** Miscellaneous Helper functions 
+
+#+begin_src emacs-lisp :tangle config/init-config-helper.el
+;;
+;; Extract value for a key from a text file
+;;
+(defun psimacs/config/read-key-value-from-file (key file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (let ((str (buffer-string)))
+      (when (string-match (concat "^" key "[[:space:]]+\\(.*\\)$") str)
+        (match-string 1 str)))))
+#+end_src
+
 * Configuration constants
 
 In the following various *Psimacs* configuration constants are defined. They are just defined at a central place, but
@@ -2656,7 +2670,12 @@ the following directory.
 
 (defconst psimacs/config/private-file
   (psimacs/file-system/concat-file psimacs/config/private-dir "init-private.el")
-  "A directory that contains non public, i.e.  private data."
+  "A emacs file containig some private data."
+  )
+
+(defconst psimacs/config/keys-file
+  (psimacs/file-system/concat-file psimacs/config/private-dir "keys.txt")
+  "A text file with some keys in it."
   )
 #+end_src
 
@@ -13776,6 +13795,25 @@ Global bindings:
         :map psimacs/config/global-key-map/special
             ("C-x C-n" . neotree-toggle)
         )
+)
+#+end_src
+
+** AI Tools
+
+Setup of some AI tools for assisting work.
+
+*** gtel : A simple LLM client for Emacs
+
+[[https://github.com/karthink/gptel][gptel]] is a simple LLM client for Emacs.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+(use-package gptel
+  :straight t
+  :init
+    (setq gptel-model "gpt-3.5-turbo"
+          gptel-default-mode 'org-mode
+          gptel-api-key #'(lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file))
+    )
 )
 #+end_src
 
