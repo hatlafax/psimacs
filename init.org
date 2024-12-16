@@ -250,6 +250,76 @@ A parent /hydra/ for many of these /hydras/ can be activated by pressing =H-SPC 
 =H-= is the =<apps>= leader key, which is the =menu= key on Windows, the key sitting on the right
 of the right =<meta>= keyboard key, i.e. the =RAlt= key.
 
+** Get Help
+
+The major help commands and their key bindings.
+
+#+attr_html: :class styledtable
+| Key binding | Command                        | Description                                                                                            |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-h= =s-h=     |                                | Help prefix, giving fast access to the help functions.                                                 |
+| =H-SPC h=     | =M-x psimacs/hydra/help/body=    | Hydra Help...                                                                                          |
+| =H-SPC H=     | =M-x psimacs/hydra/helpful/body= | Hydra Helpful...                                                                                       |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h b=       | =M-x counsel-descbinds=          | Show a list of all defined key bindings and their definitions.                                         |
+| =C-h k=       | =M-x describe-key=               | Display documentation of the function invoked by key binding.                                          |
+| =H-h H-h b=   | =M-x helm-descbinds=             | Create a listing of all key bindings of current major mode.                                            |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h f=       | =M-x counsel-describe-function=  | Describe a function in detail incl. key binding and source code. Replacement of =M-x describe-function=. |
+| =C-h v=       | =M-x counsel-describe-variable=  | Display the full documentation of variable. Replacement of =M-x describe-variable=.                      |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h m=       | =M-x describe-mode=              | Display documentation of current major mode and minor modes.                                           |
+| =H-h H-h m=   | =M-x helm-describe-modes=        | Create a listing of all modes of current major mode.                                                   |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-h C-d m=   | =M-x discover-my-major=          | Create a listing of all major-mode keys with their description.                                        |
+| =H-h C-d M=   | =M-x discover-my-mode=           | Create a listing of all MODE keys with their description.                                              |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+
+** Prefixes
+
+| Prefix command  | Description               |
+|-----------------+---------------------------|
+| =H-SPC=         | Hydras                    |
+| =H-h=           | Help                      |
+| =H-c=           | common user commands      |
+| =H-x=           | common execution commands |
+| =H-m=           | special user commands     |
+|-----------------+---------------------------|
+
+** Hydras
+
+All the hydras defined by *Psimacs*.
+
+| Key binding | Command                                 | Description               |
+|-------------+-----------------------------------------+---------------------------|
+| =H-SPC H-SPC= | =M-x psimacs/hydra/hydra/body=            | Hydras...                 |
+| =H-SPC SPC=   | =M-x psimacs/hydra/toggle/body=           | Toggles...                |
+| =H-SPC a=     | =M-x psimacs/hydra/apropos/body=          | Apropos...                |
+| =H-SPC d=     | =M-x dap-hydra=                           | DAP-Mode hydra...         |
+| =H-SPC e=     | =M-x psimacs/hydra/else/body=             | ELSE mode hydra...        |
+| =H-SPC h=     | =M-x psimacs/hydra/help/body=             | Help...                   |
+| =H-SPC H=     | =M-x psimacs/hydra/helpful/body=          | Helpful...                |
+| =H-SPC i=     | =M-x hydra-ivy/body=                      | Ivy...                    |
+| =H-SPC j=     | =M-x psimacs/hydra/jupyter/open-hydra=    | Jupyter Notebook hydra... |
+| =H-SPC l=     | =M-x psimacs/hydra/lsp/body=              | LSP Mode hydra...         |
+| =H-SPC m=     | =M-x major-mode-hydra=                    | Major Mode's hydra...     |
+| =H-SPC p=     | =M-x psimacs/hydra/projectile/body=       | Projectile...             |
+| =H-SPC t=     | =M-x psimacs/hydra/avy/body=              | Fast Jumping in Text...   |
+| =H-SPC T=     | =M-x psimacs/hydra/transpose/body=        | Transposing...            |
+| =H-SPC w=     | =M-x psimacs/hydra/window/body=           | Window...                 |
+| =H-SPC y=     | =M-x psimacs/hydra/yasnippet/body=        | YASnippet...              |
+| =H-SPC C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...       |
+| =H-SPC C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...               |
+| =H-SPC C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                  |
+| =H-SPC C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...            |
+| =H-SPC C-m=   | =M-x psimacs/hydra/word-modes/body=       | CamelCase...              |
+| =H-SPC C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...               |
+| =H-SPC C-p=   | =M-x hydra-projectile-cmake/body=         | Projectile CMake...       |
+| =H-SPC C-r=   | =M-x psimacs/hydra/rectangle/body=        | Rectangle...              |
+| =H-SPC C-s=   | =M-x psimacs/hydra/straight/body=         | Straight...               |
+| =H-SPC H-m=   | =M-x psimacs/hydra/navigation/body=       | Navigation...             |
+|-------------+-----------------------------------------+---------------------------|
+
 ** Basic movements
 
 The table that follows contain the basic movement commands with their corresponding
@@ -17171,6 +17241,11 @@ See also: [[https://lucidmanager.org/productivity/emacs-bibtex-mode/][Manage you
 The main selling points are efficient search in large bibliographies using powerful search expressions
 and tight integration into your Emacs workflows.
 
+| Key binding | Command                         | Description                              |
+|-------------+---------------------------------+------------------------------------------|
+| =C-c i b=   | =M-x ivy-bibtex= | Ivy layer for bibtex. |
+|-------------+---------------------------------+------------------------------------------|
+
 #+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el
 (use-package ivy-bibtex
     :bind ("C-c i b" . ivy-bibtex)
@@ -17217,6 +17292,7 @@ files.
 | Key binding | Command                | Description                               |
 |-------------+------------------------+-------------------------------------------|
 | =C-c C-c=     | =M-x TeX-command-master= | You get a list of actions to choose from. |
+| =C-c i g=     | =M-x pdf-sync-forward-search= | |
 |-------------+------------------------+-------------------------------------------|
 
 Following an unsorted list if references:
