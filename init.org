@@ -2918,8 +2918,7 @@ The following constant defines the file path for this command tracking file.
 
 ** Tramp
 
-*Psimacs* does not explicitely configure tramp currently. However, to avoid the tramp
-history file to appear in the configuration root directory, we set the =tramp-persistency-file-name=
+To avoid the tramp history file to appear in the configuration root directory, we set the =tramp-persistency-file-name=
 variable.
 
 #+begin_src emacs-lisp :tangle config/init-constants.el
@@ -6001,7 +6000,9 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 
 ;(set-locale-environment "en_US.UTF-8")
 
-;(prefer-coding-system         'utf-8)
+(when psimacs/system/is-win32-p
+    (prefer-coding-system      'utf-8-unix)
+)
 (set-default-coding-systems    'utf-8)
 (set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
 (set-file-name-coding-system   'utf-8)
@@ -6025,7 +6026,12 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 (setq locale-coding-system     'utf-8)
 
 (when psimacs/system/is-win32-p
-    (setq default-process-coding-system '(utf-8-dos . utf-8-dos))
+    ;(setq default-process-coding-system '(utf-8-dos . utf-8-dos))
+    (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+)
+
+(when psimacs/system/is-win32-p
+    (prefer-coding-system      'utf-8-unix)
 )
 
 ;; Set-language-environment sets default-input-method, which is unwanted.
@@ -6729,7 +6735,6 @@ References:
 #+end_src
 
 *** Unicode 
-
 
 The package [[https://github.com/rolandwalker/unicode-
 ][unicode-fonts]] provides font mappings in the Unicode 8.0 standard.
@@ -8963,18 +8968,6 @@ Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][sa
 )
 #+end_src
 
-*** Tramp Histroy
-
-To avoid the tramp history file to appear in the configuration root directory,
-we set the =tramp-persistency-file-name= variable.
-
-#+begin_src emacs-lisp :tangle config/init-basic-auto-save.el
-;;
-;; Tramp history file
-;;
-(setq tramp-persistency-file-name psimacs/config/tramp-persistency-file-name)
-#+end_src
-
 *** Recent files
 
 [[https://www.emacswiki.org/emacs/RecentFiles][Recentf-mode]] is a minor mode that builds a list of recently opened files. This list is automatically saved
@@ -9044,6 +9037,59 @@ through the command =C-x C-r=.
               ("C c"   . recentf-cleanup)
               ("C C-c" . psimacs/config/recentf-cleanup-directory-files)
         )
+)
+#+end_src
+
+** Tramp
+
+This is the *Psimacs* configuration of tramp.
+
+To avoid the tramp history file to appear in the configuration root directory,
+we set the =tramp-persistency-file-name= variable.
+
+#+begin_src emacs-lisp :tangle config/init-basic-tramp.el
+;;
+;; Tramp setup
+;;
+(use-package tramp
+    :straight nil
+    :config
+        (setq tramp-persistency-file-name psimacs/config/tramp-persistency-file-name
+              remote-file-name-inhibit-cache            60
+              remote-file-name-inhibit-locks            t
+              tramp-completion-reread-directory-timeout 60
+              tramp-verbose   1
+              ;tramp-verbose  3             ;; default
+              ;tramp-verbose  6             ;; useful
+              ;tramp-verbose 10             ;; lots of detail
+              tramp-default-method "ssh"    ;; or "sshx"
+              tramp-copy-size-limit                     512KB
+              tramp-inline-compress-start-size            1KB
+              vc-handled-backends '(Git)    ;; had a profound effect on latency.
+                                            ;; trim vc-handled-backends to just those you care about...
+
+              ;; ... or even disable version control completely to avoid delays.
+              vc-ignore-dir-regexp (format "%s\\|%s\\|%s"
+                                             vc-ignore-dir-regexp
+                                             tramp-file-name-regexp
+                                             "[/\\\\]node_modules") ;; Disable version control to avoid delays:
+        )
+
+        ;;
+        ;; reuse the path settings of your remote account when you log in. 
+        ;; Usually, these settings are overwritten, because they might not be useful for tramp. 
+        ;; The place holder tramp-own-remote-path preserves these settings.
+        ;;
+        (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
+        (when psimacs/system/is-win32-p
+          (setq tramp-use-ssh-controlmaster-options nil)    ;; any changes to ssh can be suppressed with nil
+          ;; Get the tramp-methods variable populated
+          ;; Add the '-tt' flag to the login arguments for "ssh" ONLY
+          ;; In order to force the allocation of a pseudo-terminal, we have to supply -tt as additional argument. 
+          (push '("-tt")
+                (cadr (assoc 'tramp-login-args
+                             (assoc "ssh" tramp-methods)))))
 )
 #+end_src
 
