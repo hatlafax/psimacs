@@ -5957,16 +5957,85 @@ References about customization:
 
 ** Encoding system
 
+I am by no means an expert in Encoding systems. I followed the implementation of 
+[[https://github.com/doomemacs/doomemacs][doomemacs]]. I have tested the following
+and it worked so far:
+- On Windows
+    - cut and pase from Windows notepad to *Psimacs* scratch buffer with german /umlaut/ characters
+    - tramp ssh connection linux box and editing and saving file with german /umlaut/ characters.
+    - jupyter notebook in org-mode
+
+See also:
+- [[https://github.com/doomemacs/doomemacs][doomemacs]]
+- [[https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs][Working with Coding Systems and Unicode in Emacs]]
+- [[http://xahlee.info/emacs/emacs/emacs_file_encoding.html][Emacs Init: Set Default File Encoding]]
+- [[http://xahlee.info/comp/unicode_intro.html][Unicode: Character Set, Encoding, UTF-8, Codepoint]]
+- [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
+- [[https://www.emacswiki.org/emacs/ChangingEncodings][EmacsWiki: ChangingEncodings]]
+- [[https://www.emacswiki.org/emacs/UnicodeEncoding][EmacsWiki: UnicodeEncoding]]
+- [[http://ergoemacs.org/emacs/emacs_encoding_decoding_faq.html][Emacs File Encoding FAQ]]
+- [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
+- [[https://en.wikipedia.org/wiki/List_of_Unicode_characters][Wikipdia about Unicode Characters]]
+
+
+#+attr_html: :class styledtable1
+| Key binding | Command                               | Description                                                                                                                                                                                                       |
+|-------------+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|             | =M-x revert-buffer-with-coding-system=  |                                                                                                                                                                                                                   |
+|             | =M-x set-buffer-file-coding-system=     |                                                                                                                                                                                                                   |
+|             | =M-x describe-coding-system=            | Information about coding system.                                                                                                                                                                                  |
+|             | =M-x list-coding-systems=               |                                                                                                                                                                                                                   |
+|             | =M-x find-file-literally=               | Open file without any conversion.                                                                                                                                                                                 |
+| =C-x RET c=   | =M-x universal-coding-system-argument== | Ttakes as an argument the coding system you want to use, and a command to execute it with. That makes it possible to open files, shells or run Emacs commands as though you were using a different coding system. |
+|-------------+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+See also content of variable =buffer-file-coding-system= by use of =C-h v=.
+
+Goal:
+- force Emacs to default to UTF-8
+- convincing Emacs to treat files as UTF-8 by default, when no information in the file explicitly says it is.
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Encodings
+;;
+
+;;
+;; Doomemacs says
+;;    Contrary to what many Emacs users have in their configs, you don't need more
+;;    than this to make UTF-8 the default coding system:'
+(set-language-environment "UTF-8")
+
+;;
+;; ...but `set-language-environment' also sets `default-input-method', which is
+;;    a step too opinionated.
+;;
+(setq default-input-method nil)
+
+;;
+;; ...And the clipboard on Windows is often a wider encoding (UTF-16), so leave
+;;    Emacs to its own devices there.
+;;
+(unless psimacs/system/is-win32-p
+  (setq selection-coding-system 'utf-8))
+#+end_src
+
+
+** Encoding system :noexport:
+
 I am in no means an expert in Encoding systems. I have not studied all the variables floating in encoding soup.
 Below you find the encoding settings that I have in use. Probably this is to much or even wrong. Sorry, for
 that.
 
 See also:
+- [[https://github.com/doomemacs/doomemacs][doomemacs]]
+- [[https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs][Working with Coding Systems and Unicode in Emacs]]
+- [[http://xahlee.info/emacs/emacs/emacs_file_encoding.html][Emacs Init: Set Default File Encoding]]
+- [[http://xahlee.info/comp/unicode_intro.html][Unicode: Character Set, Encoding, UTF-8, Codepoint]]
+- [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
 - [[https://www.emacswiki.org/emacs/ChangingEncodings][EmacsWiki: ChangingEncodings]]
 - [[https://www.emacswiki.org/emacs/UnicodeEncoding][EmacsWiki: UnicodeEncoding]]
 - [[http://ergoemacs.org/emacs/emacs_encoding_decoding_faq.html][Emacs File Encoding FAQ]]
-- [[https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs][Working with Coding Systems and Unicode in Emacs]]
-- [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
 - [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
 - [[https://en.wikipedia.org/wiki/List_of_Unicode_characters][Wikipdia about Unicode Characters]]
 
@@ -5983,7 +6052,7 @@ See also:
 
 See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 
-#+begin_src emacs-lisp :tangle config/init-basic-system.el
+#+begin_src emacs-lisp :tangle no config/init-basic-system.el
 ;;
 ;;  that Emacs is totally UTF-8
 ;;
@@ -5992,47 +6061,72 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 )
 
 ;;
+;; https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs says
+;;   'Note that in newer versions of Emacs you only need the first line...'
+;;
+(set-default-coding-systems     'utf-8)
+
+;;
+;; '...but if you find that it’s not enough to coax all aspects of your Emacs into your coding
+;;  system of choice, you can use the longer and more involved method.'
+;;
+
+;;
 ;; Doomemacs says
 ;;   'Contrary to what many Emacs users have in their configs, you don't need more
 ;;   than this to make UTF-8 the default coding system:
 ;;
+;; The language environment controls which coding systems to recognize when reading text.
+;; Use command describe-language-environment. This tells you which languages this language 
+;; environment is useful for, and lists the character sets, coding systems, and input methods 
+;; that go with it.
+;;
 (set-language-environment      "UTF-8")     ; How to permanently choose a encoding system in emacs for opening and saving
 
-;(set-locale-environment "en_US.UTF-8")
+;;
+;; The set-locale-environment function normally uses the preferred coding system established by the 
+;; language environment to decode system messages.
+;;
+;;(set-locale-environment "en_US.UTF-8")
 
-(when psimacs/system/is-win32-p
-    (prefer-coding-system      'utf-8-unix)
-)
+
+(prefer-coding-system      'utf-8)
+;;(when psimacs/system/is-win32-p
+;;    ;(prefer-coding-system      'utf-8-unix)
+;;    (prefer-coding-system      'utf-8)
+;;)
+
 (set-default-coding-systems    'utf-8)
 (set-buffer-file-coding-system 'utf-8)      ; How to set a encoding system for saving file
 (set-file-name-coding-system   'utf-8)
 (set-terminal-coding-system    'utf-8)      ; configured by prefer-coding-system
 (set-keyboard-coding-system    'utf-8)      ; configured by prefer-coding-system
 
-(when psimacs/system/is-win32-p
-    (set-selection-coding-system  'utf-16-le)    ; important on windows os
-    (set-clipboard-coding-system  'utf-16-le)    ; included by set-selection-coding-system
-
-    (w32-set-system-coding-system 'utf-8)
-)
-
-(when psimacs/system/is-linux-p
-    (set-selection-coding-system  'utf-8)
-    (set-clipboard-coding-system  'utf-8)
-
-    (setq select-enable-clipboard t)
+(cond (psimacs/system/is-win32-p
+        (progn
+            (set-selection-coding-system  'utf-16-le)    ; important on windows os
+            (set-clipboard-coding-system  'utf-16-le)    ; included by set-selection-coding-system
+            (w32-set-system-coding-system 'utf-8)
+        ))
+      (psimacs/system/is-linux-p
+        (progn
+            (set-selection-coding-system  'utf-8)
+            (set-clipboard-coding-system  'utf-8)
+            (setq select-enable-clipboard t)
+        ))
+      (t nil)
 )
 
 (setq locale-coding-system     'utf-8)
 
-(when psimacs/system/is-win32-p
-    ;(setq default-process-coding-system '(utf-8-dos . utf-8-dos))
-    (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-)
+;;(when psimacs/system/is-win32-p
+;;    ;(setq default-process-coding-system '(utf-8-dos . utf-8-dos))
+;;    (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+;;)
 
-(when psimacs/system/is-win32-p
-    (prefer-coding-system      'utf-8-unix)
-)
+;;(when psimacs/system/is-win32-p
+;;    (prefer-coding-system      'utf-8-unix)
+;;)
 
 ;; Set-language-environment sets default-input-method, which is unwanted.
 (setq default-input-method nil) ; this is the default  value
