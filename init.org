@@ -2671,7 +2671,7 @@ INFO-FILE      : the info directory file into which NEW-INFO-ENTRY will be added
        ))))
 #+end_src
 
-** Miscellaneous Helper functions 
+** Miscellaneous Helper functions
 
 #+begin_src emacs-lisp :tangle config/init-config-helper.el
 ;;
@@ -2815,6 +2815,20 @@ recipe is provided.
 (defconst psimacs/config/system-utils-dir
   (psimacs/file-system/concat-directory psimacs/config/home-dir "psimacs")
   "The psimac system resources and utility directory.")
+#+end_src
+
+Screenshot directory used by the system:
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Installation of system wide utilities and resources
+;;
+(defconst psimacs/config/system-screenshot-dir
+  (cond (psimacs/system/is-win32-p "c:/utils/images")
+        (psimacs/system/is-linux-p (psimacs/file-system/concat-directory psimacs/config/home-dir "Pictures/Screenshots"))
+        (t nil)
+  )
+  "The system image directory used for screenshots.")
 #+end_src
 
 ** Emacs Info directory
@@ -5634,8 +5648,8 @@ Our own /Emacs/ code resides in one directory that must be added to the load pat
 
 ** Do not show those confusing warnings when installing packages
 
-When installing a new package, Emacs will show a buffer that contains any warnings 
-produced by the byte compiler. While this information is useful for developers, it 
+When installing a new package, Emacs will show a buffer that contains any warnings
+produced by the byte compiler. While this information is useful for developers, it
 is highly confusing for users.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
@@ -5772,7 +5786,7 @@ Add the [[https://www.msys2.org/][MSYS2]] info pathes to the *Emacs Info* search
 bash shell the following code each =info= directory. This will create or update the =info/dir= files.
 
 #+begin_src
-cd c:/utils/msys64/usr/share/info
+cd \ils/msys64/usr/share/info
 for i in *info*; do install-info.exe $i dir; done
 
 cd c:/utils/msys64/mingw64/share/info
@@ -5970,7 +5984,7 @@ References about customization:
 
 ** Encoding system
 
-I am by no means an expert in Encoding systems. I followed the implementation of 
+I am by no means an expert in Encoding systems. I followed the implementation of
 [[https://github.com/doomemacs/doomemacs][doomemacs]]. I have tested the following
 and it worked so far:
 - On Windows
@@ -6090,14 +6104,14 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 ;;   than this to make UTF-8 the default coding system:
 ;;
 ;; The language environment controls which coding systems to recognize when reading text.
-;; Use command describe-language-environment. This tells you which languages this language 
-;; environment is useful for, and lists the character sets, coding systems, and input methods 
+;; Use command describe-language-environment. This tells you which languages this language
+;; environment is useful for, and lists the character sets, coding systems, and input methods
 ;; that go with it.
 ;;
 (set-language-environment      "UTF-8")     ; How to permanently choose a encoding system in emacs for opening and saving
 
 ;;
-;; The set-locale-environment function normally uses the preferred coding system established by the 
+;; The set-locale-environment function normally uses the preferred coding system established by the
 ;; language environment to decode system messages.
 ;;
 ;;(set-locale-environment "en_US.UTF-8")
@@ -6516,7 +6530,7 @@ the command =revert-buffer= to load the new content of the file into *Psimacs*. 
 *** Delete seleted text when typing.
 
 Virtually every program out there will delete the selected/highlighted
-text as soon as the user types something. 
+text as soon as the user types something.
 Emacs does not do this by default, even though it has the functionality
 available. Let us then enable it.
 
@@ -6841,7 +6855,7 @@ References:
 )
 #+end_src
 
-*** Unicode 
+*** Unicode
 
 The package [[https://github.com/rolandwalker/unicode-
 ][unicode-fonts]] provides font mappings in the Unicode 8.0 standard.
@@ -9183,8 +9197,8 @@ we set the =tramp-persistency-file-name= variable.
         )
 
         ;;
-        ;; reuse the path settings of your remote account when you log in. 
-        ;; Usually, these settings are overwritten, because they might not be useful for tramp. 
+        ;; reuse the path settings of your remote account when you log in.
+        ;; Usually, these settings are overwritten, because they might not be useful for tramp.
         ;; The place holder tramp-own-remote-path preserves these settings.
         ;;
         (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
@@ -9193,7 +9207,7 @@ we set the =tramp-persistency-file-name= variable.
           (setq tramp-use-ssh-controlmaster-options nil)    ;; any changes to ssh can be suppressed with nil
           ;; Get the tramp-methods variable populated
           ;; Add the '-tt' flag to the login arguments for "ssh" ONLY
-          ;; In order to force the allocation of a pseudo-terminal, we have to supply -tt as additional argument. 
+          ;; In order to force the allocation of a pseudo-terminal, we have to supply -tt as additional argument.
           (push '("-tt")
                 (cadr (assoc 'tramp-login-args
                              (assoc "ssh" tramp-methods)))))
@@ -20737,6 +20751,8 @@ Brains:
 | =C-c n d y=   | =M-x org-roam-dailies-goto-yesterday=                | Find the daily-note for yesterday, creating it if necessary.                 |
 | =C-c n d Y=   | =M-x org-roam-dailies-capture-yesterday=             | Create an entry in the daily-note for yesteday.                              |
 |-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+| =C-c n TAB=   | =M-x psimacs/org/roam-screenshots=                   | Move screenshot images to org roam image directory.                          |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-roam.el :var file-description="Major Modes - org-roam setup"
 ;;
@@ -20753,6 +20769,7 @@ Brains:
                 psimacs/org-roam/list-notes-by-tag
                 psimacs/org-roam/project-finalize-hook
                 psimacs/org-roam/copy-todo-to-today
+                psimacs/python/run-script
               )
     :defines (
                 org-state
@@ -21182,6 +21199,84 @@ capture was not aborted."
         (org-roam-db-autosync-enable)
         (org-roam-db-autosync-mode)
 
+        ;;
+        ;; Screenshot copying
+        ;;
+        (defvar psimacs/internal/org/roam-screenshots-category nil)
+        (defvar psimacs/internal/org/roam-screenshots-category-list '("articles" "books" "cookbooks" "cortex" "faq" "notebooks" "projects" "references" "research"))
+
+        (defvar psimacs/internal/org/roam-screenshots-group nil)
+        (defvar psimacs/internal/org/roam-screenshots-group-list '())
+
+        (defvar psimacs/internal/org/roam-screenshots-html-width  "500")
+        (defvar psimacs/internal/org/roam-screenshots-latex-width "120")
+
+        (defun psimacs/org/roam-screenshots ()
+          "Copy all screenshots into the roam group choosen.
+
+        In order to keep the interface of the function simple, the category (e.g. books, research or notebooks)
+        is not explicitely ask for. Instead the function assumes that the choosen group is unique among all
+        existing categories and that the group image folder already exists.
+
+        In case that you would like to have latex support prefix command with 'C-u'.
+        In case that you need full control prefix command with 'C-u C-u'.
+        "
+          (interactive)
+          (if (eq (prefix-numeric-value current-prefix-arg) 16)
+              (let* (
+                     (category (ivy-read "Enter the category: " psimacs/internal/org/roam-screenshots-category-list :require-match nil :preselect psimacs/internal/org/roam-screenshots-category))
+                     (group (ivy-read "Enter the group: " psimacs/internal/org/roam-screenshots-group-list :require-match nil :preselect psimacs/internal/org/roam-screenshots-group))
+                     (image-dir psimacs/config/system-screenshot-dir)
+                     (latex (if (y-or-n-p "Latex support? ") t nil))
+                     (roam-dir psimacs/config/roam-notes-dir)
+                     (html-width (read-string "HTML width: " psimacs/internal/org/roam-screenshots-html-width))
+                     (latex-width (read-string "LaTeX width: " psimacs/internal/org/roam-screenshots-latex-width))
+                     )
+
+                (add-to-list 'psimacs/internal/org/roam-screenshots-category-list category)
+                (setq psimacs/internal/org/roam-screenshots-category category)
+
+                (add-to-list 'psimacs/internal/org/roam-screenshots-group-list group)
+                (setq psimacs/internal/org/roam-screenshots-group group)
+
+                (setq psimacs/internal/org/roam-screenshots-html-width  html-width)
+                (setq psimacs/internal/org/roam-screenshots-latex-width latex-width)
+
+                (psimacs/python/run-script
+                 "roam-image.py"
+                 (format "--category=%s" category)
+                 (format "--group=%s" group)
+                 (format "--image-dir=%s" image-dir)
+                 (format "--roam-dir=%s" roam-dir)
+                 (if latex "--latex" "")
+                 (format "--html-width=%s" psimacs/internal/org/roam-screenshots-html-width)
+                 (format "--latex-width=%s" psimacs/internal/org/roam-screenshots-latex-width)
+                 )
+                )
+              ;else
+              (let* (
+                     (group (ivy-read "Enter the group: " psimacs/internal/org/roam-screenshots-group-list :require-match nil :preselect psimacs/internal/org/roam-screenshots-group))
+                     (image-dir psimacs/config/system-screenshot-dir)
+                     (latex (if current-prefix-arg t nil))
+                     (roam-dir psimacs/config/roam-notes-dir)
+                     )
+
+                (add-to-list 'psimacs/internal/org/roam-screenshots-group-list group)
+                (setq psimacs/internal/org/roam-screenshots-group group)
+
+                (psimacs/python/run-script
+                 "roam-image.py"
+                 (format "--group=%s" group)
+                 (format "--image-dir=%s" image-dir)
+                 (format "--roam-dir=%s" roam-dir)
+                 (if latex "--latex" "")
+                 (format "--html-width=%s" psimacs/internal/org/roam-screenshots-html-width)
+                 (format "--latex-width=%s" psimacs/internal/org/roam-screenshots-latex-width)
+                 )
+                )
+              )
+        )
+
     :bind (
             ("C-c n b t" . org-roam-buffer-toggle)
             ("C-c n b d" . org-roam-buffer-display-dedicated)
@@ -21210,6 +21305,7 @@ capture was not aborted."
 
             :map org-mode-map
                 ("C-M-i" . completion-at-point)
+                ("C-c n <tab>" . psimacs/org/roam-screenshots)
 
             :map org-roam-dailies-map
                 ("d" . org-roam-dailies-goto-today)
@@ -22707,7 +22803,6 @@ The printed result of script execution is inserted at point of the currently act
       (apply #'call-process psimacs/config/python-runtime-exe nil t t script args)
       )))
 #+end_src
-
 * Hydras
 
 A collection of *Psimacs* hydras that not directly belong to a single package.
