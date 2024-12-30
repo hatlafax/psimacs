@@ -5778,6 +5778,20 @@ They provide the following functions for defining hydras:
 )
 #+end_src
 
+** Transient
+
+[[https://github.com/magit/transient][Transient]] is the library used to implement the keyboard-driven /menus/ in [[https://github.com/magit/magit/][Magit]]. 
+It is distributed as a separate package, so that it can be used to implement similar menus in other packages.
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Magit requires a newer version than the built-in.
+;;
+(use-package transient
+  :demand t
+)
+#+end_src
+
 ** Info system
 
 Add the [[https://www.msys2.org/][MSYS2]] info pathes to the *Emacs Info* search path.
@@ -6766,6 +6780,9 @@ Tab stop positions: =M-i=, i.e. =tab-to-tab-stop= moves to the next position.
 (setq tab-stop-list '(4 8))
 #+end_src
 
+*** Highlight indentation 
+
+**** highlight-indent-guides package
 
 [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]] is a minor mode that
 highlights indentation levels via font-lock.
@@ -6775,19 +6792,66 @@ By default, this mode also inspects your theme dynamically, and automatically ch
 for highlighting. This mode works properly around hard tabs and mixed indentation, and it behaves well
 in large buffers.
 
+This was the package used by *Psimacs* for a long time. It is still installed but not activated automatically
+anymore. Instead *Psimacs* uses the =indent-bars= package on default.
+
+
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
 ;;
 ;; highlight-indent-guides
 ;;
 (use-package highlight-indent-guides
-  :hook ((prog-mode . (lambda ()
-                      (highlight-indent-guides-mode)
-                      (highlight-indent-guides-auto-set-faces))))
+  ;:hook ((prog-mode . (lambda ()
+  ;                    (highlight-indent-guides-mode)
+  ;                   (highlight-indent-guides-auto-set-faces))))
   :custom
       (highlight-indent-guides-auto-odd-face-perc 5)
   :config
       (setq highlight-indent-guides-method 'character
             highlight-indent-guides-responsive 'top)
+)
+#+end_src
+
+**** indent-bars package
+
+[[https://github.com/jdtsmith/indent-bars][indent-bars]] is a minor mode that provides indentation guide bars 
+in *Emacs*, with optional tree-sitter enhancement.
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; indent-bars
+;;
+(use-package indent-bars
+  :straight (indent-bars :host github :repo "jdtsmith/indent-bars")
+  :hook
+    (prog-mode . (lambda () 
+                    (when (and (not (member major-mode '(emacs-lisp-mode scheme-mode lisp-mode)))
+                               (display-graphic-p))
+                      (indent-bars-mode 1)
+                    )))
+  :config
+    (setq indent-bars-treesit-support t
+          indent-bars-treesit-ignore-blank-lines-types '("module")
+          indent-bars-treesit-wrap '((c argument_list parameter_list init_declarator)
+                                     (python
+                                      argument_list parameters ; for python, as an example
+                                      list
+                                      list_comprehension
+                                      dictionary
+                                      dictionary_comprehension
+                                      parenthesized_expression
+                                      subscript))
+    )
+    (setq indent-bars-no-descend-string t
+          indent-bars-color '(highlight :face-bg t :blend 0.15)
+          indent-bars-pattern "."
+          indent-bars-width-frac 0.1
+          indent-bars-pad-frac 0.1
+          indent-bars-zigzag nil
+          indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 1) ; blend=1: blend with BG only
+          indent-bars-highlight-current-depth '(:blend 0.5) ; pump up the BG blend on current
+          indent-bars-display-on-blank-lines t
+    )
 )
 #+end_src
 
@@ -7014,6 +7078,148 @@ identifier uniquely based on its name.
     :demand t
     :diminish
     :hook (after-init . global-color-identifiers-mode)
+)
+#+end_src
+
+*** Symbol overlay mode
+
+The package [[https://github.com/wolray/symbol-overlay][Symbol Overlay]] highlight symbols with overlays while providing a keymap for 
+various operations about highlighted symbols. It was originally inspired by the package =highlight-symbol=. The fundamental difference 
+is that in =symbol-overlay= every symbol is highlighted by the Emacs built-in function =overlay-put= rather than the =font-lock= mechanism 
+used in =highlight-symbol=. On start up the =symbol-overlay-mode= is not activated.
+
+Additionally, the package [[https://github.com/xenodium/symbol-overlay-mc][symbol-overlay-mc]] is a tiny Emacs package enabling 
+multiple cursors on symbol overlays.
+
+| Key binding | Command                              | Description                                                         |
+|-------------+--------------------------------------+---------------------------------------------------------------------|
+| =H-x H-s m= | =M-x symbol-overlay-mode=            | Toggle the automatic symbol highlight. This is disabled on default. |
+| =H-x H-s i= | =M-x symbol-overlay-put=             | Toggle all overlays of symbol at point.                             |
+| =H-x H-s a= | =M-x symbol-overlay-mc-mark-all=     | place a cursor on every symbol currently highlighted.               |
+| =H-x H-s x= | =M-x symbol-overlay-remove-all=      | Remove all highlighted symbols in the buffer.                       |
+| =H-x H-s b= | =M-x symbol-overlay-switch-backward= | Switch backward to another symbol.                                  |
+| =H-x H-s f= | =M-x symbol-overlay-switch-forward=  | Switch forward to another symbol.                                   |
+| =H-x H-s h= | =M-x symbol-overlay-map-help=        | Display the bindings in ‘symbol-overlay-map’.                       |
+|-------------+--------------------------------------+---------------------------------------------------------------------|
+
+The bindings in ‘symbol-overlay-map’ that are active when the cursor points a highlighted symbol.
+
+| Key binding | Command                                 | Description                                                         |
+|-------------+-----------------------------------------+---------------------------------------------------------------------|
+| =H-x H-s i= | =M-x symbol-overlay-put=                | Toggle all overlays of symbol at point.                             |
+| =H-x H-s n= | =M-x symbol-overlay-jump-next=          | Jump to the next location of symbol at point.                       |
+| =H-x H-s p= | =M-x symbol-overlay-jump-prev=          | Jump to the previous location of symbol at point.                   |
+| =H-x H-s <= | =M-x symbol-overlay-jump-first=         | Jump to the first location of symbol at point.                      |
+| =H-x H-s >= | =M-x symbol-overlay-jump-last=          | Jump to the last location of symbol at point.                       |
+| =H-x H-s w= | =M-x symbol-overlay-save-symbol=        | Copy symbol at point.                                               |
+| =H-x H-s t= | =M-x symbol-overlay-toggle-in-scope=    | Toggle overlays to be showed in buffer or only in scope.            |
+| =H-x H-s e= | =M-x symbol-overlay-echo-mark=          | Jump back to the mark.                                              |
+| =H-x H-s d= | =M-x symbol-overlay-jump-to-definition= | Jump to the definition of symbol at point.                          |
+| =H-x H-s s= | =M-x symbol-overlay-isearch-literally=  | Isearch symbol at point literally.                                  |
+| =H-x H-s q= | =M-x symbol-overlay-query-replace=      | Query replace symbol at point.                                      |
+| =H-x H-s r= | =M-x symbol-overlay-rename=             | Rename symbol at point on all its occurrences.                      |
+|-------------+-----------------------------------------+---------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Setup of symbol-overlay
+;;
+(use-package symbol-overlay
+  :commands (symbol-overlay-mc-mark-all)
+  :config
+    (setq symbol-overlay-idle-time 0.1)
+
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "H-x H-s i") 'symbol-overlay-put)
+      (define-key map (kbd "H-x H-s n") 'symbol-overlay-jump-next)
+      (define-key map (kbd "H-x H-s p") 'symbol-overlay-jump-prev)
+      (define-key map (kbd "H-x H-s <") 'symbol-overlay-jump-first)
+      (define-key map (kbd "H-x H-s >") 'symbol-overlay-jump-last)
+      (define-key map (kbd "H-x H-s w") 'symbol-overlay-save-symbol)
+      (define-key map (kbd "H-x H-s t") 'symbol-overlay-toggle-in-scope)
+      (define-key map (kbd "H-x H-s e") 'symbol-overlay-echo-mark)
+      (define-key map (kbd "H-x H-s d") 'symbol-overlay-jump-to-definition)
+      (define-key map (kbd "H-x H-s s") 'symbol-overlay-isearch-literally)
+      (define-key map (kbd "H-x H-s R") 'symbol-overlay-query-replace)
+      (define-key map (kbd "H-x H-s r") 'symbol-overlay-rename)
+      (setq symbol-overlay-map map)
+    )
+
+  :bind (
+          :map psimacs/config/global-key-map/execute
+          ("H-s m" . symbol-overlay-mode)
+          ("H-s i" . symbol-overlay-put)
+          ("H-s x" . symbol-overlay-remove-all)
+          ("H-s b" . symbol-overlay-switch-backward)
+          ("H-s f" . symbol-overlay-switch-forward)
+          ("H-s h" . symbol-overlay-map-help)
+
+          :map psimacs/config/global-key-map/hydra ("H-s" . psimacs/hydra/symbol-overlay/body)
+    )
+
+  :hydra (psimacs/hydra/symbol-overlay (:color pink :hint nil)
+"
+Symbol Overlay:
+
+^^Symbols     ^^Navigate             ^^Edit         ^^Exit
+--------------------------------------------------------------------
+_i_ : insert  _p_ : prev             _r_ : rename   _e_ : return
+_t_ : toggle  _n_ : next             _R_ : replace  _x_ : remove all
+_w_ : save    _b_ : switch backward  _a_ : cursors  _q_ : quit
+_m_ : auto    _f_ : switch forward
+_h_ : help    _d_ : jump definition
+            ^^_<_ : jump first
+            ^^_>_ : jump last
+            ^^_s_ : search
+"
+        ("m" symbol-overlay-mode)
+        ("i" symbol-overlay-put)
+        ("x" symbol-overlay-remove-all :color blue)
+        ("b" symbol-overlay-switch-backward)
+        ("f" symbol-overlay-switch-forward)
+        ("h" symbol-overlay-map-help)
+        ("n" symbol-overlay-jump-next)
+        ("p" symbol-overlay-jump-prev)
+        ("<" symbol-overlay-jump-first)
+        (">" symbol-overlay-jump-last)
+        ("w" symbol-overlay-save-symbol)
+        ("t" symbol-overlay-toggle-in-scope)
+        ("e" symbol-overlay-echo-mark :color blue)
+        ("d" symbol-overlay-jump-to-definition)
+        ("s" symbol-overlay-isearch-literally)
+        ("R" symbol-overlay-query-replace)
+        ("a" symbol-overlay-mc-mark-all)
+        ("r" symbol-overlay-rename)
+        ("q"   nil :color blue)
+    )
+)
+
+(use-package symbol-overlay-mc
+  :straight (symbol-overlay-mc :host github :repo "xenodium/symbol-overlay-mc")
+  :commands (psimacs/config/disable-lsp-ui-sideline-mode)
+  :config
+    (defun psimacs/config/disable-lsp-ui-sideline-mode (orig-fun &rest args)
+      (let ((enabled (bound-and-true-p lsp-ui-sideline-mode))
+            (result nil))
+        (when enabled
+          (ignore-errors
+            (lsp-ui-sideline-mode -1)
+            (lsp-ui-sideline--delete-ov)
+            ))
+        (setq result (apply orig-fun args))
+
+        (when enabled
+          (lsp-ui-sideline-mode 1)
+        )
+        result
+      )
+    )
+
+    (advice-add 'symbol-overlay-mc-mark-all :around #'psimacs/config/disable-lsp-ui-sideline-mode)
+  :bind (
+          :map psimacs/config/global-key-map/execute
+          ("H-s H-a"   . symbol-overlay-mc-mark-all)
+    )
 )
 #+end_src
 
@@ -14435,7 +14641,7 @@ The package [[https://github.com/hatlafax/projectile-b2][projectile-b2]] gives f
             :map projectile-b2-command-map
                 ("h" . hydra-projectile-b2/body)
             :map psimacs/config/global-key-map/hydra
-                ("C-p" . hydra-projectile-b2/body)
+                ("C-P" . hydra-projectile-b2/body)
           )
     :hook (projectile-mode . projectile-b2-global-mode)
     :config
