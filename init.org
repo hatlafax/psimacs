@@ -13249,8 +13249,15 @@ Sort based on the key description ignoring case."
         ;    ("prior"                 . "PgUp"))
         ;)
 
-        (setq which-key-max-description-length 60)
+        (setq which-key-max-description-length 80)
         (which-key-setup-side-window-right-bottom)
+        (setq which-key-show-docstrings t)
+
+        (setq which-key-separator " → " )
+        (setq which-key-unicode-correction 3)
+
+        (set-face-attribute 'which-key-command-description-face nil :weight 'bold)
+        (set-face-attribute 'which-key-key-face nil :foreground "Yellow")
 
         (which-key-mode t)
 )
@@ -15118,6 +15125,12 @@ See also:
         (setq transient-values-file psimacs/config/transient-values-file)
         (setq transient-history-file psimacs/config/transient-history-file)
     :config
+
+        ;;
+        ;; ToDo - setup S&B gitlab repo and torii for convenience
+        ;;
+        ;;      magit-clone-name-alist
+
         (add-hook 'git-commit-setup-hook 'flyspell-mode)
 
 )
@@ -21927,7 +21940,53 @@ See also:
 
 * Shells
 
-[[https://github.com/jschaf/powershell.el/tree/87826777bd3ebd53740be99b4546bfc11ccc625d][PowerShell]] is an Emacs major mode for editing and running [[https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.1][Microsoft PowerShell]] files.
+References:
+- [[https://github.com/akermu/emacs-libvterm][emacs-libvterm]]
+- [[https://github.com/suonlight/multi-vterm][multi-vterm]]
+- [[https://github.com/atomontage/xterm-color][xterm-color]]
+
+** EShell
+
+Some eshell configurations.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
+
+
+(use-package exec-path-from-shell
+  :config
+    ;(exec-path-from-shell-initialize)
+    ;(exec-path-from-shell-copy-env "PATH"))
+
+(use-package eshell-toggle
+  :custom
+    (eshell-toggle-size-fraction 3)
+    (eshell-toggle-run-command nil)
+    (eshell-toggle-init-function #'eshell-toggle-init-ansi-term))
+
+(use-package eshell-syntax-highlighting
+  :after esh-mode
+  :config (eshell-syntax-highlighting-global-mode +1))
+
+(use-package eshell
+  :straight nil
+  :config
+    (setq
+      eshell-rc-script (concat user-emacs-directory "eshell/profile")
+      eshell-aliases-file (concat user-emacs-directory "eshell/aliases")
+      eshell-history-size 5000
+      eshell-buffer-maximum-lines 5000
+      eshell-hist-ignoredups t
+      eshell-scroll-to-bottom-on-input t
+      eshell-destroy-buffer-when-process-dies t
+      eshell-visual-commands' ("bash" "htop" "ssh" "top" "zsh")
+    )
+)
+#+end_src
+
+** Powershell
+
+[[https://github.com/jschaf/powershell.el/tree/87826777bd3ebd53740be99b4546bfc11ccc625d][PowerShell]] is an Emacs major mode 
+for editing and running [[https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.1][Microsoft PowerShell]] files.
 
 References:
 - [[https://docs.microsoft.com/en-us/powershell/][PowerShell Documentation]]
@@ -21936,9 +21995,6 @@ References:
 - [[https://cdn.comparitech.com/wp-content/uploads/2018/08/Comparitech-Powershell-cheatsheet.pdf][PowerShell Cheat Sheet (PDF)]]
 - [[https://download.microsoft.com/download/2/1/2/2122F0B9-0EE6-4E6D-BFD6-F9DCD27C07F9/WS12_QuickRef_Download_Files/PowerShell_LangRef_v3.pdf][Microsoft PowerShell Cheat Sheet (PDF)]]
 - [[https://gist.github.com/pcgeek86/336e08d1a09e3dd1a8f0a30a9fe61c8a][PowerShell Cheat Sheet / Quick Reference]]
-- [[https://github.com/akermu/emacs-libvterm][emacs-libvterm]]
-- [[https://github.com/suonlight/multi-vterm][multi-vterm]]
-- [[https://github.com/atomontage/xterm-color][xterm-color]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
 ;;
