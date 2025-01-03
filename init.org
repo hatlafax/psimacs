@@ -5780,7 +5780,7 @@ They provide the following functions for defining hydras:
 
 ** Transient
 
-[[https://github.com/magit/transient][Transient]] is the library used to implement the keyboard-driven /menus/ in [[https://github.com/magit/magit/][Magit]]. 
+[[https://github.com/magit/transient][Transient]] is the library used to implement the keyboard-driven /menus/ in [[https://github.com/magit/magit/][Magit]].
 It is distributed as a separate package, so that it can be used to implement similar menus in other packages.
 
 #+begin_src emacs-lisp :tangle config/init-basic-system.el
@@ -6780,7 +6780,7 @@ Tab stop positions: =M-i=, i.e. =tab-to-tab-stop= moves to the next position.
 (setq tab-stop-list '(4 8))
 #+end_src
 
-*** Highlight indentation 
+*** Highlight indentation
 
 **** highlight-indent-guides package
 
@@ -6814,7 +6814,7 @@ anymore. Instead *Psimacs* uses the =indent-bars= package on default.
 
 **** indent-bars package
 
-[[https://github.com/jdtsmith/indent-bars][indent-bars]] is a minor mode that provides indentation guide bars 
+[[https://github.com/jdtsmith/indent-bars][indent-bars]] is a minor mode that provides indentation guide bars
 in *Emacs*, with optional tree-sitter enhancement.
 
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
@@ -6824,7 +6824,7 @@ in *Emacs*, with optional tree-sitter enhancement.
 (use-package indent-bars
   :straight (indent-bars :host github :repo "jdtsmith/indent-bars")
   :hook
-    (prog-mode . (lambda () 
+    (prog-mode . (lambda ()
                     (when (and (not (member major-mode '(emacs-lisp-mode scheme-mode lisp-mode)))
                                (display-graphic-p))
                       (indent-bars-mode 1)
@@ -7083,12 +7083,12 @@ identifier uniquely based on its name.
 
 *** Symbol overlay mode
 
-The package [[https://github.com/wolray/symbol-overlay][Symbol Overlay]] highlight symbols with overlays while providing a keymap for 
-various operations about highlighted symbols. It was originally inspired by the package =highlight-symbol=. The fundamental difference 
-is that in =symbol-overlay= every symbol is highlighted by the Emacs built-in function =overlay-put= rather than the =font-lock= mechanism 
+The package [[https://github.com/wolray/symbol-overlay][Symbol Overlay]] highlight symbols with overlays while providing a keymap for
+various operations about highlighted symbols. It was originally inspired by the package =highlight-symbol=. The fundamental difference
+is that in =symbol-overlay= every symbol is highlighted by the Emacs built-in function =overlay-put= rather than the =font-lock= mechanism
 used in =highlight-symbol=. On start up the =symbol-overlay-mode= is not activated.
 
-Additionally, the package [[https://github.com/xenodium/symbol-overlay-mc][symbol-overlay-mc]] is a tiny Emacs package enabling 
+Additionally, the package [[https://github.com/xenodium/symbol-overlay-mc][symbol-overlay-mc]] is a tiny Emacs package enabling
 multiple cursors on symbol overlays.
 
 | Key binding | Command                              | Description                                                         |
@@ -11394,27 +11394,43 @@ See also:
 ;;
 ;; A comprehensive visual interface to Unix diff and patch utilities.
 ;;
-(use-package ediff)
+(use-package ediff
+    :straight nil
+    :init
+        ;; only highlight the current diff (cam be toggled with key 'h')
+        ;; (setq-default ediff-highlight-all-diffs 'nil)
+    :config
+        ;; The default is t, meaning that the buffers being compared or merged will be preserved when Ediff quits.
+        ;; Setting this to nil causes Ediff to offer the user a chance to delete these buffers
+        ;; However, Ediff temporarily resets this variable to t if it is invoked via one of the "buffer" jobs, such
+        ;; as ediff-buffers.
+        (setq ediff-keep-variants nil)
 
-;; Don't use the weird setup with the control panel in a separate frame.
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+        (setq ediff-make-buffers-readonly-at-startup nil)
+        (setq ediff-merge-revisions-with-ancestor t)
 
-;; Split the windows horizontally instead of vertically.
-;; This way, it's much easier to follow the changes.
-(setq ediff-split-window-function
-    (lambda (&optional arg)
-        (if (> (frame-width) 150)
-            (split-window-horizontally arg)
-            (split-window-vertically arg)
+        ;; Ediff lets you automatically ignore the regions where only one of the buffers A and B disagrees
+        ;; with the ancestor (Merging and diff3)
+        (setq ediff-show-clashes-only t)
+
+        ;; Ignore white space.
+        ;;(setq ediff-diff-options "-w")
+
+
+        ;; Split the windows horizontally instead of vertically.
+        ;; This way, it's much easier to follow the changes.
+        (setq ediff-split-window-function
+            (lambda (&optional arg)
+                (if (> (frame-width) 150)
+                    (split-window-horizontally arg)
+                    (split-window-vertically arg)
+                )
+            )
         )
-    )
+
+        ;; Don't use the weird setup with the control panel in a separate frame.
+        (setq ediff-windows-setup-function 'ediff-setup-windows-plain)
 )
-
-;; Ignore white space.
-(setq ediff-diff-options "-w")
-
-;; only highlight the current diff
-(setq-default ediff-highlight-all-diffs 'nil)
 #+end_src
 
 *** Visible Bookmarks
@@ -11544,6 +11560,7 @@ a char-based decision tree.
 _c_: ... one char, jump ...
 _C_: ... two consecutive chars, jump ...
 _t_: ... an arbitrary amount of consecutive chars, jump ...
+_T_: ... an arbitrary amount of consecutive chars, jump to matching Org headings ...
 _l_: ... zero chars, jump ...
 _w_: ... one char at word start, jump ...
 _W_: ... zero chars, jump ...
@@ -11551,6 +11568,7 @@ _W_: ... zero chars, jump ...
         ("c" avy-goto-char)
         ("C" avy-goto-char-2)
         ("t" avy-goto-char-timer)
+        ("T" avy-org-goto-heading-timer)
         ("l" avy-goto-line)
         ("w" avy-goto-word-1)
         ("W" avy-goto-word-0)
@@ -13097,7 +13115,7 @@ bindings interactively searchable with helm.
          ("H-h b" . helm-descbinds)
          )
   :config
-  (helm-descbinds-mode)
+        ;;(helm-descbinds-mode)
   )
 #+end_src
 
@@ -13235,7 +13253,7 @@ Sort based on the key description ignoring case."
            )
     :init
         (setq which-key-sort-order psimacs/config/which-key-sort-order)
-        (setq which-key-idle-delay 0.3)
+        (setq which-key-idle-delay 0.5)
     :config
         ;(setq which-key-replacement-alist '(
         ;    ("<\\([[:alnum:]-]+\\)>" . "\\1")
@@ -13249,15 +13267,138 @@ Sort based on the key description ignoring case."
         ;    ("prior"                 . "PgUp"))
         ;)
 
-        (setq which-key-max-description-length 80)
-        (which-key-setup-side-window-right-bottom)
-        (setq which-key-show-docstrings t)
+        (setq which-key-max-description-length 60)
+
+        (which-key-setup-side-window-bottom)
+        (setq which-key-show-docstrings nil)
 
         (setq which-key-separator " → " )
         (setq which-key-unicode-correction 3)
 
         (set-face-attribute 'which-key-command-description-face nil :weight 'bold)
         (set-face-attribute 'which-key-key-face nil :foreground "Yellow")
+
+        (which-key-add-key-based-replacements "C-h 4"         "info")
+
+        (which-key-add-key-based-replacements "C-c &"         "yasnippet")
+        (which-key-add-key-based-replacements "C-c /"         "regexp")
+        (which-key-add-key-based-replacements "C-c / e "      "rxt")
+        (which-key-add-key-based-replacements "C-c / p "      "pcre")
+        (which-key-add-key-based-replacements "C-c i"         "search")
+        (which-key-add-key-based-replacements "C-c n"         "org-roam")
+        (which-key-add-key-based-replacements "C-c n a"       "add")
+        (which-key-add-key-based-replacements "C-c n b"       "buffer")
+        (which-key-add-key-based-replacements "C-c n g"       "graph")
+        (which-key-add-key-based-replacements "C-c n i"       "insert")
+        (which-key-add-key-based-replacements "C-c n p"       "project")
+        (which-key-add-key-based-replacements "C-c n r"       "ref")
+        (which-key-add-key-based-replacements "C-c n x"       "capture")
+
+        (which-key-add-key-based-replacements "C-x RET"       "unicode")
+        (which-key-add-key-based-replacements "C-x 4"         "window")
+        (which-key-add-key-based-replacements "C-x 5"         "frame")
+        (which-key-add-key-based-replacements "C-x 8"         "insert char")
+        (which-key-add-key-based-replacements "C-x 8 e"       "emoji")
+        (which-key-add-key-based-replacements "C-x a"         "abbrev")
+        (which-key-add-key-based-replacements "C-x a i"       "insert")
+        (which-key-add-key-based-replacements "C-x D"         "dired+")
+        (which-key-add-key-based-replacements "C-x n"         "narrow")
+        (which-key-add-key-based-replacements "C-x p"         "project")
+        (which-key-add-key-based-replacements "C-x r"         "register")
+        (which-key-add-key-based-replacements "C-x t"         "tab")
+        (which-key-add-key-based-replacements "C-x v"         "vc")
+        (which-key-add-key-based-replacements "C-x w"         "window")
+        (which-key-add-key-based-replacements "C-x w ^"       "window tear")
+        (which-key-add-key-based-replacements "C-x X"         "edebug")
+        (which-key-add-key-based-replacements "C-x x"         "buffer")
+        (which-key-add-key-based-replacements "C-x C-a"       "gud")
+        (which-key-add-key-based-replacements "C-x C-k"       "kmacro")
+
+        (which-key-add-key-based-replacements "H-m RET"       "ui")
+        (which-key-add-key-based-replacements "H-m RET C-v"   "mode")
+        (which-key-add-key-based-replacements "H-m i"         "org/image")
+        (which-key-add-key-based-replacements "H-m C-c"       "else")
+        (which-key-add-key-based-replacements "H-m C-e"       "ui")
+        (which-key-add-key-based-replacements "H-m C-e RET"   "visual")
+        (which-key-add-key-based-replacements "H-m C-f"       "flyspell")
+        (which-key-add-key-based-replacements "H-m C-f C-a"   "function")
+        (which-key-add-key-based-replacements "H-m C-l"       "langtool")
+        (which-key-add-key-based-replacements "H-m C-p"       "pair")
+        (which-key-add-key-based-replacements "H-m C-p C-r"   "rainbow")
+        (which-key-add-key-based-replacements "H-m C-p C-s"   "mode")
+        (which-key-add-key-based-replacements "H-m C-s"       "search")
+        (which-key-add-key-based-replacements "H-m C-s RET"   "mosey")
+        (which-key-add-key-based-replacements "H-m C-s w"     "web")
+        (which-key-add-key-based-replacements "H-m C-s C-a"   "avy")
+        (which-key-add-key-based-replacements "H-m C-t"       "spelling")
+        (which-key-add-key-based-replacements "H-m C-u"       "which-key")
+        (which-key-add-key-based-replacements "H-m C-u C-w"   "sort-order")
+        (which-key-add-key-based-replacements "H-m C-v"       "shell")
+        (which-key-add-key-based-replacements "H-m C-w"       "ui/zoom")
+        (which-key-add-key-based-replacements "H-m C-w C-s"   "scroll")
+        (which-key-add-key-based-replacements "H-m C-w C-x"   "ace")
+        (which-key-add-key-based-replacements "H-m C-x"       "ui/modes/search")
+        (which-key-add-key-based-replacements "H-m C-x G"     "google")
+        (which-key-add-key-based-replacements "H-m C-x S"     "sx")
+        (which-key-add-key-based-replacements "H-m C-x s"     "last-command")
+        (which-key-add-key-based-replacements "H-m C-x t"     "treemacs")
+        (which-key-add-key-based-replacements "H-m C-y"       "yasnippets")
+        (which-key-add-key-based-replacements "H-m H-c"       "cursor")
+        (which-key-add-key-based-replacements "H-m H-c a"     "anchor")
+        (which-key-add-key-based-replacements "H-m H-c a r"   "rectangular")
+        (which-key-add-key-based-replacements "H-m H-c e"     "mc/edit")
+        (which-key-add-key-based-replacements "H-m H-c i"     "mc/insert")
+        (which-key-add-key-based-replacements "H-m H-c m"     "mc/mark")
+        (which-key-add-key-based-replacements "H-m H-c m d"   "mc/mark/dwim")
+        (which-key-add-key-based-replacements "H-m H-c m f"   "mc/mark/all")
+        (which-key-add-key-based-replacements "H-m H-c m f s" "mc/mark/symbols")
+        (which-key-add-key-based-replacements "H-m H-c m f w" "mc/mark/words")
+        (which-key-add-key-based-replacements "H-m H-c m r"   "mc/mark/region")
+        (which-key-add-key-based-replacements "H-m H-c m S"   "mc/mark/symbols/np")
+        (which-key-add-key-based-replacements "H-m H-c m s"   "mc/mark/symbols")
+        (which-key-add-key-based-replacements "H-m H-c m W"   "mc/mark/words/np")
+        (which-key-add-key-based-replacements "H-m H-c m w"   "mc/mark/works")
+        (which-key-add-key-based-replacements "H-m H-c r"     "mc/regions")
+        (which-key-add-key-based-replacements "H-m H-c s"     "mc/skip")
+        (which-key-add-key-based-replacements "H-m H-c u"     "mc/unmark")
+        (which-key-add-key-based-replacements "H-m H-c v"     "mc/align")
+        (which-key-add-key-based-replacements "H-m H-x"       "amx")
+
+        (which-key-add-key-based-replacements "H-c C-t"       "greetings")
+
+        (which-key-add-key-based-replacements "H-h C-d"       "discover")
+        (which-key-add-key-based-replacements "H-h H-h"       "helm/desc...")
+        (which-key-add-key-based-replacements "H-h H-p"       "help")
+
+        (which-key-add-key-based-replacements "H-x C"         "recentf")
+        (which-key-add-key-based-replacements "H-x C-c"       "command")
+        (which-key-add-key-based-replacements "H-x C-c C-e"   "execute")
+        (which-key-add-key-based-replacements "H-x C-c C-e s" "sphinx")
+        (which-key-add-key-based-replacements "H-x C-w"       "whitespace")
+        (which-key-add-key-based-replacements "H-x H-c"       "vr")
+        (which-key-add-key-based-replacements "H-x H-f"       "yafolding")
+        (which-key-add-key-based-replacements "H-x H-s"       "symbol-overlay")
+        (which-key-add-key-based-replacements "H-x C"         "recentf")
+        (which-key-add-key-based-replacements "H-x H-x RET"   "crux")
+        (which-key-add-key-based-replacements "H-x H-x C-c"   "crux/commnads")
+        (which-key-add-key-based-replacements "H-x H-x C-x"   "crux/case")
+        (which-key-add-key-based-replacements "H-x H-x C-x 4" "crux/transpose")
+
+        (which-key-add-major-mode-key-based-replacements 'org-mode        "C-c \"" "org-plot")
+        (which-key-add-major-mode-key-based-replacements 'org-mode        "C-c C-v" "org-babel")
+        (which-key-add-major-mode-key-based-replacements 'org-mode        "C-c C-x" "org-misc")
+        (which-key-add-major-mode-key-based-replacements 'emacs-lisp-mode "C-c ," "overseer")
+        (which-key-add-major-mode-key-based-replacements 'python-mode     "C-c C-t" "python-skeleton")
+        (which-key-add-major-mode-key-based-replacements 'markdown-mode   "C-c C-a" "markdown-link")
+        (which-key-add-major-mode-key-based-replacements 'markdown-mode   "C-c C-c" "markdown-command")
+        (which-key-add-major-mode-key-based-replacements 'markdown-mode   "C-c C-s" "markdown-style")
+        (which-key-add-major-mode-key-based-replacements 'markdown-mode   "C-c C-t" "markdown-header")
+        (which-key-add-major-mode-key-based-replacements 'markdown-mode   "C-c C-x" "markdown-toggle")
+        (which-key-add-major-mode-key-based-replacements 'gfm-mode        "C-c C-a" "markdown-link")
+        (which-key-add-major-mode-key-based-replacements 'gfm-mode        "C-c C-c" "markdown-command")
+        (which-key-add-major-mode-key-based-replacements 'gfm-mode        "C-c C-s" "markdown-style")
+        (which-key-add-major-mode-key-based-replacements 'gfm-mode        "C-c C-t" "markdown-header")
+        (which-key-add-major-mode-key-based-replacements 'gfm-mode        "C-c C-x" "markdown-toggle")
 
         (which-key-mode t)
 )
@@ -15090,7 +15231,7 @@ See also:
 
 | Key binding | Command          | Description             |
 |-------------+------------------+-------------------------|
-| =H-m C-c g s= | =M-x magit-status= | Run git status command. |
+| =C-x g=       | =M-x magit-status= | Run git status command. |
 |-------------+------------------+-------------------------|
 
 *** Git timemachine
@@ -15117,8 +15258,7 @@ See also:
 ;;
 (use-package magit
     :bind (
-         :map psimacs/config/global-key-map/special
-             ("C-c g s" . magit-status)
+             ("C-x g" . magit-status)
          )
     :init
         (setq transient-levels-file psimacs/config/transient-levels-file)
@@ -21955,17 +22095,20 @@ Some eshell configurations.
 (use-package exec-path-from-shell
   :config
     ;(exec-path-from-shell-initialize)
-    ;(exec-path-from-shell-copy-env "PATH"))
+    ;(exec-path-from-shell-copy-env "PATH")
+)
 
 (use-package eshell-toggle
   :custom
     (eshell-toggle-size-fraction 3)
     (eshell-toggle-run-command nil)
-    (eshell-toggle-init-function #'eshell-toggle-init-ansi-term))
+    (eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
+)
 
 (use-package eshell-syntax-highlighting
   :after esh-mode
-  :config (eshell-syntax-highlighting-global-mode +1))
+  :config (eshell-syntax-highlighting-global-mode +1)
+)
 
 (use-package eshell
   :straight nil
@@ -21985,7 +22128,7 @@ Some eshell configurations.
 
 ** Powershell
 
-[[https://github.com/jschaf/powershell.el/tree/87826777bd3ebd53740be99b4546bfc11ccc625d][PowerShell]] is an Emacs major mode 
+[[https://github.com/jschaf/powershell.el/tree/87826777bd3ebd53740be99b4546bfc11ccc625d][PowerShell]] is an Emacs major mode
 for editing and running [[https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.1][Microsoft PowerShell]] files.
 
 References:
