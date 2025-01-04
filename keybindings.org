@@ -692,6 +692,45 @@ The default fill column is set to 120 characters because huge displays are now c
 | =H-m C-m C-v f= | =M-x global-display-fill-column-indicator-mode= | Toggle the display of the fill column indicator. |
 |---------------+-----------------------------------------------+--------------------------------------------------|
 
+** Symbol overlay mode
+
+The package [[https://github.com/wolray/symbol-overlay][Symbol Overlay]] highlight symbols with overlays while providing a keymap for
+various operations about highlighted symbols. It was originally inspired by the package =highlight-symbol=. The fundamental difference
+is that in =symbol-overlay= every symbol is highlighted by the Emacs built-in function =overlay-put= rather than the =font-lock= mechanism
+used in =highlight-symbol=. On start up the =symbol-overlay-mode= is not activated.
+
+Additionally, the package [[https://github.com/xenodium/symbol-overlay-mc][symbol-overlay-mc]] is a tiny Emacs package enabling
+multiple cursors on symbol overlays.
+
+| Key binding | Command                              | Description                                                         |
+|-------------+--------------------------------------+---------------------------------------------------------------------|
+| =H-x H-s m= | =M-x symbol-overlay-mode=            | Toggle the automatic symbol highlight. This is disabled on default. |
+| =H-x H-s i= | =M-x symbol-overlay-put=             | Toggle all overlays of symbol at point.                             |
+| =H-x H-s a= | =M-x symbol-overlay-mc-mark-all=     | place a cursor on every symbol currently highlighted.               |
+| =H-x H-s x= | =M-x symbol-overlay-remove-all=      | Remove all highlighted symbols in the buffer.                       |
+| =H-x H-s b= | =M-x symbol-overlay-switch-backward= | Switch backward to another symbol.                                  |
+| =H-x H-s f= | =M-x symbol-overlay-switch-forward=  | Switch forward to another symbol.                                   |
+| =H-x H-s h= | =M-x symbol-overlay-map-help=        | Display the bindings in ‘symbol-overlay-map’.                       |
+|-------------+--------------------------------------+---------------------------------------------------------------------|
+
+The bindings in ‘symbol-overlay-map’ that are active when the cursor points a highlighted symbol.
+
+| Key binding | Command                                 | Description                                                         |
+|-------------+-----------------------------------------+---------------------------------------------------------------------|
+| =H-x H-s i= | =M-x symbol-overlay-put=                | Toggle all overlays of symbol at point.                             |
+| =H-x H-s n= | =M-x symbol-overlay-jump-next=          | Jump to the next location of symbol at point.                       |
+| =H-x H-s p= | =M-x symbol-overlay-jump-prev=          | Jump to the previous location of symbol at point.                   |
+| =H-x H-s <= | =M-x symbol-overlay-jump-first=         | Jump to the first location of symbol at point.                      |
+| =H-x H-s >= | =M-x symbol-overlay-jump-last=          | Jump to the last location of symbol at point.                       |
+| =H-x H-s w= | =M-x symbol-overlay-save-symbol=        | Copy symbol at point.                                               |
+| =H-x H-s t= | =M-x symbol-overlay-toggle-in-scope=    | Toggle overlays to be showed in buffer or only in scope.            |
+| =H-x H-s e= | =M-x symbol-overlay-echo-mark=          | Jump back to the mark.                                              |
+| =H-x H-s d= | =M-x symbol-overlay-jump-to-definition= | Jump to the definition of symbol at point.                          |
+| =H-x H-s s= | =M-x symbol-overlay-isearch-literally=  | Isearch symbol at point literally.                                  |
+| =H-x H-s q= | =M-x symbol-overlay-query-replace=      | Query replace symbol at point.                                      |
+| =H-x H-s r= | =M-x symbol-overlay-rename=             | Rename symbol at point on all its occurrences.                      |
+|-------------+-----------------------------------------+---------------------------------------------------------------------|
+
 ** Theming
 
 | Key binding   | Command                                       | Description                                      |
@@ -1517,6 +1556,16 @@ See also:
 - [[https://oremacs.com/2015/01/17/setting-up-ediff/][Setting up Ediff]]
 - [[http://www.sentia.com.au/blog/ediff-for-the-brainically-challenged][Ediff For The Brainically Challenged]]
 
+** goto-chg - go to the point where the last edit was made
+
+Package [[https://github.com/emacs-evil/goto-chg/blob/master/goto-chg.el][goto-chg]] allows you to jump back to the last edited places.
+
+#+attr_html: :class styledtable1
+| Key binding | Command                      | Description                                                           |
+|-------------+------------------------------+-----------------------------------------------------------------------|
+| =H-x H-,=     | =M-x goto-last-change=         | Go to the point where the last edit was made in the current buffer.   |
+| =H-x H-.=     | =M-x goto-last-change-reverse= | Go back to more recent changes after =goto-last-change= have been used. |
+|-------------+------------------------------+-----------------------------------------------------------------------|
 ** Visible Bookmarks
 
 The package [[https://github.com/joodland/bm][Visible bookmarks]] provides visible, buffer local, bookmarks and the
@@ -2720,7 +2769,7 @@ See also:
 
 | Key binding | Command          | Description             |
 |-------------+------------------+-------------------------|
-| =H-m C-c g s= | =M-x magit-status= | Run git status command. |
+| =C-x g=       | =M-x magit-status= | Run git status command. |
 |-------------+------------------+-------------------------|
 
 ** Else Mode
@@ -3327,7 +3376,8 @@ Brains:
 | =C-c n d y=   | =M-x org-roam-dailies-goto-yesterday=                | Find the daily-note for yesterday, creating it if necessary.                 |
 | =C-c n d Y=   | =M-x org-roam-dailies-capture-yesterday=             | Create an entry in the daily-note for yesteday.                              |
 |-------------+----------------------------------------------------+------------------------------------------------------------------------------|
-
+| =C-c n TAB=   | =M-x psimacs/org/roam-screenshots=                   | Move screenshot images to org roam image directory.                          |
+|-------------+----------------------------------------------------+------------------------------------------------------------------------------|
 ** Org-Noter
 
 The package [[https://github.com/org-noter/org-noter][org-noter]] allows you to take notes in org-mode

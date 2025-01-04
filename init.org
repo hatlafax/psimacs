@@ -11515,6 +11515,30 @@ Just define the bookmark file in the =psimacs/config/bookmarks-dir=.
 )
 #+end_src
 
+*** goto-chg - go to the point where the last edit was made
+
+Package [[https://github.com/emacs-evil/goto-chg/blob/master/goto-chg.el][goto-chg]] allows you to jump back to the last edited places.
+
+#+attr_html: :class styledtable1
+| Key binding | Command                      | Description                                                           |
+|-------------+------------------------------+-----------------------------------------------------------------------|
+| =H-x H-,=     | =M-x goto-last-change=         | Go to the point where the last edit was made in the current buffer.   |
+| =H-x H-.=     | =M-x goto-last-change-reverse= | Go back to more recent changes after =goto-last-change= have been used. |
+|-------------+------------------------------+-----------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; go to the point where the last edit was made
+;;
+(use-package goto-chg
+  :bind (
+        :map psimacs/config/global-key-map/execute
+        ("H-." . goto-last-change-reverse)
+        ("H-," . goto-last-change)
+      )
+)
+#+end_src
+
 *** Avy - jumping to visible text
 
 [[https://github.com/abo-abo/avy][Avy]] is a GNU Emacs package for jumping to visible text using
@@ -23974,26 +23998,28 @@ _q_: quit_
             (
                 "Basic"
                   (
-                    ("C-f"       forward-char           "      forward char")
-                    ("C-b"       backward-char          "      backward char")
-                    ("M-f"       forward-word           "      forward word")
-                    ("M-b"       backward-word          "      backward word")
-                    ("C-M-f"     forward-sexp           "    forward sexp")
-                    ("C-M-b"     backward-sexp          "    backward sexp")
-                    ("M-e"       forward-sentence       "      forward sentence")
-                    ("M-a"       backward-sentence      "      backward sentence")
-                    ("C-<down>"  forward-paragraph      " forward paragraph  M-{")
-                    ("C-<up>"    backward-paragraph     "   backward paragraph M-}")
-                    ("C-n"       next-line              "      next line")
-                    ("C-p"       previous-line          "      previous line")
-                    ("C-a"       move-beginning-of-line "      beginning of line")
-                    ("C-e"       move-end-of-line       "      end of line")
-                    ("M-m"       back-to-indentation    "      first non-whitespace char")
-                    ("C-<home>"  beginning-of-buffer    " beginning of buffer M-<")
-                    ("C-<end>"   end-of-buffer          "  end of buffer       M->")
-                    ("M-g c"     goto-char              "    goto char position")
-                    ("M-g M-g"   goto-line              "  goto line")
-                    ("M-g <tab>" move-to-column         "goto column")
+                    ("C-f"       forward-char             "      forward char")
+                    ("C-b"       backward-char            "      backward char")
+                    ("M-f"       forward-word             "      forward word")
+                    ("M-b"       backward-word            "      backward word")
+                    ("C-M-f"     forward-sexp             "    forward sexp")
+                    ("C-M-b"     backward-sexp            "    backward sexp")
+                    ("M-e"       forward-sentence         "      forward sentence")
+                    ("M-a"       backward-sentence        "      backward sentence")
+                    ("C-<down>"  forward-paragraph        " forward paragraph  M-{")
+                    ("C-<up>"    backward-paragraph       "   backward paragraph M-}")
+                    ("C-n"       next-line                "      next line")
+                    ("C-p"       previous-line            "      previous line")
+                    ("C-a"       move-beginning-of-line   "      beginning of line")
+                    ("C-e"       move-end-of-line         "      end of line")
+                    ("M-m"       back-to-indentation      "      first non-whitespace char")
+                    ("C-<home>"  beginning-of-buffer      " beginning of buffer M-<")
+                    ("C-<end>"   end-of-buffer            "  end of buffer       M->")
+                    ("M-g c"     goto-char                "    goto char position")
+                    ("M-g M-g"   goto-line                "  goto line")
+                    ("M-g <tab>" move-to-column           "goto column")
+                    ("H-x H-,"   goto-last-change         "  goto last change")
+                    ("H-x H-."   goto-last-change-reverse "  goto last change reverse")
                   )
 
                 "Scroll and Search"
