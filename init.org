@@ -3287,6 +3287,22 @@ repository.
     "The psimacs customization file.")
 #+end_src
 
+** Eshell
+
+Cache directory of package eshell.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Cache directory of the package eshell.
+;;
+(defconst psimacs/config/eshell-cache-dir
+  (psimacs/file-system/concat-directory psimacs/config/session-dir "eshell")
+  "The psimacs eshell cache directory.")
+#+end_src
+
+Reference:
+- [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]]
+
 ** MSYS2
 
 [[https://www.msys2.org/][MSYS2]] is software distribution and a building platform for Windows.
@@ -3811,6 +3827,19 @@ zip 3.0-3
 (defconst psimacs/config/msys-env-lib-dir
     (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "lib")
   "The psimacs actual msys environment lib directory.")
+#+end_src
+
+** SSH
+
+The search path for the SSH executables. We set this on the Windows platfom, because of problems
+with the /MSYS2 ssh/ integration into /Emacs/.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+(defconst psimacs/config/ssh-env-dir
+  (if psimacs/system/is-win32-p
+        "C:/Windows/System32/OpenSSH"
+    nil)
+  "The psimacs OpenSSH environment directory.")
 #+end_src
 
 ** Latex
@@ -4886,6 +4915,7 @@ correct parents search path setup. Be explicit. Additionally, synchronize the en
 ;;
 (setq exec-path
       (append `(
+                ,psimacs/config/ssh-env-dir
                 ,psimacs/config/python-runtime-dir
                 ,psimacs/config/python-scripts-dir
                 ,psimacs/config/java-runtime-dir
@@ -5789,6 +5819,10 @@ It is distributed as a separate package, so that it can be used to implement sim
 ;;
 (use-package transient
   :demand t
+  :config
+    (setq transient-levels-file psimacs/config/transient-levels-file)
+    (setq transient-values-file psimacs/config/transient-values-file)
+    (setq transient-history-file psimacs/config/transient-history-file)
 )
 #+end_src
 
@@ -9385,10 +9419,10 @@ we set the =tramp-persistency-file-name= variable.
               remote-file-name-inhibit-cache            60
               remote-file-name-inhibit-locks            t
               tramp-completion-reread-directory-timeout 60
-              tramp-verbose   1
+              ;tramp-verbose   1
               ;tramp-verbose  3             ;; default
-              ;tramp-verbose  6             ;; useful
-              ;tramp-verbose 10             ;; lots of detail
+              tramp-verbose  6              ;; useful
+              ;tramp-verbose 10              ;; lots of detail
               tramp-default-method "ssh"    ;; or "sshx"
               tramp-copy-size-limit                     512KB
               tramp-inline-compress-start-size            1KB
@@ -15281,13 +15315,10 @@ See also:
 ;; User interface for Git
 ;;
 (use-package magit
+    :after transient
     :bind (
              ("C-x g" . magit-status)
          )
-    :init
-        (setq transient-levels-file psimacs/config/transient-levels-file)
-        (setq transient-values-file psimacs/config/transient-values-file)
-        (setq transient-history-file psimacs/config/transient-history-file)
     :config
 
         ;;
@@ -18521,6 +18552,7 @@ A list of useful tags is predefined by *Psimacs*.
                 ("buy"          . (:foreground "LightGoldenrod1"))
                 ("order"        . (:foreground "LightGoldenrod1"))
                 ("dont-forget"  . (:foreground "LightGoldenrod1"))
+                ("repetitive"   . (:foreground "LightGoldenrod1"))
 
                 ;; Category of the task
                 ("pg50"         . (:foreground "DeepSkyBlue"))
@@ -18614,6 +18646,7 @@ A list of useful tags is predefined by *Psimacs*.
                 ("request"      . ?q)
                 ("buy"          . ?b)
                 ("order"        . ?o)
+                ("repetitive"   . ?u)
                 (:endgroup      . nil)
 
                 ;; Category of the task
@@ -22138,6 +22171,7 @@ Some eshell configurations.
   :straight nil
   :config
     (setq
+      eshell-directory-name psimacs/config/eshell-cache-dir
       eshell-rc-script (concat user-emacs-directory "eshell/profile")
       eshell-aliases-file (concat user-emacs-directory "eshell/aliases")
       eshell-history-size 5000
@@ -22262,17 +22296,73 @@ References:
   (eshell)
   )
 
-(defun psimacs/shell/run-ubuntu-bash ()
-  "Run a WSL2 Ubuntu bash shell"
+;(defun psimacs/shell/run-ubuntu-bash ()
+;  "Run a WSL2 Ubuntu bash shell"
+;  (interactive)
+;  (let ((process-environment (cl-copy-list process-environment))
+;          (explicit-shell-file-name "C:\\Windows\\System32\\bash.exe" )
+;          (explicit-bash.exe-args '("--login" "-i"))
+;          (binary-process-input t)
+;          (w32-quote-process-args t)
+;          )
+;      (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+;      (shell "*ubuntu bash*")
+;  )
+;)
+
+;(defun psimacs/shell/run-wunix-shell ()
+;  "Run Windows' bash in shell mode."
+;  (interactive)
+;  (let (
+;        (explicit-shell-file-name "cmd.exe")
+;        ;(explicit-cmd.exe-args '("/C" "c:\\Windows\\WinSxS\\amd64_microsoft-windows-lxss-bash_31bf3856ad364e35_10.0.19041.4474_none_b44cc5c971d28390\\bash.exe" "-i"))
+;        (explicit-cmd.exe-args '("/C" "c:\Program Files\WindowsApps\CanonicalGroupLimited.Ubuntu_2404.1.66.0_x64__79rhkp1fndgsc\ubuntu.exe"))
+;    )
+;    (call-interactively 'shell)
+;  )
+;)
+
+(defun psimacs/shell/run-vs-2019-x64-native-shell ()
+  "Run Windows x64-native shell with Visual Studio environment."
   (interactive)
-  (let ((process-environment (cl-copy-list process-environment))
-          (explicit-shell-file-name "C:\\Windows\\System32\\bash.exe" )
-          (explicit-bash.exe-args '("--login" "-i"))
-          (binary-process-input t)
-          (w32-quote-process-args t)
-          )
-      (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
-      (shell "*ubuntu bash*")
+  (let (
+        (explicit-shell-file-name "cmd.exe")
+        (explicit-cmd.exe-args'("/k" "c:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"))
+    )
+    (shell "*vs-2019-x64-native*")
+  )
+)
+
+(defun psimacs/shell/run-vs-2019-x86-native-shell ()
+  "Run Windows x86-native shell with Visual Studio environment."
+  (interactive)
+  (let (
+        (explicit-shell-file-name "cmd.exe")
+        (explicit-cmd.exe-args '("/k" "c:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\Auxiliary\\Build\\vcvars32.bat"))
+    )
+    (shell "*vs-2019-x86-native*")
+  )
+)
+
+(defun psimacs/shell/run-vs-2019-x64_x86-cross-shell ()
+  "Run Windows x64_x86-cross shell with Visual Studio environment."
+  (interactive)
+  (let (
+        (explicit-shell-file-name "cmd.exe")
+        (explicit-cmd.exe-args '("/k" "c:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\Auxiliary\\Build\\vcvarsamd64_x86.bat"))
+    )
+    (shell "*vs-2019-x64_x86-cross*")
+  )
+)
+
+(defun psimacs/shell/run-vs-2019-x86_x64-cross-shell ()
+  "Run Windows x86_x64-cross shell with Visual Studio environment."
+  (interactive)
+  (let (
+        (explicit-shell-file-name "cmd.exe")
+        (explicit-cmd.exe-args '("/k" "c:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\Auxiliary\\Build\\vcvarsx86_amd64.bat"))
+    )
+    (shell "*vs-2019-x86_x64-cross*")
   )
 )
 #+end_src
