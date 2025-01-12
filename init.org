@@ -257,7 +257,7 @@ The major help commands and their key bindings.
 #+attr_html: :class styledtable
 | Key binding | Command                        | Description                                                                                            |
 |-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =H-h= =s-h=     |                                | Help prefix, giving fast access to the help functions.                                                 |
+| =H-h==        |                                | Help prefix, giving fast access to the help functions.                                                 |
 | =H-SPC h=     | =M-x psimacs/hydra/help/body=    | Hydra Help...                                                                                          |
 | =H-SPC H=     | =M-x psimacs/hydra/helpful/body= | Hydra Helpful...                                                                                       |
 |-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
@@ -274,17 +274,23 @@ The major help commands and their key bindings.
 | =H-h C-d m=   | =M-x discover-my-major=          | Create a listing of all major-mode keys with their description.                                        |
 | =H-h C-d M=   | =M-x discover-my-mode=           | Create a listing of all MODE keys with their description.                                              |
 |-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h e=       | =M-x view-echo-area-messages=    | View the log of recent echo-area messages: the **Messages** buffer.                                      |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h r=       | =M-x info-manual=                | Display a manual in Info mode - by default, the Emacs manual.                                          |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h C-q=     | =M-x help-quick-toggle=          | Toggle display of a window showing popular commands and their bindings.                                |
+|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
 
 ** Prefixes
 
-| Prefix command  | Description               |
-|-----------------+---------------------------|
-| =H-SPC=         | Hydras                    |
-| =H-h=           | Help                      |
-| =H-c=           | common user commands      |
-| =H-x=           | common execution commands |
-| =H-m=           | special user commands     |
-|-----------------+---------------------------|
+| Prefix command | Description               |
+|----------------+---------------------------|
+| =H-SPC=          | Hydras                    |
+| =H-h=            | Help                      |
+| =H-c=            | common user commands      |
+| =H-x=            | common execution commands |
+| =H-m=            | special user commands     |
+|----------------+---------------------------|
 
 ** Hydras
 
@@ -320,6 +326,38 @@ All the hydras defined by *Psimacs*.
 | =H-SPC H-m=   | =M-x psimacs/hydra/navigation/body=       | Navigation...             |
 |-------------+-----------------------------------------+---------------------------|
 
+** Universal, Numeric and Negative Argument
+
+=C-u= or =H-u= runs the command =universal-argument=.
+
+It is bound to =C-u= and =H-u= and it begin a numeric argument for the following command.
+Digits or minus sign following =C-u= make up the numeric argument.
+=C-u= following the digits or minus sign ends the argument.
+=C-u= without digits or minus sign provides 4 as argument.
+Repeating =C-u= without digits or minus sign multiplies the argument by 4 each time.
+For some commands, just =C-u= by itself serves as a flag that is different in effect from
+any particular numeric argument.
+
+| Key binding          | Command                | Description                                                                                                          |
+|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
+| =C-u=  =H-u=             | =M-x universal-argument= | Begin a numeric argument for the following command. Digits or minus sign following =C-u= make up the numeric argument. |
+| =C-u=  =H-u=             | =C-u 4=                  |                                                                                                                      |
+| =C-u C-u=  =H-u H-u=     | =C-u 16=                 |                                                                                                                      |
+|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
+| =C-0=  =M-0=  =C-M-0=  =H-0= | =C-u 0=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-1=  =M-1=  =C-M-1=  =H-1= | =C-u 1=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-2=  =M-2=  =C-M-2=  =H-2= | =C-u 2=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-3=  =M-3=  =C-M-3=  =H-3= | =C-u 3=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-4=  =M-4=  =C-M-4=  =H-4= | =C-u 4=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-5=  =M-5=  =C-M-5=  =H-5= | =C-u 5=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-6=  =M-6=  =C-M-6=  =H-6= | =C-u 6=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-7=  =M-7=  =C-M-7=  =H-7= | =C-u 7=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-8=  =M-8=  =C-M-8=  =H-8= | =C-u 8=                  | Runs the command =digit-argument=.                                                                                     |
+| =C-9=  =M-9=  =C-M-9=  =H-9= | =C-u 9=                  | Runs the command =digit-argument=.                                                                                     |
+|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
+| =C--=  =M--=  =C-M--=  =H--= | =C-u -=                  | Runs the command =negative-argument=.                                                                                  |
+|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
+
 ** Basic movements
 
 The table that follows contain the basic movement commands with their corresponding
@@ -329,60 +367,63 @@ provided but the standard binding is given in the second column.
 References:
 - [[https://www.youtube.com/watch?v=wT_jUtEGfeg][Efficient Movement with Emacs Key Bindings - Emacs Essentials #2]]
 
-| Key binding | Standard | Command                         | Description                                                                                                           |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-f=         |          | =M-x forward-char=                | Move point forward by one character.                                                                                  |
-| =C-b=         |          | =M-x backward-char=               | Move point backward by one character.                                                                                 |
-| =C-n=         |          | =M-x next-line=                   | Move point forward by one line, keeping horizontal position.                                                          |
-| =C-p=         |          | =M-x previous-line=               | Move point backward by one line, keeping horizontal position.                                                         |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =<Left>=      |          | =M-x left-char=                   | Properly respect the /right-to-left/ text.                                                                              |
-| =<Rigth>=     |          | =M-x right-char=                  | Dito.                                                                                                                 |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-a=         |          | =M-x move-beginning-of-line=      | Goto the beginning of the line.                                                                                       |
-| =C-e=         |          | =M-x move-end-of-line=            | Goto the end of the line.                                                                                             |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =M-<=         |          | =M-x beginning-of-buffer=         | Goto the beginning of the buffer.                                                                                     |
-| =M->=         |          | =M-x end-of-buffer=               | Goto the end of the buffer.                                                                                           |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-<Home>=    |          | =M-x beginning-of-buffer=         | Goto the beginning of the buffer.                                                                                     |
-| =C-<End>=     |          | =M-x end-of-buffer=               | Goto the end of the buffer.                                                                                           |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =M-g M-g=     |          | =M-x goto-line=                   | Goto line number N                                                                                                    |
-| =M-g <Tab>=   |          | =M-x move-to-column=              | Move point to column number N                                                                                         |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =M-f=         |          | =M-x forward-word=                | Move point forward by one word.                                                                                       |
-| =M-b=         |          | =M-x backward-word=               | Move point backward by one word.                                                                                      |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =M-{=         |          | =M-x forward-paragraph=           | Move point forward by one paragraph.                                                                                  |
-| =M-}=         |          | =M-x backward-paragraph=          | Move point backward by one paragrah.                                                                                  |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-<Down>=    |          | =M-x forward-paragraph=           | Move point forward by one paragraph.                                                                                  |
-| =C-<Up>=      |          | =M-x backward-paragraph=          | Move point backward by one paragrah.                                                                                  |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-M-f=       |          | =M-x forward-sexp=                | Move point forward across one balanced expression.                                                                    |
-| =C-M-b=       |          | =M-x backward-sexp=               | Move point backward across one balanced expression.                                                                   |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =M-e=         |          | =M-x forward-sentence=            | Move point forward by one sentence.                                                                                   |
-| =M-a=         |          | =M-x backward-sentence=           | Move point backward by one sentence.                                                                                  |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-v=         |          | =M-x scroll-up-command=           | Move the window to the next page. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                             |
-| =M-v=         |          | =M-x scroll-down-command=         | Move the window to the previous page.                                                                                 |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =<PageDown>=  |          | =M-x scroll-up-command=           | Move the window to the next page. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                             |
-| =<PageUp>=    |          | =M-x scroll-down-command=         | Move the window to the previous page.                                                                                 |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-l=         |          | =M-x recenter-top-bottom=         | Center line of point to the middle of the buffer window. Pressing it repeatedly cycles throug /top/, /bottom/ and /center/. |
-| =C-M-l=       |          | =M-x reposition-window=           | Attempt to scroll the screen to fit as much as possible in the window.                                                |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =H-m C-s s=   | =C-s=      | =M-x isearch-forward=             | Search term forward and places point after the occurence.                                                             |
-| =H-m C-s r=   | =C-r=      | =M-x isearch-backward=            | Search term backward and places point before the occurence.                                                           |
-| =H-s=         |          | =M-x psimacs/config/isearch-menu= | In isearch mode, opens an isearch menu, allowing to easily utilize the functionality.                                 |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =C-s=         |          | =M-x swiper-isearch=              | Isearch enhanced by /Ivy Swiper/.                                                                                       |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
-| =M-m=         |          | =M-x back-to-indentation=         | Move point to the first non-whitespace character in the current line.                                                 |
-|-------------+----------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| Key binding    | Standard                | Command                                                   | Description                                                                                                           |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-f=            |                         | =M-x forward-char=                                          | Move point forward by one character.                                                                                  |
+| =C-b=            |                         | =M-x backward-char=                                         | Move point backward by one character.                                                                                 |
+| =C-n=            |                         | =M-x next-line=                                             | Move point forward by one line, keeping horizontal position.                                                          |
+| =C-p=            |                         | =M-x previous-line=                                         | Move point backward by one line, keeping horizontal position.                                                         |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =<Left>=         |                         | =M-x left-char=                                             | Properly respect the /right-to-left/ text.                                                                              |
+| =<Rigth>=        |                         | =M-x right-char=                                            | Dito.                                                                                                                 |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-a=            |                         | =M-x move-beginning-of-line=                                | Goto the beginning of the line.                                                                                       |
+| =C-e=            |                         | =M-x move-end-of-line=                                      | Goto the end of the line.                                                                                             |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =M-<=            |                         | =M-x beginning-of-buffer=                                   | Goto the beginning of the buffer.                                                                                     |
+| =M->=            |                         | =M-x end-of-buffer=                                         | Goto the end of the buffer.                                                                                           |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-<Home>=       |                         | =M-x beginning-of-buffer=                                   | Goto the beginning of the buffer.                                                                                     |
+| =C-<End>=        |                         | =M-x end-of-buffer=                                         | Goto the end of the buffer.                                                                                           |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =M-g M-g=  =M-g g= |                         | =M-x goto-line=                                             | Goto line number N                                                                                                    |
+| =M-g <Tab>=      |                         | =M-x move-to-column=                                        | Move point to column number N                                                                                         |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =M-f=            |                         | =M-x forward-word=                                          | Move point forward by one word.                                                                                       |
+| =M-b=            |                         | =M-x backward-word=                                         | Move point backward by one word.                                                                                      |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =M-{=            |                         | =M-x forward-paragraph=                                     | Move point forward by one paragraph.                                                                                  |
+| =M-}=            |                         | =M-x backward-paragraph=                                    | Move point backward by one paragrah.                                                                                  |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-<Down>=       |                         | =M-x forward-paragraph=                                     | Move point forward by one paragraph.                                                                                  |
+| =C-<Up>=         |                         | =M-x backward-paragraph=                                    | Move point backward by one paragrah.                                                                                  |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-M-f=          |                         | =M-x forward-sexp=                                          | Move point forward across one balanced expression.                                                                    |
+| =C-M-b=          |                         | =M-x backward-sexp=                                         | Move point backward across one balanced expression.                                                                   |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =M-e=            |                         | =M-x forward-sentence=                                      | Move point forward by one sentence.                                                                                   |
+| =M-a=            |                         | =M-x backward-sentence=                                     | Move point backward by one sentence.                                                                                  |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-v=            |                         | =M-x scroll-up-command=                                     | Move the window to the next page. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                             |
+| =M-v=            |                         | =M-x scroll-down-command=                                   | Move the window to the previous page.                                                                                 |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =<PageDown>=     |                         | =M-x scroll-up-command=                                     | Move the window to the next page. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                             |
+| =<PageUp>=       |                         | =M-x scroll-down-command=                                   | Move the window to the previous page.                                                                                 |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-l=            |                         | =M-x recenter-top-bottom=                                   | Center line of point to the middle of the buffer window. Pressing it repeatedly cycles throug /top/, /bottom/ and /center/. |
+| =C-M-l=          |                         | =M-x reposition-window=                                     | Attempt to scroll the screen to fit as much as possible in the window.                                                |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s s=      | =C-s=                     | =M-x isearch-forward=                                       | Search term forward and places point after the occurence.                                                             |
+| =H-m C-s r=      | =C-r=                     | =M-x isearch-backward=                                      | Search term backward and places point before the occurence.                                                           |
+| =H-s=            |                         | =M-x psimacs/config/isearch-menu=                           | In isearch mode, opens an isearch menu, allowing to easily utilize the functionality.                                 |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-s=            |                         | =M-x swiper-isearch=                                        | Isearch enhanced by /Ivy Swiper/.                                                                                       |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =M-m=            |                         | =M-x back-to-indentation=                                   | Move point to the first non-whitespace character in the current line.                                                 |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+| =C-x C-n=        | =M-x set-goal-=column=     | Set the current horizontal position as a goal column.     |                                                                                                                       |
+| =C-u C-x C-n=    | =C-u M-x set-goal-=column= | Cleas out the goal column and resume to normal operation. |                                                                                                                       |
+|----------------+-------------------------+-----------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------|
 
 ** Basic selection
 
@@ -423,7 +464,7 @@ References:
 | =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
 | =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-g=             | =M-x psimacs/config/keyboard-quit-dwim= | When the region is active, disable it. When a minibuffer is open, but not focused, close the minibuffer. When the Completions buffer is selected, close it.
+| =C-g=             | =M-x psimacs/config/keyboard-quit-dwim= | When the region is active, disable it. When a minibuffer is open, but not focused, close the minibuffer. When the Completions buffer is selected, close it.                                                                                          |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
 | =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
@@ -441,39 +482,39 @@ References:
 
 Emacs registers are compartments where you can save text, rectangles, positions, and other things for later use.
 
-In the following table =r= is any single key character.
+In the following table =Chr= is any single key character.
 
 Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][Registers]]
 
 #+attr_html: :class styledtable
-| Key binding   | Command                                    | Description                                                                                                                                                                       |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|               | =M-x view-register RET r=                    | Display a description of what register r contains.                                                                                                                                |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r SPC r=   | =M-x point-to-register RET r=                | Record the position of point and the current buffer in register r.                                                                                                                |
-| =C-x r SPC r r= | =M-x point-to-register RET r r=              | Saves both the position of point and the current buffer in register r.                                                                                                            |
-| =C-x r j r=     | =M-x jump-to-register RET r=                 | Jump to the position and buffer saved in register r.                                                                                                                              |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r s r=     | =M-x copy-to-register RET r=                 | Copy region into register r.                                                                                                                                                      |
-| =C-u C-x r s r= | =C-u M-x copy-to-register RET r=             | Copies the text into register r and deletes the text from the buffer as well.                                                                                                     |
-| =C-x r i r=     | =M-x insert-register RET r=                  | Insert text from register r.                                                                                                                                                      |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|               | =M-x append-to-register RET r=               | Append region to text in register r.                                                                                                                                              |
-|               | =C-u M-x append-to-register RET r=           | Append region to text in register r and deletes the text from the buffer as well.                                                                                                 |
-| =C-x r +=       | =M-x increment-register=                     | When register r contains text, use this command to append to that register.                                                                                                       |
-|               | =M-x prepend-to-register RET r=              | Prepend region to text in register r.                                                                                                                                             |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r r r=     | =M-x copy-rectangle-to-register RET r=       | Copy the region-rectangle into register r. With prefix argument, delete it as well.                                                                                               |
-| =C-x r i r=     | =M-x insert-register RET r=                  | Insert the rectangle stored in register r (if it contains a rectangle).                                                                                                           |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r w r=     | =M-x window-configuration-to-register RET r= | Save the state of the selected frame’s windows in register r.                                                                                                                     |
-| =C-x r f r=     | =M-x frameset-to-register RET r=             | Save the state of all frames, including all their windows, in register r.                                                                                                         |
-| =C-x r j r=     | =M-x jump-to-register RET r=                 | To restore a window or frame configuration stored in register r. When you restore a frame configuration, any existing frames not included in the  configuration become invisible. |
-| =C-u C-x r j r= | =C-u M-x jump-to-register RET r=             | Use Prefix to also delete pre-existing frames.                                                                                                                                    |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-k x r=   | =M-x kmacro-to-register RET r=               | Stores the last keyboard macro in register r.                                                                                                                                     |
-| =C-x r j r=     | =M-x jump-to-register RET r=                 | To execute the keyboard macro in register r                                                                                                                                       |
-|---------------+--------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                                      | Description                                                                                                                                                                         |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                 | =M-x view-register RET Chr=                    | Display a description of what register Chr contains.                                                                                                                                |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r SPC Chr=   | =M-x point-to-register RET Chr=                | Record the position of point and the current buffer in register Chr.                                                                                                                |
+| =C-x r SPC r Chr= | =M-x point-to-register RET Chr=                | Saves both the position of point and the current buffer in register Chr.                                                                                                            |
+| =C-x r j Chr=     | =M-x jump-to-register RET Chr=                 | Jump to the position and buffer saved in register Chr.                                                                                                                              |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r s Chr=     | =M-x copy-to-register RET Chr=                 | Copy region into register Chr.                                                                                                                                                      |
+| =C-u C-x r s Chr= | =C-u M-x copy-to-register RET Chr=             | Copies the text into register Chr and deletes the text from the buffer as well.                                                                                                     |
+| =C-x r i Chr=     | =M-x insert-register RET Chr=                  | Insert text from register Chr.                                                                                                                                                      |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                 | =M-x append-to-register RET Chr=               | Append region to text in register Chr.                                                                                                                                              |
+|                 | =C-u M-x append-to-register RET Chr=           | Append region to text in register Chr and deletes the text from the buffer as well.                                                                                                 |
+| =C-x r + Chr=     | =M-x increment-register RET Chr=               | When register Chr contains text, use this command to append to that register.                                                                                                       |
+|                 | =M-x prepend-to-register RET Chr=              | Prepend region to text in register Chr.                                                                                                                                             |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r r Chr=     | =M-x copy-rectangle-to-register RET Chr=       | Copy the region-rectangle into register Chr. With prefix argument, delete it as well.                                                                                               |
+| =C-x r i Chr=     | =M-x insert-register RET Chr=                  | Insert the rectangle stored in register Chr (if it contains a rectangle).                                                                                                           |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r w Chr=     | =M-x window-configuration-to-register RET Chr= | Save the state of the selected frame’s windows in register Chr.                                                                                                                     |
+| =C-x r f Chr=     | =M-x frameset-to-register RET Chr=             | Save the state of all frames, including all their windows, in register Chr.                                                                                                         |
+| =C-x r j Chr=     | =M-x jump-to-register RET Chr=                 | To restore a window or frame configuration stored in register Chr. When you restore a frame configuration, any existing frames not included in the  configuration become invisible. |
+| =C-u C-x r j Chr= | =C-u M-x jump-to-register RET Chr=             | Use Prefix to also delete pre-existing frames.                                                                                                                                      |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-k x Chr=   | =M-x kmacro-to-register RET Chr=               | Stores the last keyboard macro in register Chr.                                                                                                                                     |
+| =C-x r j Chr=     | =M-x jump-to-register RET Chr=                 | To execute the keyboard macro in register Chr.                                                                                                                                      |
+|-----------------+----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 *** Bookmarks
 
@@ -483,20 +524,20 @@ they have long names, and they persist automatically.
 Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]]
 
 #+attr_html: :class styledtable
-| Key binding          | Command                                       | Description                                                                                                                                                                                                     |
-|----------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x r m=              | =M-x bookmark-set RET=                          | Set the bookmark for the visited file, at point.                                                                                                                                                                |
-| =C-x r m Bookmark RET= | =M-x bookmark-set Bookmark RET=                 | Set the bookmark named Bookmark at point.                                                                                                                                                                       |
-| =C-x r M Bookmark RET= | =M-x bookmark-set-no-overwrite Bookmark RET=    | Like =C-x r m=, but don’t overwrite an existing bookmark.                                                                                                                                                         |
-| =C-x r b Bookmark RET= | =M-x bookmark-jump Bookmark RET=                | Jump to the bookmark named Bookmark.                                                                                                                                                                            |
-| =C-x r l=              | =M-x list-bookmarks=                            | List all bookmarks.                                                                                                                                                                                             |
-|                      | =M-x bookmark-save=                             | Save all the current bookmark values in the default bookmark file.                                                                                                                                              |
-|                      | =M-x bookmark-write RET Filename RET=           | Save all the current bookmark values in the file Filename.                                                                                                                                                      |
-|                      | =M-x bookmark-load RET Filename RET=            | Load a file named Filename that contains a list of bookmark values. You can use this command, as well as bookmark-write, to work with other files of bookmark values in addition to your default bookmark file. |
-|                      | =M-x bookmark-delete RET Bookmark RET=          | Delete the bookmark named Bookmark.                                                                                                                                                                             |
-|                      | =M-x bookmark-insert-location RET Bookmark RET= | Insert in the buffer the name of the file that bookmark Bookmark points to.                                                                                                                                     |
-|                      | =M-x bookmark-insert RET Bookmark RET=          | Insert in the buffer the contents of the file that bookmark Bookmark points to.                                                                                                                                 |
-|----------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding      | Command                                       | Description                                                                                                                                                                                                     |
+|------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x r m=          | =M-x bookmark-set RET=                          | Set the bookmark for the visited file, at point.                                                                                                                                                                |
+| =C-x r m Bookmark= | =M-x bookmark-set Bookmark RET=                 | Set the bookmark named Bookmark at point.                                                                                                                                                                       |
+| =C-x r M Bookmark= | =M-x bookmark-set-no-overwrite Bookmark RET=    | Like =C-x r m=, but don’t overwrite an existing bookmark.                                                                                                                                                         |
+| =C-x r b Bookmark= | =M-x bookmark-jump Bookmark RET=                | Jump to the bookmark named Bookmark.                                                                                                                                                                            |
+| =C-x r l=          | =M-x list-bookmarks=                            | List all bookmarks.                                                                                                                                                                                             |
+|                  | =M-x bookmark-save=                             | Save all the current bookmark values in the default bookmark file.                                                                                                                                              |
+|                  | =M-x bookmark-write RET Filename RET=           | Save all the current bookmark values in the file Filename.                                                                                                                                                      |
+|                  | =M-x bookmark-load RET Filename RET=            | Load a file named Filename that contains a list of bookmark values. You can use this command, as well as bookmark-write, to work with other files of bookmark values in addition to your default bookmark file. |
+|                  | =M-x bookmark-delete RET Bookmark RET=          | Delete the bookmark named Bookmark.                                                                                                                                                                             |
+|                  | =M-x bookmark-insert-location RET Bookmark RET= | Insert in the buffer the name of the file that bookmark Bookmark points to.                                                                                                                                     |
+|                  | =M-x bookmark-insert RET Bookmark RET=          | Insert in the buffer the contents of the file that bookmark Bookmark points to.                                                                                                                                 |
+|------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Useful commands
 
@@ -528,47 +569,47 @@ This is just a brief overview over the most important *Info* commands:
 Inside *Info* the following commands are useful:
 
 #+attr_html: :class styledtable
-| Key binding   | Command                     | Description                                                                                                              |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =?=             |                             | Provide brief list of commands in *Info*.                                                                                  |
-| =q=             |                             | Quit info.                                                                                                               |
-| =C-l=           |                             | Redisplay                                                                                                                |
-|               | =M-x visible-mode=            | Show or hide invisible text.                                                                                             |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =b= =e=           |                             | Jump to /beginning/ or /end/ of node text                                                                                    |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =g=             |                             | Go to node if /node's name/ is given, e.g. =gGo to Node<ret>=, =g(dir)Top<ret>=, =g(emacs)Top<ret>=, =g*<ret>=, =g(FILENAME)*<ret>=. |
-| =n= =p=           |                             | Go to /next/ or /previous/ node at same level.                                                                               |
-| =SPC= =BACKSPC=   |                             | Move /forward/ or /backward/ in node and might move to /next/ or /previous/ logical node.                                        |
-| =]= =[=           |                             | Move to /next/ or /previous/ logical node.                                                                                   |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =d=             | =M-x Info-directory=          | Go to /directory/ node.                                                                                                    |
-| =t=             | =M-x Info-top-node=           | Go to current manual /top/ node, i.e. =gTop<ret>=                                                                            |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =m=             |                             | Go to /subnode/ found in node's menu.                                                                                      |
-| =1= ... =9=       |                             | Go to /N-th subnode/ found in node's menu.                                                                                 |
-| =0=             |                             | Go to /last subnode/ found in node's menu.                                                                                 |
-| =u=             |                             | Go to /parent node/.                                                                                                       |
-| =<tab>= =S-<tab>= |                             | Go to /next/ or /previous/ node menu entry or cross reference.                                                               |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =f=             |                             | /Follow/ cross reference.                                                                                                  |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =l= =r=           |                             | Move /backward/ or /forward/ in the node and cross reference history list.                                                   |
-| =L=             |                             | Create a virtual node with menu of /all nodes visited/.                                                                    |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =s=             |                             | /Search/ info file text for string.                                                                                        |
-| =C-s= =C-r=       |                             | /Incremental search forward/ or /backward/ info file text.                                                                   |
-| =i=             |                             | /Searches the index/ for string.                                                                                           |
-| =,=             |                             | After =i=, visit additional index entries which match.                                                                     |
-| =I=             | =M-x Info-virtual-index=      | Construct a virtual info node displaying results of an index search.                                                     |
-|               | =M-x index-apropos=           | Search in all the indices of all the *Info* documents known by the system.                                                 |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| =M-n=           | =M-x clone-buffer=            | Create and return a twin copy of the current buffer, i.e. a new Info-buffer from the current node.                       |
-| =C-u m= =C-u g=   |                             | Go to new Info-buffer in another window.                                                                                 |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
-|               | =M-x info-display-manual=     | Show the *Info* manual by name.                                                                                            |
-|               | =C-u M-x info-display-manual= | Show the *Info* manual by name, but limits the completion alternatives to currently visited info files.                    |
-|---------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| Key binding    | Command                     | Description                                                                                                              |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =?=              |                             | Provide brief list of commands in *Info*.                                                                                  |
+| =q=              |                             | Quit info.                                                                                                               |
+| =C-l=            |                             | Redisplay                                                                                                                |
+|                | =M-x visible-mode=            | Show or hide invisible text.                                                                                             |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =b=  =e=           |                             | Jump to /beginning/ or /end/ of node text                                                                                    |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =g=              |                             | Go to node if /node's name/ is given, e.g. =gGo to Node<ret>=, =g(dir)Top<ret>=, =g(emacs)Top<ret>=, =g*<ret>=, =g(FILENAME)*<ret>=. |
+| =n=  =p=           |                             | Go to /next/ or /previous/ node at same level.                                                                               |
+| =SPC=  =BACKSPC=   |                             | Move /forward/ or /backward/ in node and might move to /next/ or /previous/ logical node.                                        |
+| =]=  =[=           |                             | Move to /next/ or /previous/ logical node.                                                                                   |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =d=              | =M-x Info-directory=          | Go to /directory/ node.                                                                                                    |
+| =t=              | =M-x Info-top-node=           | Go to current manual /top/ node, i.e. =gTop<ret>=                                                                            |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =m=              |                             | Go to /subnode/ found in node's menu.                                                                                      |
+| =1= ... =9=        |                             | Go to /N-th subnode/ found in node's menu.                                                                                 |
+| =0=              |                             | Go to /last subnode/ found in node's menu.                                                                                 |
+| =u=              |                             | Go to /parent node/.                                                                                                       |
+| =<tab>=  =S-<tab>= |                             | Go to /next/ or /previous/ node menu entry or cross reference.                                                               |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =f=              |                             | /Follow/ cross reference.                                                                                                  |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =l=  =r=           |                             | Move /backward/ or /forward/ in the node and cross reference history list.                                                   |
+| =L=              |                             | Create a virtual node with menu of /all nodes visited/.                                                                    |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =s=              |                             | /Search/ info file text for string.                                                                                        |
+| =C-s=  =C-r=       |                             | /Incremental search forward/ or /backward/ info file text.                                                                   |
+| =i=              |                             | /Searches the index/ for string.                                                                                           |
+| =,=              |                             | After =i=, visit additional index entries which match.                                                                     |
+| =I=              | =M-x Info-virtual-index=      | Construct a virtual info node displaying results of an index search.                                                     |
+|                | =M-x index-apropos=           | Search in all the indices of all the *Info* documents known by the system.                                                 |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+| =M-n=            | =M-x clone-buffer=            | Create and return a twin copy of the current buffer, i.e. a new Info-buffer from the current node.                       |
+| =C-u m=  =C-u g=   |                             | Go to new Info-buffer in another window.                                                                                 |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
+|                | =M-x info-display-manual=     | Show the *Info* manual by name.                                                                                            |
+|                | =C-u M-x info-display-manual= | Show the *Info* manual by name, but limits the completion alternatives to currently visited info files.                    |
+|----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------|
 
 * Working with Org-Mode
 
@@ -5565,6 +5606,31 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 )
 
 (global-set-key (kbd "M-<f4>" ) 'psimacs/config/delete-frame)
+#+end_src
+
+*** Extend the universal-argument handling to the Hyper key
+
+Because numeric arguments are so useful they are bound to a multitude of keys.
+The idea is minimizing the finger movements. For that reason, *Psimacs* extends
+that for its =<hyper>= key as well.
+
+Reference:
+- [[https://www.masteringemacs.org/article/effective-editing-movement][Effective Editing I: Movement]]
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+(global-set-key (kbd "H-0") 'digit-argument)
+(global-set-key (kbd "H-1") 'digit-argument)
+(global-set-key (kbd "H-2") 'digit-argument)
+(global-set-key (kbd "H-3") 'digit-argument)
+(global-set-key (kbd "H-4") 'digit-argument)
+(global-set-key (kbd "H-5") 'digit-argument)
+(global-set-key (kbd "H-6") 'digit-argument)
+(global-set-key (kbd "H-7") 'digit-argument)
+(global-set-key (kbd "H-8") 'digit-argument)
+(global-set-key (kbd "H-9") 'digit-argument)
+
+(global-set-key (kbd "H--") 'negative-argument)
+(global-set-key (kbd "H-u") 'universal-argument)
 #+end_src
 
 *** Make C-g a bit more helpful
