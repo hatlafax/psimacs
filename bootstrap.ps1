@@ -731,6 +731,8 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed Database"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-wget2"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed dos2unix"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed w3m"
+
 
     #
     # Bootstrap msys64 into psimacs dir: install git
