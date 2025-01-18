@@ -2872,6 +2872,29 @@ Screenshot directory used by the system:
   "The system image directory used for screenshots.")
 #+end_src
 
+** HTML documentation
+
+*Psimacs* provides two HTML documents. At first the HTML exported =init.org= file, which provides the full detailed
+information about *Psimacs*. Secondly, an extract of the =init.org= file that does only contain the text and keybinding
+tables but no elsips code.
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Installation of system wide utilities and resources
+;;
+(defconst psimacs/config/docs-dir
+    (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/docs-folder)
+    "The HTML documentation directory.")
+
+(defconst psimacs/config/init-html-file
+    (psimacs/file-system/concat-file psimacs/config/docs-dir "init.html")
+    "The HTML exported configuration file.")
+
+(defconst psimacs/config/keybindings-html-file
+    (psimacs/file-system/concat-file psimacs/config/docs-dir "keybindings.html")
+    "The HTML exported keybindings file.")
+#+end_src
+
 ** Emacs Info directory
 
 *Emacs* primary Info directory.
@@ -2982,7 +3005,6 @@ The following constant defines the file path for this command tracking file.
   (psimacs/file-system/concat-file psimacs/config/session-dir ".mc-lists.el")
   "The psimacs multiple-cursor command tracking file.")
 #+end_src
-
 
 ** Tramp
 
@@ -5788,6 +5810,30 @@ Further reading: [[https://www.emacswiki.org/emacs/AutoRecompile][EmacsWiki: Aut
         ;(setq auto-compile-update-autoloads             t)      ; Whether to update autoloads after compiling.
         ;(add-hook 'auto-compile-inhibit-compile-hook
         ;          'auto-compile-inhibit-compile-detached-git-head)
+)
+#+end_src
+
+** HTML Documentation
+
+Provide keybindings for conveniently access of the *Psimacs* HTML documentation and keybindings.
+
+| Key binding | Command                                                                            | Description                                            |
+|-------------+------------------------------------------------------------------------------------+--------------------------------------------------------|
+| =H-<f1>=      | =M-x (lambda() (interactive) (browse-url psimacs/config/keybindings-html-file)))=    | Open *Psimacs* keybindings as Html in default browser.   |
+| =H-<f2>=      | =M-x (lambda() (interactive) (browse-url psimacs/config/init-html-file)))=           | Open *Psimacs* configuration as Html in default browser. |
+| =H-S-<f1>=    | =M-x (lambda() (interactive) (eww-open-file psimacs/config/keybindings-html-file)))= | Open *Psimacs* keybindings as Html in =eww=.               |
+| =H-S-<f2>=    | =M-x (lambda() (interactive) (eww-open-file psimacs/config/init-html-file)))=        | Open *Psimacs* configuration as Html in =eww=.             |
+|-------------+------------------------------------------------------------------------------------+--------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+(use-package eww
+    :straight nil
+    :bind (
+        ("H-<f1>"   . (lambda() (interactive) (browse-url psimacs/config/keybindings-html-file)))
+        ("H-S-<f1>" . (lambda() (interactive) (eww-open-file psimacs/config/keybindings-html-file)))
+        ("H-<f2>"   . (lambda() (interactive) (browse-url psimacs/config/init-html-file)))
+        ("H-S-<f2>" . (lambda() (interactive) (eww-open-file psimacs/config/init-html-file)))
+    )
 )
 #+end_src
 
