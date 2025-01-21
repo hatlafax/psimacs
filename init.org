@@ -255,31 +255,70 @@ of the right =<meta>= keyboard key, i.e. the =RAlt= key.
 The major help commands and their key bindings.
 
 #+attr_html: :class styledtable
-| Key binding | Command                        | Description                                                                                            |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =H-h==        |                                | Help prefix, giving fast access to the help functions.                                                 |
-| =H-SPC h=     | =M-x psimacs/hydra/help/body=    | Hydra Help...                                                                                          |
-| =H-SPC H=     | =M-x psimacs/hydra/helpful/body= | Hydra Helpful...                                                                                       |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-h b=       | =M-x counsel-descbinds=          | Show a list of all defined key bindings and their definitions.                                         |
-| =C-h k=       | =M-x describe-key=               | Display documentation of the function invoked by key binding.                                          |
-| =H-h H-h b=   | =M-x helm-descbinds=             | Create a listing of all key bindings of current major mode.                                            |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-h f=       | =M-x counsel-describe-function=  | Describe a function in detail incl. key binding and source code. Replacement of =M-x describe-function=. |
-| =C-h v=       | =M-x counsel-describe-variable=  | Display the full documentation of variable. Replacement of =M-x describe-variable=.                      |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-h m=       | =M-x describe-mode=              | Display documentation of current major mode and minor modes.                                           |
-| =H-h H-h m=   | =M-x helm-describe-modes=        | Create a listing of all modes of current major mode.                                                   |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =H-h C-d m=   | =M-x discover-my-major=          | Create a listing of all major-mode keys with their description.                                        |
-| =H-h C-d M=   | =M-x discover-my-mode=           | Create a listing of all MODE keys with their description.                                              |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-h e=       | =M-x view-echo-area-messages=    | View the log of recent echo-area messages: the **Messages** buffer.                                      |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-h r=       | =M-x info-manual=                | Display a manual in Info mode - by default, the Emacs manual.                                          |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-h C-q=     | =M-x help-quick-toggle=          | Toggle display of a window showing popular commands and their bindings.                                |
-|-------------+--------------------------------+--------------------------------------------------------------------------------------------------------|
+| Key binding    | Command                                                                            | Description                                                                                            |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h ?=  =C-h C-h= | =M-x help-for-help=                                                                  | Help command.                                                                                          |
+| =C-h t=          | =M-x help-with-tutorial=                                                             | Select the Emacs learn-by-doing tutorial.                                                              |
+| =C-h C-s=        | =M-x search-forward-help-for-help=                                                   | Search forward in the help-for-help window.                                                            |
+| =C-h C-a=        | =M-x about-emacs=                                                                    | Display the **About GNU Emacs** buffer.                                                                  |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h C-q=        | =M-x help-quick-toggle=                                                              | Toggle display of a window showing popular commands and their bindings.                                |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-h=            |                                                                                    | Help prefix, giving fast access to the help functions.                                                 |
+| =H-SPC h=        | =M-x psimacs/hydra/help/body=                                                        | Hydra Help...                                                                                          |
+| =H-SPC H=        | =M-x psimacs/hydra/helpful/body=                                                     | Hydra Helpful...                                                                                       |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h e=          | =M-x view-echo-area-messages=                                                        | View the log of recent echo-area messages: the **Messages** buffer.                                      |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h b=          | =M-x counsel-descbinds=                                                              | Show a list of all defined key bindings and their definitions.                                         |
+| =C-h c=          | =M-x describe-key-briefly=                                                           | Print the name of the function called by key binding.                                                  |
+| =C-h k=          | =M-x describe-key=                                                                   | Display documentation of the function invoked by key binding.                                          |
+| =H-h H-h b=      | =M-x helm-descbinds=                                                                 | Create a listing of all key bindings of current major mode.                                            |
+| =C-h w=          | =M-x where-is=                                                                       | Print message listing key sequences that invoke the command DEFINITION.                                |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h f=          | =M-x counsel-describe-function=                                                      | Describe a function in detail incl. key binding and source code. Replacement of =M-x describe-function=. |
+| =C-h x=          | =M-x describe-command=                                                               | Only describes commands, and not functions like its sibling below.                                     |
+| =C-h F=          | =M-x Info-goto-emacs-command-node=                                                   | Go to the Info node in the Emacs manual for a command.                                                 |
+| =C-h a=          | =M-x apropos-command=                                                                | List only the commands.                                                                                |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h v=          | =M-x counsel-describe-variable=                                                      | Display the full documentation of variable. Replacement of =M-x describe-variable=.                      |
+| =C-h j=          | =M-x counsel-set-variable=                                                           | Allows the setting of variable values.                                                                 |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h m=          | =M-x describe-mode=                                                                  | Display documentation of current major mode and minor modes.                                           |
+| =H-h H-h m=      | =M-x helm-describe-modes=                                                            | Create a listing of all modes of current major mode.                                                   |
+| =H-h C-d m=      | =M-x discover-my-major=                                                              | Create a listing of all major-mode keys with their description.                                        |
+| =H-h C-d M=      | =M-x discover-my-mode=                                                               | Create a listing of all MODE keys with their description.                                              |
+| =C-h l=          | =M-x counsel-find-library=                                                           | Visit a selected library elisp code.                                                                   |
+| =C-h s=          | =M-x describe-syntax=                                                                | Describe the syntax specifications in the syntax table of BUFFER.                                      |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-h P=          | =M-x describe-package=                                                               | Display the full documentation of a package.                                                           |
+| =C-h p=          | =M-x finder-by-keyword=                                                              | Find packages matching a given keyworkd.                                                               |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+|                | =M-x info=                                                                           | Enter Info the documentation browser.                                                                  |
+| =C-h r=          | =M-x info-manual=                                                                    | Display a manual in Info mode - by default, the Emacs manual.                                          |
+| =C-x R=          | =M-x info-display-manual=                                                            | Display an Info buffer displaying MANUAL.                                                              |
+| =C-h i=          | =M-x counsel-info-lookup-symbol=                                                     | Open info reader and lookup a symbol.                                                                  |
+| =C-h o=          | =M-x counsel-describe-symbol=                                                        | Display the full documentation of symbol.                                                              |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+|                | =M-x apropos=                                                                        | This command will display all symbols that match a given pattern.                                      |
+| =C-x c a=        | =M-x helm-apropos=                                                                   | Helm to describe commands, function, variables and faces.                                              |
+| =C-h d=          | =M-x apropos-documentation=                                                          | Searches just the documentation.                                                                       |
+|                | =M-x apropos-library=                                                                | Lists all variables and functions defined in a library.                                                |
+|                | =M-x apropos-user-option=                                                            | Shows user options available through the Customize interface.                                          |
+|                | =M-x apropos-value=                                                                  | Searches ll symbols with a particular value.                                                           |
+|                | =M-x info-apropos=                                                                   | Search indexes of known Info files on your system for apropos PATTERN.                                 |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+|                | =M-x counsel-describe-face=                                                          | Display the properties of face FACE on FRAME.                                                          |
+| =C-h C=          | =M-x describe-coding-system=                                                         | Display information about CODING-SYSTEM.                                                               |
+| =C-h I=          | =M-x describe-input-method=                                                          | Describe input method.                                                                                 |
+| =C-h L=          | =M-x describe-language-environment=                                                  | Describe how Emacs supports language environment.                                                      |
+| =C-h u=          | =M-x counsel-unicode-char=                                                           | Insert COUNT copies of a Unicode character at point.                                                   |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-<f1>=         | =M-x (lambda() (interactive) (browse-url psimacs/config/keybindings-html-file)))=    | Open *Psimacs* keybindings as Html in default browser.                                                   |
+| =H-<f2>=         | =M-x (lambda() (interactive) (browse-url psimacs/config/init-html-file)))=           | Open *Psimacs* configuration as Html in default browser.                                                 |
+| =H-S-<f1>=       | =M-x (lambda() (interactive) (eww-open-file psimacs/config/keybindings-html-file)))= | Open *Psimacs* keybindings as Html in =eww=.                                                               |
+| =H-S-<f2>=       | =M-x (lambda() (interactive) (eww-open-file psimacs/config/init-html-file)))=        | Open *Psimacs* configuration as Html in =eww=.                                                             |
+|----------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 
 ** Prefixes
 
