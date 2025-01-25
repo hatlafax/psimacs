@@ -339,6 +339,61 @@ References:
 | =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                                                                                                                         |
 |-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
+** Working with other Window
+
+Following table with the most important commands and keybindings for working with other windows.
+
+References:
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+
+#+attr_html: :class styledtable
+| Key binding | Command                                | Description                                                                                                                                                                                   |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x 4 .=     | =M-x xref-find-definitions-other-window= | Like =M-.= (=M-x xref-find-definitions=) but switch to the other window. Find the definition of the identifier at point.                                                                          |
+| =C-x 4 0=     | =M-x kill-buffer-and-window=             | Kill the current buffer and delete the selected window.                                                                                                                                       |
+| =C-x 4 1=     | =M-x same-window-prefix=                 | Execute command in same window. Display the buffer of the next command in the same window. The next buffer is the buffer displayed by the next command invoked immediately after this command |
+| =C-x 4 4=     | =M-x other-window-prefix=                | Execute command in new window. Display the buffer of the next command in a new window. The next buffer is the buffer displayed by the next command invoked immediately after this command     |
+| =C-x 4 a=     | =M-x add-change-log-entry-other-window=  | Find change log file in other window and add entry and item. This is just like =add-change-log-entry= except that it displays the change log file in another window.                            |
+| =C-x 4 b=     | =M-x switch-to-buffer-other-window=      | Switch to another buffer in another window.                                                                                                                                                   |
+| =C-x 4 c=     | =M-x clone-indirect-buffer-other-window= | Create an indirect buffer that is a twin copy of the current buffer in other window.                                                                                                          |
+| =C-x 4 d=     | =M-x dired-other-window=                 | /Edit/ directory DIRNAME (=M-x dired=) -- delete, rename, print, etc. some files in it, but in other window.                                                                                      |
+| =C-x 4 f=     | =M-x find-file-other-window=             | Edit file FILENAME, in another window.                                                                                                                                                        |
+| =C-x 4 m=     | =M-x compose-mail-other-window=          | Like =C-x m= (=M-x compose-mail=). Start composing a mail message to send, but edit the outgoing message in another window.                                                                       |
+| =C-x 4 p=     | =M-x project-other-window-command=       | Run project command, displaying resultant buffer in another window.                                                                                                                           |
+| =C-x 4 r=     | =M-x find-file-read-only-other-window=   | Edit file FILENAME, in another window, but don't allow changes.                                                                                                                               |
+| =C-x 4 C-f=   | =M-x find-file-other-window=             | Edit file FILENAME, in another window.                                                                                                                                                        |
+| =C-x 4 C-j=   | =M-x dired-jump-other-window=            | Jump to Dired buffer, in other window, corresponding to current buffer. If in a buffer visiting a file, Dired that file’s directory and move to that file’s line in the directory listing.    |
+| =C-x 4 C-o=   | =M-x display-buffer=                     | Display BUFFER-OR-NAME in some window, without selecting it.                                                                                                                                  |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+** Working with other Frame
+
+Following table with the most important commands and keybindings for working with other frames.
+
+References:
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+
+#+attr_html: :class styledtable
+| Key binding | Command                               | Description                                                                                                                                                                                                                       |
+|-------------+---------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x 5 .=     | =M-x xref-find-definitions-other-frame= | Like =M-.= (=M-x xref-find-definitions=) but switch to the other frame. Find the definition of the identifier at point.                                                                                                               |
+| =C-x 5 0=     | =M-x delete-frame=                      | Delete FRAME, eliminating it from use. See also =undelete-frame-mode=.                                                                                                                                                              |
+| =C-x 5 1=     | =M-x delete-other-frame=                | Delete all frames except FRAME (default: selected frame).                                                                                                                                                                         |
+| =C-x 5 2=     | =M-x make-frame-command=                | Make a new frame, on the same terminal as the selected frame.                                                                                                                                                                     |
+| =C-x 5 5=     | =M-x other-frame-prefix=                | Execute command in other frame. Display the buffer of the next command in a new frame. The next buffer is the buffer displayed by the next command invoked immediately after this command.                                        |
+| =C-x 5 b=     | =M-x switch-to-buffer-other-frame=      | Switch to another buffer in another frame.                                                                                                                                                                                        |
+| =C-x 5 c=     | =M-x clone-frame=                       | Make and select a new frame with the same parameters as FRAME.                                                                                                                                                                    |
+| =C-x 5 d=     | =M-x dired-other-frame=                 | /Edit/ directory DIRNAME (=M-x dired=) -- delete, rename, print, etc. some files in it, but in other frame.                                                                                                                           |
+| =C-x 5 f=     | =M-x find-file-other-frame=             | Edit file FILENAME, in another frame.                                                                                                                                                                                             |
+| =C-x 5 m=     | =M-x compose-mail-other-frame=          | Like =C-x m= (=M-x compose-mail=). Start composing a mail message to send, but edit the outgoing message in another frame.                                                                                                            |
+| =C-x 5 o=     | =M-x other-frame=                       | Select the ARGth different visible frame on current display, and raise it. All frames are arranged in a cyclic order.                                                                                                             |
+| =C-x 5 p=     | =M-x project-other-frame-command=       | Run project command, displaying resultant buffer in another frame.                                                                                                                                                                |
+| =C-x 5 r=     | =M-x find-file-read-only-other-frame=   | Edit file FILENAME, in another frame, but don't allow changes.                                                                                                                                                                    |
+| =C-x 5 u=     | =M-x undelete-frame=                    | Undelete a frame deleted with =M-x delete-frame=.                                                                                                                                                                                   |
+| =C-x 5 C-f=   | =M-x find-file-other-frame=             | Edit file FILENAME, in another frame.                                                                                                                                                                                             |
+| =C-x 4 C-o=   | =M-x display-buffer-other-frame=        | Display buffer BUFFER preferably in another frame. This function attempts to look for a window displaying BUFFER, on all the frames on the current terminal, skipping the selected window; if that fails, it pops up a new frame. |
+|-------------+---------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
 ** Registers
 
 Emacs registers are compartments where you can save text, rectangles, positions, and other things for later use.
@@ -417,6 +472,61 @@ about beforhand or that I might forget about in the future.
 | =C-x C-+=     | =C-u +1 M-x zoom-in=         | Increase the default face height by one step.                                                                     |
 | =C-x C-0=     | =C-u  0 M-x zoom-frm-unzoom= | Reset the default face height to the global default.                                                              |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
+
+** Buffer Handling in Psimacs
+
+*Psimacs* defines some buffer toggle commands of its own.
+
+#+attr_html: :class styledtable
+| Key binding | Command                                  | Description                                                                                       |
+|-------------+------------------------------------------+---------------------------------------------------------------------------------------------------|
+| =C-TAB=       | =M-x psimacs/buffer/next-user-buffer=      | Switch to the next user buffer. Buffer name starts with *, it's not considered a user buffer.     |
+| =C-S-TAB=     | =M-x psimacs/buffer/previous-user-buffer=  | Switch to the previous user buffer. Buffer name starts with *, it's not considered a user buffer. |
+| =H-TAB=       | =M-x psimacs/buffer/next-emacs-buffer=     | Switch to the next emacs buffer, i.e. that starts with *.                                         |
+| =H-S-TAB=     | =M-x psimacs/buffer/previous-emacs-buffer= | Switch to the previous emacs buffer, i.e. that starts with *.                                     |
+| =C-x <right>= | =M-x next-buffer=                          | Switch to the next buffer.                                                                        |
+| =C-x <left>=  | =M-x previous-buffer=                      | Switch to the previous buffer.                                                                    |
+|-------------+------------------------------------------+---------------------------------------------------------------------------------------------------|
+
+** Tab Bar Mode
+
+A tab is a /window configuration/. In *Emacs*, a window configuration is a collection of windows – size, location, the buffer, and so on –
+that captures the layout of your Emacs frame.
+
+Remarks:
+With option =tab-bar-show= it is possible to hide the tab-bar, but still benefit from all the capabilitties of the tab bar.
+
+References:
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+
+#+attr_html: :class styledtable
+| Key binding | Command                           | Description                                                                                                                                                                                                                                            |
+|-------------+-----------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|             | =M-x tab-bar-mode=                  | Toggle the tab bar in all graphical frames.                                                                                                                                                                                                            |
+| =C-x t RET=   | =M-x tab-switch=                    | Switch to the tab by NAME.                                                                                                                                                                                                                             |
+| =C-x t 0=     | =M-x tab-close=                     | Close the current tab.                                                                                                                                                                                                                                 |
+| =C-x t 1=     | =M-x tab-close-other=               | Close all tabs on the selected frame, except the tab TAB-NUMBER.                                                                                                                                                                                       |
+| =C-x t 2=     | =M-x tab-new=                       | Create a new tab ARG positions to the right.                                                                                                                                                                                                           |
+| =C-x t ^ f=   | =M-x tab-detach=                    | Move tab number FROM-NUMBER to a new frame.                                                                                                                                                                                                            |
+| =C-x t b=     | =M-x switch-to-buffer-other-tab=    | Switch to buffer BUFFER-OR-NAME in another tab.                                                                                                                                                                                                        |
+| =C-x t d=     | =M-x dired-other-tab=               | /Edit/ directory DIRNAME.  Like =M-x dired= but make a new tab.                                                                                                                                                                                            |
+| =C-x t f=     | =M-x find-file-other-tab=           | Edit file FILENAME, in another tab.                                                                                                                                                                                                                    |
+| =C-x t G=     | =M-x tab-group=                     | Add the tab specified by its absolute position TAB-NUMBER to GROUP-NAME. If no TAB-NUMBER is specified, then set the GROUP-NAME for the current tab. Interactively, TAB-NUMBER is the prefix numeric argument, and the command prompts for GROUP-NAME. |
+| =C-x t M=     | =M-x tab-move-to=                   | Move tab from FROM-NUMBER position to new position at TO-NUMBER.                                                                                                                                                                                       |
+| =C-x t m=     | =M-x tab-move=                      | Move the current tab ARG positions to the right.                                                                                                                                                                                                       |
+| =C-x t N=     | =M-x tab-new-to=                    | Add a new tab at the absolute position TAB-NUMBER.                                                                                                                                                                                                     |
+| =C-x t n=     | =M-x tab-duplicate=                 | Clone the current tab to ARG positions to the right.                                                                                                                                                                                                   |
+| =C-x t O=     | =M-x tab-previous=                  | Switch to ARGth previous tab.                                                                                                                                                                                                                          |
+| =C-x t o=     | =M-x tab-next=                      | Switch to ARGth next tab.                                                                                                                                                                                                                              |
+| =C-x t p=     | =M-x project-other-tab-command=     | Run project command, displaying resultant buffer in a new tab.                                                                                                                                                                                         |
+| =C-x t r=     | =M-x tab-rename=                    | Give the tab specified by its absolute position TAB-NUMBER a new NAME.                                                                                                                                                                                 |
+| =C-x t t=     | =M-x other-tab-prefix=              | Execute command in other tab. Display the buffer of the next command in a new tab. The next buffer is the buffer displayed by the next command invoked immediately after this command.                                                                 |
+| =C-x t u=     | =M-x tab-undo=                      | Restore the most recently closed tab.                                                                                                                                                                                                                  |
+| =C-x t C-f=   | =M-x find-file-other-tab=           | Edit file FILENAME, in another tab.                                                                                                                                                                                                                    |
+| =C-x t C-r=   | =M-x find-file-read-only-other-tab= | Edit file FILENAME, in another tab, but don’t allow changes.                                                                                                                                                                                           |
+|             | =M-x tab-list=                      | Display a list of named window configurations.                                                                                                                                                                                                         |
+|             | =M-x tab-recent=                    | Switch to ARGth most recently visited tab.                                                                                                                                                                                                             |
+|-------------+-----------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Working with Info
 
