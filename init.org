@@ -1226,11 +1226,14 @@ This allows sharing of a single configuration on multiple machines.")
 =config= directory after tangling. The performance increase is very small currently. It
 is done nevertheless.
 
+As of *Emacs 30.1* byte compiling leads to problems with configuration file =init-advanced-shell.el=.
+Therefore byte-compiling is disabled on default.
+
 #+begin_src emacs-lisp :tangle early-init.el
 ;;
 ;; Inhibit the byte compilation of the config folder
 ;;
-(defconst psimacs/config/inhibit-byte-compile-config-folder nil
+(defconst psimacs/config/inhibit-byte-compile-config-folder t
   "If set to true, config directory will not be byte-compiled.")
 
 (defvar psimacs/config/byte-compile-config-folder nil
@@ -13564,6 +13567,7 @@ Sort based on the key description ignoring case."
 
 (use-package which-key
     :demand t
+    :straight nil
     :diminish which-key-mode
     :bind (
            :map psimacs/config/global-key-map/special
@@ -18598,9 +18602,6 @@ A small number of internal helper functions used in *Psimacs's* [[https://code.o
 (use-package org
     :straight nil
     :config
-        (setq org-export-backends '(ascii html icalendar latex beamer md odt org-ref pandoc))
-        (setq org-cite-csl-styles-dir psimacs/config/org-cite-csl-styles-dir)
-
         ;; Make windmove work in Org mode
         (add-hook 'org-shiftup-final-hook    'windmove-up)
         (add-hook 'org-shiftleft-final-hook  'windmove-left)
@@ -21356,6 +21357,24 @@ Usually called in a hook function."
             ("H-m H-l"        . remove-results-remaining-jupyter-src-blocks)
             ("H-SPC j"        . psimacs/hydra/jupyter/open-hydra)
         )
+)
+#+end_src
+
+*** Org Export Backends and other late settings
+
+Define the *Psimacs* export backends and performe various other settings.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; The following settings are performed last after all other things are
+;; setup.
+;;
+(use-package org
+    :straight nil
+    :after org
+    :config
+        (setq org-export-backends '(ascii html icalendar latex beamer md odt org-ref pandoc))
+        (setq org-cite-csl-styles-dir psimacs/config/org-cite-csl-styles-dir)
 )
 #+end_src
 

@@ -105,7 +105,7 @@ This allows sharing of a single configuration on multiple machines.")
 ;;
 ;; Inhibit the byte compilation of the config folder
 ;;
-(defconst psimacs/config/inhibit-byte-compile-config-folder nil
+(defconst psimacs/config/inhibit-byte-compile-config-folder t
   "If set to true, config directory will not be byte-compiled.")
 
 (defvar psimacs/config/byte-compile-config-folder nil
