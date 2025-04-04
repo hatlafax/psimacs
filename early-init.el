@@ -266,7 +266,9 @@ It is the fraction of the current heap size.")
           native-comp-async-report-warnings-errors 'silent
           native-comp-deferred-compilation         nil ; Obsolete since Emacs 29.1
           native-comp-warning-on-missing-source    nil
+          native-comp-jit-compilation-deny-list   '(".*org-element.*")
           package-native-compile                   t)
+
   ;; Deactivate the `native-compile' feature if it is not available
   (setq features (delq 'native-compile features)))
 
