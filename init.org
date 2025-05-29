@@ -4732,7 +4732,7 @@ properly installed [[https://git-scm.com/][Git]] program. A portable version is 
 ;; Portable Git configuration
 ;;
 (defconst psimacs/config/git-runtime-dir
-  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "PortableGit/cmd")
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "Git/cmd")
   "The psimacs git runtime directory.")
 
 (defconst psimacs/config/git-runtime-exe
@@ -14719,15 +14719,31 @@ Global bindings:
 
 Setup of some AI tools for assisting work.
 
-*** gtel : A simple LLM client for Emacs
+*** gptel : A simple LLM client for Emacs
 
 [[https://github.com/karthink/gptel][gptel]] is a simple LLM client for Emacs.
+
+The basic commands:
+#+attr_html: :class styledtable1
+| Key binding   | Command                        | Description                                   |
+|---------------+--------------------------------+-----------------------------------------------|
+|               | =M-x gptel=                    | Start or switch to the chat buffer.           |
+|               | =C-u M-x gptel=                | Start a new session of the chat buffer.       |
+| =C-c RET=     | =M-x gptel-send=               | Transient menu for preferences, input/output redirection etc. |
+| =C-u C-c RET= | =C-u M-x gptel-send=           | Set chat parameters and send your prompt.     |
+|               | =M-x gptel-menu=               | Transient menu for preferences, input/output redirection etc. |
+|               | =M-x gptel-add=                | Add/remove a region or buffer to gptel’s context. In Dired, add/remove marked files. |
+|               | =M-x gptel-add-file=           | Add a file (text or supported media type) to gptel’s context. Also available from the transient menu. |
+|               | =M-x gptel-rewrite=            | Rewrite, refactor or change the selected region. Can diff/ediff changes before merging/applying. |
+|               | =M-x gptel-org-set-topic=      | Limit conversation context to an Org heading. |
+|               | =M-x gptel-org-set-properties= | Write gptel configuration as Org properties, for per-heading chat configuration. |
+|---------------+--------------------------------+-----------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 (use-package gptel
   :straight t
   :init
-    (setq gptel-model "gpt-3.5-turbo"
+    (setq gptel-model "o4-mini"
           gptel-default-mode 'org-mode
           gptel-api-key #'(lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file))
     )
@@ -21377,6 +21393,171 @@ Define the *Psimacs* export backends and performe various other settings.
     :config
         (setq org-export-backends '(ascii html icalendar latex beamer md odt org-ref pandoc))
         (setq org-cite-csl-styles-dir psimacs/config/org-cite-csl-styles-dir)
+)
+#+end_src
+
+** Org-present
+
+[[https://github.com/rlister/org-present][Org-present]] is an extremely minimalist presentation 
+tool for Emacs [[https://orgmode.org/][org-mode]].
+
+Dependencies:
+- [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]]
+- [[https://github.com/joostkremers/writeroom-mode][writeroom-mode]]
+
+Keybindings:
+
+| Key binding | Command                                | Description                                                                 |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------|
+| =<left>=    | =M-x org-present-prev=                 | Previous slide.                                                             |
+| =<right>=   | =M-x org-present-next=                 | Next slide.                                                                 |
+| =C-c C-==   | =M-x org-present-big =                 | For large txt.                                                              |
+| =C-c C--=   | =M-x org-present-small=                | For small txt.                                                              |
+| =C-c C-q=   | =M-x org-present-quit=                 | Quit presentation mode.                                                     |
+| =C-c C-r=   | =M-x org-present-read-only=            | Read only mode.                                                             |
+| =C-c C-w=   | =M-x org-present-read-write=           | Read/Write mode.                                                            |
+| =C-c C-<=   | =M-x org-present-beginning=            | Jump to the first slide.                                                    |
+| =C-c C->=   | =M-x org-present-end=                  | Jump to the last slide.                                                     |
+| =C-c C-1=   | =M-x org-present-toggle-one-big-page=  | Show one big page with all slides.                                          |
+|-------------+----------------------------------------+-----------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el
+;;
+;; Install visual-fill-column
+;;
+(use-package visual-fill-column
+    :init
+        (setq visual-fill-column-center-text t)
+        ;(setq visual-fill-column-width 120) ;; By default, the global value of `fill-column' is used
+)
+
+;;
+;; Install writeroom-mode
+;;
+(use-package writeroom-mode
+    :defer t
+)
+
+;;
+;; Install org-present mode
+;;
+(use-package org-present
+    :commands
+        (
+            psimacs/org/presentation-start
+            psimacs/org/presentation-end
+            psimacs/org/presentation-prepare-slide
+        )
+    :config
+        (message "From org-present config...")
+
+        ;; Load org-faces to make sure we can set appropriate faces
+        (require 'org-faces)
+
+        ;; Hide emphasis markers on formatted text
+        (setq org-hide-emphasis-markers t)
+
+        ;; Set reusable font name variables
+        (defvar psimacs/org/fixed-width-font "Hack Nerd Font Mono"
+          "The font to use for monospaced (fixed width) text.")
+
+        (defvar psimacs/org/variable-width-font "Hack Nerd Font Propo"
+          "The font to use for variable-pitch (document) text.")
+
+        ;; Resize Org headings
+        (dolist (face '((org-level-1 . 1.5)
+                        (org-level-2 . 1.1)
+                        (org-level-3 . 1.05)
+                        (org-level-4 . 1.0)
+                        (org-level-5 . 1.1)
+                        (org-level-6 . 1.1)
+                        (org-level-7 . 1.1)
+                        (org-level-8 . 1.1)))
+                (set-face-attribute (car face) nil :font psimacs/org/variable-width-font :weight 'medium :height (cdr face))
+        )
+
+        ;; Make the document title a bit bigger
+        (set-face-attribute 'org-document-title nil :font psimacs/org/variable-width-font :weight 'bold :height 1.3)
+
+        ;; Make sure certain org faces use the fixed-pitch face when variable-pitch-mode is on
+        (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+        (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+        (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+        (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+
+    :hook (
+        (org-mode . variable-pitch-mode)
+        (org-present-mode . psimacs/org/presentation-start)
+        (org-present-mode-quit . psimacs/org/presentation-end)
+        (org-present-after-navigate-functions . psimacs/org/presentation-prepare-slide)
+    )
+)
+
+(defun psimacs/org/presentation-prepare-slide (buffer-name heading)
+    (message "From presentation-prepare-slide...")
+  ;; Show only top-level headlines
+  (org-overview)
+
+  ;; Unfold the current entry
+  (org-show-entry)
+
+  ;; Show only direct subheadings of the slide but don't expand them
+  (org-show-children)
+)
+
+(defun psimacs/org/presentation-start ()
+    (message "From presentation-start...")
+
+    ;(org-present-big)
+    (org-present-read-only)
+    (org-present-hide-cursor)
+
+    ;; Tweak font sizes
+    (setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
+                                       (header-line (:height 4.0) variable-pitch)
+                                       (org-document-title (:height 1.75) org-document-title)
+                                       (org-code (:height 1.55) org-code)
+                                       (org-verbatim (:height 1.55) org-verbatim)
+                                       (org-block (:height 1.25) org-block)
+                                       (org-block-begin-line (:height 0.7) org-block)))
+
+    ;; Set a blank header line string to create blank space at the top
+    (setq header-line-format " ")
+
+    ;; Display inline images automatically
+    (org-display-inline-images)
+
+    ;; Center the presentation and wrap lines
+    (visual-line-fill-column-mode t)
+    ;(visual-fill-column-toggle-center-text)
+
+    ;(writeroom-mode 1)
+)
+
+(defun psimacs/org/presentation-end ()
+    (message "From presentation-end...")
+
+    ;(org-present-small)
+    (org-present-read-write)
+    (org-present-show-cursor)
+
+    ;; Reset font customizations
+    (setq-local face-remapping-alist '((default variable-pitch default)))
+
+    ;; Clear the header line string so that it isn't displayed
+    (setq header-line-format nil)
+
+    ;; Stop displaying inline images
+    (org-remove-inline-images)
+
+    ;; Stop centering the document
+    (visual-line-fill-column-mode -1)
+
+    ;(writeroom-mode 0)
 )
 #+end_src
 
