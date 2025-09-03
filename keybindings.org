@@ -468,9 +468,21 @@ about beforhand or that I might forget about in the future.
 | =C-x M-:=     | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
 |             | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x C--=     | =C-u -1 M-x zoom-out=        | Decrease the default face height by one step.                                                                     |
-| =C-x C-+=     | =C-u +1 M-x zoom-in=         | Increase the default face height by one step.                                                                     |
-| =C-x C-0=     | =C-u  0 M-x zoom-frm-unzoom= | Reset the default face height to the global default.                                                              |
+| =C-x C-+=     | =M-x zoom-in/out=            | Zooms in  current buffer                                                                                          |
+| =C-x C--=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
+| =C-x C-0=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
+| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
+| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
+| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
+|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =C-u C-x C-+= | =C-u M-x zoom-in/out=        | Zooms in  current frame                                                                                           |
+| =C-u C-x C--= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
+| =C-u C-x C-0= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
+| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
+| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
+| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
+|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =H-m C-x C-0= | =M-x zoom-frm-unzoom=        | Cancel zoom of frame.                                                                                             |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
 
 ** Buffer Handling in Psimacs
@@ -1535,10 +1547,22 @@ Refefences:
 The package [[https://www.emacswiki.org/emacs/SetFonts#ZoomFrame][zoom-frm]] allows the font resize of the current buffer, the current frame or of all frames.
 It is an enhancement of the build-in =M-x text-adjust-scale= command.
 
-| Key binding | Command             | Description           |
-|-------------+---------------------+-----------------------|
-| =H-m C-x C-0= | =M-x zoom-frm-unzoom= | Cancel zoom of frame. |
-|-------------+---------------------+-----------------------|
+| Key binding | Command             | Description                               |
+|-------------+---------------------+-------------------------------------------|
+| =C-x C-+=     | =M-x zoom-in/out=     | Zooms in  current buffer                  |
+| =C-x C--=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
+| =C-x C-0=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
+| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
+| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
+| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
+|-------------+---------------------+-------------------------------------------|
+| =C-u C-x C-+= | =C-u M-x zoom-in/out= | Zooms in  current frame                   |
+| =C-u C-x C--= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
+| =C-u C-x C-0= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
+| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
+| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
+| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
+|-------------+---------------------+-------------------------------------------|
 
 ** Zoom
 
@@ -2285,11 +2309,9 @@ Provide access to the HTML documentation of *Psimacs*.
 |-------------+------------------------------------------+------------------------------------------------------------------|
 | =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config=   | Open default browser and shows the Psimacs configuration export. |
 | =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=     | Open default browser and shows the Psimacs keys.                 |
-| =H-h H-p b=   | =M-x psimacs/help/browse-psimacs-key-list= | Open default browser and shows the Psimacs listed keys.          |
 |-------------+------------------------------------------+------------------------------------------------------------------|
 | =H-h H-p C=   | =M-x psimacs/help/org-psimacs-config=      | Open org buffer with Psimacs configuration.                      |
 | =H-h H-p K=   | =M-x psimacs/help/org-psimacs-keys=        | Open org buffer and shows the Psimacs keys.                      |
-| =H-h H-p B=   | =M-x psimacs/help/org-psimacs-key-list=    | Open org buffer and shows the psimacs listed keys.               |
 |-------------+------------------------------------------+------------------------------------------------------------------|
 
 ** Helm

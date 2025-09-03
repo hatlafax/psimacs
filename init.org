@@ -646,9 +646,19 @@ about beforhand or that I might forget about in the future.
 | =C-x M-:=     | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
 |             | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x C--=     | =C-u -1 M-x zoom-out=        | Decrease the default face height by one step.                                                                     |
-| =C-x C-+=     | =C-u +1 M-x zoom-in=         | Increase the default face height by one step.                                                                     |
-| =C-x C-0=     | =C-u  0 M-x zoom-frm-unzoom= | Reset the default face height to the global default.                                                              |
+| =C-x C-+=     | =M-x zoom-in/out=            | Zooms in  current buffer                                                                                          |
+| =C-x C--=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
+| =C-x C-0=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
+| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
+| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
+| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
+|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =C-u C-x C-+= | =C-u M-x zoom-in/out=        | Zooms in  current frame                                                                                           |
+| =C-u C-x C--= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
+| =C-u C-x C-0= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
+| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
+| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
+| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
 
 ** Buffer Handling in Psimacs
@@ -11310,10 +11320,24 @@ Add key bindings for the frame creation strategy commands, as promised in the [[
 The package [[https://www.emacswiki.org/emacs/SetFonts#ZoomFrame][zoom-frm]] allows the font resize of the current buffer, the current frame or of all frames.
 It is an enhancement of the build-in =M-x text-adjust-scale= command.
 
-| Key binding | Command             | Description           |
-|-------------+---------------------+-----------------------|
-| =H-m C-x C-0= | =M-x zoom-frm-unzoom= | Cancel zoom of frame. |
-|-------------+---------------------+-----------------------|
+| Key binding | Command             | Description                               |
+|-------------+---------------------+-------------------------------------------|
+| =C-x C-+=     | =M-x zoom-in/out=     | Zooms in  current buffer                  |
+| =C-x C--=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
+| =C-x C-0=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
+| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
+| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
+| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
+|-------------+---------------------+-------------------------------------------|
+| =C-u C-x C-+= | =C-u M-x zoom-in/out= | Zooms in  current frame                   |
+| =C-u C-x C--= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
+| =C-u C-x C-0= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
+| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
+| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
+| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
+|-------------+---------------------+-------------------------------------------|
+| =H-m C-x C-0= | =M-x zoom-frm-unzoom= | Cancel zoom of frame.                     |
+|-------------+---------------------+-------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-layout.el :var file-description="Basic layout setup"
 ;;
@@ -13021,30 +13045,22 @@ Provide access to the HTML documentation of *Psimacs*.
 |-------------+------------------------------------------+------------------------------------------------------------------|
 | =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config=   | Open default browser and shows the Psimacs configuration export. |
 | =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=     | Open default browser and shows the Psimacs keys.                 |
-| =H-h H-p b=   | =M-x psimacs/help/browse-psimacs-key-list= | Open default browser and shows the Psimacs listed keys.          |
 |-------------+------------------------------------------+------------------------------------------------------------------|
 | =H-h H-p C=   | =M-x psimacs/help/org-psimacs-config=      | Open org buffer with Psimacs configuration.                      |
 | =H-h H-p K=   | =M-x psimacs/help/org-psimacs-keys=        | Open org buffer and shows the Psimacs keys.                      |
-| =H-h H-p B=   | =M-x psimacs/help/org-psimacs-key-list=    | Open org buffer and shows the psimacs listed keys.               |
 |-------------+------------------------------------------+------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-tools.el
 (defun psimacs/help/browse-psimacs-config ()
   "Open default browser and shows the psimacs HTML configuration export."
   (interactive)
-  (browse-url (psimacs/file-system/concat-file user-emacs-directory "init.html"))
+  (browse-url (psimacs/file-system/concat-file user-emacs-directory "docs/init.html"))
 )
 
 (defun psimacs/help/browse-psimacs-keys ()
-  "Open default browser and shows the psimacs HTML keys."
-  (interactive)
-  (browse-url (psimacs/file-system/concat-file user-emacs-directory "sortedKeyBindings.html"))
-)
-
-(defun psimacs/help/browse-psimacs-key-list ()
   "Open default browser and shows the psimacs HTML listed keys."
   (interactive)
-  (browse-url (psimacs/file-system/concat-file user-emacs-directory "keybindings.html"))
+  (browse-url (psimacs/file-system/concat-file user-emacs-directory "docs/keybindings.html"))
 )
 
 (defun psimacs/help/open-psimacs-config ()
@@ -13054,23 +13070,15 @@ Provide access to the HTML documentation of *Psimacs*.
 )
 
 (defun psimacs/help/open-psimacs-keys ()
-  "Open org buffer and shows the Psimacs keys."
-  (interactive)
-  (find-file-read-only (psimacs/file-system/concat-file user-emacs-directory "sortedKeyBindings.org"))
-)
-
-(defun psimacs/help/open-psimacs-key-list ()
   "Open org buffer and shows the psimacs listed keys."
   (interactive)
   (find-file-read-only (psimacs/file-system/concat-file user-emacs-directory "keybindings.org"))
 )
 
 (define-key psimacs/config/global-key-map/help (kbd "H-p c") 'psimacs/help/browse-psimacs-config)
-(define-key psimacs/config/global-key-map/help (kbd "H-p k") 'psimacs/help/browse-psimacs-keys)
-(define-key psimacs/config/global-key-map/help (kbd "H-p b") 'psimacs/help/browse-psimacs-key-list)
 (define-key psimacs/config/global-key-map/help (kbd "H-p C") 'psimacs/help/open-psimacs-config)
+(define-key psimacs/config/global-key-map/help (kbd "H-p k") 'psimacs/help/browse-psimacs-keys)
 (define-key psimacs/config/global-key-map/help (kbd "H-p K") 'psimacs/help/open-psimacs-keys)
-(define-key psimacs/config/global-key-map/help (kbd "H-p B") 'psimacs/help/open-psimacs-key-list)
 #+end_src
 
 ** EditorConfig Emacs Plugin
@@ -24000,7 +24008,6 @@ _v_: variable      ^ ^
 _e_: view messages _l_: view lossage        _C_: coding-system     _I_: input-method
 
 ^ ^                _K_: Psimacs keys        ^ ^                    _P_: Psimacs
-^ ^                _B_: Psimacs key list
 
 _q_: quit
 "
@@ -24033,7 +24040,6 @@ _q_: quit
         ;; Psimacs
         ("P" psimacs/help/browse-psimacs-config nil)
         ("K" psimacs/help/browse-psimacs-keys nil)
-        ("B" psimacs/help/browse-psimacs-key-list nil)
 
         ;; quit
         ("q" help-quit)
