@@ -1436,10 +1436,23 @@ set the directory where the compiled files are stored.
     ;; Activate `native-compile'
     (setq native-comp-jit-compilation              t
           native-comp-async-report-warnings-errors 'silent
-          native-comp-deferred-compilation         nil ; Obsolete since Emacs 29.1
+          native-comp-async-query-on-exit          t
+          native-comp-deferred-compilation         native-comp-jit-compilation ; Obsolete since Emacs 29.1
           native-comp-warning-on-missing-source    nil
           native-comp-jit-compilation-deny-list   '(".*org-element.*")
-          package-native-compile                   t)
+          package-native-compile                   t
+
+          ;; Show buffer when there is a warning.
+          ;; (NOT RECOMMENDED, except during development).
+          ;compile-angel-verbose                     t
+          ;compile-angel-byte-compile-report-issues  t
+          ;warning-minimum-level                     :warning
+          ;byte-compile-verbose                      t
+          ;byte-compile-warnings                     t
+          ;native-comp-async-report-warnings-errors  t
+          ;native-comp-warning-on-missing-source     t
+
+    )
 
   ;; Deactivate the `native-compile' feature if it is not available
   (setq features (delq 'native-compile features)))
@@ -1503,7 +1516,7 @@ is because it breaks some old (badly written) code.
 ;; prevent the use of stale byte-code. Otherwise, it saves us a little IO time
 ;; to skip the mtime checks on every *.elc file.
 ;;
-(setq load-prefer-newer noninteractive)
+(setq load-prefer-newer t)
 #+end_src
 
 - Let's inhibit resizing the frame at early stage.
@@ -1769,7 +1782,7 @@ FILE        : el file that get generated
 ORG-FILE    : org mode file that is prints
 DESCRIPTION : short description text"
   (let (
-        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8; lexical-binding: t; -*-\n" (file-name-nondirectory file) description)
+        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8; lexical-binding: t -*-\n" (file-name-nondirectory file) description)
                                   ";;; Commentary:\n"
                                   ";;\n"
                           (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
@@ -5333,8 +5346,63 @@ require in one of your custom commands.
 If you do want to start optimizing your startup, you will likely end up using just =:hook= for mode triggered
 loading and =:defer t= for command triggered loading!
 
-*** Provide the diminish.el package
+*** Compile Angle
 
+The [[https://github.com/jamescherti/compile-angel.el][compile angle]] speeds up Emacs by ensuring that all Elisp 
+libraries are both byte-compiled and native-compiled.
+
+#+begin_src emacs-lisp :tangle config/init-package-manager.el
+(use-package compile-angel
+  :ensure t
+  :demand t
+  :config
+      ;; Set `compile-angel-verbose' to nil to disable compile-angel messages.
+      ;; (When set to nil, compile-angel won't show which file is being compiled.)
+      ;;(setq compile-angel-verbose t)
+      (setq compile-angel-verbose nil)
+
+      ;; Display the *Compile-Log* buffer (Set it to t while writing elisp)
+      (setq compile-angel-display-buffer nil)
+
+      ;; Uncomment the line below to compile automatically when an Elisp file is saved
+      (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
+
+      ;; The following directive prevents compile-angel from compiling your init files
+      (push "/init.el" compile-angel-excluded-files)
+      (push "/early-init.el" compile-angel-excluded-files)
+      (push "/config/init-.*\\.el$" compile-angel-excluded-files-regexps)
+
+      ;(mapc (lambda (file)
+      ;            (push file compile-angel-excluded-files-regexps))
+      ;          '(
+      ;              "early-init.el"
+      ;              "init.el"
+      ;              "/config/init-.*\\.el$"
+      ;          )
+      ;      )
+
+      ;; Ensure that the value of `savehist-file` is updated before proceeding
+      (with-eval-after-load "savehist"
+        (push (concat "/" (file-name-nondirectory savehist-file))
+              compile-angel-excluded-files))
+
+      ;; Ensure that the value of `recentf-save-file` is updated before proceeding
+      (with-eval-after-load "recentf"
+        (push (concat "/" (file-name-nondirectory recentf-save-file))
+              compile-angel-excluded-files))
+
+      ;; A global mode that compiles .el files before they are loaded
+      ;; using `load' or `require'.
+      (compile-angel-on-load-mode)
+      ;(compile-angel-on-save-mode)
+
+      ;; Enable both byte compilation and native compilation (default)
+      (setq compile-angel-enable-byte-compile t)
+      (setq compile-angel-enable-native-compile t)
+)
+#+end_src
+
+*** Provide the diminish.el package
 
 [[https://github.com/emacsmirror/diminish][Diminish]] implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
 When [[https://github.com/emacsmirror/diminish][diminish]] is installed, you can use the =:diminish= keyword in =use-package= calls. If diminish is not
@@ -5944,7 +6012,7 @@ is highly confusing for users.
                (allow-no-window . t)))
 #+end_src
 
-** Automatically compile outdated elips files
+** CANCELED Automatically compile outdated elips files
 
 The [[https://github.com/emacscollective/auto-compile][Auto-compile]] package provides two minor modes which automatically recompile Emacs Lisp source files.
 Together these modes guarantee that Emacs never loads outdated byte code files.
@@ -7016,6 +7084,20 @@ instead of =C-u C-SPC= to cycle through the mark ring.
 (bind-key "H-x q" 'pop-global-mark)
 #+end_src
 
+*** Repeat-mode
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Repeating.html][Repeat mode]] allows repeating commands bound to sequences of two or more keys by typing a single character.
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+;;
+;; Repeat-mode allows repeating commands bound to sequences of two or more keys by typing a single character.
+;;
+(repeat-mode 1)
+#+end_src
+
+Reference:
+- [[https://karthinks.com/software/it-bears-repeating/][It Bears Repeating: Emacs 28 & Repeat Mode]]
+
 *** Indentation and Tab stops
 
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Indent-Convenience.html][Electric Indent mode]] is a global minor mode that automatically indents the line after every =RET= you type.
@@ -7032,7 +7114,10 @@ Use instead:
 ;;
 ;; Matter of taste, do not automatically indent on RET
 ;;
-(setq electric-indent-mode nil)
+(electric-indent-mode nil)
+
+;; Toggle removal of indentation from text saved to the kill ring.
+(kill-ring-deindent-mode 1)
 #+end_src
 
 Do not use tab characters -> fill spaces instead.
@@ -14735,25 +14820,90 @@ The basic commands:
 #+attr_html: :class styledtable1
 | Key binding | Command                      | Description                                                                                           |
 |-------------+------------------------------+-------------------------------------------------------------------------------------------------------|
-|             | =M-x gptel=                    | Start or switch to the chat buffer.                                                                   |
+|             | =M-x gptel=                    | Create a new dedicated chat buffer. Not required to use gptel.                                        |
 |             | =C-u M-x gptel=                | Start a new session of the chat buffer.                                                               |
-| =C-c RET=     | =M-x gptel-send=               | Transient menu for preferences, input/output redirection etc.                                         |
-| =C-u C-c RET= | =C-u M-x gptel-send=           | Set chat parameters and send your prompt.                                                             |
-|             | =M-x gptel-menu=               | Transient menu for preferences, input/output redirection etc.                                         |
+| =C-c RET=     | =M-x gptel-send=               | Send all text up to (point), or the selection if region is active. Works anywhere in Emacs.           |
+| =C-u C-c RET= | =C-u M-x gptel-send=           | Transient menu for preferences, input/output redirection etc.                                         |
+|             | =M-x gptel-rewrite=            | Rewrite, refactor or change the selected region. Can diff/ediff changes before merging/applying.      |
+|             | =M-x gptel-menu=               | Transient menu for preferences, input/output redirection etc. Same as =C-u gptel-send=.                 |
 |             | =M-x gptel-add=                | Add/remove a region or buffer to gptel’s context. In Dired, add/remove marked files.                  |
 |             | =M-x gptel-add-file=           | Add a file (text or supported media type) to gptel’s context. Also available from the transient menu. |
-|             | =M-x gptel-rewrite=            | Rewrite, refactor or change the selected region. Can diff/ediff changes before merging/applying.      |
 |             | =M-x gptel-org-set-topic=      | Limit conversation context to an Org heading.                                                         |
 |             | =M-x gptel-org-set-properties= | Write gptel configuration as Org properties, for per-heading chat configuration.                      |
 |-------------+------------------------------+-------------------------------------------------------------------------------------------------------|
 
+
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 (use-package gptel
   :straight t
+  :hook (after-init . psimacs/config/gptel-initialize)
   :init
-    (setq gptel-model "o4-mini"
-          gptel-default-mode 'org-mode
-          gptel-api-key #'(lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file))
+    (defun psimacs/config/gptel-initialize ()
+        (setq gptel-track-media t)
+        ;(setq gptel-model "gpt-5-mini")
+        (setq gptel-model "o4-mini")
+        (setq gptel-default-mode 'org-mode)
+
+        ;;
+        ;; OpenAI
+        ;;
+        (setq gptel-api-key #'(lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file)))
+
+        ;;
+        ;; Anthropic: makes this backend available to select
+        ;;
+        (gptel-make-anthropic "Claude"
+          :stream t
+          :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
+        )
+
+        ;; To use Claude 3.7 Sonnet model in its “thinking” mode, you can define
+        ;; a second Claude backend and select it via the UI or elisp:
+        (gptel-make-anthropic "Claude-thinking" ;Any name you want
+          :stream t
+          :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
+          :models '(claude-3-7-sonnet-20250219 claude-sonnet-4-20250514 claude-sonnet-4-5-20250929 claude-opus-4-1-20250805 claude-3-5-haiku-latest)
+          :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
+                            :max_tokens 64000)
+        )
+
+        ;;
+        ;; Google
+        ;;
+        ;(gptel-make-gemini "Gemini"
+        ;  :key "YOUR_GEMINI_API_KEY"
+        ;  :stream t
+        ;)
+
+        ;;
+        ;; Together.ai
+        ;;
+        ;;
+        ;(gptel-make-openai "TogetherAI"         ;Any name you want
+        ;  :host "api.together.xyz"
+        ;  :key "your-api-key"                   ;can be a function that returns the key
+        ;  :stream t
+        ;  :models '(;; has many more, check together.ai
+        ;            mistralai/Mixtral-8x7B-Instruct-v0.1
+        ;            codellama/CodeLlama-13b-Instruct-hf
+        ;            codellama/CodeLlama-34b-Instruct-hf))
+
+
+        ;;
+        ;; OpenRouter
+        ;;
+        ;; OpenRouter offers an OpenAI compatible API
+        ;(gptel-make-openai "OpenRouter"               ;Any name you want
+        ;  :host "openrouter.ai"
+        ;  :endpoint "/api/v1/chat/completions"
+        ;  :stream t
+        ;  :key "your-api-key"                   ;can be a function that returns the key
+        ;  :models '(openai/gpt-3.5-turbo
+        ;            mistralai/mixtral-8x7b-instruct
+        ;            meta-llama/codellama-34b-instruct
+        ;            codellama/codellama-70b-instruct
+        ;            google/palm-2-codechat-bison-32k
+        ;            google/gemini-pro))
     )
 )
 #+end_src
@@ -15602,6 +15752,8 @@ See also:
 )
 #+end_src
 
+*** Base Magit
+
 #+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
 ;;
 ;; User interface for Git
@@ -15621,6 +15773,30 @@ See also:
         (add-hook 'git-commit-setup-hook 'flyspell-mode)
 
 )
+#+end_src
+
+*** Why-This Mode
+
+The package [[https://codeberg.org/akib/emacs-why-this][why-this]] shows why the current line was changed on the right side of line. 
+It can also show editing history with heat map.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
+(use-package why-this
+    :custom (why-this-annotate-enable-heat-map nil)
+    :custom-face
+        (why-this-face
+            ((t ( :foreground unspecified :inherit font-lock-comment-face))))
+)
+#+end_src
+
+*** Diff-hl Mode
+
+[[diff-hl-mode][diff-hl]] highlights uncommitted changes on the side of the window, allows you to jump between and revert them selectively.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
+(use-package diff-hl
+    :hook (after-init . global-diff-hl-mode)
+    :custom (diff-hl-draw-borders nil))
 #+end_src
 
 ** Else Mode

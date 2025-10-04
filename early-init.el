@@ -1,4 +1,4 @@
-;;; early-init.el --- Early initialization -*- coding: utf-8; lexical-binding: t; -*-
+;;; early-init.el --- Early initialization -*- coding: utf-8; lexical-binding: t -*-
 ;;; Commentary:
 ;;
 ;; Don't edit this file, edit init.org instead ...
@@ -264,10 +264,23 @@ It is the fraction of the current heap size.")
     ;; Activate `native-compile'
     (setq native-comp-jit-compilation              t
           native-comp-async-report-warnings-errors 'silent
-          native-comp-deferred-compilation         nil ; Obsolete since Emacs 29.1
+          native-comp-async-query-on-exit          t
+          native-comp-deferred-compilation         native-comp-jit-compilation ; Obsolete since Emacs 29.1
           native-comp-warning-on-missing-source    nil
           native-comp-jit-compilation-deny-list   '(".*org-element.*")
-          package-native-compile                   t)
+          package-native-compile                   t
+
+          ;; Show buffer when there is a warning.
+          ;; (NOT RECOMMENDED, except during development).
+          ;compile-angel-verbose                     t
+          ;compile-angel-byte-compile-report-issues  t
+          ;warning-minimum-level                     :warning
+          ;byte-compile-verbose                      t
+          ;byte-compile-warnings                     t
+          ;native-comp-async-report-warnings-errors  t
+          ;native-comp-warning-on-missing-source     t
+
+    )
 
   ;; Deactivate the `native-compile' feature if it is not available
   (setq features (delq 'native-compile features)))
@@ -295,7 +308,7 @@ It is the fraction of the current heap size.")
 ;; prevent the use of stale byte-code. Otherwise, it saves us a little IO time
 ;; to skip the mtime checks on every *.elc file.
 ;;
-(setq load-prefer-newer noninteractive)
+(setq load-prefer-newer t)
 
 ;;
 ;; If this option is nil, changing a frame' font, menu bar, tool bar, internal borders,
@@ -479,7 +492,7 @@ FILE        : el file that get generated
 ORG-FILE    : org mode file that is prints
 DESCRIPTION : short description text"
   (let (
-        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8; lexical-binding: t; -*-\n" (file-name-nondirectory file) description)
+        (preamble (concat (format ";;; %s ---%s-*- coding: utf-8; lexical-binding: t -*-\n" (file-name-nondirectory file) description)
                                   ";;; Commentary:\n"
                                   ";;\n"
                           (format ";; Don't edit this file, edit %s instead ...\n" (file-name-nondirectory org-file))
