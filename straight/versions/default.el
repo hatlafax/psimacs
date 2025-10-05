@@ -106,7 +106,6 @@
  ("gnu-elpa-mirror" . "4d68dacd88b0c51c9a1429d3c6c1fbb7ee5b507f")
  ("google-translate" . "e84599df7c70870b33dd6c902b527d7f78310815")
  ("goto-chg" . "72f556524b88e9d30dc7fc5b0dc32078c166fda7")
- ("gptel" . "7c51c6680e4c070095a231ff7cf9734ea7d5ecfb")
  ("graphviz-dot-mode" . "516c151b845a3eb2da73eb4ee648ad99172087ac")
  ("helm" . "da1ebf9d0225927381a09f57f88d81f0f16a129a")
  ("helm-bibtex" . "6064e8625b2958f34d6d40312903a85c173b5261")

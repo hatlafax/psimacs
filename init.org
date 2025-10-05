@@ -2944,6 +2944,10 @@ programs are installed.
   (psimacs/file-system/concat-directory user-emacs-directory psimacs/config/assets-folder)
   "The psimacs assets directory.")
 
+(defconst psimacs/config/prompt-dir
+  (psimacs/file-system/concat-directory user-emacs-directory "prompts")
+  "The psimacs assets directory.")
+
 (defconst psimacs/config/content-dir
   (psimacs/file-system/prefer-dropbox-directory psimacs/config/content-folder)
   "The psimacs top level content directory. This directory is DropBox synchronized.")
@@ -9977,10 +9981,7 @@ region unchanged. Very useful!
 ;; Edit regions in a separate buffer
 ;;
 (use-package edit-indirect
-  :bind (
-         :map psimacs/config/global-key-map/common
-              ("C-e" . edit-indirect-region)
-        )
+
 )
 #+end_src
 
@@ -14835,76 +14836,119 @@ The basic commands:
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 (use-package gptel
-  :straight t
-  :hook (after-init . psimacs/config/gptel-initialize)
-  :init
-    (defun psimacs/config/gptel-initialize ()
-        (setq gptel-track-media t)
-        ;(setq gptel-model "gpt-5-mini")
-        (setq gptel-model "o4-mini")
-        (setq gptel-default-mode 'org-mode)
-
-        ;;
-        ;; OpenAI
-        ;;
-        (setq gptel-api-key #'(lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file)))
-
-        ;;
-        ;; Anthropic: makes this backend available to select
-        ;;
-        (gptel-make-anthropic "Claude"
-          :stream t
-          :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
-        )
-
-        ;; To use Claude 3.7 Sonnet model in its “thinking” mode, you can define
-        ;; a second Claude backend and select it via the UI or elisp:
-        (gptel-make-anthropic "Claude-thinking" ;Any name you want
-          :stream t
-          :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
-          :models '(claude-3-7-sonnet-20250219 claude-sonnet-4-20250514 claude-sonnet-4-5-20250929 claude-opus-4-1-20250805 claude-3-5-haiku-latest)
-          :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
-                            :max_tokens 64000)
-        )
-
-        ;;
-        ;; Google
-        ;;
-        ;(gptel-make-gemini "Gemini"
-        ;  :key "YOUR_GEMINI_API_KEY"
-        ;  :stream t
-        ;)
-
-        ;;
-        ;; Together.ai
-        ;;
-        ;;
-        ;(gptel-make-openai "TogetherAI"         ;Any name you want
-        ;  :host "api.together.xyz"
-        ;  :key "your-api-key"                   ;can be a function that returns the key
-        ;  :stream t
-        ;  :models '(;; has many more, check together.ai
-        ;            mistralai/Mixtral-8x7B-Instruct-v0.1
-        ;            codellama/CodeLlama-13b-Instruct-hf
-        ;            codellama/CodeLlama-34b-Instruct-hf))
-
-
-        ;;
-        ;; OpenRouter
-        ;;
-        ;; OpenRouter offers an OpenAI compatible API
-        ;(gptel-make-openai "OpenRouter"               ;Any name you want
-        ;  :host "openrouter.ai"
-        ;  :endpoint "/api/v1/chat/completions"
-        ;  :stream t
-        ;  :key "your-api-key"                   ;can be a function that returns the key
-        ;  :models '(openai/gpt-3.5-turbo
-        ;            mistralai/mixtral-8x7b-instruct
-        ;            meta-llama/codellama-34b-instruct
-        ;            codellama/codellama-70b-instruct
-        ;            google/palm-2-codechat-bison-32k
-        ;            google/gemini-pro))
+  :straight (gptel :host github :repo "karthink/gptel")
+  :demand t
+  :config
+    (setq gptel-track-media         t
+          gptel-expert-commands     t
+          gptel-include-reasoning   'ignore
+          gptel-log-level           'info
+          gptel--debug              nil
+          ;gptel-model              "gpt-5-mini"
+          gptel-model               "o4-mini"
+          gptel-default-mode        'org-mode
     )
+
+    (add-to-list 'gptel-prompt-prefix-alist `(org-mode . ,(concat "*** me: " (format-time-string "[%Y-%m-%d]") "\n")))
+
+    ;;
+    ;; OpenAI
+    ;;
+    (setq gptel-api-key #'(lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file)))
+
+    ;;
+    ;; Anthropic: makes this backend available to select
+    ;;
+    (gptel-make-anthropic "Claude"
+      :stream t
+      :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
+    )
+
+    ;; To use Claude 3.7 Sonnet model in its “thinking” mode, you can define
+    ;; a second Claude backend and select it via the UI or elisp:
+    (gptel-make-anthropic "Claude-thinking" ;Any name you want
+      :stream t
+      :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
+      :models '(claude-3-7-sonnet-20250219 claude-sonnet-4-20250514 claude-sonnet-4-5-20250929 claude-opus-4-1-20250805 claude-3-5-haiku-latest)
+      :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
+                        :max_tokens 64000)
+    )
+
+    ;;
+    ;; Google
+    ;;
+    ;(gptel-make-gemini "Gemini"
+    ;  :key "YOUR_GEMINI_API_KEY"
+    ;  :stream t
+    ;)
+
+    ;;
+    ;; Together.ai
+    ;;
+    ;;
+    ;(gptel-make-openai "TogetherAI"         ;Any name you want
+    ;  :host "api.together.xyz"
+    ;  :key "your-api-key"                   ;can be a function that returns the key
+    ;  :stream t
+    ;  :models '(;; has many more, check together.ai
+    ;            mistralai/Mixtral-8x7B-Instruct-v0.1
+    ;            codellama/CodeLlama-13b-Instruct-hf
+    ;            codellama/CodeLlama-34b-Instruct-hf))
+
+
+    ;;
+    ;; OpenRouter
+    ;;
+    ;; OpenRouter offers an OpenAI compatible API
+    ;(gptel-make-openai "OpenRouter"               ;Any name you want
+    ;  :host "openrouter.ai"
+    ;  :endpoint "/api/v1/chat/completions"
+    ;  :stream t
+    ;  :key "your-api-key"                   ;can be a function that returns the key
+    ;  :models '(openai/gpt-3.5-turbo
+    ;            mistralai/mixtral-8x7b-instruct
+    ;            meta-llama/codellama-34b-instruct
+    ;            codellama/codellama-70b-instruct
+    ;            google/palm-2-codechat-bison-32k
+    ;            google/gemini-pro))
+
+    (require 'gptel-integrations)
+
+  :bind (
+         :map psimacs/config/global-key-map/common
+              ("RET"   . gptel-send)
+              ("C-RET" . gptel-send)
+        )
+)
+#+end_src
+
+**** gptel-prompts
+
+The [[https://github.com/jwiegley/gptel-prompts?tab=readme-ov-file][gptel-prompts]] package offers an alternative 
+way to manage your =gptel-directives= variable, using files rather than customizing the variable directly.
+
+You may now put prompts, one per file, in the directory =gptel-prompts-directory=. Prompts may be one of three different kinds:
+- Plain text : =.txt=, =.md= or =.org= files.
+- elisp files: =.el= files that must evaluate to a list of strings and/or symbols.
+- Prompt Poet templates: =.poet= or =.jinja= files.
+
+References:
+- [[https://github.com/character-ai/prompt-poet][prompt-poet]]
+- [[https://jinja.palletsprojects.com/en/stable][Jinja]]
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+(use-package gptel-prompts
+  :straight (gptel-prompts :host github :repo "jwiegley/gptel-prompts")
+  :after (gptel)
+  :demand t
+  :init
+        (setq gptel-prompts-directory psimacs/config/prompt-dir)
+
+  :config
+        (gptel-prompts-update)
+
+        ;; ensure prompts are updated if prompt files change
+        (gptel-prompts-add-update-watchers)
 )
 #+end_src
 
