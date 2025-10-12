@@ -356,6 +356,7 @@ All the hydras defined by *Psimacs*.
 | =H-SPC C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...       |
 | =H-SPC C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...               |
 | =H-SPC C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                  |
+| =H-SPC C-j=   | =M-x psimacs/hydra/dumb-jump/body=        | Dumb-Jump...              |
 | =H-SPC C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...            |
 | =H-SPC C-m=   | =M-x psimacs/hydra/word-modes/body=       | CamelCase...              |
 | =H-SPC C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...               |
@@ -5352,7 +5353,7 @@ loading and =:defer t= for command triggered loading!
 
 *** Compile Angle
 
-The [[https://github.com/jamescherti/compile-angel.el][compile angle]] speeds up Emacs by ensuring that all Elisp 
+The [[https://github.com/jamescherti/compile-angel.el][compile angle]] speeds up Emacs by ensuring that all Elisp
 libraries are both byte-compiled and native-compiled.
 
 #+begin_src emacs-lisp :tangle config/init-package-manager.el
@@ -6443,8 +6444,7 @@ Goal:
   (setq selection-coding-system 'utf-8))
 #+end_src
 
-
-** Encoding system :noexport:
+** Encoding system                                                :noexport:
 
 I am in no means an expert in Encoding systems. I have not studied all the variables floating in encoding soup.
 Below you find the encoding settings that I have in use. Probably this is to much or even wrong. Sorry, for
@@ -14105,6 +14105,19 @@ The package [[https://github.com/Yevgnen/ivy-rich][ivy-rich]] provides a more fr
 )
 #+end_src
 
+The package [[https://github.com/alexmurray/ivy-xref][ivy-xref]] provides an interface to select from xref candidates.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-swiper-key.el
+;;
+;; ... provides an ivy interface to select from xref candidates ...
+;;
+(use-package ivy-xref
+  :init
+    (setq xref-show-definitions-function #'ivy-xref-show-defs)
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+)
+#+end_src
+
 The package [[https://github.com/abo-abo/swiper/blob/master/ivy-hydra.el][ivy-hydra]] provides a [[https://github.com/abo-abo/hydra][hydra]] for [[https://github.com/abo-abo/swiper][ivy]].
 
 | Key binding | Command            | Description |
@@ -14924,7 +14937,7 @@ The basic commands:
 
 **** gptel-prompts
 
-The [[https://github.com/jwiegley/gptel-prompts?tab=readme-ov-file][gptel-prompts]] package offers an alternative 
+The [[https://github.com/jwiegley/gptel-prompts?tab=readme-ov-file][gptel-prompts]] package offers an alternative
 way to manage your =gptel-directives= variable, using files rather than customizing the variable directly.
 
 You may now put prompts, one per file, in the directory =gptel-prompts-directory=. Prompts may be one of three different kinds:
@@ -15821,7 +15834,7 @@ See also:
 
 *** Why-This Mode
 
-The package [[https://codeberg.org/akib/emacs-why-this][why-this]] shows why the current line was changed on the right side of line. 
+The package [[https://codeberg.org/akib/emacs-why-this][why-this]] shows why the current line was changed on the right side of line.
 It can also show editing history with heat map.
 
 #+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
@@ -17098,6 +17111,76 @@ The package [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] integrat
 ;; Treemacs integration of lsp-mode
 ;;
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+#+end_src
+
+
+** Code Search
+*** Dumb-Jump
+
+[[https://github.com/jacktasia/dumb-jump?tab=readme-ov-file][Dumb-jump]] is an Emacs /jump to definition/ package with support for 50+ programming languages that favors /just working/.
+This means minimal -- and ideally zero -- configuration with absolutely no stored indexes (TAGS) or persistent background
+processes.
+
+| Key binding | Command                                       | Description                                                                                                                          |
+|-------------+-----------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------|
+| =H-j j=       | =M-x dumb-jump-go=                              | Attempts to jump to the definition for the thing under point.                                                                        |
+| =H-j J=       | =M-x dumb-jump-go-other-window=                 | Attempts to jump to the definition for the thing under point in other window.                                                        |
+| =H-j e=       | =M-x dumb-jump-go-prefer-external=              | Attempts to jump to the definition for the thing under point, but will prefer definitions not in the current buffer.                 |
+| =H-j E=       | =M-x dumb-jump-go-prefer-external-other-window= | Attempts to jump to the definition for the thing under point, but will prefer definitions not in the current buffer in other window. |
+| =H-j p=       | =M-x dumb-jump-go-prompt=                       | Prompt for search funtion and jumps to the definition.                                                                               |
+| =H-j q=       | =M-x dumb-jump-quick-look=                      | Shows tooltip with file, line, and context instead of jumping.                                                                       |
+| =H-j b=       | =M-x dumb-jump-back=                            | Jumps back to where you were when you jumped.                                                                                        |
+|-------------+-----------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------|
+| =M-.=         | =M-x xref-find-definitions=                     | Find the definition of the identifier at point. Like =M-x dumb-jump-go=.                                                               |
+| =M-?=         | =M-x xref-find-references=                      | Find references of the identifier at point.                                                                                          |
+| =M-,=         | =M-x xref-go-back=                              | Go back to the previous position in xref history. Like =M-x dumb-jump-go-back=                                                         |
+| =C-x 5 .=     | =M-x xref-find-definitions-other-frame=         | Like =M-x xref-find-definitions= but switch to the other frame.                                                                        |
+| =C-x 4 .=     | =M-x xref-find-definitions-other-window=        | Like =M-x xref-find-definitions= but switch to the other window.                                                                       |
+|-------------+-----------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-advanced-code-search.el :var file-description="Advanced code searching setup"
+;;
+;; Dumb-jump: jump to definition package
+;;
+(use-package dumb-jump
+  :config
+    (setq dumb-jump-prefer-searcher 'rg)
+    (setq dumb-jump-selector 'ivy)
+    (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
+  :hook (xref-backend-functions . dumb-jump-xref-activate)
+  :bind (
+    ("H-j j" . dumb-jump-go)
+    ("H-j J" . dumb-jump-go-other-window)
+    ("H-j e" . dumb-jump-go-prefer-external)
+    ("H-j E" . dumb-jump-go-prefer-external-other-window)
+    ("H-j p" . dumb-jump-go-prompt)
+    ("H-j q" . dumb-jump-quick-look)
+    ("H-j b" . dumb-jump-back)
+
+    :map psimacs/config/global-key-map/hydra
+       ("C-j" . psimacs/hydra/dumb-jump/body)
+  )
+  :hydra (psimacs/hydra/dumb-jump (:color blue :hint nil)
+"
+^^Dumb-jump Code Navigation: Input ...
+^^---------------------------------------------------------
+_j_: ... jump ...
+_J_: ... jump other window ...
+_e_: ... jump prefer definitions not in the current buffer ...
+_E_: ... jump prefer definitions not in the current buffer other window ...
+_p_: ... prompt and jump ...
+_q_: ... quick look ...
+_b_: ... jump back ...
+"
+    ("j" dumb-jump-go)
+    ("J" dumb-jump-go-other-window)
+    ("e" dumb-jump-go-prefer-external)
+    ("E" dumb-jump-go-prefer-external-other-window)
+    ("p" dumb-jump-go-prompt)
+    ("q" dumb-jump-quick-look)
+    ("b" dumb-jump-back)
+  )
+)
 #+end_src
 
 ** Lisp
@@ -24052,6 +24135,7 @@ References:
 | =H-SPC C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...       |
 | =H-SPC C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...               |
 | =H-SPC C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                  |
+| =H-SPC C-j=   | =M-x psimacs/hydra/dumb-jump/body=        | Dumb-Jump...              |
 | =H-SPC C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...            |
 | =H-SPC C-m=   | =M-x psimacs/hydra/word-modes/body=       | CamelCase...              |
 | =H-SPC C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...               |
