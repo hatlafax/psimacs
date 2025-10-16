@@ -474,47 +474,51 @@ References:
 - Read also [[https://spwhitton.name/blog/entry/transient-mark-mode/][GNU Emacs' Transient Mark mode]]
 
 #+attr_html: :class styledtable
-| Key binding     | Command                               | Description                                                                                                                                                                                                                                          |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-SPC=           | =M-x cua-set-mark= =M-x set-mark-command= | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
-| =C-@=             |                                       |                                                                                                                                                                                                                                                      |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-u C-SPC=       | =M-x pop-to-mark-command=               | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
-| =C-u C-@=         |                                       |                                                                                                                                                                                                                                                      |
-| =H-x p=           |                                       |                                                                                                                                                                                                                                                      |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-SPC=       | =M-x pop-global-mark=                   | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
-| =C-x C-@=         |                                       |                                                                                                                                                                                                                                                      |
-| =H-x q=           |                                       |                                                                                                                                                                                                                                                      |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-SPC C-SPC=     |                                       | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
-| =C-u C-u C-SPC=   |                                       | Unconditionally set mark.                                                                                                                                                                                                                            |
-| =C-x C-x=         | =M-x exchange-point-and-mark=           | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =S-C-f=           | =M-x forward-char S-<Ret>=              | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |
-| =S-...=           | =M-x ... S-<Ret>=                       | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-w=             | =M-x kill-region=                       | Deletes text in region and copies it to kill ring.                                                                                                                                                                                                   |
-| =M-w=             | =M-x kill-ring-save=                    | Copies text in region to the kill ring.                                                                                                                                                                                                              |
-| =C-y=             | =M-x yank=                              | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
-| =M-y=             | =M-x counsel-yank-pop=                  | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-x C-u=         | =M-x upcase-region=                     | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
-| =C-x C-l=         | =M-x downcase-region=                   | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
-| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
-| =H-x H-x C-x C-l= | =M-x crux-downcase-region=              | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =C-g=             | =M-x psimacs/config/keyboard-quit-dwim= | When the region is active, disable it. When a minibuffer is open, but not focused, close the minibuffer. When the Completions buffer is selected, close it.                                                                                          |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =M-@=             | =M-x mark-word=                         | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
-| =C-M-@=           | =M-x mark-sexp=                         | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
-| =M-h=             | =M-x mark-paragraph=                    | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
-| =C-M-h=           | =M-x mark-defun=                        | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
-| =C-x C-p=         | =M-x mark-page=                         | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
-| =C-x h=           | =M-x mark-whole-buffer=                 | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer. In every other case use the regular `keyboard-quit'."                                                                                            |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| =H-x e=           | =M-x er/expand-region=                  | Expand region intelligently.                                                                                                                                                                                                                         |
-|-----------------+---------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key binding     | Command                                 | Description                                                                                                                                                                                                                                          |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC=           | =M-x cua-set-mark= =M-x set-mark-command=   | Set mark where point is, clear mark, or jump to mark. With no prefix argument, clear mark if already set. Otherwise, mark, and push old mark position on local mark ring; also push mark on global mark ring if last mark was set in another buffer. |
+| =C-@=             |                                         |                                                                                                                                                                                                                                                      |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-u C-SPC=       | =M-x pop-to-mark-command=                 | Jump to mark, and pop a new position for mark off the local mark ring (this does not affect the global mark ring).                                                                                                                                   |
+| =C-u C-@=         |                                         |                                                                                                                                                                                                                                                      |
+| =H-x p=           |                                         |                                                                                                                                                                                                                                                      |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-SPC=       | =M-x pop-global-mark=                     | Jump to a mark off the global mark ring.                                                                                                                                                                                                             |
+| =C-x C-@=         |                                         |                                                                                                                                                                                                                                                      |
+| =H-x q=           |                                         |                                                                                                                                                                                                                                                      |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-SPC C-SPC=     |                                         | Jumps to the next position off the local (or global) mark ring. Set the mark, pushing it onto the mark ring, without activating it.                                                                                                                  |
+| =C-u C-u C-SPC=   |                                         | Unconditionally set mark.                                                                                                                                                                                                                            |
+| =C-x C-x=         | =M-x exchange-point-and-mark=             | Set mark where point is, and move point to last deactivated mark if any. Transient mark mode modifies the behaviour.                                                                                                                                 |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =S-C-f=           | =M-x forward-char S-<Ret>=                | Set mark where point is, and move point forward by one character, thereby creating a selection.                                                                                                                                                      |
+| =S-...=           | =M-x ... S-<Ret>=                         | Set mark where point is, and move point ..., thereby creating a selection. Attention, this does not work for all movement command.                                                                                                                   |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-w=             | =M-x kill-region=                         | Deletes text in region and copies it to kill ring. See also minor mode =whole-line-or-region=.                                                                                                                                                         |
+| =M-w=             | =M-x kill-ring-save=                      | Copies text in region to the kill ring. See also minor mode =whole-line-or-region=.                                                                                                                                                                    |
+| =C-y=             | =M-x yank=                                | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
+| =M-y=             | =M-x counsel-yank-pop=                    | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
+| =C-w=             | =M-x whole-line-or-region-kill-region=    | Kill the whole line if no region is selected.                                                                                                                                                                                                        |
+| =M-w=             | =M-x whole-line-or-region-kill-ring-save= | Copy the whole line if no region is selected.                                                                                                                                                                                                        |
+| =H-x H-x C-k=     | =M-x crux-kill-whole-line=                | A simple wrapper around command ‘kill-whole-line’ that respects indentation.                                                                                                                                                                         |
+| =C-S-<backspace>= | =M-x kill-whole-line=                     | Kill current line.                                                                                                                                                                                                                                   |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-x C-u=         | =M-x upcase-region=                       | Convert all charcters in region to upper case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
+| =C-x C-l=         | =M-x downcase-region=                     | Convert all charcters in region to lower case. Disable =cua-mode= for that by pressing =<f12>= in *Psimacs*.                                                                                                                                               |
+| =H-x H-x C-x C-u= | =M-x crux-upcase-region=                  | Convert all charcters in region to upper case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
+| =H-x H-x C-x C-l= | =M-x crux-downcase-region=                | Convert all charcters in region to lower case when =transient-mark-mode= is on and region is active.                                                                                                                                                   |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =C-g=             | =M-x psimacs/config/keyboard-quit-dwim=   | When the region is active, disable it. When a minibuffer is open, but not focused, close the minibuffer. When the Completions buffer is selected, close it.                                                                                          |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =M-@=             | =M-x mark-word=                           | Sets mark at end of next word without moving point.                                                                                                                                                                                                  |
+| =C-M-@=           | =M-x mark-sexp=                           | Sets mark at end of next s-expression without moving point.                                                                                                                                                                                          |
+| =M-h=             | =M-x mark-paragraph=                      | Sets mark at end of next paragraph without moving point.                                                                                                                                                                                             |
+| =C-M-h=           | =M-x mark-defun=                          | Marks the whole /defun/ under point.                                                                                                                                                                                                                   |
+| =C-x C-p=         | =M-x mark-page=                           | Sets mark at end of page/buffer without moving point, i.e. selecting from point to the end of the page/buffer.                                                                                                                                       |
+| =C-x h=           | =M-x mark-whole-buffer=                   | Move point at the beginning of buffer, sets mark at end of buffer, i.e. selecting the whole buffer. In every other case use the regular `keyboard-quit'."                                                                                            |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =H-x e=           | =M-x er/expand-region=                    | Expand region intelligently.                                                                                                                                                                                                                         |
+|-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Working with other Window
 
@@ -6672,7 +6676,6 @@ No distracting splash screen or annoying startup message :-)
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
 #+end_src
 
-
 *** Bells
 
 Avoid annoying bells as described in [[https://www.emacswiki.org/emacs/AlarmBell][Alarm Bell]] on [[https://www.emacswiki.org][EmacsWiki]].
@@ -7640,6 +7643,36 @@ The default fill column is set to 120 characters because huge displays are now c
 (define-key psimacs/config/global-key-map/special (kbd "C-m C-v f") 'display-fill-column-indicator-mode)
 
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+#+end_src
+
+*** Whole Line or Region
+
+The [[https://github.com/purcell/whole-line-or-region][whole-line-or-region]] package provides a minor mode that allows functions to operate
+on the current line if they would normally operate on a region and region is currently
+undefined.
+
+| Key binding | Command                                 | Description                                         |
+|-------------+-----------------------------------------+-----------------------------------------------------|
+| =C-w=         | =M-x whole-line-or-region-kill-region=    | Kill the whole line if no region is selected.       |
+| =M-w=         | =M-x whole-line-or-region-kill-ring-save= | Copy the whole line if no region is selected.       |
+| =M-;=         | =M-x whole-line-or-region-comment-dwim-2= | Call ‘comment-dwim’ on region or PREFIX whole line. |
+|-------------+-----------------------------------------+-----------------------------------------------------|
+
+Alternatives:
+| Key binding     | Command                    | Description                                                                  |
+|-----------------+----------------------------+------------------------------------------------------------------------------|
+| =C-S-<backspace>= | =M-x kill-whole-line=        | Kill current line.                                                           |
+|                 | =M-x sp-kill-whole-line=     | Kill current line in sexp-aware manner.                                      |
+|                 | =M-x avy-kill-whole-line=    | Kill current line in sexp-aware manner.                                      |
+| =H-x H-x C-k=     | =M-x crux-kill-whole-line=   | A simple wrapper around command ‘kill-whole-line’ that respects indentation. |
+|                 | =M-x comint-kill-whole-line= | Kill current line, ignoring read-only and field properties.                  |
+|-----------------+----------------------------+------------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+(use-package whole-line-or-region
+  :diminish whole-line-or-region-local-mode
+  :init (whole-line-or-region-global-mode)
+)
 #+end_src
 
 ** Themes
@@ -10664,7 +10697,6 @@ Some usefule key bindings and commands:
 )
 #+end_src
 
-
 *** Dired-Sidebar
 
 [[https://github.com/jojojames/dired-sidebar][Dired-sidebar]] is a sidebar enhancement for dired.
@@ -11656,7 +11688,6 @@ See also:
 #+end_src
 
 ** Basic Tools
-
 *** Ediff
 
 The [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] package provides a
@@ -13450,38 +13481,39 @@ Key bindings that related to [[https://github.com/emacs-helm/helm][Helm]]:
 The following [[https://github.com/emacs-helm/helm][Helm]] configuration is taken from [[https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el][init-helm.el]].
 
 #+begin_src emacs-lisp :tangle config/init-advanced-helm.el :var file-description="Advanced helm setup"
-;;
-;; Plain configuration of helm taken from https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el
-;;
-(use-package helm
-  :config
-      ;;(require 'helm-config)
-      (setq helm-input-idle-delay                     0.01
-            helm-reuse-last-window-split-state        t
-            helm-always-two-windows                   t
-            helm-split-window-inside-p                nil
-            helm-commands-using-frame                 '(
-                                                        ;;completion-at-point
-                                                        helm-apropos
-                                                        helm-eshell-prompts helm-imenu
-                                                        helm-imenu-in-all-buffers
-                                                       )
-            helm-actions-inherit-frame-settings       t
-            helm-use-frame-when-more-than-two-windows t
-            helm-use-frame-when-no-suitable-window    t
-            ;;helm-frame-background-color               "DarkSlateGray"
-            helm-show-action-window-other-window      'left
-            helm-allow-mouse                          t
-            ;;helm-move-to-line-cycle-in-source         t
-            helm-autoresize-max-height                80 ; it is %.
-            helm-autoresize-min-height                20 ; it is %.
-            helm-debug-root-directory                 psimacs/config/session-dir
-            helm-follow-mode-persistent               t
-            helm-candidate-number-limit               500)
+  ;;
+  ;; Plain configuration of helm taken from https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el
+  ;;
+  (use-package helm
+    :straight (helm :type git :host github :repo "emacs-helm/helm" :files ("*.el" "*"))
+    :config
+        ;;(require 'helm-config)
+        (setq helm-input-idle-delay                     0.01
+              helm-reuse-last-window-split-state        t
+              helm-always-two-windows                   t
+              helm-split-window-inside-p                nil
+              helm-commands-using-frame                 '(
+                                                          ;;completion-at-point
+                                                          helm-apropos
+                                                          helm-eshell-prompts helm-imenu
+                                                          helm-imenu-in-all-buffers
+                                                         )
+              helm-actions-inherit-frame-settings       t
+              helm-use-frame-when-more-than-two-windows t
+              helm-use-frame-when-no-suitable-window    t
+              ;;helm-frame-background-color               "DarkSlateGray"
+              helm-show-action-window-other-window      'left
+              helm-allow-mouse                          t
+              ;;helm-move-to-line-cycle-in-source         t
+              helm-autoresize-max-height                80 ; it is %.
+              helm-autoresize-min-height                20 ; it is %.
+              helm-debug-root-directory                 psimacs/config/session-dir
+              helm-follow-mode-persistent               t
+              helm-candidate-number-limit               500)
 
-      ;;(add-to-list 'helm-sources-using-default-as-input 'helm-source-info-bash)
-      ;;(helm-define-key-with-subkeys global-map (kbd "C-c n") ?n 'helm-cycle-resume)
-)
+        ;;(add-to-list 'helm-sources-using-default-as-input 'helm-source-info-bash)
+        ;;(helm-define-key-with-subkeys global-map (kbd "C-c n") ?n 'helm-cycle-resume)
+  )
 #+end_src
 
 ** Discoverability
@@ -15848,7 +15880,7 @@ It can also show editing history with heat map.
 
 *** Diff-hl Mode
 
-[[diff-hl-mode][diff-hl]] highlights uncommitted changes on the side of the window, allows you to jump between and revert them selectively.
+[[https://github.com/dgutov/diff-hl][diff-hl-mode]] highlights uncommitted changes on the side of the window, allows you to jump between and revert them selectively.
 
 #+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
 (use-package diff-hl
@@ -17527,6 +17559,7 @@ client leveraging the [[https://github.com/microsoft/pyright][Pyright language s
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-pyright
     ;;:after lsp-mode
+    :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
     :config
         (setq lsp-pyright-python-executable-cmd psimacs/config/python-runtime-exe)
 
@@ -24190,6 +24223,7 @@ References:
                     ("R" psimacs/pair/rainbow-toggle-sized-delimiters "rainbow delimiters sized" :toggle psimacs/config/rainbow-toogle-sized-delimiters-flag)
                     ("w" (setq-default show-trailing-whitespace (not show-trailing-whitespace)) "whitespace" :toggle show-trailing-whitespace)
                     ("i" display-fill-column-indicator-mode "fill column indicator" :toggle t)
+                    ("w" whole-line-or-region-global-mode "whole line or region" : toggle t)
                 )
             "Coding"
                 (
