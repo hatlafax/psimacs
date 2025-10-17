@@ -232,7 +232,7 @@ Do not change it here!!!")
 ;;
 ;; Psimacs default garbage collection parameters
 ;;
-(defconst psimacs/config/gc-cons-threshold 16MB
+(defconst psimacs/config/gc-cons-threshold 32MB
   "The default value to use for `gc-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
@@ -247,7 +247,7 @@ increase this.")
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
 
-(defconst psimacs/config/gc-cons-percentage 0.1
+(defconst psimacs/config/gc-cons-percentage 0.2
   "This variable specifies the amount of consing before garbage collection occurs.
 It is the fraction of the current heap size.")
 
@@ -301,7 +301,8 @@ It is the fraction of the current heap size.")
 ;;
 ;; Inhibit the package manager at all
 ;;
-(setq package-enable-at-startup nil)
+(setq package-enable-at-startup nil
+      package-quickstart        nil)
 
 ;;
 ;; In noninteractive sessions, prioritize non-byte-compiled source files to

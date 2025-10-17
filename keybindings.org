@@ -321,8 +321,6 @@ References:
 | =M-w=             | =M-x kill-ring-save=                      | Copies text in region to the kill ring. See also minor mode =whole-line-or-region=.                                                                                                                                                                    |
 | =C-y=             | =M-x yank=                                | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
 | =M-y=             | =M-x counsel-yank-pop=                    | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
-| =C-w=             | =M-x whole-line-or-region-kill-region=    | Kill the whole line if no region is selected.                                                                                                                                                                                                        |
-| =M-w=             | =M-x whole-line-or-region-kill-ring-save= | Copy the whole line if no region is selected.                                                                                                                                                                                                        |
 | =H-x H-x C-k=     | =M-x crux-kill-whole-line=                | A simple wrapper around command ‘kill-whole-line’ that respects indentation.                                                                                                                                                                         |
 | =C-S-<backspace>= | =M-x kill-whole-line=                     | Kill current line.                                                                                                                                                                                                                                   |
 |-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -910,7 +908,7 @@ The default fill column is set to 120 characters because huge displays are now c
 | =H-m C-m C-v f= | =M-x global-display-fill-column-indicator-mode= | Toggle the display of the fill column indicator. |
 |---------------+-----------------------------------------------+--------------------------------------------------|
 
-** Whole Line or Region
+** Whole Line or Region                                           :noexport:
 
 The [[https://github.com/purcell/whole-line-or-region][whole-line-or-region]] package provides a minor mode that allows functions to operate
 on the current line if they would normally operate on a region and region is currently
@@ -932,6 +930,46 @@ Alternatives:
 | =H-x H-x C-k=     | =M-x crux-kill-whole-line=   | A simple wrapper around command ‘kill-whole-line’ that respects indentation. |
 |                 | =M-x comint-kill-whole-line= | Kill current line, ignoring read-only and field properties.                  |
 |-----------------+----------------------------+------------------------------------------------------------------------------|
+
+** Easy-Kill
+
+The package [[https://github.com/leoliu/easy-kill][easy-kill]] provide commands =easy-kill= and =easy-mark= to let users kill or mark things easily.
+=easy-kill= is a drop-in replacement for =kill-ring-save= and =easy-mark= is similar to =easy-kill= but marks
+the region immediately.
+
+| Key binding | Command              | Description                                                                                                 |
+|-------------+----------------------+-------------------------------------------------------------------------------------------------------------|
+| =M-w=         | =M-x easy-kill=        | Saves in the order of active region, url, email and finally current line.                                   |
+| =M-w w=       | =M-x easy-kill w=      | Save word at point.                                                                                         |
+| =M-w s=       | =M-x easy-kill s=      | Save sexp at point.                                                                                         |
+| =M-w l=       | =M-x easy-kill l=      | Save liat at point (enclosing sexp).                                                                        |
+| =M-w f=       | =M-x easy-kill f=      | Save file at point.                                                                                         |
+| =M-w d=       | =M-x easy-kill d=      | Save defun at point.                                                                                        |
+| =M-w D=       | =M-x easy-kill D=      | Save current defun name.                                                                                    |
+| =M-w e=       | =M-x easy-kill e=      | Save line at point.                                                                                         |
+| =M-w b=       | =M-x easy-kill b=      | Save =buffer-file-name=.                                                                                      |
+| =@=           | =M-x easy-kill-append= | Append selection to previous kill and exit. For example, =M-w d @= will append current function to last kill. |
+| =C-w=         |                      | Kill selection and exit.                                                                                    |
+| =+=, ===        |                      | Expand selection.                                                                                           |
+| =-=           |                      | Shrink selection.                                                                                           |
+| =1..9=        |                      | Expand selection.                                                                                           |
+| =0=           |                      | Shrink selection to the initial size.                                                                       |
+| =SPC=         |                      | Cycle through things in =easy-kill-alist=.                                                                    |
+| =C-SPC=       |                      | Turn selection into an active region.                                                                       |
+| =C-g=         |                      | Abort.                                                                                                      |
+| =?=           |                      | Help.                                                                                                       |
+|-------------+----------------------+-------------------------------------------------------------------------------------------------------------|
+
+For example, =M-w w= saves current word, repeat =w= to expand the kill to include the next word. =5= to include the next 5 words etc.
+The other commands also follow this pattern.
+
+=+= / =-= does expanding/shrinking according to the thing selected. So for word the expansion is word-wise, for line line-wise,
+for list or sexp, list-wise.
+
+list-wise expanding/shrinking work well in lispy modes (elisp, Common Lisp, Scheme, Clojure etc.),
+smie-based modes (Prolog, SML, Modula2, Shell, Ruby, Octave, CSS, SQL etc.), Org mode, Nxml mode and Js2 mode.
+
+To copy the enclosing list in lispy modes, the key sequence is =M-w l= (save list at point).
 
 ** Symbol overlay mode
 

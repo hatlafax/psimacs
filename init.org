@@ -498,8 +498,6 @@ References:
 | =M-w=             | =M-x kill-ring-save=                      | Copies text in region to the kill ring. See also minor mode =whole-line-or-region=.                                                                                                                                                                    |
 | =C-y=             | =M-x yank=                                | Paste the most recently added text to the kill-ring at point.                                                                                                                                                                                        |
 | =M-y=             | =M-x counsel-yank-pop=                    | Replace just-yanked text with former copied or killed text.                                                                                                                                                                                          |
-| =C-w=             | =M-x whole-line-or-region-kill-region=    | Kill the whole line if no region is selected.                                                                                                                                                                                                        |
-| =M-w=             | =M-x whole-line-or-region-kill-ring-save= | Copy the whole line if no region is selected.                                                                                                                                                                                                        |
 | =H-x H-x C-k=     | =M-x crux-kill-whole-line=                | A simple wrapper around command ‘kill-whole-line’ that respects indentation.                                                                                                                                                                         |
 | =C-S-<backspace>= | =M-x kill-whole-line=                     | Kill current line.                                                                                                                                                                                                                                   |
 |-----------------+-----------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1402,7 +1400,7 @@ Copyright information that should be inserted into all tangled code.
 ;;
 ;; Psimacs default garbage collection parameters
 ;;
-(defconst psimacs/config/gc-cons-threshold 16MB
+(defconst psimacs/config/gc-cons-threshold 32MB
   "The default value to use for `gc-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
@@ -1417,7 +1415,7 @@ increase this.")
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
 
-(defconst psimacs/config/gc-cons-percentage 0.1
+(defconst psimacs/config/gc-cons-percentage 0.2
   "This variable specifies the amount of consing before garbage collection occurs.
 It is the fraction of the current heap size.")
 #+end_src
@@ -1510,7 +1508,8 @@ is because it breaks some old (badly written) code.
 ;;
 ;; Inhibit the package manager at all
 ;;
-(setq package-enable-at-startup nil)
+(setq package-enable-at-startup nil
+      package-quickstart        nil)
 #+end_src
 
 - In noninteractive sessions, prioritize non-byte-compiled source files to prevent the use of stale byte-code.
@@ -7645,7 +7644,7 @@ The default fill column is set to 120 characters because huge displays are now c
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
 #+end_src
 
-*** Whole Line or Region
+*** Whole Line or Region                                         :noexport:
 
 The [[https://github.com/purcell/whole-line-or-region][whole-line-or-region]] package provides a minor mode that allows functions to operate
 on the current line if they would normally operate on a region and region is currently
@@ -7672,6 +7671,56 @@ Alternatives:
 (use-package whole-line-or-region
   :diminish whole-line-or-region-local-mode
   :init (whole-line-or-region-global-mode)
+)
+#+end_src
+
+*** Easy-Kill
+
+The package [[https://github.com/leoliu/easy-kill][easy-kill]] provide commands =easy-kill= and =easy-mark= to let users kill or mark things easily.
+=easy-kill= is a drop-in replacement for =kill-ring-save= and =easy-mark= is similar to =easy-kill= but marks
+the region immediately.
+
+| Key binding | Command              | Description                                                                                                 |
+|-------------+----------------------+-------------------------------------------------------------------------------------------------------------|
+| =M-w=         | =M-x easy-kill=        | Saves in the order of active region, url, email and finally current line.                                   |
+| =M-w w=       | =M-x easy-kill w=      | Save word at point.                                                                                         |
+| =M-w s=       | =M-x easy-kill s=      | Save sexp at point.                                                                                         |
+| =M-w l=       | =M-x easy-kill l=      | Save liat at point (enclosing sexp).                                                                        |
+| =M-w f=       | =M-x easy-kill f=      | Save file at point.                                                                                         |
+| =M-w d=       | =M-x easy-kill d=      | Save defun at point.                                                                                        |
+| =M-w D=       | =M-x easy-kill D=      | Save current defun name.                                                                                    |
+| =M-w e=       | =M-x easy-kill e=      | Save line at point.                                                                                         |
+| =M-w b=       | =M-x easy-kill b=      | Save =buffer-file-name=.                                                                                      |
+| =@=           | =M-x easy-kill-append= | Append selection to previous kill and exit. For example, =M-w d @= will append current function to last kill. |
+| =C-w=         |                      | Kill selection and exit.                                                                                    |
+| =+=, ===        |                      | Expand selection.                                                                                           |
+| =-=           |                      | Shrink selection.                                                                                           |
+| =1..9=        |                      | Expand selection.                                                                                           |
+| =0=           |                      | Shrink selection to the initial size.                                                                       |
+| =SPC=         |                      | Cycle through things in =easy-kill-alist=.                                                                    |
+| =C-SPC=       |                      | Turn selection into an active region.                                                                       |
+| =C-g=         |                      | Abort.                                                                                                      |
+| =?=           |                      | Help.                                                                                                       |
+|-------------+----------------------+-------------------------------------------------------------------------------------------------------------|
+
+For example, =M-w w= saves current word, repeat =w= to expand the kill to include the next word. =5= to include the next 5 words etc.
+The other commands also follow this pattern.
+
+=+= / =-= does expanding/shrinking according to the thing selected. So for word the expansion is word-wise, for line line-wise,
+for list or sexp, list-wise.
+
+list-wise expanding/shrinking work well in lispy modes (elisp, Common Lisp, Scheme, Clojure etc.),
+smie-based modes (Prolog, SML, Modula2, Shell, Ruby, Octave, CSS, SQL etc.), Org mode, Nxml mode and Js2 mode.
+
+To copy the enclosing list in lispy modes, the key sequence is =M-w l= (save list at point).
+
+#+begin_src emacs-lisp :tangle config/init-basic-ui.el
+(use-package easy-kill
+  :demand t
+  :bind (([remap kill-ring-save] . #'easy-kill)
+         ([remap mark-sexp]      . #'easy-mark)
+         ("M-S-w"                . kill-ring-save)
+        )
 )
 #+end_src
 
@@ -9655,9 +9704,9 @@ It uses a central [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Au
         (make-directory auto-save-dir t)
     )
 
-    (setq auto-save-default    t) ;; each time you visit a file, auto-saving is turned on
-    (setq auto-save-interval 300) ;; specifies how many characters there are between auto-saves
-    (setq auto-save-timeout   30) ;; also auto-save after 30 seconds of idleness
+    (setq auto-save-default     t) ;; each time you visit a file, auto-saving is turned on
+    (setq auto-save-interval 2400) ;; specifies how many characters there are between auto-saves
+    (setq auto-save-timeout   300) ;; also auto-save after 30 seconds of idleness
 
     (setq auto-save-list-file-prefix (concat auto-save-dir ".auto-saves-"))
     (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
@@ -9857,6 +9906,10 @@ we set the =tramp-persistency-file-name= variable.
 This section provides setting and packages that enhance the user experience with *Emacs* considerably.
 
 *** Undo-Redo
+
+#+begin_src emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
+(setq undo-limit 128MB)
+#+end_src
 
 The package [[https://gitlab.com/ideasman42/emacs-undo-fu][undo-fu]] provides a simple, stable linear undo with redo for *Emacs*.
 
@@ -10292,6 +10345,7 @@ See also:
         (setq show-paren-style 'mixed)
         ;(setq show-paren-style 'parenthesis)
         ;(setq show-paren-style 'expression)
+        (setq show-paren-highlight-openparen t)
 
         (setq show-paren-when-point-inside-paren t)
         (setq show-paren-when-point-in-periphery t)
@@ -16414,7 +16468,7 @@ Python client usage:
 pip install emacs-porthole
 #+end_src
 
-#+begin_src python
+#+begin_src text
 from emacs_porthole import call
 
 result = call("psimacs-porthole-control-server", method="insert", params=["Some text to insert"])
