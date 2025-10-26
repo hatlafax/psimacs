@@ -261,25 +261,41 @@ It is the fraction of the current heap size.")
 (if (and (featurep 'native-compile)
          (fboundp 'native-comp-available-p)
          (native-comp-available-p))
-    ;; Activate `native-compile'
-    (setq native-comp-jit-compilation              t
-          native-comp-async-report-warnings-errors 'silent
-          native-comp-async-query-on-exit          t
-          native-comp-deferred-compilation         native-comp-jit-compilation ; Obsolete since Emacs 29.1
-          native-comp-warning-on-missing-source    nil
-          native-comp-jit-compilation-deny-list   '(".*org-element.*")
-          package-native-compile                   t
 
-          ;; Show buffer when there is a warning.
-          ;; (NOT RECOMMENDED, except during development).
-          ;compile-angel-verbose                     t
-          ;compile-angel-byte-compile-report-issues  t
-          ;warning-minimum-level                     :warning
-          ;byte-compile-verbose                      t
-          ;byte-compile-warnings                     t
-          ;native-comp-async-report-warnings-errors  t
-          ;native-comp-warning-on-missing-source     t
+    (progn
+        (message "Native compilation is active!")
 
+        ;; Activate `native-compile'
+        (setq native-comp-jit-compilation              t
+              native-comp-async-report-warnings-errors 'silent
+              native-comp-async-query-on-exit          t
+              native-comp-deferred-compilation         native-comp-jit-compilation ; Obsolete since Emacs 29.1
+              native-comp-warning-on-missing-source    nil
+              native-comp-jit-compilation-deny-list   '(".*org-element.*")
+              package-native-compile                   t
+
+              ;; Show buffer when there is a warning.
+              ;; (NOT RECOMMENDED, except during development).
+              ;compile-angel-verbose                     t
+              ;compile-angel-byte-compile-report-issues  t
+              ;warning-minimum-level                     :warning
+              ;byte-compile-verbose                      t
+              ;byte-compile-warnings                     t
+              ;native-comp-async-report-warnings-errors  t
+              ;native-comp-warning-on-missing-source     t
+        )
+
+        (let ((deny-list '("\\(?:[/\\\\]\\.dir-locals\\.el\\(?:\\.gz\\)?$\\)"
+                           "\\(?:[/\\\\]modus-vivendi-theme\\.el\\(?:\\.gz\\)?$\\)"
+                           "\\(?:[/\\\\][^/\\\\]+-loaddefs\\.el\\(?:\\.gz\\)?$\\)"
+                           "\\(?:[/\\\\][^/\\\\]+-autoloads\\.el\\(?:\\.gz\\)?$\\)"
+                           ".*org-element.*"
+                )))
+          (setq native-comp-jit-compilation-deny-list deny-list)
+          ;; Deprecated
+          (with-no-warnings
+            (setq native-comp-deferred-compilation-deny-list deny-list)
+            (setq comp-deferred-compilation-deny-list deny-list)))
     )
 
   ;; Deactivate the `native-compile' feature if it is not available

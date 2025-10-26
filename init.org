@@ -1436,25 +1436,41 @@ set the directory where the compiled files are stored.
 (if (and (featurep 'native-compile)
          (fboundp 'native-comp-available-p)
          (native-comp-available-p))
-    ;; Activate `native-compile'
-    (setq native-comp-jit-compilation              t
-          native-comp-async-report-warnings-errors 'silent
-          native-comp-async-query-on-exit          t
-          native-comp-deferred-compilation         native-comp-jit-compilation ; Obsolete since Emacs 29.1
-          native-comp-warning-on-missing-source    nil
-          native-comp-jit-compilation-deny-list   '(".*org-element.*")
-          package-native-compile                   t
 
-          ;; Show buffer when there is a warning.
-          ;; (NOT RECOMMENDED, except during development).
-          ;compile-angel-verbose                     t
-          ;compile-angel-byte-compile-report-issues  t
-          ;warning-minimum-level                     :warning
-          ;byte-compile-verbose                      t
-          ;byte-compile-warnings                     t
-          ;native-comp-async-report-warnings-errors  t
-          ;native-comp-warning-on-missing-source     t
+    (progn
+        (message "Native compilation is active!")
 
+        ;; Activate `native-compile'
+        (setq native-comp-jit-compilation              t
+              native-comp-async-report-warnings-errors 'silent
+              native-comp-async-query-on-exit          t
+              native-comp-deferred-compilation         native-comp-jit-compilation ; Obsolete since Emacs 29.1
+              native-comp-warning-on-missing-source    nil
+              native-comp-jit-compilation-deny-list   '(".*org-element.*")
+              package-native-compile                   t
+
+              ;; Show buffer when there is a warning.
+              ;; (NOT RECOMMENDED, except during development).
+              ;compile-angel-verbose                     t
+              ;compile-angel-byte-compile-report-issues  t
+              ;warning-minimum-level                     :warning
+              ;byte-compile-verbose                      t
+              ;byte-compile-warnings                     t
+              ;native-comp-async-report-warnings-errors  t
+              ;native-comp-warning-on-missing-source     t
+        )
+
+        (let ((deny-list '("\\(?:[/\\\\]\\.dir-locals\\.el\\(?:\\.gz\\)?$\\)"
+                           "\\(?:[/\\\\]modus-vivendi-theme\\.el\\(?:\\.gz\\)?$\\)"
+                           "\\(?:[/\\\\][^/\\\\]+-loaddefs\\.el\\(?:\\.gz\\)?$\\)"
+                           "\\(?:[/\\\\][^/\\\\]+-autoloads\\.el\\(?:\\.gz\\)?$\\)"
+                           ".*org-element.*"
+                )))
+          (setq native-comp-jit-compilation-deny-list deny-list)
+          ;; Deprecated
+          (with-no-warnings
+            (setq native-comp-deferred-compilation-deny-list deny-list)
+            (setq comp-deferred-compilation-deny-list deny-list)))
     )
 
   ;; Deactivate the `native-compile' feature if it is not available
@@ -5354,7 +5370,7 @@ require in one of your custom commands.
 If you do want to start optimizing your startup, you will likely end up using just =:hook= for mode triggered
 loading and =:defer t= for command triggered loading!
 
-*** Compile Angle
+*** Compile Angle :noexport:
 
 The [[https://github.com/jamescherti/compile-angel.el][compile angle]] speeds up Emacs by ensuring that all Elisp
 libraries are both byte-compiled and native-compiled.
@@ -5378,16 +5394,10 @@ libraries are both byte-compiled and native-compiled.
       ;; The following directive prevents compile-angel from compiling your init files
       (push "/init.el" compile-angel-excluded-files)
       (push "/early-init.el" compile-angel-excluded-files)
-      (push "/config/init-.*\\.el$" compile-angel-excluded-files-regexps)
+      (push "/lisp/org/org-element.el")
 
-      ;(mapc (lambda (file)
-      ;            (push file compile-angel-excluded-files-regexps))
-      ;          '(
-      ;              "early-init.el"
-      ;              "init.el"
-      ;              "/config/init-.*\\.el$"
-      ;          )
-      ;      )
+      (push "/config/init-.*\\.el$" compile-angel-excluded-files-regexps)
+      (push "/straight/build/else-.*\\.el$" compile-angel-excluded-files-regexps)
 
       ;; Ensure that the value of `savehist-file` is updated before proceeding
       (with-eval-after-load "savehist"
