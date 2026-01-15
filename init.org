@@ -14942,6 +14942,9 @@ The basic commands:
 |             | =M-x gptel-org-set-properties= | Write gptel configuration as Org properties, for per-heading chat configuration.                      |
 |-------------+------------------------------+-------------------------------------------------------------------------------------------------------|
 
+References:
+- [[https://platform.openai.com/docs/pricing][OpenAI pricing]]
+- [[https://platform.claude.com/docs/en/about-claude/models/overview][Anthropic Claude Models]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 (use-package gptel
@@ -14953,8 +14956,8 @@ The basic commands:
           gptel-include-reasoning   'ignore
           gptel-log-level           'info
           gptel--debug              nil
-          ;gptel-model              "gpt-5-mini"
-          gptel-model               "o4-mini"
+          gptel-model              "gpt-5-nano"
+          ;gptel-model               "gpt-4.1-mini"
           gptel-default-mode        'org-mode
     )
 
@@ -14978,7 +14981,7 @@ The basic commands:
     (gptel-make-anthropic "Claude-thinking" ;Any name you want
       :stream t
       :key #'(lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
-      :models '(claude-3-7-sonnet-20250219 claude-sonnet-4-20250514 claude-sonnet-4-5-20250929 claude-opus-4-1-20250805 claude-3-5-haiku-latest)
+      :models '(claude-sonnet-4-5 claude-haiku-4-5 claude-opus-4-5 claude-sonnet-4-5-20250929 claude-haiku-4-5-20251001 claude-opus-4-5-20251101)
       :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
                         :max_tokens 64000)
     )
