@@ -1678,12 +1678,15 @@ ugly flashes of unstyled Emacs.
 ;;
 ;; Faster to disable these here (before they've been initialized)
 ;;
-(push '(menu-bar-lines . 0)     default-frame-alist)
-(push '(tool-bar-lines . 0)     default-frame-alist)
-(push '(vertical-scroll-bars)   default-frame-alist)
-(push '(horizontal-scroll-bars) default-frame-alist)
+(push '(menu-bar-lines . 0)           default-frame-alist)
+(push '(tool-bar-lines . 0)           default-frame-alist)
+(push '(vertical-scroll-bars)         default-frame-alist)
+(push '(horizontal-scroll-bars)       default-frame-alist)
+(push '(background-color . "#000000") default-frame-alist)
 (when (featurep 'ns)
-    (push '(ns-transparent-titlebar . t) default-frame-alist))
+    (push '(ns-appearance . dark)        default-frame-alist)
+    (push '(ns-transparent-titlebar . t) default-frame-alist)
+)
 (setq-default mode-line-format nil)
 
 (setq scroll-bar-mode nil)
@@ -11916,7 +11919,7 @@ See also:
 
         ;; Ediff lets you automatically ignore the regions where only one of the buffers A and B disagrees
         ;; with the ancestor (Merging and diff3)
-        (setq ediff-show-clashes-only t)
+        ;(setq ediff-show-clashes-only t)
 
         ;; Ignore white space.
         ;;(setq ediff-diff-options "-w")
@@ -11935,6 +11938,14 @@ See also:
 
         ;; Don't use the weird setup with the control panel in a separate frame.
         (setq ediff-windows-setup-function 'ediff-setup-windows-plain)
+)
+
+(use-package ediff-init
+  :straight nil
+  :after ediff
+  :demand
+  :config
+    (add-hook 'ediff-prepare-buffer-hook #'org-fold-show-all)
 )
 #+end_src
 
@@ -15064,6 +15075,58 @@ References:
 )
 #+end_src
 
+**** ob-gptel
+
+[[https://github.com/jwiegley/ob-gptel][ob-gptel]] provides an Org Babel backend for gptel, enabling AI-powered interactions directly
+within Org mode source blocks. This allows you to seamlessly integrate AI responses into your
+Org documents, making it perfect for documentation, exploration, and interactive workflows.
+
+Features:
+- Execute AI queries as Org source blocks
+- Full control over gptel parameters (model, temperature, etc.)
+- Support for system messages and conversation contexts
+- Dry-run mode to inspect API calls without sending them
+- Integration with Org’s export and tangling features
+- Reusable prompts through named blocks
+
+Note: Lookup the examples of the documentation for proper use.
+
+Header Arguments:
+
+| Parameter    | Default  | Descriion                                            |
+|--------------+----------+------------------------------------------------------|
+| =:model=       | =nil=      | GPT model to use (e.g., gpt-4, gpt-3.5-turbo)        |
+| =:temperature= | =nil=      | Sampling temperature (0.0-2.0)                       |
+| =:max-tokens=  | =nil=      | Maximum tokens in response                           |
+| =:system=      | =nil=      | System message to set context                        |
+| =:stream=      | =nil=      | Enable streaming responses                           |
+| =:backend=     | =nil=      | gptel backend to use                                 |
+| =:dry-run=     | =nil=      | Show request without sending (yes to enable)         |
+| =:context=     | =nil=      | Additional context for the query                     |
+| =:prompt=      | =nil=      | Name of a previous block to use as conversation base |
+| =:sessiony=    | =nil=      | Session name of blocks to use as conversation base   |
+| =:preset=      | =nil=      | Name of preset to use                                |
+| =:format=      | =markdown= | Output format: =markdown= or =org=                       |
+| =:results=     | =replace=  | How to handle results (standard Org babel)           |
+| =:exports=     | =both=     | What to export (standard Org babel)                  |
+|--------------+----------+------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+  ;;
+  ;; gptel support in ORG documents
+  ;;
+  (use-package ob-gptel
+    :straight (ob-gptel :host github :repo "jwiegley/ob-gptel")
+    :hook ((org-mode . ob-gptel-install-completions))
+    :defines ob-gptel-install-completions
+    :config
+      (add-to-list 'org-babel-load-languages '(gptel . t))
+      ;; Optional, for better completion-at-point
+      (defun ob-gptel-install-completions ()
+        (add-hook 'completion-at-point-functions
+                  'ob-gptel-capf nil t)))
+#+end_src
+
 ** Project Management
 
 Project management is important in order to be able to  work with projects that consist of many files and that
@@ -15225,6 +15288,16 @@ The file is only created if it does not already exist."
         (setq projectile-cache-file          psimacs/config/projectile-cache-file)
 
     :config
+
+        (defun psimacs/config/projectile-compile-project (fun type &rest args)
+          (projectile-with-default-dir (projectile-project-root)
+            (apply fun type args)
+            )
+        )
+
+        (advice-add 'projectile-compile-project :around #'psimacs/config/projectile-compile-project)
+
+
         (setq projectile-project-search-path psimacs/config/project-search-path)
         (setq projectile-globally-ignored-files '(
                 "TAGS" "\#*\#" "*~" "*.la" "*.o" "*.pyc" "*.elc" "*.exe"
@@ -15337,82 +15410,85 @@ Example '.projectile-envrc' file:
 The package [[https://github.com/hatlafax/projectile-cmake][projectile-cmake]] gives fine grained support of [[https://cmake.org/][CMake]] with Emacs projectile.
 
 #+attr_html: :class styledtable1
-| Key binding   | Command                                                      | Description                                                                               |
-|---------------+--------------------------------------------------------------+-------------------------------------------------------------------------------------------|
-| =C-c C-p s C=   | =M-x projectile-cmake-select-configuration=                    | Select the cmake configuration data. Convenience function calling other /select/ functions. |
-|---------------+--------------------------------------------------------------+-------------------------------------------------------------------------------------------|
-| =C-c C-p s d=   | =M-x projectile-cmake-select-build-dir=                        | Select the current project build dir.                                                     |
-| =C-c C-p s t=   | =M-x projectile-cmake-select-build-type=                       | Select the current project build type.                                                    |
-| =C-c C-p s g=   | =M-x projectile-cmake-select-generator=                        | Select the current project configuration generator.                                       |
-| =C-c C-p s a=   | =M-x projectile-cmake-select-architecture=                     | Select the current project configuration architecture.                                    |
-| =C-c C-p s s=   | =M-x projectile-cmake-select-toolset=                          | Select the current project configuration toolset.                                         |
-| =C-c C-p s c=   | =M-x projectile-cmake-select-toolchain=                        | Select the current project configuration toolchain.                                       |
-| =C-c C-p s r g= | =M-x projectile-cmake-select-run-file=                         | Select the file that should be run for the project.                                       |
-| =C-c C-p s r d= | =M-x projectile-cmake-select-run-file-debug=                   | Select the file that should be run for the debug project.                                 |
-| =C-c C-p s r r= | =M-x projectile-cmake-select-run-file-release=                 | Select the file that should be run for the release project.                               |
-| =C-c C-p s r i= | =M-x projectile-cmake-select-run-file-release-with-debug-info= | Select the file that should be run for the release with debug info project.               |
-| =C-c C-p s r m= | =M-x projectile-cmake-select-run-file-minimal-size-release=    | Select the file that should be run for the minimal size release project.                  |
-| =C-c C-p t d=   | =M-x projectile-cmake-toggle-run-in-build-dir=                 | Toggle the run in build directory flag variable.                                          |
-|---------------+--------------------------------------------------------------+-------------------------------------------------------------------------------------------|
-| =C-c C-p h=     | =M-x hydra-projectile-cmake/body=                              | Hydra for projectile-cmake.                                                               |
-|---------------+--------------------------------------------------------------+-------------------------------------------------------------------------------------------|
+| Key binding   | Command                                                      | Description                                                                                      |
+|---------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------|
+| =C-c C-p s C=   | =M-x projectile-cmake-select-configuration=                    | Select the cmake configuration data. Convenience function calling other /select/ functions.        |
+| =C-c C-p s P=   | =M-x projectile-cmake-select-preset-configuration=             | Select the cmake preset configuration data. Convenience function calling other /select/ functions. |
+|---------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------|
+| =C-c C-p s d=   | =M-x projectile-cmake-select-build-dir=                        | Select the current project build dir.                                                            |
+| =C-c C-p s t=   | =M-x projectile-cmake-select-build-type=                       | Select the current project build type.                                                           |
+| =C-c C-p s g=   | =M-x projectile-cmake-select-generator=                        | Select the current project configuration generator.                                              |
+| =C-c C-p s a=   | =M-x projectile-cmake-select-architecture=                     | Select the current project configuration architecture.                                           |
+| =C-c C-p s s=   | =M-x projectile-cmake-select-toolset=                          | Select the current project configuration toolset.                                                |
+| =C-c C-p s c=   | =M-x projectile-cmake-select-toolchain=                        | Select the current project configuration toolchain.                                              |
+| =C-c C-p s p=   | =M-x projectile-cmake-select-preset=                           | Select the current project configuration preset.                                                 |
+| =C-c C-p s r g= | =M-x projectile-cmake-select-run-file=                         | Select the file that should be run for the project.                                              |
+| =C-c C-p s r d= | =M-x projectile-cmake-select-run-file-debug=                   | Select the file that should be run for the debug project.                                        |
+| =C-c C-p s r r= | =M-x projectile-cmake-select-run-file-release=                 | Select the file that should be run for the release project.                                      |
+| =C-c C-p s r i= | =M-x projectile-cmake-select-run-file-release-with-debug-info= | Select the file that should be run for the release with debug info project.                      |
+| =C-c C-p s r m= | =M-x projectile-cmake-select-run-file-minimal-size-release=    | Select the file that should be run for the minimal size release project.                         |
+| =C-c C-p t d=   | =M-x projectile-cmake-toggle-run-in-build-dir=                 | Toggle the run in build directory flag variable.                                                 |
+|---------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------|
+| =C-c C-p h=     | =M-x hydra-projectile-cmake/body=                              | Hydra for projectile-cmake.                                                                      |
+|---------------+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-projectile.el
-;;
-;; Configure the projectile-cmake package
-;;
-(use-package projectile-cmake
-    :diminish projectile-cmake-mode
-    :straight (projectile-cmake :host github :repo "hatlafax/projectile-cmake")
-    ;:straight nil
-    :bind (
-            :map projectile-cmake-mode-map
-                ("C-c C-p" . projectile-cmake-command-map)
-            :map projectile-cmake-command-map
-                ("h" . hydra-projectile-cmake/body)
-            :map psimacs/config/global-key-map/hydra
-                ("C-p" . hydra-projectile-cmake/body)
-          )
-    :hook (projectile-mode . projectile-cmake-global-mode)
-    :init
-        (setq projectile-cmake-executable           psimacs/config/cmake-runtime-exe)
-        (setq projectile-emcmake-executable         psimacs/config/emscripten-emcmake-exe)
-        (setq projectile-cmake-clang-c-executable   psimacs/config/clang-c-compiler-runtime-exe)
-        (setq projectile-cmake-clang-c++-executable psimacs/config/clang-c++-compiler-runtime-exe)
-    :config
-        (defun psimacs/config/projectile-cmake--set-all-commands-lsp-clients-clangd-args(&optional evaluate)
-          "Adds or updates to .dir-locals.el the variable \\='lsp-clients-clangd-args\\=' variable in \\='c++-mode\\='
-           wrspt. to the \\='--compile-commands-dir\\=' argument."
-          (interactive)
-          (when (projectile-cmake-valid-p)
-            (let* (
-                   (build-dir   (projectile-cmake-project-build-dir))
-                   (entry       (concat "--compile-commands-dir=" build-dir))
-                   (clangd-args lsp-clients-clangd-args)
-                  )
+  ;;
+  ;; Configure the projectile-cmake package
+  ;;
+  (use-package projectile-cmake
+      :diminish projectile-cmake-mode
+      :straight (projectile-cmake :host github :repo "hatlafax/projectile-cmake")
+      ;:load-path "./work-lisp/projectile-cmake"
+      ;:straight nil
+      :bind (
+              :map projectile-cmake-mode-map
+                  ("C-c C-p" . projectile-cmake-command-map)
+              :map projectile-cmake-command-map
+                  ("h" . hydra-projectile-cmake/body)
+              :map psimacs/config/global-key-map/hydra
+                  ("C-p" . hydra-projectile-cmake/body)
+            )
+      :hook (projectile-mode . projectile-cmake-global-mode)
+      :init
+          (setq projectile-cmake-executable           psimacs/config/cmake-runtime-exe)
+          (setq projectile-emcmake-executable         psimacs/config/emscripten-emcmake-exe)
+          (setq projectile-cmake-clang-c-executable   psimacs/config/clang-c-compiler-runtime-exe)
+          (setq projectile-cmake-clang-c++-executable psimacs/config/clang-c++-compiler-runtime-exe)
+      :config
+          (defun psimacs/config/projectile-cmake--set-all-commands-lsp-clients-clangd-args(&optional evaluate)
+            "Adds or updates to .dir-locals.el the variable \\='lsp-clients-clangd-args\\=' variable in \\='c++-mode\\='
+             wrspt. to the \\='--compile-commands-dir\\=' argument."
+            (interactive)
+            (when (projectile-cmake-valid-p)
+              (let* (
+                     (build-dir   (projectile-cmake-project-build-dir))
+                     (entry       (concat "--compile-commands-dir=" build-dir))
+                     (clangd-args lsp-clients-clangd-args)
+                    )
 
-              (unless (seq-find (lambda (cand)
-                                  (string-equal entry cand)) clangd-args)
-                (if (seq-find (lambda (cand)
-                                (message "=> %s" cand)
-                                (string-prefix-p "--compile-commands-dir=" cand)) clangd-args)
-                    (setq clangd-args (cl-subst entry "--compile-commands-dir=" clangd-args :test #'string-prefix-p))
-                  ;;(add-to-list 'clangd-args entry))
-                  (cl-pushnew entry clangd-args))
+                (unless (seq-find (lambda (cand)
+                                    (string-equal entry cand)) clangd-args)
+                  (if (seq-find (lambda (cand)
+                                  (message "=> %s" cand)
+                                  (string-prefix-p "--compile-commands-dir=" cand)) clangd-args)
+                      (setq clangd-args (cl-subst entry "--compile-commands-dir=" clangd-args :test #'string-prefix-p))
+                    ;;(add-to-list 'clangd-args entry))
+                    (cl-pushnew entry clangd-args))
 
-                (save-current-buffer
-                  (add-dir-local-variable 'c++-mode 'lsp-clients-clangd-args clangd-args)
+                  (save-current-buffer
+                    (add-dir-local-variable 'c++-mode 'lsp-clients-clangd-args clangd-args)
 
-                  (unless evaluate
-                    (save-buffer)
-                    (kill-buffer)
+                    (unless evaluate
+                      (save-buffer)
+                      (kill-buffer)
 
-                    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)
-                    )))))
-          )
+                      (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)
+                      )))))
+            )
 
-        (advice-add 'projectile-cmake--set-all-commands :after #'psimacs/config/projectile-cmake--set-all-commands-lsp-clients-clangd-args)
-)
+          (advice-add 'projectile-cmake--set-all-commands :after #'psimacs/config/projectile-cmake--set-all-commands-lsp-clients-clangd-args)
+  )
 #+end_src
 
 **** CANCELED projectile-b2
@@ -15901,10 +15977,10 @@ See also:
 
 #+begin_src emacs-lisp :tangle config/init-advanced-magit.el :var file-description="Advanced magit setup"
 (use-package git-timemachine
-;    :after magit
-;    :straight (git-timemachine :host https://codeberg.org :repo "pidu/git-timemachine")
-    :straight nil
-    :load-path "./site-lisp/git-timemachine"
+    :after magit
+    ;:straight (git-timemachine :host https://codeberg.org :repo "pidu/git-timemachine")
+    ;:straight nil
+    ;:load-path "./site-lisp/git-timemachine"
 )
 #+end_src
 
@@ -16568,8 +16644,8 @@ GNU Emacs, intended as replacement for the older Flymake extension which is part
 ;;
 (use-package flycheck
     :diminish flycheck-mode
-    :config
-        (global-flycheck-mode)
+    ;:config
+    ;    (global-flycheck-mode)
     :custom
         ;(flycheck-emacs-lisp-initialize-packages nil)  ; ??? maybe necessary because of straight, not sure yet
         (flycheck-display-errors-delay .3)
@@ -17017,7 +17093,38 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (setq lsp-clangd-binary-path psimacs/config/clangd-runtime-exe)
 
         (setq lsp-clients-clangd-executable psimacs/config/clangd-runtime-exe)
-        (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+
+        ; see https://manpages.debian.org/experimental/clangd-21/clangd-21.1.en.html
+        (setq lsp-clients-clangd-args '(
+                                        "-j=8"                             ; Number of async workers used by clangd. Background index also uses this many workers.
+                                        ;"--query-driver=/usr/bin/**/clang-*,/bin/clang,/bin/clang++,/usr/bin/gcc,/usr/bin/g++"
+                                                                           ; Comma separated list of globs for white-listing gcc-compatible drivers that are safe to execute. Drivers matching any of these globs will be used to extract system includes
+                                        "--enable-config"                  ; Read user and project configuration from YAML files. Project config is from a .clangd file in the project directory. User config is from clangd/config.yaml in the following directories: ~/.config
+                                        "--pretty"                         ; Pretty-print JSON output
+                                        "--all-scopes-completion=true"     ; If set to true, code completion will include index symbols that are not defined in the scopes visible from the code completion point.
+                                        "--background-index"               ; Index project code in the background and persist index on disk.
+                                        "--clang-tidy"                     ; Enable clang-tidy diagnostics
+                                        "--clang-tidy-checks=*"
+                                        "--completion-style=detailed"      ; Granularity of code completion suggestions: One completion item for each semantically distinct completion, with full type information
+                                        ;"--completion-style=bundled"      ; Granularity of code completion suggestions: Similar completion items (e.g. function overloads) are combined. Type information shown where possible
+                                        ;"--experimental-modules-support"  ; Experimental support for standard c++ modules
+                                        "--fallback-style=Mozilla"         ; clang-format style to apply by default when no .clang-format file is found
+                                        "--log=error"                      ; Verbosity of log messages written to stderr: error,info or verbose
+                                        ;"--header-insertion=iwyu"         ; Add #include directives when accepting code completions: Include what you use. Insert the owning header for top-level symbols, unless the header is already directly included or the symbol is forward-declared
+                                        "--header-insertion=never"         ; Add #include directives when accepting code completions: Never insert #include directives as part of code completion
+                                        ;"--header-insertion-decorators"   ; Prepend a circular dot or space before the completion label, depending on whether an include line will be inserted or not
+                                        ;"--limit-references=1000"         ; Limit the number of references returned by clangd. 0 means no limit (default=1000)
+                                        ;"--limit-results=100"             ; Limit the number of results returned by clangd. 0 means no limit (default=100)
+                                        ;"--rename-file-limit=50           ; Limit the number of files to be affected by symbol renaming. 0 means no limit (default=50)
+                                        "--malloc-trim"                    ; Trim memory periodically
+                                        "--pch-storage=memory"             ; Storing PCHs in memory increases memory usages, but may improve performance
+                                        ;"--pch-storage=disk"
+                                        "--function-arg-placeholders=0"    ; When disabled (0), completions contain only parentheses for function calls. When enabled (1), completions also contain placeholders for method parameters
+                                        ;"--ranking-model=decision_forest"
+                                        ;"--cross-file-rename"
+                                       )
+              )
+
 
         (use-package consult-lsp
             :bind (:map lsp-mode-map
@@ -17626,7 +17733,7 @@ client leveraging the [[https://github.com/microsoft/pyright][Pyright language s
 #+begin_src emacs-lisp :tangle config/init-advanced-python.el :var file-description="Advanced Python setup"
 (use-package lsp-pyright
     ;;:after lsp-mode
-    :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+    :custom (lsp-pyright-langserver-command "basedpyright") ;; or pyright
     :config
         (setq lsp-pyright-python-executable-cmd psimacs/config/python-runtime-exe)
 
@@ -25341,9 +25448,9 @@ References:
   (setq treesit-font-lock-level 4)
 
   (use-package combobulate
-      :straight nil
-      :load-path "./work-lisp/combobulate"
-      ;:straight (combobulate :host github :repo "mickeynp/combobulate")
+      ;:straight nil
+      ;:load-path "./work-lisp/combobulate"
+      :straight (combobulate :host github :repo "mickeynp/combobulate")
       :preface
             (setq combobulate-key-prefix "C-c o")
       :hook
