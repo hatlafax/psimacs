@@ -15075,58 +15075,6 @@ References:
 )
 #+end_src
 
-**** ob-gptel
-
-[[https://github.com/jwiegley/ob-gptel][ob-gptel]] provides an Org Babel backend for gptel, enabling AI-powered interactions directly
-within Org mode source blocks. This allows you to seamlessly integrate AI responses into your
-Org documents, making it perfect for documentation, exploration, and interactive workflows.
-
-Features:
-- Execute AI queries as Org source blocks
-- Full control over gptel parameters (model, temperature, etc.)
-- Support for system messages and conversation contexts
-- Dry-run mode to inspect API calls without sending them
-- Integration with Org’s export and tangling features
-- Reusable prompts through named blocks
-
-Note: Lookup the examples of the documentation for proper use.
-
-Header Arguments:
-
-| Parameter    | Default  | Descriion                                            |
-|--------------+----------+------------------------------------------------------|
-| =:model=       | =nil=      | GPT model to use (e.g., gpt-4, gpt-3.5-turbo)        |
-| =:temperature= | =nil=      | Sampling temperature (0.0-2.0)                       |
-| =:max-tokens=  | =nil=      | Maximum tokens in response                           |
-| =:system=      | =nil=      | System message to set context                        |
-| =:stream=      | =nil=      | Enable streaming responses                           |
-| =:backend=     | =nil=      | gptel backend to use                                 |
-| =:dry-run=     | =nil=      | Show request without sending (yes to enable)         |
-| =:context=     | =nil=      | Additional context for the query                     |
-| =:prompt=      | =nil=      | Name of a previous block to use as conversation base |
-| =:sessiony=    | =nil=      | Session name of blocks to use as conversation base   |
-| =:preset=      | =nil=      | Name of preset to use                                |
-| =:format=      | =markdown= | Output format: =markdown= or =org=                       |
-| =:results=     | =replace=  | How to handle results (standard Org babel)           |
-| =:exports=     | =both=     | What to export (standard Org babel)                  |
-|--------------+----------+------------------------------------------------------|
-
-#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
-  ;;
-  ;; gptel support in ORG documents
-  ;;
-  (use-package ob-gptel
-    :straight (ob-gptel :host github :repo "jwiegley/ob-gptel")
-    :hook ((org-mode . ob-gptel-install-completions))
-    :defines ob-gptel-install-completions
-    :config
-      (add-to-list 'org-babel-load-languages '(gptel . t))
-      ;; Optional, for better completion-at-point
-      (defun ob-gptel-install-completions ()
-        (add-hook 'completion-at-point-functions
-                  'ob-gptel-capf nil t)))
-#+end_src
-
 ** Project Management
 
 Project management is important in order to be able to  work with projects that consist of many files and that
@@ -19624,6 +19572,58 @@ References:
 )
 #+end_src
 
+**** gptel support with Org-Mode
+
+[[https://github.com/jwiegley/ob-gptel][ob-gptel]] provides an Org Babel backend for gptel, enabling AI-powered interactions directly
+within Org mode source blocks. This allows you to seamlessly integrate AI responses into your
+Org documents, making it perfect for documentation, exploration, and interactive workflows.
+
+Features:
+- Execute AI queries as Org source blocks
+- Full control over gptel parameters (model, temperature, etc.)
+- Support for system messages and conversation contexts
+- Dry-run mode to inspect API calls without sending them
+- Integration with Org’s export and tangling features
+- Reusable prompts through named blocks
+
+Note: Lookup the examples of the documentation for proper use.
+
+Header Arguments:
+
+| Parameter    | Default  | Descriion                                            |
+|--------------+----------+------------------------------------------------------|
+| =:model=       | =nil=      | GPT model to use (e.g., gpt-4, gpt-3.5-turbo)        |
+| =:temperature= | =nil=      | Sampling temperature (0.0-2.0)                       |
+| =:max-tokens=  | =nil=      | Maximum tokens in response                           |
+| =:system=      | =nil=      | System message to set context                        |
+| =:stream=      | =nil=      | Enable streaming responses                           |
+| =:backend=     | =nil=      | gptel backend to use                                 |
+| =:dry-run=     | =nil=      | Show request without sending (yes to enable)         |
+| =:context=     | =nil=      | Additional context for the query                     |
+| =:prompt=      | =nil=      | Name of a previous block to use as conversation base |
+| =:sessiony=    | =nil=      | Session name of blocks to use as conversation base   |
+| =:preset=      | =nil=      | Name of preset to use                                |
+| =:format=      | =markdown= | Output format: =markdown= or =org=                       |
+| =:results=     | =replace=  | How to handle results (standard Org babel)           |
+| =:exports=     | =both=     | What to export (standard Org babel)                  |
+|--------------+----------+------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-org-mode.el :var file-description="Major Modes - org-mode setup"
+  ;;
+  ;; gptel support in ORG documents
+  ;;
+  (use-package ob-gptel
+    :straight (ob-gptel :host github :repo "jwiegley/ob-gptel")
+    :hook ((org-mode . ob-gptel-install-completions))
+    :defines ob-gptel-install-completions
+
+    :config
+      ;; Optional, for better completion-at-point
+      (defun ob-gptel-install-completions ()
+        (add-hook 'completion-at-point-functions
+                  'ob-gptel-capf nil t)))
+#+end_src
+
 **** Org babel language configuration
 
 Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.html][org babel]].
@@ -19646,6 +19646,7 @@ Configuration settings for [[https://orgmode.org/worg/org-contrib/babel/intro.ht
             (emacs-lisp . t)
             (latex . t)
             (yaml .t)
+            (gptel . t)
         ))
 
         (setq org-plantuml-jar-path (expand-file-name psimacs/config/plantuml-jar-file))
