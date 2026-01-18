@@ -1646,8 +1646,6 @@ if (-not $nopython)
             $psimacs_py_requirements = "$psimacs\psimacs\assets\dependencies\windows\python\requirements.txt".Replace('\', '/')
         }
 
-        $psimacs_py_requirements = "$psimacs\psimacs\assets\dependencies\windows\python\requirements.txt".Replace('\', '/')
-
         if ( Test-Path "$activate_0_bash" -PathType Leaf )
         {
             echo "Installing the Python packages as defined in file $psimacs_py_requirements ..."
