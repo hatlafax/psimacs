@@ -108,6 +108,10 @@ if ($help -or $h)
     echo "              Your administrator will need to activate the 'Enable Win32 long paths'"
     echo "              group policy, or set 'LongPathsEnabled' to 1 in the registry key"
     echo "              HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem."
+    echo "      3) A minor Python version cannot be installed if it is already installed on the machine."
+    echo "         E.g. if you have 3.11.x already installed somewhere, the installation of the private Psimacs"
+    echo "         Python version will fail. Either uninstall a previous Python version or copy the existing"
+    echo "         Python installation into the Psimacs directory, i.e. \$HOME\psimacs\Python311."
     echo ""
     echo "Additionally, the script allows the complete deinstallation of the Psimacs envrironment. Python gets deinstalled"
     echo "properly and the virtual Python environment as well as Psimacs itself are only removed on special request with the"
@@ -194,6 +198,10 @@ if ($help -or $h)
 #
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if ($pythonrequirements) {
+    $pythonrequirements = Convert-Path -LiteralPath "$pythonrequirements"
+}
 
 #
 # Uninstallation
@@ -357,7 +365,6 @@ if ($uninstall)
 
     $shortcuts += "$Desktop\Psimacs Documentation.lnk"
     $shortcuts += "$Desktop\Psimacs Key Bindings.lnk"
-    $shortcuts += "$Desktop\Psimacs Sorted Key Bindings.lnk"
 
     foreach ($shortcut in $shortcuts)
     {
@@ -1475,6 +1482,8 @@ if (! (Test-Path $init_el -PathType Leaf) )
         }
     }
 
+
+    $else_grammar_compiler_git = "$psimacs\ELSE-grammar-compiler\.git"
     if (! (Test-Path $else_grammar_compiler_git) )
     {
         echo "Cloning ELSE grammar compiler..."
@@ -1598,37 +1607,8 @@ if (! (Test-Path $init_el -PathType Leaf) )
             $ShortCut.Description      = $Desc
             $Shortcut.Save()
         }
-
-        $Target  = "$psimacs\psimacs\docs\sortedKeyBindings.html"
-        $Dest    = "$Desk\Psimacs Sorted Key Bindings.lnk"
-        $Desc    = "Psimacs Sorted Key Bindings"
-
-        if (! (Test-Path "$Dest" -PathType Leaf) )
-        {
-            echo "Psimacs Documentation Shortcut..."
-
-            $Shortcut = $Shell.CreateShortcut($Dest)
-            $Shortcut.WindowStyle      = 1
-            $Shortcut.IconLocation     = $Icon
-            $Shortcut.TargetPath       = $Target
-            $Shortcut.WorkingDirectory = $env:HOME
-            $ShortCut.Description      = $Desc
-            $Shortcut.Save()
-        }
     }
 }
-
-$else_grammar_compiler_git = "$psimacs\ELSE-grammar-compiler\.git"
-
-if (! (Test-Path $else_grammar_compiler_git) )
-{
-    echo "Cloning ELSE grammar compiler..."
-
-    $else_grammar_compiler_url = "https://github.com/hatlafax/ELSE-grammar-compiler.git"
-
-    & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $else_grammar_compiler_url ELSE-grammar-compiler"
-}
-
 
 if (-not $nopython)
 {
@@ -1639,17 +1619,18 @@ if (-not $nopython)
         #
         if ( ($pythonrequirements) -and (Test-Path "$pythonrequirements"))
         {
+            echo "...using $pythonrequirements"
             $psimacs_py_requirements = "$pythonrequirements".Replace('\', '/')
         }
         else
         {
+            echo "...using requirements from assets directory"
             $psimacs_py_requirements = "$psimacs\psimacs\assets\dependencies\windows\python\requirements.txt".Replace('\', '/')
         }
 
         if ( Test-Path "$activate_0_bash" -PathType Leaf )
         {
             echo "Installing the Python packages as defined in file $psimacs_py_requirements ..."
-
             & $bash_exe --login -c ". $(cygpath --mixed $activate_0_bash); pip install -r $psimacs_py_requirements"
         }
     }
