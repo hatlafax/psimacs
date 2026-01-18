@@ -11,6 +11,7 @@ param (
     [switch]$nopythonupdate    = $false,
     [switch]$nopythonpackages  = $false,
     [switch]$pythonuselatest   = $false,
+    [string]$pythonrequirements,
     [string]$python,
     [switch]$nojava            = $false,
     [string]$java              = "21.35",
@@ -125,12 +126,13 @@ if ($help -or $h)
     echo "      -conemu            : Additionally install the ConEmu terminal."
     echo "    Python"
     echo "      -nopython          : Do not install Python."
-    echo "      -pythonuselatest   : Use the latest python version. Otherwise the version Python 3.11.14 is currently used."
+    echo "      -pythonuselatest   : Use the latest python version. Otherwise the version Python 3.11.9 is currently used."
     echo "                           The latest Python version might not work. Not all package wheels are already available."
     echo "      -nopythonupdate    : If Python is already installed, this options allows the suppression of Python updates."
     echo "      -nopythonpackages  : Do not install the the Psimacs defined Python package requirements."
     echo "      -python            : The Python version number in the format 'N.M.B' that should be installed. Default is latest"
-    echo "                           if flage 'pythonuselatest' is defined. Otherwise the Python 3.11.14 is currently used."
+    echo "                           if flage 'pythonuselatest' is defined. Otherwise the Python 3.11.9 is currently used."
+    echo "      -pythonrequirements: Path to alternative 'requirements.txt' to use instead of the one from the 'assets' directory."
     echo "    Java"
     echo "      -nojava            : Do not install OpenJDK JDK."
     echo "      -java              : The Java version number and the revision: 'N.M'"
@@ -166,7 +168,7 @@ if ($help -or $h)
     echo "      bootstrap.ps1 -help"
     echo "      bootstrap.ps1 -run"
     echo "      bootstrap.ps1 -run -conemu -ucrt"
-    echo "      bootstrap.ps1 -run -conemu -mingw -nopackages -python 3.11.14 -java 21.35"
+    echo "      bootstrap.ps1 -run -conemu -mingw -nopackages -python 3.11.9 -java 21.35"
     echo "      bootstrap.ps1 -run -mingw -allnerdfonts -pythonuselatest -username \"Tobi Talbot\" -useremail \"tobi4242@gmail.com\" -calendarlatitude \"42.123\" -calendarlongitude \"2.987\" -calendarlocation \"Montreal, Canada\""
     echo ""
     echo "Information:"
@@ -432,7 +434,7 @@ if (-not $nopython)
 {
     if ((-not $python) -and (-not $pythonuselatest))
     {
-        $python = "3.11.14"
+        $python = "3.11.9"
     }
 
     if ($python)
@@ -484,7 +486,7 @@ if (-not $nopython)
             else
             {
                 echo "No valid Python version could be determined. Please provide a version string"
-                echo "with option -python, like -python 3.11.14."
+                echo "with option -python, like -python 3.11.9."
                 return
             }
         }
@@ -1326,7 +1328,7 @@ if (-not $nosumatrapdf)
     if (test-path -PathType container $psimacs\$sumatrapdf_dir) 
     {
         echo "Removing $psimacs\$sumatrapdf_dir directory..."
-        Remove-Item –path $psimacs\$sumatrapdf_dir –recurse
+        Remove-Item -Path $psimacs\$sumatrapdf_dir -Recurse
     }
 
     if (-not (test-path -PathType container $psimacs\$sumatrapdf_dir)) 
@@ -1395,7 +1397,7 @@ if (-not $nopandoc)
     if (test-path -PathType container $pandoc_dir) 
     {
         echo "Removing $pandoc_dir directory..."
-        Remove-Item –path $pandoc_dir –recurse
+        Remove-Item -Path $pandoc_dir -Recurse
     }
 
     if ( ! (Test-Path "$pandoc_dir") )
@@ -1635,7 +1637,16 @@ if (-not $nopython)
         #
         # Install the Python Requirements
         #
-        $psimacs_py_requirements = "$psimacs\psimacs\assets\dependencies\python\requirements.txt".Replace('\', '/')
+        if ( ($pythonrequirements) -and (Test-Path "$pythonrequirements"))
+        {
+            $psimacs_py_requirements = "$pythonrequirements".Replace('\', '/')
+        }
+        else
+        {
+            $psimacs_py_requirements = "$psimacs\psimacs\assets\dependencies\windows\python\requirements.txt".Replace('\', '/')
+        }
+
+        $psimacs_py_requirements = "$psimacs\psimacs\assets\dependencies\windows\python\requirements.txt".Replace('\', '/')
 
         if ( Test-Path "$activate_0_bash" -PathType Leaf )
         {
