@@ -11,6 +11,7 @@ param (
     [switch]$nopythonupdate    = $false,
     [switch]$nopythonpackages  = $false,
     [switch]$pythonuselatest   = $false,
+    [switch]$python_msi        = $false,
     [string]$pythonrequirements,
     [string]$python,
     [switch]$nojava            = $false,
@@ -135,6 +136,10 @@ if ($help -or $h)
     echo "      -nopython          : Do not install Python."
     echo "      -pythonuselatest   : Use the latest python version. Otherwise the version Python 3.11.9 is currently used."
     echo "                           The latest Python version might not work. Not all package wheels are already available."
+    echo "      -python_msi        : Use the official msi installer from www.python.org. Otherwise the Python package is taken"
+    echo "                           from https://github.com/astral-sh/python-build-standalone. It is not recommended to use the"
+    echo "                           msi installer from www.pytho.org because it forces you to properly uninstall any Python version"
+    echo "                           with the same major.minor version installed on your computer, which typically is quite a hassle."
     echo "      -nopythonupdate    : If Python is already installed, this options allows the suppression of Python updates."
     echo "      -nopythonpackages  : Do not install the the Psimacs defined Python package requirements."
     echo "      -python            : The Python version number in the format 'N.M.B' that should be installed. Default is latest"
@@ -241,54 +246,57 @@ if ($uninstall)
     #
     # Deinstallation of Python
     #
-    $dirs = Get-ChildItem "$psimacs\Python*" -Directory
-
-    foreach ($dir in $dirs)
+    if ($python_msi)
     {
-        if ($dir -match 'Python(?<major>\d)(?<minor>\d+)$')
+        $dirs = Get-ChildItem "$psimacs\Python*" -Directory
+
+        foreach ($dir in $dirs)
         {
-            $PyMajor = $Matches.major
-            $PyMinor = $Matches.minor
-
-            $python = "CPython-${PyMajor}.${PyMinor}"
-
-            echo "Found $python installation in $dir ..."
-
-            #
-            # Lookup the uninstaller for that Python version
-            #
-            $key = "registry::HKEY_CURRENT_USER\SOFTWARE\Classes\Installer\Dependencies\$python"
-            if (Test-Path -Path "$key")
+            if ($dir -match 'Python(?<major>\d)(?<minor>\d+)$')
             {
-                $key = "registry::\HKEY_CURRENT_USER\SOFTWARE\Classes\Installer\Dependencies\$python\Dependents\*"
-                $subkeys = Get-ChildItem -Path "$key"
+                $PyMajor = $Matches.major
+                $PyMinor = $Matches.minor
 
-                foreach ($subkey in $subkeys)
+                $python = "CPython-${PyMajor}.${PyMinor}"
+
+                echo "Found $python installation in $dir ..."
+
+                #
+                # Lookup the uninstaller for that Python version
+                #
+                $key = "registry::HKEY_CURRENT_USER\SOFTWARE\Classes\Installer\Dependencies\$python"
+                if (Test-Path -Path "$key")
                 {
-                    if ($subkey -match '^.*\\(?<hash_key>\{.+\})$')
+                    $key = "registry::\HKEY_CURRENT_USER\SOFTWARE\Classes\Installer\Dependencies\$python\Dependents\*"
+                    $subkeys = Get-ChildItem -Path "$key"
+
+                    foreach ($subkey in $subkeys)
                     {
-                        $hash_key = $Matches.hash_key
-
-                        $key = "registry::\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$hash_key"
-                        if (Test-Path -Path "$key")
+                        if ($subkey -match '^.*\\(?<hash_key>\{.+\})$')
                         {
-                            try {
-                                $uninstall_cmd = (Get-ItemProperty -Path "$key" -Name "QuietUninstallString").QuietUninstallString
+                            $hash_key = $Matches.hash_key
 
-                                if ($uninstall_cmd -match '^"(?<cmd>.*)"\s+(?<args>.*)$')
-                                {
-                                    $uninstall_cmd  = $Matches.cmd
-                                    $uninstall_args = $Matches.args
-
-                                    echo "$uninstall_cmd"
-                                    echo "$uninstall_args"
-
-                                    Start-Process "$uninstall_cmd" -NoNewWindow -Wait -ArgumentList "$uninstall_args"
-                                }
-                            }
-                            catch
+                            $key = "registry::\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$hash_key"
+                            if (Test-Path -Path "$key")
                             {
-                                echo "Uninstallation of $python failed!"
+                                try {
+                                    $uninstall_cmd = (Get-ItemProperty -Path "$key" -Name "QuietUninstallString").QuietUninstallString
+
+                                    if ($uninstall_cmd -match '^"(?<cmd>.*)"\s+(?<args>.*)$')
+                                    {
+                                        $uninstall_cmd  = $Matches.cmd
+                                        $uninstall_args = $Matches.args
+
+                                        echo "$uninstall_cmd"
+                                        echo "$uninstall_args"
+
+                                        Start-Process "$uninstall_cmd" -NoNewWindow -Wait -ArgumentList "$uninstall_args"
+                                    }
+                                }
+                                catch
+                                {
+                                    echo "Uninstallation of $python failed!"
+                                }
                             }
                         }
                     }
@@ -458,11 +466,95 @@ if (-not $nopython)
             $PyMinor = $Matches.minor
             $PyBuild = $Matches.build
 
-            #
-            # Remark: Python on Windows allows not to install separate build numbers.
-            #         We therefore use the 'PythonXY' directory as used by many people.
-            #
-            $python_dir = "Python${PyMajor}${PyMinor}"
+            if ($python_msi)
+            {
+                #
+                # Remark: Python on Windows allows not to install separate build numbers.
+                #         We therefore use the 'PythonXY' directory as used by many people.
+                #
+                $python_dir = "Python${PyMajor}${PyMinor}"
+            }
+            else
+            {
+                try
+                {
+                    $ProgressPreference = "silentlyContinue"
+
+                    $githubLatestReleases = 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest'
+
+                    $githubLatestRelease = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '-x86_64-pc-windows-msvc-install_only.tar.gz').Line
+                    
+                    $ProgressPreference = 'Continue'
+                }
+                catch
+                {
+                    echo "Could not determine Python version from 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest'!"
+                    return 
+                }
+
+                $python_url =""
+                $python_major_minor_requested = "${PyMajor}.${PyMinor}"
+                $python_requested = $python
+
+                $no_exact_match = $false
+
+                $PyMajor_found = $PyMajor
+                $PyMinor_found = $PyMinor
+                $PyBuild_found = $PyBuild
+
+                foreach ($e in $githubLatestRelease)
+                {
+                    if ($e -match '^.*cpython-(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)%.*$')
+                    {
+                        $PyMajor = $Matches.major
+                        $PyMinor = $Matches.minor
+                        $PyBuild = $Matches.build
+
+                        $python_major_minor_build = "${PyMajor}.${PyMinor}.${PyBuild}"
+                        $python_major_minor       = "${PyMajor}.${PyMinor}"
+
+                        if ($python_major_minor_build -eq $python)
+                        {
+                            $python_url = $e
+                            $no_exact_match = $false
+
+                            $PyMajor_found = $PyMajor
+                            $PyMinor_found = $PyMinor
+                            $PyBuild_found = $PyBuild
+                        }
+
+                        if ( (-not $python_url) -and ($python_major_minor -eq $python_major_minor_requested) )
+                        {
+                            $python_url = $e
+                            $no_exact_match = $true
+
+                            $PyMajor_found = $PyMajor
+                            $PyMinor_found = $PyMinor
+                            $PyBuild_found = $PyBuild
+                        }
+                    }
+                }
+
+                if (-not $python_url)
+                {
+                    echo "Standalone Python does not provide the requested version ${python_requested}."
+                    return 
+                }
+
+                if ($no_exact_match)
+                {
+                    $python = "${PyMajor_found}.${PyMinor_found}.${PyBuild_found}"
+                    echo "Standalone Python does not provide the requested version ${python_requested}. Using ${python} instead."
+                }
+
+                #
+                # Remark: Python on Windows allows not to install separate build numbers.
+                #         With the standalone route we could, but we stick to the same
+                #         pattern as in the msi case. 
+                #         We therefore use the 'PythonXY' directory as used by many people.
+                #
+                $python_dir = "Python${PyMajor_found}${PyMinor_found}"
+            }
         }
         else
         {
@@ -472,41 +564,120 @@ if (-not $nopython)
     }
     else
     {
-        $baseuri = 'https://www.python.org/downloads/windows'
-
-        try 
+        if ($python_msi)
         {
-            $ProgressPreference = "silentlyContinue"
-            $response = Invoke-WebRequest -Uri $baseuri -UseBasicParsing
-            $ProgressPreference = 'Continue'
+            $baseuri = 'https://www.python.org/downloads/windows'
 
-            if ($response.Content -match '.*Latest Python \d+ Release - Python (?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+).*')
+            try 
             {
-                $PyMajor = $Matches.major
-                $PyMinor = $Matches.minor
-                $PyBuild = $Matches.build
+                $ProgressPreference = "silentlyContinue"
+                $response = Invoke-WebRequest -Uri $baseuri -UseBasicParsing
+                $ProgressPreference = 'Continue'
 
-                $python  = "${PyMajor}.${PyMinor}.${PyBuild}"
+                if ($response.Content -match '.*Latest Python \d+ Release - Python (?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+).*')
+                {
+                    $PyMajor = $Matches.major
+                    $PyMinor = $Matches.minor
+                    $PyBuild = $Matches.build
 
-                #
-                # Remark: Python on Windows allows not to install separate build numbers.
-                #         We therefore use the 'PythonXY' directory as used by many people.
-                #
-                $python_dir = "Python${PyMajor}${PyMinor}"
+                    $python  = "${PyMajor}.${PyMinor}.${PyBuild}"
 
-                echo "Found latest stable Python release $python"
+                    #
+                    # Remark: Python on Windows allows not to install separate build numbers.
+                    #         We therefore use the 'PythonXY' directory as used by many people.
+                    #
+                    $python_dir = "Python${PyMajor}${PyMinor}"
+
+                    echo "Found latest stable Python release $python"
+                }
+                else
+                {
+                    echo "No valid Python version could be determined. Please provide a version string"
+                    echo "with option -python, like -python 3.11.9."
+                    return
+                }
             }
-            else
+            catch
             {
-                echo "No valid Python version could be determined. Please provide a version string"
-                echo "with option -python, like -python 3.11.9."
+                echo "Could identify the latest Python version number. Check for another Python version. Prematurely leaving script!"
                 return
             }
         }
-        catch
+        else
         {
-            echo "Could identify the latest Python version number. Check for another Python version. Prematurely leaving script!"
-            return
+            try
+            {
+                $ProgressPreference = "silentlyContinue"
+
+                $githubLatestReleases = 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest'
+
+                $githubLatestRelease = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '-x86_64-pc-windows-msvc-install_only.tar.gz').Line
+                
+                $ProgressPreference = 'Continue'
+}
+            catch
+            {
+                echo "Could not determine Python version from 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest'!"
+                return 
+            }
+
+            [Int]$major_latest = 0
+            [Int]$minor_latest = 0
+            [Int]$build_latest = 0
+
+            $python_url =""
+
+            foreach ($e in $githubLatestRelease)
+            {
+                if ($e -match '^.*cpython-(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)%.*$')
+                {
+                    $PyMajor = $Matches.major
+                    $PyMinor = $Matches.minor
+                    $PyBuild = $Matches.build
+
+                    [int]$major = [Int]${PyMajor}
+                    [int]$minor = [Int]${PyMinor}
+                    [int]$build = [Int]${PyBuild}
+
+                    if ($major_latest -lt $major)
+                    {
+                        $major_latest = $major
+                        $minor_latest = 0
+                        $build_latest = 0
+
+                        $python_url = $e
+                    }
+
+                    if ( ($major_latest -eq $major) -and ($minor_latest -lt $minor) )
+                    {
+                        $minor_latest = $minor
+                        $build_latest = 0
+
+                        $python_url = $e
+                    }
+
+                    if ( ($major_latest -eq $major) -and ($minor_latest -eq $minor) -and ($build_latest -lt $build) )
+                    {
+                        $build_latest = $build
+
+                        $python_url = $e
+                    }
+                }
+            }
+
+            $PyMajor = $major_latest.ToString()
+            $PyMinor = $minor_latest.ToString()
+            $PyBuild = $build_latest.ToString()
+
+            $python  = "${PyMajor}.${PyMinor}.${PyBuild}"
+
+            #
+            # Remark: Python on Windows allows not to install separate build numbers.
+            #         With the standalone route we could, but we stick to the same
+            #         pattern as in the msi case. 
+            #         We therefore use the 'PythonXY' directory as used by many people.
+            #
+            $python_dir = "Python${PyMajor}${PyMinor}"
         }
     }
 }
@@ -809,6 +980,11 @@ if ( ! $nopackages )
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-scite-defaults"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-fd"
     & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-ffmpeg"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-bat"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-dust"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-eza"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-fzf"
+    & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-meld3"
 
     #
     # Node.js and mermaid diagramm support
@@ -981,41 +1157,80 @@ if (-not $nopython)
     {
         echo "Installing Python $python ..."
 
-        $python_installer = "python-${python}-amd64.exe"
-
-        #
-        # Download installer
-        #
-        if ( ! (Test-Path "$psimacs\$python_installer" -PathType Leaf) )
+        if ($python_msi)
         {
-            echo "Downloading $python_installer installer..."
+            $python_installer = "python-${python}-amd64.exe"
 
-            try
+            #
+            # Download installer
+            #
+            if ( ! (Test-Path "$psimacs\$python_installer" -PathType Leaf) )
             {
-                $python_installer_url = "https://www.python.org/ftp/python/$python/$python_installer"
-                
-                $ProgressPreference = "silentlyContinue"
-                Invoke-WebRequest -Uri $python_installer_url -UseBasicParsing -OutFile $python_installer
-                $ProgressPreference = 'Continue'
+                echo "Downloading $python_installer installer..."
 
+                try
+                {
+                    $python_installer_url = "https://www.python.org/ftp/python/$python/$python_installer"
+                    
+                    $ProgressPreference = "silentlyContinue"
+                    Invoke-WebRequest -Uri $python_installer_url -UseBasicParsing -OutFile $python_installer
+                    $ProgressPreference = 'Continue'
+
+                }
+                catch
+                {
+                    echo "Downloading of Python $python failed. Check for another Python version. Prematurely leaving script!"
+                    Set-Location -Path "$PSScriptRoot"
+                    return 
+                }
             }
-            catch
+
+            #
+            # Execute the python installer
+            #
+            if ( Test-Path "$psimacs\$python_installer" -PathType Leaf )
             {
-                echo "Downloading of Python $python failed. Check for another Python version. Prematurely leaving script!"
-                Set-Location -Path "$PSScriptRoot"
-                return 
+                echo "Running $python_installer installer..."
+
+                Start-Process "$psimacs\$python_installer" -NoNewWindow -Wait -ArgumentList /quiet,Shortcuts=0,Include_launcher=0,AssociateFiles=0,InstallAllUsers=0,TargetDir="$psimacs\$python_dir",DefaultJustForMeTargetDir="$psimacs\$python_dir"
+                Remove-Item "$psimacs\$python_installer"
             }
         }
-
-        #
-        # Execute the python installer
-        #
-        if ( Test-Path "$psimacs\$python_installer" -PathType Leaf )
+        else
         {
-            echo "Running $python_installer installer..."
+            $python_tar_gz = "python.tar.gz"
 
-            Start-Process "$psimacs\$python_installer" -NoNewWindow -Wait -ArgumentList /quiet,Shortcuts=0,Include_launcher=0,AssociateFiles=0,InstallAllUsers=0,TargetDir="$psimacs\$python_dir",DefaultJustForMeTargetDir="$psimacs\$python_dir"
-            Remove-Item "$psimacs\$python_installer"
+            #
+            # Download installer
+            #
+            if ( ! (Test-Path "$psimacs\$python_tar_gz" -PathType Leaf) )
+            {
+                echo "Downloading $python_url archive..."
+
+                try
+                {
+                    $ProgressPreference = "silentlyContinue"
+                    Invoke-WebRequest -Uri $python_url -UseBasicParsing -OutFile $python_tar_gz
+                    $ProgressPreference = 'Continue'
+                }
+                catch
+                {
+                    echo "Downloading of Python $python from $python_url failed. Check for another PYTHON version. Prematurely leaving script!"
+                    Set-Location -Path "$PSScriptRoot"
+                    return 
+                }
+            }
+
+            #
+            # Extract the Python archive
+            #
+            if ( Test-Path "$psimacs\$python_tar_gz" -PathType Leaf )
+            {
+                echo "Extracting $python_tar_gz archive..."
+                & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); 7z x $python_tar_gz -so | 7z x -aoa -si -ttar -o.; mv python $python_dir"
+
+                Remove-Item "$psimacs\$python_tar_gz"
+            }
         }
     }
 
