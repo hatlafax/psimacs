@@ -179,6 +179,7 @@ if ($help -or $h)
     echo "      bootstrap.ps1 -run -conemu -ucrt"
     echo "      bootstrap.ps1 -run -conemu -mingw -nopackages -python 3.11.9 -java 21.35"
     echo "      bootstrap.ps1 -run -mingw -allnerdfonts -pythonuselatest -username \"Tobi Talbot\" -useremail \"tobi4242@gmail.com\" -calendarlatitude \"42.123\" -calendarlongitude \"2.987\" -calendarlocation \"Montreal, Canada\""
+    echo "      bootstrap.ps1 -run -mingw -nopackages -nojava -nolangtool -nosumatrapdf -nopandoc -noplantuml -noprivatefile -nofontsinstall -noorgthemes -nocontent -pythonrequirements .\requirements.txt"
     echo ""
     echo "Information:"
     echo "      In case that the powershell script does not run, two reasons may be involved:"
