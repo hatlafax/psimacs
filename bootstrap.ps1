@@ -20,6 +20,7 @@ param (
     [string]$sumatrapdf,
     [switch]$nopandoc          = $false,
     [switch]$noplantuml        = $false,
+    [switch]$noreveal_js       = $false,
     [switch]$uninstall         = $false,
     [switch]$force             = $false,
     [string]$psimacsbranch     = "master",
@@ -82,6 +83,8 @@ if ($help -or $h)
     echo "      Cmake        : Cmake is the de-facto standard for building C++. Installed via MSYS2."
     echo "      Doxygen      : Doxygen is a documentation generator from source code. Installed via MSYS2."
     echo "      Hugo         : Hugo is the world's fastest framework for building websites. Installed via MSYS2."
+    echo "      Reveal.js    : Reveal.js is an open source HTML presentation framework. It enables anyone with a"
+    echo "                     web browser to create beautiful presentations for free."
     echo "      Hunspell     : Hunspell is a popular spell checking tool. Installed via MSYS2."
     echo "      ASpell       : ASpell is another popular spell checking tool. Installed via MSYS2."
     echo "      7zip         : 7-Zip is a file archiver with a high compression ratio.Installed via MSYS2."
@@ -146,6 +149,8 @@ if ($help -or $h)
     echo "      -sumatrapdf        : The SumatraPDF viewer version number in the format 'N.M.B' that should be installed. Default is latest."
     echo "      -nopandoc          : Do not install the Pandoc document converter."
     echo "      -noplantuml        : Do not install the PlantUML tool."
+    echo "      -noreveal_js       : Do not install the reveal.js repository. This is not necessary for using of Reveal in Psimacs:"
+    echo "                           Lookup Psimacs variable org-re-reveal-root or option REVEAL_ROOT for informations."
     echo "    Psimacs"
     echo "      -psimacsbranch     : The specific branch, tag or commit to clone. Currently this defaults to the 'master'"
     echo "                           branch of Psimacs, which is compatible with Emacs 30.2."
@@ -865,6 +870,23 @@ if (! (Test-Path "$Dest" -PathType Leaf) )
 }
 
 #
+# Handle reveal.js installation
+#
+if (-not $noreveal_js)
+{
+    $reveal_js_git = "$psimacs\reveal.js\.git"
+
+    if (! (Test-Path $reveal_js_git) )
+    {
+        echo "Cloning reveal.js..."
+
+        $reveal_js_url = "https://github.com/hakimel/reveal.js.git"
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $reveal_js_url reveal.js"
+    }
+}
+
+#
 # Handle ConEmu on request
 #
 if ($conemu)
@@ -1484,6 +1506,7 @@ if (! (Test-Path $init_el -PathType Leaf) )
 
 
     $else_grammar_compiler_git = "$psimacs\ELSE-grammar-compiler\.git"
+
     if (! (Test-Path $else_grammar_compiler_git) )
     {
         echo "Cloning ELSE grammar compiler..."
