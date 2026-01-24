@@ -14,15 +14,15 @@ This is an attempt to create a *Emacs* configuration from the ground up. It has 
 - Literally programming style. The complete configuration is written in one [[https://orgmode.org/][org-mode]] file.
 - Primarily targets the Windows and Linux operating systems. It started on Windows and works very well on that platform.
 - Simple to use.
-- Provides bootstrapping of used tools.
+- Provides bootstrapping of used tools on Windows.
 - [[https://github.com/raxod502/straight.el][Straight]] package manager.
 - Support of [[https://www.dropbox.com/][Dropbox]] configuration and file sharing.
 - Classic *Emacs* keyboard handling.
-- Use of [[https://github.com/justbur/emacs-which-key][which-key]]. This is a game changer for me.
-- Use of [[https://github.com/abo-abo/hydra][hydra]]. And another beautiful package that I like a lot.
-- Use of [[https://github.com/abo-abo/swiper][ivy]]. I started with ivy and I am quite comfortable with it. Likely, [[https://www.gnu.org/software/emacs/manual/html_mono/ido.html][ido]], [[https://github.com/emacs-helm/helm][helm]] and the more recent incarnations are also worth trying.
-- Use of [[https://github.com/bbatsov/projectile][projectile]]. Another great package that I am used to.
-- Use of [[http://company-mode.github.io/][company]]. Great text completion framework.
+- Use of [[https://github.com/justbur/emacs-which-key][which-key]].
+- Use of [[https://github.com/abo-abo/hydra][hydra]].
+- Use of [[https://github.com/abo-abo/swiper][ivy]]. I started with ivy and I am quite comfortable with it. Likely, [[https://www.gnu.org/software/emacs/manual/html_mono/ido.html][ido]], [[https://github.com/emacs-helm/helm][helm]] and the more recent incarnations like [[https://github.com/minad/vertico][vertico]] are also worth trying.
+- Use of [[https://github.com/bbatsov/projectile][projectile]].
+- Use of [[http://company-mode.github.io/][company]].
 - Use of [[https://github.com/peter-milliken/ELSE][ELSE]] for programming.
 - Use of [[https://github.com/joaotavora/yasnippet][yasnippet]].
 - ... and many more packages.
@@ -40,8 +40,9 @@ The name *Psimacs* is arbitrarily. I was in search for a catchy name with just o
 
 * Installation
 ** Windows
-The Powershell script =bootstrap.ps1= is able to bootstrap *Psimacs* and all its dependencies into
-the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
+The Powershell script =bootstrap.ps1=, provided in the distribution, is able to bootstrap *Psimacs* and all of its
+dependencies into the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
+However, considerable disk space is required for the complete installation. *Psimacs* uses the [[https://www.msys2.org/][MSYS2]] *Emacs* exetutable.
 
 Download the raw =booststrap.ps1= file into a temporary directory and run
 
@@ -53,26 +54,27 @@ in a Powershell console.
 
 The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimacs= directory:
 
-| Tools        | Remarks                                                                                                  |
-|--------------+----------------------------------------------------------------------------------------------------------|
-| [[https://www.msys2.org/][MSYS2]]        | *Psimacs* uses the *Emacs* provided by [[https://www.msys2.org/][MSYS2]]. |
-| [[https://conemu.github.io/][ConEmu]]       | Optionally, *Psimacs* can install the [[https://conemu.github.io/][ConEmu]] console emulation. Use option =-conemu= to install the console. |
-| [[https://openjdk.org/][Java]]         | *Psimacs* installs the GPL OpenJDK Java distribution provided by Oracle.                                   |
-| [[https://languagetool.org][LanguageTool]] | [[https://languagetool.org][LanguageTool]] is a spell and grammar checker supported by *Psimacs*.                                        |
-| [[https://pandoc.org/][pandoc]]       | *Psimacs* uses the universal document converter [[https://pandoc.org/][Pandoc]].                                                    |
-| [[https://plantuml.com][plantUML]]     | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
-| [[https://www.python.org/][python]]       | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
-| [[https://www.sumatrapdfreader.org][SumatraPDF]]   | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
-| [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]]   | Tool allowing to create ELSE language specification files.                                                                 |
-|--------------+----------------------------------------------------------------------------------------------------------|
+| Tools                 | Remarks                                                                                                  |
+|-----------------------+----------------------------------------------------------------------------------------------------------|
+| [[https://www.msys2.org/][MSYS2]]                 | *Psimacs* uses the *Emacs* provided by [[https://www.msys2.org/][MSYS2]].                                                                |
+| [[https://conemu.github.io/][ConEmu]]                | Optionally, *Psimacs* can install the [[https://conemu.github.io/][ConEmu]] console emulation. Use option =-conemu= to install the console. |
+| [[https://openjdk.org/][Java]]                  | *Psimacs* installs the GPL OpenJDK Java distribution provided by Oracle.                                   |
+| [[https://languagetool.org][LanguageTool]]          | [[https://languagetool.org][LanguageTool]] is a spell and grammar checker supported by *Psimacs*.                                        |
+| [[https://pandoc.org/][pandoc]]                | *Psimacs* uses the universal document converter [[https://pandoc.org/][Pandoc]].                                                    |
+| [[https://plantuml.com][plantUML]]              | [[https://plantuml.com][PlantUML]] diagram generation is supported by *Psimacs*.                                                     |
+| [[https://www.python.org/][python]]                | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
+| [[https://www.sumatrapdfreader.org][SumatraPDF]]            | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
+| [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]] | Tool allowing to create ELSE language specification files.                                               |
+| [[https://revealjs.com/][Reveal.js]]             | Reveal.js is an open source HTML presentation framework.                                                 |
+|-----------------------+----------------------------------------------------------------------------------------------------------|
 
-To get detail help on the options =bootstrap.ps1= provides run:
+To get detail help on the options =bootstrap.ps1= provides, do run:
 
 #+begin_src
 .\booststrap.ps1 --help
 #+end_src
 
-On bootstrapping *Psimacs* installs the most recent versions of the tools that are known to work
+On bootstrapping, *Psimacs* installs the most recent versions of the tools that are known to work
 properly in the context of *Psimacs*. Any other tools used by *Psimacs* are installed within the
 [[https://www.msys2.org/][MSYS2]] environment, e.g. [[https://www.doxygen.nl/][doxygen]], [[https://www.graphviz.org/][graphviz]] or [[https://mermaid.js.org/][mermaid]].
 
@@ -82,18 +84,30 @@ but there are some exceptions:
 - In case that no =%HOME%= variable is defined inside of the active environment, a variable =%HOME%= is created
   and set to value =c:\home\%UserName%=. After that, the =%HOME%= directory is created, if it does not already exists.
 - Bootstrapping installs a number of font files into the user's font directory.
-- A raw python installation is performed into the local =%HOME%\psimacs= directory. The official python installer does
-  modify the registry, which cannot be avoided easily.
+- A raw python installation is performed into the local =%HOME%\psimacs= directory. On default a standalone version
+  is installed that does not modify the outer system. However, an option exists to take the official python
+  MSI installer. This version will  modify the registry.
 - A number of desktop shortcuts are created.
 
 After bootstrapping, the [[https://github.com/raxod502/straight.el][Straight]] based *Psimacs* configuration is performed on the very first startup
-of *Psimacs*. This process takes a couple of minutes and asks two times for confirmation to allow the download of
-1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary,
+of *Psimacs*. This process takes a couple of minutes and might asks for confirmation to allow the download of
+1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary, and
 2. for the [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] icons.
 
 *Attention:*
 - At least 22 GByte of free disk space is used by the default *Psimacs* installation!
 - Performing a *Psimacs* bootstrapping operation is at one's own risk!
+- For MSYS2 and for Python many additional packages are installed with *pacman* and *pip*,
+  respectively. The list packages are governed by the needs of the author. If you do not
+  like to install all of this stuff you have two measures for change:
+  - *MSYS2* : Modify the =bootstrap.ps1= file directly before execution. In the block
+            /'Bootstrapping $msys64'/ you will find all the steps that governs the *MSYS2*
+            installation. Just comment the packages that you do not like or need.
+  - *Python* : After cloning of the actual *psimacs* repository from github, a file =requirements.txt=
+             will be found in the subdirectory =$HOME/psimacs/psimacs/assets/dependencies/windows/python=.
+             This file is installed with Python's *pip* program on default. It is, however,
+             possible to provide a user =requirements.txt= file by utilizing the =bootstrap.ps1=
+             option =pythonrequirements=.
 
 *Remark:* Windows Powershell typically restricts the execution of scripts. You can
 take the following measures in order to get the =bootstrap.ps1= script running:
@@ -110,10 +124,24 @@ Set-ExecutionPolicy -ExecutionPolicy unrestricted -Scope CurrentUser
 Unblock-File -Path .\bootstrap.ps1
   #+end_src
 
-Maybe, better ways exists for these problems ;-)
+Finally, just run *Emacs*.
+
+The only file really needed is the =early-init.el= file. On startup, it reads the file =init.org= and extracts all the
+initialization code into the main =init.el= and various additionally =config/init-*.el= files. The created =init.el=
+file is then read and evaluated in the further startup procedure. The =init.el= file loads the other =config/init-*.el=
+files on evaluation.
+
+Never edit transient file =early-init.el=,  =init.el= or =config/init-*.el= directly. They will be overridden by the next
+run of *Psimacs*. Instead modify the =init.org= file in order to change your configuration.
+
+HTML documentation files =init.html= and =keybindings.html= can be found in the directory =$HOME/psimacs/psimacs/docs=.
+These files are generated from the corresponing =init.org= and the =keybindings.org= files
+by running command =C-c C-e h h=, respectively, in the *Emacs* buffer for these files.
+
+It is recommended to use the =init.html= for reading. From a *Psimacs* session, you can always open this file
+with =H-<f1>=.
 
 ** Linux
-
 *Psimacs* is able to run on Ubuntu 24.04 LTS. Currently, no automatic installation method for bootstrapping
 *Psimacs* exists on this platform.
 
@@ -128,14 +156,20 @@ Install the following parts:
 | *Sumatra PDF*           | =https://www.sumatrapdfreader.org/free-pdf-reader=         | with /snap/ over the /App Center/ of Ubuntu.                                                |                                                                            |
 | Various tools         | ubuntu package manager                                   | see =~/psimacs/psimas/assets/dependencies/ubuntu/linux/requirements_ubuntu_installed.txt= | This file contains all modules that were installed when writing this text. |
 | *Python* packages       | pip tool                                                 | see  =~/psimacs/psimas/assets/dependencies/ubuntu/python/requirements_linux_versions.txt= | This file contains all packages installed when writing this text.          |
+| *Reveal.js*             | =https://github.com/hakimel/reveal.js=                     | =git clone https://github.com/hakimel/reveal.js.git=                                      | =~/psimacs/psimacs=                                                          |
 |-----------------------+----------------------------------------------------------+-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------|
 
-A virtual python environment is used and created by running =python3 -m venv ./python-0/venv/=. This virtual python environment is activated before starting *Psimacs*.
-There are better methods, but that worked for me.
+A virtual python environment should be used and can be created by running command  =python3 -m venv ./python-0/venv/=.
+This virtual python environment is to be activated before starting *Psimacs*.
+There exits better methods, but so far that worked for me.
+
+** Fedora
+
+*Psimacs* is able to run on *Fedora 43*. Basically, the installation steps are identical to the Ubuntu
+installation process. Packages are installed with the *dnf* package manager.
 
 ** MacOS
 Currently, MacOS is also not supported by Psimacs.
-
 
 * Usage
 
@@ -159,7 +193,7 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 * Limitations / Known Issues
 
 - Tested on Windows operating system only
-- Linux usage on Ubuntu 24.04 LTS is only started recently and does have some rough edges.
+- Linux usage on Ubuntu 24.04 LTS and Fedora 43 has only started recently and might have some rough edges.
 * License (GPL v3)
 
 Copyright (C) 2020-2021 Johannes Brunen (hatlafax@gmx.de)

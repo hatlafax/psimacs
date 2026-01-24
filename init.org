@@ -42,7 +42,7 @@ that allowed learning more about the vast *Emacs* universe. This configuration i
 will not be able to compete against the big frameworks that are build by a lot of talented people.
 So feel free to use it or blame it. I am fine with it.
 
-This configuration is used on the Windows OS on top of [[https://www.msys2.org/][MSYS2]] stack as well as on Ubuntu Linux.
+This configuration is used on Windows on top of the [[https://www.msys2.org/][MSYS2]] stack, on Ubuntu and Fedora Linux systems.
 
 The name *Psimacs* is arbitrarily. The author was in search for a catchy name with just one syllable in front of
 the *macs*.
@@ -55,7 +55,7 @@ See also:
 *** Windows
 The Powershell script =bootstrap.ps1=, provided in the distribution, is able to bootstrap *Psimacs* and all of its
 dependencies into the user's =%HOME%\psimacs= directory. No administrator privileges are required for the installation.
-However, considerable disk space is required for the complete installation. *Psimacs* uses the [[https://www.msys2.org/][MSYS2]] *Emacs* program.
+However, considerable disk space is required for the complete installation. *Psimacs* uses the [[https://www.msys2.org/][MSYS2]] *Emacs* exetutable.
 
 Download the raw =booststrap.ps1= file into a temporary directory and run
 
@@ -78,6 +78,7 @@ The *Psimacs* bootstrapping installs the following tools into the =%HOME%\psimac
 | [[https://www.python.org/][python]]                | *Psimacs* installs [[https://www.python.org/][Python]] and uses a virtual environment created from this installation.                   |
 | [[https://www.sumatrapdfreader.org][SumatraPDF]]            | *Psimacs* uses the free SumatraPDF viewer.                                                                 |
 | [[https://github.com/hatlafax/ELSE-grammar-compiler][ELSE Grammar Compiler]] | Tool allowing to create ELSE language specification files.                                               |
+| [[https://revealjs.com/][Reveal.js]]             | Reveal.js is an open source HTML presentation framework.                                                 |
 |-----------------------+----------------------------------------------------------------------------------------------------------|
 
 To get detail help on the options =bootstrap.ps1= provides, do run:
@@ -86,7 +87,7 @@ To get detail help on the options =bootstrap.ps1= provides, do run:
 .\booststrap.ps1 --help
 #+end_src
 
-On bootstrapping *Psimacs* installs the most recent versions of the tools that are known to work
+On bootstrapping, *Psimacs* installs the most recent versions of the tools that are known to work
 properly in the context of *Psimacs*. Any other tools used by *Psimacs* are installed within the
 [[https://www.msys2.org/][MSYS2]] environment, e.g. [[https://www.doxygen.nl/][doxygen]], [[https://www.graphviz.org/][graphviz]] or [[https://mermaid.js.org/][mermaid]].
 
@@ -96,18 +97,30 @@ but there are some exceptions:
 - In case that no =%HOME%= variable is defined inside of the active environment, a variable =%HOME%= is created
   and set to value =c:\home\%UserName%=. After that, the =%HOME%= directory is created, if it does not already exists.
 - Bootstrapping installs a number of font files into the user's font directory.
-- A raw python installation is performed into the local =%HOME%\psimacs= directory. The official python installer does
-  modify the registry, which cannot be avoided easily.
+- A raw python installation is performed into the local =%HOME%\psimacs= directory. On default a standalone version
+  is installed that does not modify the outer system. However, an option exists to take the official python
+  MSI installer. This version will  modify the registry.
 - A number of desktop shortcuts are created.
 
 After bootstrapping, the [[https://github.com/raxod502/straight.el][Straight]] based *Psimacs* configuration is performed on the very first startup
-of *Psimacs*. This process takes a couple of minutes and asks two times for confirmation to allow the download of
+of *Psimacs*. This process takes a couple of minutes and might asks for confirmation to allow the download of
 1. a suitable [[https://github.com/nnicandro/emacs-zmq][emacs-zmq]] binary, and
 2. for the [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] icons.
 
 *Attention:*
 - At least 22 GByte of free disk space is used by the default *Psimacs* installation!
 - Performing a *Psimacs* bootstrapping operation is at one's own risk!
+- For MSYS2 and for Python many additional packages are installed with *pacman* and *pip*,
+  respectively. The list packages are governed by the needs of the author. If you do not
+  like to install all of this stuff you have two measures for change:
+  - *MSYS2* : Modify the =bootstrap.ps1= file directly before execution. In the block
+            /'Bootstrapping $msys64'/ you will find all the steps that governs the *MSYS2*
+            installation. Just comment the packages that you do not like or need.
+  - *Python* : After cloning of the actual *psimacs* repository from github, a file =requirements.txt=
+             will be found in the subdirectory =$HOME/psimacs/psimacs/assets/dependencies/windows/python=.
+             This file is installed with Python's *pip* program on default. It is, however,
+             possible to provide a user =requirements.txt= file by utilizing the =bootstrap.ps1=
+             option =pythonrequirements=.
 
 *Remark:* Windows Powershell typically restricts the execution of scripts. You can
 take the following measures in order to get the =bootstrap.ps1= script running:
@@ -124,8 +137,6 @@ Set-ExecutionPolicy -ExecutionPolicy unrestricted -Scope CurrentUser
 Unblock-File -Path .\bootstrap.ps1
   #+end_src
 
-Maybe, better ways exists for these problems ;-)
-
 Finally, just run *Emacs*.
 
 The only file really needed is the =early-init.el= file. On startup, it reads the file =init.org= and extracts all the
@@ -136,8 +147,12 @@ files on evaluation.
 Never edit transient file =early-init.el=,  =init.el= or =config/init-*.el= directly. They will be overridden by the next
 run of *Psimacs*. Instead modify the =init.org= file in order to change your configuration.
 
-You can create a HTML document =init.html= from the =init.org= file by simply typing =C-c C-e h h= in the *Emacs* buffer for
-this file. It is recommended to use this =init.html= for browser reading.
+HTML documentation files =init.html= and =keybindings.html= can be found in the directory =$HOME/psimacs/psimacs/docs=.
+These files are generated from the corresponing =init.org= and the =keybindings.org= files
+by running command =C-c C-e h h=, respectively, in the *Emacs* buffer for these files.
+
+It is recommended to use the =init.html= for reading. From a *Psimacs* session, you can always open this file
+with =H-<f1>=.
 
 *** Linux
 
@@ -155,10 +170,21 @@ Install the following parts:
 | *Sumatra PDF*           | =https://www.sumatrapdfreader.org/free-pdf-reader=         | with /snap/ over the /App Center/ of Ubuntu.                                                |                                                                            |
 | Various tools         | ubuntu package manager                                   | see =~/psimacs/psimas/assets/dependencies/ubuntu/linux/requirements_ubuntu_installed.txt= | This file contains all modules that were installed when writing this text. |
 | *Python* packages       | pip tool                                                 | see  =~/psimacs/psimas/assets/dependencies/ubuntu/python/requirements_linux_versions.txt= | This file contains all packages installed when writing this text.          |
+| *Reveal.js*             | =https://github.com/hakimel/reveal.js=                     | =git clone https://github.com/hakimel/reveal.js.git=                                      | =~/psimacs/psimacs=                                                          |
 |-----------------------+----------------------------------------------------------+-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------|
 
-A virtual python environment is used and created by running =python3 -m venv ./python-0/venv/=. This virtual python environment is activated before starting *Psimacs*.
-There are better methods, but that worked for me.
+A virtual python environment should be used and can be created by running command  =python3 -m venv ./python-0/venv/=.
+This virtual python environment is to be activated before starting *Psimacs*.
+There exits better methods, but so far that worked for me.
+
+*** Fedora
+
+*Psimacs* is able to run on *Fedora 43*. Basically, the installation steps are identical to the Ubuntu
+installation process. Packages are installed with the *dnf* package manager.
+
+*** MacOS
+Currently, MacOS is also not supported by Psimacs.
+
 
 ** Usage
 
@@ -170,14 +196,15 @@ The /category/ is used to structure the functions and variables by topic. As an 
 
 The configuration does have many dependencies that could be installed separately, Some are mandatory and some are
 optional. By default, all non *Emacs* dependencies are expected to be installed into directory =$home/psimacs=.
-A global directory constant =psimacs/config/dependencies-dir= is used by the configuration for changing this default
+A global directory constant =psimacs/config/system-utils-dir= is used by the configuration for changing this default
 location conveniently.
 
 Install missing dependencies at the time you notice that they are missing. Most of the dependencies only apply to
 very narrow use cases.
 
-The two mentioned =requirements.txt= files for [[https://www.python.org/downloads/][Python]] and [[https://www.msys2.org/][MSYS2]] actually cover many of the cases.
-The author tries to tackle as many dependencies as possible with the MSYS2 installation.
+The two =requirements.txt= files for [[https://www.python.org/downloads/][Python]] and [[https://www.msys2.org/][MSYS2]], found in =assets= subdirectories, show the currently used
+dependencies used by the author. The author tries to tackle as many dependencies as possible with the MSYS2
+installation.
 
 ** Great Emacs resources
 - [[https://www.damtp.cam.ac.uk/user/sje30/ess11/resources/emacs-refcard.pdf][Emacs RefCard]]
@@ -185,8 +212,6 @@ The author tries to tackle as many dependencies as possible with the MSYS2 insta
 - [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]]
 - [[https://github.com/caisah/emacs.dz][Emacs Configurations]]
 - [[http://xahlee.info/emacs/index.html][Xah Emacs Site]]
-- [[https://emacs.zeef.com/ehartc][Emacs by Ernst de Hart]]
-- [[https://www.emacswiki.org/][EmacsWiki]]
 - [[https://systemcrafters.net/emacs-from-scratch/][System Crafters]]
 - [[https://planet.emacslife.com/][Planet Emacslife]]
 - [[https://www.gnu.org/software/emacs/manual/][Emacs Manual]]
@@ -217,7 +242,7 @@ This is work in progress. Sometimes this *Readme* is ahead of times or not yet u
 
 ** License (GPL v3)
 
-Copyright (C) 2020-2022 Johannes Brunen (hatlafax@gmx.de)
+Copyright (C) 2020-2026 Johannes Brunen (hatlafax@gmx.de)
 
 License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
@@ -240,10 +265,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 In the following sections some of these bindings are introduced.
 
 Beside of the predefined key bindings, however, *Psimacs* also has many of its own key bindings.
-The following two pages provides cheat sheets for these bindings:qqqq
+The following page provides a cheat sheet for these bindings:
 
 - [[https://hatlafax.github.io/psimacs/docs/keybindings.html][List of all Psimacs Key Bindings]].
-- [[https://hatlafax.github.io/psimacs/docs/sortedKeyBindings.html][Psimacs Keybindings on Topic.]]
 
 Additionally, *Psimacs* comes with many /hydras/, providing an alternative usage pattern.
 A parent /hydra/ for many of these /hydras/ can be activated by pressing =H-SPC H-SPC=, where
@@ -22096,7 +22120,7 @@ g        (defvar psimacs/org/variable-width-font "Hack Nerd Font Propo"
 ** Presentation with Reveal.js
 
 [[https://github.com/hakimel/reveal.js?tab=readme-ov-file][Reveal.js]] is an open source HTML presentation framework.
-It enables anyone with a web browser to create beautiful presentations for free. Package 
+It enables anyone with a web browser to create beautiful presentations for free. Package
 [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]] allows you to create [[https://github.com/hakimel/reveal.js?tab=readme-ov-file][reveal.js]]
 presentations from =org-mode= buffers.
 
@@ -22105,12 +22129,12 @@ References:
   It enables anyone with a web browser to create beautiful presentations for free.
 
 - Packages
-    - [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]] It provides an export back-end for HTML 
+    - [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]] It provides an export back-end for HTML
       presentations with [[https://github.com/hakimel/reveal.js?tab=readme-ov-file][reveal.js]].
 
-    - [[https://gitlab.com/oer/org-re-reveal-ref][org-re-reveal-ref]] is an addon to org-re-reveal for bibliography 
+    - [[https://gitlab.com/oer/org-re-reveal-ref][org-re-reveal-ref]] is an addon to org-re-reveal for bibliography
       slide based on [[https://github.com/jkitchin/org-ref][org-ref]].
-    - [[https://gitlab.com/oer/org-re-reveal-citeproc][org-re-reveal-citeproc]] is an alternative to 
+    - [[https://gitlab.com/oer/org-re-reveal-citeproc][org-re-reveal-citeproc]] is an alternative to
       [[https://gitlab.com/oer/org-re-reveal-ref][org-re-reveal-ref]] for bibliography slide based on syntax of Org mode 9.5.
       *Psimacs* works with [[https://github.com/jkitchin/org-ref][org-ref]] and therefore does not load this package.
     - [[https://gitlab.com/oer/oer-reveal][oer-reveal]] is an export backend derived from
@@ -22118,9 +22142,9 @@ References:
     - [[https://gitlab.com/oer/emacs-reveal/][emacs-reveal]] is a package that orchestrates all the packages above. However,
       *Psimacs* currently only uses the bare minimum, i.e. [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
       and [[https://gitlab.com/oer/org-re-reveal-ref][org-re-reveal-ref]].
-    - [[https://github.com/yjwen/org-reveal][org-reveal]] is the original package akas =ox-reveal.el=. 
+    - [[https://github.com/yjwen/org-reveal][org-reveal]] is the original package akas =ox-reveal.el=.
       Package [[https://gitlab.com/oer/org-re-reveal-ref][org-re-reveal-ref]] is a fork from that package.
-    - [[https://github.com/GerardoCendejas/ox-reveal-layouts][ox-reveal-layouts]] is an addon to package 
+    - [[https://github.com/GerardoCendejas/ox-reveal-layouts][ox-reveal-layouts]] is an addon to package
       [[https://github.com/yjwen/org-reveal][org-reveal]].
 
 - Additional Informations
