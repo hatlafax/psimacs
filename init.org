@@ -1178,6 +1178,17 @@ Later in the initialization process the garbage collection procedure is even mor
 
 ** Some basic constants
 
+*** Verbose messaging
+
+*Psimacs* can provide extended message output. This is useful for debugging purposes only.
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Verbose message output
+;;
+(defconst psimacs/config/verbose t)
+#+end_src
+
 *** Timing of the Emacs load time
 
 *Psimacs* allows the timing of the complete startup procedure.
@@ -2524,66 +2535,196 @@ to it's documentation string.
 
 (defconst psimacs/config/default-frame-offset 20)
 
-(let* ((primary-monitor (car (display-monitor-attributes-list)))
-       (geometry        (assoc 'geometry primary-monitor))
-      )
+(defvar psimacs/config/initial-frame-pos-x  0)
+(defvar psimacs/config/initial-frame-pos-y  0)
+(defvar psimacs/config/initial-frame-size-x 0)
+(defvar psimacs/config/initial-frame-size-y 0)
 
-    (defconst psimacs/config/initial-frame-pos-x  (round (* 28 (/ (nth 3 geometry) 100))))
-    (defconst psimacs/config/initial-frame-pos-y  0)
-    (defconst psimacs/config/initial-frame-size-x (round (* 60 (/ (nth 3 geometry) 100))))
-    (defconst psimacs/config/initial-frame-size-y (- (nth 4 geometry) 90))
+(defvar psimacs/config/default-frame-pos-x  0)
+(defvar psimacs/config/default-frame-pos-y  0)
+(defvar psimacs/config/default-frame-size-x 0)
+(defvar psimacs/config/default-frame-size-y 0)
 
-    (defconst psimacs/config/default-frame-1-pos-x  0)
-    (defconst psimacs/config/default-frame-1-pos-y  psimacs/config/initial-frame-pos-y)
-    (defconst psimacs/config/default-frame-1-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-1-pos-x psimacs/config/default-frame-offset)))
-    (defconst psimacs/config/default-frame-1-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
+(defvar psimacs/config/default-frame-1-pos-x  0)
+(defvar psimacs/config/default-frame-1-pos-y  0)
+(defvar psimacs/config/default-frame-1-size-x 0)
+(defvar psimacs/config/default-frame-1-size-y 0)
 
-    (defconst psimacs/config/default-frame-2-pos-x  0)
-    (defconst psimacs/config/default-frame-2-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* psimacs/config/default-frame-offset 1.75))))
-    (defconst psimacs/config/default-frame-2-size-x (- psimacs/config/initial-frame-pos-x  (+ psimacs/config/default-frame-2-pos-x psimacs/config/default-frame-offset)))
-    (defconst psimacs/config/default-frame-2-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
+(defvar psimacs/config/default-frame-2-pos-x  0)
+(defvar psimacs/config/default-frame-2-pos-y  0)
+(defvar psimacs/config/default-frame-2-size-x 0)
+(defvar psimacs/config/default-frame-2-size-y 0)
 
+(defvar psimacs/config/default-frame-3-pos-x  0)
+(defvar psimacs/config/default-frame-3-pos-y  0)
+(defvar psimacs/config/default-frame-3-size-x 0)
+(defvar psimacs/config/default-frame-3-size-y 0)
 
-    (defconst psimacs/config/default-frame-3-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x psimacs/config/default-frame-offset))
-    (defconst psimacs/config/default-frame-3-pos-y  psimacs/config/initial-frame-pos-y)
-    (defconst psimacs/config/default-frame-3-size-x (- (nth 3 geometry) (+ psimacs/config/default-frame-3-pos-x (round (* psimacs/config/default-frame-offset 1.5)))))
-    (defconst psimacs/config/default-frame-3-size-y (round (/ psimacs/config/initial-frame-size-y 2)))
+(defvar psimacs/config/default-frame-4-pos-x  0)
+(defvar psimacs/config/default-frame-4-pos-y  0)
+(defvar psimacs/config/default-frame-4-size-x 0)
+(defvar psimacs/config/default-frame-4-size-y 0)
 
-    (defconst psimacs/config/default-frame-4-pos-x  (+ psimacs/config/initial-frame-pos-x psimacs/config/initial-frame-size-x psimacs/config/default-frame-offset))
-    (defconst psimacs/config/default-frame-4-pos-y  (+ psimacs/config/default-frame-1-size-y psimacs/config/initial-frame-pos-y (round (* psimacs/config/default-frame-offset 1.75))))
-    (defconst psimacs/config/default-frame-4-size-x (- (nth 3 geometry) (+ psimacs/config/default-frame-4-pos-x (round (* psimacs/config/default-frame-offset 1.5)))))
-    (defconst psimacs/config/default-frame-4-size-y (- psimacs/config/initial-frame-size-y psimacs/config/default-frame-2-pos-y))
+(defvar psimacs/config/default-frame-5-pos-x  0)
+(defvar psimacs/config/default-frame-5-pos-y  0)
+(defvar psimacs/config/default-frame-5-size-x 0)
+(defvar psimacs/config/default-frame-5-size-y 0)
 
-    (defvar psimacs/config/default-frame-placement-counter 1)
+(defvar psimacs/config/default-frame-placement-counter 1)
+(defconst psimacs/config/default-frame-placement-counter-max 5)
 
-    ;;
-    ;; The initial frame
-    ;;
-    (set-frame-position (selected-frame) psimacs/config/initial-frame-pos-x  psimacs/config/initial-frame-pos-y)
-    (set-frame-size     (selected-frame) psimacs/config/initial-frame-size-x psimacs/config/initial-frame-size-y t)
+(defun psimacs/config/calculate_layout_positions ()
+    "Take the main frame as reference."
 
-    (unless (daemonp)
-      ;;
-      ;; Somewhat redundant
-      ;;
-      (add-to-list 'initial-frame-alist `(_left   . ,psimacs/config/initial-frame-pos-x))
-      (add-to-list 'initial-frame-alist `(_top    . ,psimacs/config/initial-frame-pos-y))
-      (add-to-list 'initial-frame-alist `(_width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-      (add-to-list 'initial-frame-alist `(_height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+    (let* ( (main_frame       (car (reverse (frame-list))))
+            (primary-monitor (car (display-monitor-attributes-list)))
+            (geometry        (assoc 'geometry primary-monitor))
+            (_width          (nth 3 geometry))                          ;; screen width
+            (_height         (nth 4 geometry))                          ;; screen height
+            ;;
+            ;; screen offsets in pixel
+            ;;
+            (offset_left     10)
+            (offset_right    10)
+            (offset_top      20)
+            (offset_bottom   70)
+            ;;
+            ;; distances in pixel between frames
+            ;;
+            (delta_x         10)
+            (delta_y         10)
+            ;;
+            ;; Size corrections
+            ;;
+            (height_factor      0.963)
+            (width_factor       0.980)
+            (main_width_factor  0.960)
+            ;;
+            ;; helper values to simplify the expressions
+            ;;
+            (delta_x/2       (round (/ delta_x 2)))
+            (delta_y/2       (round (/ delta_y 2)))
+            (width/2         (round (/ _width 2)))
+            (main_width      (round (* 50 (/ _width 100))))
+            (main_width/2    (round (/ main_width 2)))
+            ;;
+            ;; main frame, centered on the screen
+            ;;
+            (s0_x            (frame-outer-width  main_frame))           ;; frame width
+            (s0_y            (frame-outer-height main_frame))           ;; frame height
+            (x0_0            (frame-parameter main_frame 'left))        ;; left frame pixel
+            (y0_0            (frame-parameter main_frame 'top))         ;; top frame pixel
+            (x0_1            (+ x0_0 s0_x))                             ;; right frame pixel
+            (y0_1            (+ y0_0 s0_y))                             ;; bottom frame pixel
 
-      (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/initial-frame-pos-x))
-      (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/initial-frame-pos-y))
-      (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-      (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
+            (s0_y/2          (/ s0_y 2))                                        ;; half frame height
+            (s0_y/2_c        (round (* height_factor (- s0_y/2 delta_y/2))))    ;; half frame height
+            ;;
+            ;; first client frame on top left quadrant
+            ;;
+            (x1_0            offset_left)                               ;; left frame pixel
+            (x1_1            (- x0_0 delta_x))                          ;; right frame pixel
+            (y1_0            y0_0)                                      ;; top frame pixel
+            (s1_x            (round (* width_factor (- x1_1 x1_0))))    ;; frame width
+            (s1_y            s0_y/2_c)                                  ;; frame height
 
-      ;;
-      ;; Hacky, we need a redisplay
-      ;;
-      (setq-default inhibit-redisplay nil
-                    inhibit-message   nil)
-      (redisplay)
-      (setq-default inhibit-redisplay t
-                    inhibit-message   t)
+            ;;
+            ;; second client frame on bottom left quadrant
+            ;;
+            (x2_0            offset_left)                               ;; left frame pixel
+            (x2_1            (- x0_0 delta_x))                          ;; right frame pixel
+            (y2_0            (+ y0_0 s0_y/2 delta_y/2))                 ;; top frame pixel
+            (s2_x            (round (* width_factor (- x2_1 x2_0))))    ;; frame width
+            (s2_y            s0_y/2_c)   ;; frame height
+
+            ;;
+            ;; third client frame on top right quadrant
+            ;;
+            (x3_0            x0_1);                                     ;; left frame pixel
+            (x3_1            (- _width offset_right delta_x/2))         ;; right frame pixel
+            (y3_0            y0_0)                                      ;; top frame pixel
+            (s3_x            (round (* width_factor (- x3_1 x3_0))))    ;; frame width
+            (s3_y            s0_y/2_c)                                  ;; frame height
+            ;;
+            ;; fourth client frame on bottom right quadrant
+            ;;
+            (x4_0            x0_1)                                      ;; left frame pixel
+            (x4_1            (- _width offset_right delta_x/2))         ;; right frame pixel
+            (y4_0            (+ y0_0 s0_y/2 delta_y/2))                 ;; top frame pixel
+            (s4_x            (round (* width_factor (- x4_1 x4_0))))    ;; frame width
+            (s4_y            s0_y/2_c)                                  ;; frame height
+          )
+
+        (setq psimacs/config/default-frame-pos-x  x0_0)
+        (setq psimacs/config/default-frame-pos-y  y0_0)
+        (setq psimacs/config/default-frame-size-x s0_x)
+        (setq psimacs/config/default-frame-size-y s0_y)
+
+        (setq psimacs/config/default-frame-1-pos-x  x1_0)
+        (setq psimacs/config/default-frame-1-pos-y  y1_0)
+        (setq psimacs/config/default-frame-1-size-x s1_x)
+        (setq psimacs/config/default-frame-1-size-y s1_y)
+
+        (setq psimacs/config/default-frame-2-pos-x  x2_0)
+        (setq psimacs/config/default-frame-2-pos-y  y2_0)
+        (setq psimacs/config/default-frame-2-size-x s2_x)
+        (setq psimacs/config/default-frame-2-size-y s2_y)
+
+        (setq psimacs/config/default-frame-3-pos-x  x3_0)
+        (setq psimacs/config/default-frame-3-pos-y  y3_0)
+        (setq psimacs/config/default-frame-3-size-x s3_x)
+        (setq psimacs/config/default-frame-3-size-y s3_y)
+
+        (setq psimacs/config/default-frame-4-pos-x  x4_0)
+        (setq psimacs/config/default-frame-4-pos-y  y4_0)
+        (setq psimacs/config/default-frame-4-size-x s4_x)
+        (setq psimacs/config/default-frame-4-size-y s4_y)
+
+        (setq psimacs/config/default-frame-5-pos-x  psimacs/config/initial-frame-pos-x)
+        (setq psimacs/config/default-frame-5-pos-y  psimacs/config/initial-frame-pos-y)
+        (setq psimacs/config/default-frame-5-size-x psimacs/config/initial-frame-size-x)
+        (setq psimacs/config/default-frame-5-size-y psimacs/config/initial-frame-size-y)
+    )
+)
+
+(defun psimacs/config/calculate_init_frame_position ()
+    "Take the main frame as reference."
+
+    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
+            (geometry        (assoc 'geometry primary-monitor))
+            (_width          (nth 3 geometry))                          ;; screen width
+            (_height         (nth 4 geometry))                          ;; screen height
+            ;;
+            ;; screen offsets in pixel
+            ;;
+            (offset_top      20)
+            (offset_bottom   70)
+            ;;
+            ;; Size corrections
+            ;;
+            (main_width_factor  0.96)
+            ;;
+            ;; helper values to simplify the expressions
+            ;;
+            (width/2         (round (/ _width 2)))
+            (main_width      (round (* 50 (/ _width 100))))
+            (main_width/2    (round (/ main_width 2)))
+            ;;
+            ;; main frame, centered on the screen
+            ;;
+            (x0_0            (- width/2 main_width/2))                  ;; left frame pixel
+            (x0_1            (+ width/2 main_width/2))                  ;; right frame pixel
+            (y0_0            offset_top)                                ;; top frame pixel
+            (y0_1            (- _height (+ offset_top offset_bottom)))  ;; bottom frame pixel
+            (s0_x            (- x0_1 x0_0))                             ;; frame width
+            (s0_y            (- y0_1 y0_0))                             ;; frame height
+            (s0_y/2          (round (/ s0_y 2)))                        ;; half frame height
+          )
+
+        (setq psimacs/config/initial-frame-pos-x  x0_0)
+        (setq psimacs/config/initial-frame-pos-y  y0_0)
+        (setq psimacs/config/initial-frame-size-x s0_x)
+        (setq psimacs/config/initial-frame-size-y s0_y)
     )
 )
 
@@ -2596,7 +2737,8 @@ to it's documentation string.
 Supported strategies are:
   `layout'      -> new frames surround the main frame
   `main'        -> new frames get always the same size and position of the main frame
-  `system'      -> let emacs decide")
+  `system'      -> let emacs decide"
+)
 
 ;;
 ;; Prepare for the choosen frame creation strategy
@@ -2604,210 +2746,144 @@ Supported strategies are:
 (defun psimacs/window/set-frame-creation-strategy-layout ()
     "Set the frame layout creation strategy to `layout'."
     (interactive)
-    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
-            (geometry        (assoc 'geometry primary-monitor))
-            (_left            0)
-            (_top             0)
-            (_width           (nth 3 geometry))
-            (_height          (nth 4 geometry))
-          )
-        (setq default-frame-alist (assq-delete-all '_left   default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_top    default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_width  default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_height default-frame-alist))
 
-        (when (= psimacs/config/default-frame-placement-counter 1)
-          (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-1-pos-x))
-          (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-1-pos-y))
-          (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
-          (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
-          )
+    (psimacs/config/calculate_layout_positions)
 
-        (when (= psimacs/config/default-frame-placement-counter 2)
-          (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-2-pos-x))
-          (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-2-pos-y))
-          (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
-          (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
-          )
+    (when (= psimacs/config/default-frame-placement-counter 1)
+        (setq psimacs/config/default-frame-pos-x  psimacs/config/default-frame-1-pos-x)
+        (setq psimacs/config/default-frame-pos-y  psimacs/config/default-frame-1-pos-y)
+        (setq psimacs/config/default-frame-size-x psimacs/config/default-frame-1-size-x)
+        (setq psimacs/config/default-frame-size-y psimacs/config/default-frame-1-size-y)
+    )
 
-        (when (= psimacs/config/default-frame-placement-counter 3)
-          (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-3-pos-x))
-          (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-3-pos-y))
-          (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
-          (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
-          )
+    (when (= psimacs/config/default-frame-placement-counter 2)
+        (setq psimacs/config/default-frame-pos-x  psimacs/config/default-frame-2-pos-x)
+        (setq psimacs/config/default-frame-pos-y  psimacs/config/default-frame-2-pos-y)
+        (setq psimacs/config/default-frame-size-x psimacs/config/default-frame-2-size-x)
+        (setq psimacs/config/default-frame-size-y psimacs/config/default-frame-2-size-y)
+    )
 
-        (when (= psimacs/config/default-frame-placement-counter 4)
-          (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-4-pos-x))
-          (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-4-pos-y))
-          (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
-          (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
-          )
+    (when (= psimacs/config/default-frame-placement-counter 3)
+        (setq psimacs/config/default-frame-pos-x  psimacs/config/default-frame-3-pos-x)
+        (setq psimacs/config/default-frame-pos-y  psimacs/config/default-frame-3-pos-y)
+        (setq psimacs/config/default-frame-size-x psimacs/config/default-frame-3-size-x)
+        (setq psimacs/config/default-frame-size-y psimacs/config/default-frame-3-size-y)
+    )
 
-        (setq psimacs/config/default-frame-creation-strategy "layout")
-        (message "Switched to frame layout creation strategy.")))
+    (when (= psimacs/config/default-frame-placement-counter 4)
+        (setq psimacs/config/default-frame-pos-x  psimacs/config/default-frame-4-pos-x)
+        (setq psimacs/config/default-frame-pos-y  psimacs/config/default-frame-4-pos-y)
+        (setq psimacs/config/default-frame-size-x psimacs/config/default-frame-4-size-x)
+        (setq psimacs/config/default-frame-size-y psimacs/config/default-frame-4-size-y)
+    )
+
+    (when (= psimacs/config/default-frame-placement-counter 5)
+        (setq psimacs/config/default-frame-pos-x  psimacs/config/default-frame-5-pos-x)
+        (setq psimacs/config/default-frame-pos-y  psimacs/config/default-frame-5-pos-y)
+        (setq psimacs/config/default-frame-size-x psimacs/config/default-frame-5-size-x)
+        (setq psimacs/config/default-frame-size-y psimacs/config/default-frame-5-size-y)
+    )
+
+    (setq psimacs/config/default-frame-creation-strategy "layout")
+    (message "Switched to frame layout creation strategy.")
+)
 
 (defun psimacs/window/set-frame-creation-strategy-main ()
     "Set the frame layout creation strategy to `main'."
     (interactive)
-    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
-            (geometry        (assoc 'geometry primary-monitor))
-            (_left            0)
-            (_top             0)
-            (_width           (nth 3 geometry))
-            (_height          (nth 4 geometry))
-          )
-        (setq default-frame-alist (assq-delete-all '_left   default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_top    default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_width  default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_height default-frame-alist))
+    (setq psimacs/config/default-frame-pos-x  psimacs/config/initial-frame-pos-x)
+    (setq psimacs/config/default-frame-pos-y  psimacs/config/initial-frame-pos-y)
+    (setq psimacs/config/default-frame-size-x psimacs/config/initial-frame-size-x)
+    (setq psimacs/config/default-frame-size-y psimacs/config/initial-frame-size-y)
 
-        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/initial-frame-pos-x))
-        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/initial-frame-pos-y))
-        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/initial-frame-size-x)))
-        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/initial-frame-size-y)))
-
-        (setq psimacs/config/default-frame-creation-strategy "main")
-        (message "Switched to main frame creation strategy.")))
+    (setq psimacs/config/default-frame-creation-strategy "main")
+    (message "Switched to main frame creation strategy.")
+)
 
 (defun psimacs/window/set-frame-creation-strategy-system ()
     "Set the frame layout creation strategy to `system'."
     (interactive)
-    (let* ( (primary-monitor (car (display-monitor-attributes-list)))
-            (geometry        (assoc 'geometry primary-monitor))
-            (_left            0)
-            (_top             0)
-            (_width           (nth 3 geometry))
-            (_height          (nth 4 geometry))
-          )
-        (setq default-frame-alist (assq-delete-all '_left   default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_top    default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_width  default-frame-alist))
-        (setq default-frame-alist (assq-delete-all '_height default-frame-alist))
 
-        (setq psimacs/config/default-frame-creation-strategy "system")
-        (message "Switched to system frame creation strategy.")))
+    (setq default-frame-alist (assq-delete-all 'left   default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'top    default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'width  default-frame-alist))
+    (setq default-frame-alist (assq-delete-all 'height default-frame-alist))
 
-(defun psimacs/window/set-frame-creation-strategy ()
+    (setq psimacs/config/default-frame-creation-strategy "system")
+    (message "Switched to system frame creation strategy.")
+)
+
+(defun psimacs/window/apply-frame-creation-strategy ()
     "Apply the current frame creation strategy."
     (interactive)
+
     (cond ((string= psimacs/config/default-frame-creation-strategy "layout")
            (psimacs/window/set-frame-creation-strategy-layout))
           ((string= psimacs/config/default-frame-creation-strategy "main")
            (psimacs/window/set-frame-creation-strategy-main))
           ((string= psimacs/config/default-frame-creation-strategy "system")
-           (psimacs/window/set-frame-creation-strategy-system)))
+           (psimacs/window/set-frame-creation-strategy-system))
     )
+)
+
+(add-hook 'before-make-frame-hook
+    #'(lambda ()
+        (psimacs/window/apply-frame-creation-strategy)
+    )
+)
+
+(add-hook 'after-make-frame-functions
+    #'(lambda (_frame)
+
+        (set-frame-position _frame psimacs/config/default-frame-pos-x  psimacs/config/default-frame-pos-y)
+        (set-frame-size     _frame psimacs/config/default-frame-size-x psimacs/config/default-frame-size-y t)
+
+        (when (equal psimacs/config/default-frame-creation-strategy "layout")
+            (setq psimacs/config/default-frame-placement-counter (+ psimacs/config/default-frame-placement-counter 1))
+            (when (> psimacs/config/default-frame-placement-counter psimacs/config/default-frame-placement-counter-max)
+                (setq psimacs/config/default-frame-placement-counter 1)
+            )
+        )
+        (psimacs/window/apply-frame-creation-strategy)
+    )
+)
+
+(add-hook 'after-delete-frame-functions
+    #'(lambda (_frame)
+        (when (equal psimacs/config/default-frame-creation-strategy "layout")
+            (setq psimacs/config/default-frame-placement-counter (- psimacs/config/default-frame-placement-counter 1))
+            (when (< psimacs/config/default-frame-placement-counter 1)
+                (setq psimacs/config/default-frame-placement-counter 1)
+            )
+        )
+        (psimacs/window/apply-frame-creation-strategy)
+    )
+)
+
+;;
+;; Setup the initial frame
+;;
+(psimacs/config/calculate_init_frame_position)
+
+;;
+;; The initial frame
+;;
+(set-frame-position (selected-frame) psimacs/config/initial-frame-pos-x  psimacs/config/initial-frame-pos-y)
+(set-frame-size     (selected-frame) psimacs/config/initial-frame-size-x psimacs/config/initial-frame-size-y t)
+
+;;
+;; Hacky, we need a redisplay
+;;
+(setq-default inhibit-redisplay nil
+              inhibit-message   nil)
+(redisplay)
+(setq-default inhibit-redisplay t
+              inhibit-message   t)
 
 ;;
 ;; Initialize the frame creation strategy
 ;;
-(unless (daemonp)
-    (psimacs/window/set-frame-creation-strategy-layout)
-)
-
-;;
-;; Prepare for the next frame creation
-;;
-(add-hook 'after-make-frame-functions
-            (lambda (_frame)
-                (let* ( (primary-monitor (car (display-monitor-attributes-list)))
-                        (geometry        (assoc 'geometry primary-monitor))
-                        (_left            0)
-                        (_top             0)
-                        (_width           (nth 3 geometry))
-                        (_height          (nth 4 geometry))
-                      )
-                    (when (equal psimacs/config/default-frame-creation-strategy "layout")
-                      (setq default-frame-alist (assq-delete-all '_left   default-frame-alist))
-                      (setq default-frame-alist (assq-delete-all '_top    default-frame-alist))
-                      (setq default-frame-alist (assq-delete-all '_width  default-frame-alist))
-                      (setq default-frame-alist (assq-delete-all '_height default-frame-alist))
-
-                      (setq psimacs/config/default-frame-placement-counter (+ psimacs/config/default-frame-placement-counter 1))
-
-                      (when (> psimacs/config/default-frame-placement-counter 4)
-                        (setq psimacs/config/default-frame-placement-counter 1)
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 1)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-1-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-1-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 2)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-2-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-2-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 3)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-3-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-3-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 4)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-4-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-4-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
-                        )
-                      ))))
-
-(add-hook 'after-delete-frame-functions
-            (lambda (_frame)
-                (let* ( (primary-monitor (car (display-monitor-attributes-list)))
-                        (geometry        (assoc 'geometry primary-monitor))
-                        (_left            0)
-                        (_top             0)
-                        (_width           (nth 3 geometry))
-                        (_height          (nth 4 geometry))
-                      )
-                    (when (equal psimacs/config/default-frame-creation-strategy "layout")
-                      (setq default-frame-alist (assq-delete-all '_left   default-frame-alist))
-                      (setq default-frame-alist (assq-delete-all '_top    default-frame-alist))
-                      (setq default-frame-alist (assq-delete-all '_width  default-frame-alist))
-                      (setq default-frame-alist (assq-delete-all '_height default-frame-alist))
-
-                      (setq psimacs/config/default-frame-placement-counter (- psimacs/config/default-frame-placement-counter 1))
-
-                      (when (< psimacs/config/default-frame-placement-counter 1)
-                        (setq psimacs/config/default-frame-placement-counter 1)
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 1)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-1-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-1-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-1-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-1-size-y)))
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 2)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-2-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-2-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-2-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-2-size-y)))
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 3)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-3-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-3-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-3-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-3-size-y)))
-                        )
-
-                      (when (= psimacs/config/default-frame-placement-counter 4)
-                        (add-to-list 'default-frame-alist `(_left   . ,psimacs/config/default-frame-4-pos-x))
-                        (add-to-list 'default-frame-alist `(_top    . ,psimacs/config/default-frame-4-pos-y))
-                        (add-to-list 'default-frame-alist `(_width  . (text-pixels . ,psimacs/config/default-frame-4-size-x)))
-                        (add-to-list 'default-frame-alist `(_height . (text-pixels . ,psimacs/config/default-frame-4-size-y)))
-                        )
-                      ))))
+(psimacs/window/apply-frame-creation-strategy)
 #+end_src
 
 ** System constants flags
@@ -3345,8 +3421,10 @@ to the correct server file, or we must call *emacsclient* with option =-f server
 
 *Psimacs* handles that in the following way:
 - *Psimacs* uses the =EMACS_SERVER_FILE=
-- If at startup a =EMACS_SERVER_FILE= if already defined in the environment and it does not correspond to
-  the current configuration, =EMACS_SERVER_FILE= is not modified and the //*Emacs server*/ is not started.
+- If at startup a =EMACS_SERVER_FILE= is already defined in the environment pointing to a running Emacs process other
+  than the current one, then the =EMACS_SERVER_FILE= is not modified and the //*Emacs server*/ is not started.
+  If the =EMACS_SERVER_FILE= exists and no corresponding running Emacs process can be found, the file is deleted
+  before starting a new //*Emacs server*/.
 - If the =EMACS_SERVER_FILE= is not defined, or it points to a non existing file, it is set to the
   current configuration's /server-file/ in the user environment.
   Additionally, a =kill-emacs-hook= is set up that removes the environment variable on exit of the *Emacs* session.
@@ -3367,23 +3445,6 @@ References:
 (defconst psimacs/config/server-file
   (psimacs/file-system/concat-file psimacs/config/server-dir "server")
   "The psimacs server file.")
-
-
-;;
-;; ToDo: this should go to the server setup code below
-;;
-(defvar psimacs/config/found-server-file
-   (getenv "EMACS_SERVER_FILE")
-   "The active server file.")
-
-(when (and psimacs/system/is-win32-p
-            (or (not psimacs/config/found-server-file)
-                (not (file-exists-p psimacs/config/found-server-file))
-                (equal psimacs/config/found-server-file psimacs/config/server-file)))
-   (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
-   (add-hook 'kill-emacs-hook
-             (lambda ()
-               (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f"))))
 #+end_src
 
 ** Org-Mode and agenda files
@@ -6629,47 +6690,220 @@ References:
 ;;
 ;; Initialize Emacs server if it is not already running.
 ;;
+;(defvar psimacs/config/found-server-file
+;   (getenv "EMACS_SERVER_FILE")
+;   "The active server file.")
+;
+;(if psimacs/system/is-win32-p
+;    (progn
+;      (when (and psimacs/system/is-gui-p
+;                 (or (not psimacs/config/found-server-file)
+;                     (not (file-exists-p psimacs/config/found-server-file))
+;                     (equal psimacs/config/found-server-file psimacs/config/server-file)))
+;         (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
+;         (add-hook 'kill-emacs-hook
+;                   (lambda ()
+;                     (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
+;
+;          (unless (file-directory-p psimacs/config/server-dir)
+;              (make-directory psimacs/config/server-dir t)
+;          )
+;
+;          (require 'server)
+;
+;          (unless (server-running-p)
+;              (defun server-ensure-safe-dir (_dir) "Noop" t)  ; Suppress error "directory
+;                                                              ; ~/.emacs.d/server is unsafe"
+;                                                              ; on windows.
+;
+;              (message "server-start")
+;              (server-start)
+;          )
+;      )
+;
+;    )
+;  ;; else linux ...
+;  (unless (daemonp)
+;    (when psimacs/system/is-gui-p
+;      (require 'server)
+;      (unless (server-running-p)
+;        (message "server-start")
+;        (server-start)
+;      )
+;    )
+;  )
+;)
+
+;;
+;; found-server-file from environment EMACS_SERVER_FILE
+;;
 (defvar psimacs/config/found-server-file
    (getenv "EMACS_SERVER_FILE")
-   "The active server file.")
+  "The active server file.")
 
+;;
+;; reset found-server-file and delete EMACS_SERVER_FILE
+;;
+(defun psimacs/config/clear-emacs-server ()
+    "Reset found-server-file and remove "
+    (setq psimacs/config/found-server-file nil)
+    (when psimacs/system/is-win32-p
+      (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")
+    )
+)
+
+;;
+;; Check if the existing found-server-file is a valid Emacs server file and get the PID
+;;
+(defun psimacs/config/pid-from-server-file (file)
+  "Returns the pid number of the Emacs server file FILE."
+  (when (and file 
+             (file-exists-p file)
+        )
+    (let (
+          (server-str (f-read-text file 'utf-8))
+          (pid nil) )
+      (when (string-match "^.*[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+:[[:digit:]]+[[:space:]]+\\([[:digit:]]+\\)" server-str)
+        (setq pid (string-to-number (match-string 1 server-str)))
+  )
+)))
+
+;;
+;; Check PID, is there a valid Emacs process running?
+;;
+(defun psimacs/config/is-emacs-process-p (pid)
+  "Return t if process PID is an actual Emacs process"
+  (let ((name (alist-get 'comm (process-attributes pid))))
+    (when (and name
+               (string-prefix-p "emacs" name)) t)))
+
+;;
+;; Finial server start-up function
+;;
+(defun psimacs/config/start-emacs-server ()
+    "Try to start the emacs server."
+    (if psimacs/system/is-win32-p
+        (progn
+            ;;
+            ;; Environment variable "EMACS_SERVER_FILE" is defined but corresponding file
+            ;; does not exists found-server-file
+            ;;
+            (when (and psimacs/config/found-server-file                        ;; set by environment
+                       (not (file-exists-p psimacs/config/found-server-file))) ;; filesystem, actual file
+              (psimacs/config/clear-emacs-server)
+            )
+
+            ;;
+            ;; Ensure the existence of the psimac server directory
+            ;;
+            (unless (file-directory-p psimacs/config/server-dir)
+                (make-directory psimacs/config/server-dir t)
+            )
+
+            ;;
+            ;; Load package
+            ;;
+            (require 'server)
+
+            ;;
+            ;; We explicitely check for a running Emacs server. It could be 
+            ;;
+            (unless (server-running-p)
+                ;;
+                ;; Set the EMACS_SERVER_FILE environment variable and ensure that it is
+                ;; properly killed on leaving Emacs
+                ;;
+                (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
+                (add-hook 'kill-emacs-hook
+                        (lambda ()
+                          (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
+
+                ;;
+                ;; Solve the following problem: ownership of the directory server directory when you also have 
+                ;;                              administrators rights on your account. This leads to warnings messages.
+                ;;
+                (defun server-ensure-safe-dir (_dir) "Noop" t)  ; Suppress error "directory
+                                                                ; ~/.emacs.d/server is unsafe"
+                                                                ; on windows.
+                ;;
+                ;; Finally start the Emacs server
+                ;;
+                (message "server-start")
+                (server-start)
+            )
+        )
+
+        ;; else block: non windows e.g. linux
+        ;;
+        ;; On linux only the bare minimum is done.
+        ;;
+        (unless (daemonp)
+            (when psimacs/system/is-gui-p
+                ;;
+                ;; Load package
+                ;;
+                (require 'server)
+
+                ;;
+                ;; We explicitely check for a running Emacs server. It could be 
+                ;;
+                (unless (server-running-p)
+                    (message "server-start")
+                    (server-start)
+                )
+            )
+        )
+    )
+)
+
+;;
+;; Finally, the actual server govering code
+;;
 (if psimacs/system/is-win32-p
     (progn
-      (when (and psimacs/system/is-gui-p
-                 (or (not psimacs/config/found-server-file)
-                     (equal psimacs/config/found-server-file psimacs/config/server-file)))
-         (start-process "SETX" nil "setx" "EMACS_SERVER_FILE" psimacs/config/server-file)
-         (add-hook 'kill-emacs-hook
-                   (lambda ()
-                     (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
+        (let (
+              (start-emacs-server-p t)
+              (   own-pid (emacs-pid))
+              ( found-pid (psimacs/config/pid-from-server-file psimacs/config/found-server-file))
+              (server-pid (psimacs/config/pid-from-server-file psimacs/config/server-file))
+             )
+            (if found-pid
+                (progn
+                    ;;
+                    ;; If we found our own pid we do not need to restart server
+                    ;;
+                    (when (and server-pid
+                               (equal server-pid own-pid)
+                               (equal found-pid  own-pid)
+                          )
+                        (setq start-emacs-server-p nil)
+                    )
 
-          (unless (file-directory-p psimacs/config/server-dir)
-              (make-directory psimacs/config/server-dir t)
-          )
+                    ;;
+                    ;; If not our pid but a valid emacs pid - we do not start server; Foreign emacs running
+                    ;;
+                    (when (and (not (equal found-pid (emacs-pid)))
+                               (psimacs/config/is-emacs-process-p found-pid))
+                        (setq start-emacs-server-p nil)
+                    )
+                )
+                ;; else not found-pid
+                (psimacs/config/clear-emacs-server)
+            )
 
-          (require 'server)
+            (when (and start-emacs-server-p 
+                       (file-exists-p psimacs/config/server-file)
+                  )
+                (delete-file psimacs/config/server-file)
+            )
 
-          (unless (server-running-p)
-              (defun server-ensure-safe-dir (_dir) "Noop" t)  ; Suppress error "directory
-                                                              ; ~/.emacs.d/server is unsafe"
-                                                              ; on windows.
-
-              (message "server-start")
-              (server-start)
-          )
-      )
-
+            (when start-emacs-server-p
+                (psimacs/config/start-emacs-server)
+            )
+        )
     )
-  ;; else linux ...
-  (unless (daemonp)
-    (when psimacs/system/is-gui-p
-      (require 'server)
-      (unless (server-running-p)
-        (message "server-start")
-        (server-start)
-      )
-    )
-  )
+    ;; else block non windows, e.g. linux
+    (psimacs/config/start-emacs-server)
 )
 #+end_src
 

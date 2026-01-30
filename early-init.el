@@ -52,6 +52,11 @@
 
 
 ;;
+;; Verbose message output
+;;
+(defconst psimacs/config/verbose t)
+
+;;
 ;; Start up timing
 ;;
 (defconst psimacs/config/startup-timing t
