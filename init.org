@@ -2586,8 +2586,8 @@ to it's documentation string.
             ;;
             (offset_left     10)
             (offset_right    10)
-            (offset_top      20)
-            (offset_bottom   70)
+            (offset_top      30)
+            (offset_bottom   80)
             ;;
             ;; distances in pixel between frames
             ;;
@@ -2697,8 +2697,8 @@ to it's documentation string.
             ;;
             ;; screen offsets in pixel
             ;;
-            (offset_top      20)
-            (offset_bottom   70)
+            (offset_top      30)
+            (offset_bottom   80)
             ;;
             ;; Size corrections
             ;;
@@ -3494,6 +3494,7 @@ your calendar.
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "notebooks"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "books"))
 (psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "cookbooks"))
+(psimacs/file-system/make-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "talks"))
 
 (defconst psimacs/config/roam-templates-dir
     (psimacs/file-system/concat-directory psimacs/config/site-lisp-dir "roam-templates")
@@ -5254,6 +5255,74 @@ Websites built with [[https://gohugo.io/][Hugo]] are extremely fast and secure. 
   "The hugo executable to use.")
 #+end_src
 
+** Whisper
+
+[[https://github.com/openai/whisper][Whisper]] is a general-purpose speech recognition model. It is trained on a large dataset of diverse
+audio and is also a multitasking model that can perform multilingual speech recognition, speech
+translation, and language identification. [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] is a plain C++ implementation of the original
+whisper model. *Psimacs* builds on top of [[https://github.com/natrys/whisper.el][whisper.el]] which integrates [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] into /Emacs/.
+
+TODO: Missing proper Linux support!
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Whisper-cpp support
+;;
+(defconst psimacs/config/whisper-cpp-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "whisper.cpp")
+  "Installation directory of the whisper.cpp runtime."
+)
+
+(defconst psimacs/config/whisper-cpp-model-dir
+  (psimacs/file-system/concat-directory psimacs/config/system-utils-dir "whisper-models")
+  "Installation directory of the whisper models in ggml format."
+)
+
+(defconst psimacs/config/whisper-cpp-runtime-dir
+   (psimacs/file-system/concat-directory psimacs/config/whisper-cpp-dir "bin")
+  "Path to the whisper-cli executable.
+This is the compiled Whisper.cpp command-line tool."
+)
+
+(defconst psimacs/config/whisper-cpp-temp-wav-file
+  (psimacs/file-system/concat-file psimacs/config/session-dir "emacs-whisper.wav")
+  "Path to the emacs-whisper.wav file in session dir."
+)
+
+
+(defconst psimacs/config/whisper-cpp-exe
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/whisper-cpp-runtime-dir "whisper-cli.exe")
+      ;; else
+      ("whisper-cli")
+  )
+  "Path to the whisper-cli executable.
+This is the compiled Whisper.cpp command-line tool."
+)
+
+(defconst psimacs/config/whisper-cpp-vocabulary-file
+  nil
+  ;(psimacs/file-system/concat-file psimacs/config/whisper-cpp-dir "whisper-vocabulary.txt")
+  "Path to file containing vocabulary hints for Whisper.
+This should contain proper nouns, specialized terms, etc.
+The file should contain comma-separated words/phrases that Whisper
+should recognize.
+Set to nil to disable vocabulary hints."
+)
+
+(defconst psimacs/config/whisper-cpp-model-file
+  (psimacs/file-system/concat-file psimacs/config/whisper-cpp-model-dir "ggml-medium.bin")
+  "Path to the Whisper model to use for transcription.
+Larger models are more accurate but slower."
+)
+
+(defconst psimacs/config/whisper-cpp-base-model-file
+  (psimacs/file-system/concat-file psimacs/config/whisper-cpp-model-dir "ggml-base.bin")
+  "Path to the Whisper base model for fast transcription.
+Used by `whisper-transcribe-fast'."
+)
+#+end_src
+
 ** Emacs Application Framework :noexport:
 
 The package [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] provides a free/libre and open-source extensible framework that
@@ -6757,7 +6826,7 @@ References:
 ;;
 (defun psimacs/config/pid-from-server-file (file)
   "Returns the pid number of the Emacs server file FILE."
-  (when (and file 
+  (when (and file
              (file-exists-p file)
         )
     (let (
@@ -6806,7 +6875,7 @@ References:
             (require 'server)
 
             ;;
-            ;; We explicitely check for a running Emacs server. It could be 
+            ;; We explicitely check for a running Emacs server. It could be
             ;;
             (unless (server-running-p)
                 ;;
@@ -6819,7 +6888,7 @@ References:
                           (call-process "reg.exe" nil nil nil "delete" "HKCU\\Environment" "/v" "EMACS_SERVER_FILE" "/f")))
 
                 ;;
-                ;; Solve the following problem: ownership of the directory server directory when you also have 
+                ;; Solve the following problem: ownership of the directory server directory when you also have
                 ;;                              administrators rights on your account. This leads to warnings messages.
                 ;;
                 (defun server-ensure-safe-dir (_dir) "Noop" t)  ; Suppress error "directory
@@ -6845,7 +6914,7 @@ References:
                 (require 'server)
 
                 ;;
-                ;; We explicitely check for a running Emacs server. It could be 
+                ;; We explicitely check for a running Emacs server. It could be
                 ;;
                 (unless (server-running-p)
                     (message "server-start")
@@ -6891,7 +6960,7 @@ References:
                 (psimacs/config/clear-emacs-server)
             )
 
-            (when (and start-emacs-server-p 
+            (when (and start-emacs-server-p
                        (file-exists-p psimacs/config/server-file)
                   )
                 (delete-file psimacs/config/server-file)
@@ -15347,6 +15416,131 @@ References:
 )
 #+end_src
 
+** Speech Recognition
+*** Whisper
+
+[[https://github.com/openai/whisper][Whisper]] is a general-purpose speech recognition model. It is trained on a large dataset of diverse
+audio and is also a multitasking model that can perform multilingual speech recognition, speech
+translation, and language identification. [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] is a plain C++ implementation of the original
+whisper model. *Psimacs* builds on top of [[https://github.com/natrys/whisper.el][whisper.el]] which integrates [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] into /Emacs/.
+
+TODO: Missing proper Linux support!
+
+#+begin_src emacs-lisp :tangle config/init-advanced-whisper.el :var file-description="Advanced whisper setup"
+;;
+;; Whisper speech recognition support
+;;
+(use-package whisper
+  ;:straight (whisper.el :host github :repo "natrys/whisper.el" :branch "master")
+  :straight (whisper.el :host github :repo "hatlafax/whisper.el" :branch "master")
+  :bind (
+         ("H-x H-w"    . whisper-run)
+         ("H-x H-W"    . psimacs/whisper/replay)
+         ("H-x C-W"    . psimacs/whisper/toogle-language)
+         ("H-x W"      . psimacs/whisper/select-microphone)
+        )
+  :config
+    (defun psimacs/whisper/select-microphone ()
+      "Select a microphone from a list of predefined devices."
+      (interactive)
+      (let* (( result (psimacs/ui/internal/select-from-item-list "Select a microphone: "
+                                                           '(
+                                                             "Mikrofon (4- AT2020USB+)"
+                                                             "Mikrofon (Razer Kiyo Pro)"
+                                                             "Kopfhörermikrofon (Jabra Link 380)"
+                                                             "Mikrofonarray (Realtek(R) Audio)"
+                                                             "Mikrofon (USB Audio)"
+                                                             ))))
+        (setq whisper--ffmpeg-input-device (concat "audio=" result))
+      )
+    )
+
+    (defun psimacs/whisper/replay ()
+      "Replay the last recored speech file."
+      (interactive)
+      (when (file-exists-p whisper--temp-file)
+        (play-sound-file whisper--temp-file)
+      )
+    )
+
+    (defun psimacs/whisper/toggle-language ()
+      "Set the language explicitly, since sometimes auto doesn't figure out the right one."
+      (interactive)
+      (setq whisper-language (if (string= whisper-language "en") "de" "en"))
+      ;; If using a server, we need to restart for the language
+      (when (process-live-p whisper--server-process)
+        (kill-process whisper--server-process))
+      (message "%s" whisper-language)
+    )
+
+    (setq whisper-install-whispercpp nil)
+    (setq whisper-install-whispercpp 'manual)         ;; Specify whether to install whisper.cpp automatically.
+    (setq whisper-install-directory psimacs/config/system-utils-dir)
+
+    (setq whisper--temp-file
+          psimacs/config/whisper-cpp-temp-wav-file)   ;; Location of the temporary audio file.
+
+    ;;(defun psimacs/config/whisper-set-temp-filename ()
+    ;;    (setq whisper--temp-file (expand-file-name
+    ;;                        (format-time-string "%Y-%m-%d-%H-%M-%S.wav")
+    ;;                        psimacs/config/session-dir)))
+    ;;
+    ;;(with-eval-after-load 'whisper
+    ;;    (add-hook 'whisper-before-transcription-hook #'psimacs/config/whisper-set-temp-filename))
+
+
+    (setq whisper--mode-line-recording-indicator    "★")
+    (setq whisper--mode-line-transcribing-indicator "✿")
+
+    ;(setq whisper-executable psimacs/config/whisper-cpp-exe)
+    ;(setq whisper-model-path psimacs/config/whisper-cpp-model-file)
+    ;(setq whisper-base-model-path psimacs/config/whisper-cpp-base-model-file)
+    (setq whisper-vocabulary-file psimacs/config/whisper-cpp-vocabulary-file)
+
+    (setq whisper-insert-text-at-point t)             ;; Whether to put whisper output under point in current buffer.
+    (setq whisper-display-transcription-buffer t)     ;; Whether to display the temporary buffer with transcription.
+                                                      ;; This variable only has an effect when `whisper-insert-text-at-point'
+                                                      ;; is nil.
+    ;(setq whisper-transcription-buffer-name-function  ;; Function to generate the name of the transcription buffer.
+    ;      #'whisper--timestamped-transcription-buffer-name)
+
+    (setq whisper-return-cursor-to-start nil)         ;; Whether to re-position the cursor after transcription.
+    (setq whisper-show-progress-in-mode-line t)       ;; Whether to show transcription progress in mode line.
+
+    (setq whisper-model "base")                       ;; Choose between: tiny, base, small, medium, large.
+    (setq whisper-language "en")                      ;; Set spoken language for audio, or 'auto'
+    (setq whisper-quantize nil)   ;; "q4_0"           ;; Whether to use quantized version of the model in whisper.cpp
+                                                      ;; string: q4_0, q4_1, q4_k, q5_0, q5_1, q5_k, q6_k, q8_0
+    (setq whisper-enable-speed-up nil)
+    (setq whisper-translate nil)
+    (setq whisper-use-threads (- (num-processors) 2)) ;; How many threads to use for transcribing.
+
+    (setq whisper-server-mode nil)                    ;; Server mode to use for transcription: nil, 'local, 'openai
+
+    ;; for server-mode 'local
+    (setq whisper-server-host "127.0.0.1")            ;; Host address for the whisper server
+    (setq whisper-server-port 8642)                   ;; Port number for the whisper server.
+
+    ;; for server-mode 'openai
+    (setq whisper-openai-api-baseurl
+          "https://api.openai.com/")                  ;; whisper-openai-api-baseurl "https://api.openai.com/"
+    (setq whisper-openai-api-key nil)                 ;; API key for OpenAI compatible transcription API.
+    (setq whisper-openai-model  "gpt-4o-transcribe")  ;; Model to use in OpenAI compatible API.
+
+    ;(setq whisper--ffmpeg-input-format 'dshow)       ;; -f flag of FFmpeg (Default is pulse on linux and dshow on Windows.
+
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (4- AT2020USB+)")           ;; -i flag of FFmpeg
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (Razer Kiyo Pro)")           ;; -i flag of FFmpeg
+    ;(setq whisper--ffmpeg-input-device "Kopfhörermikrofon (Jabra Link 380)") ;; -i flag of FFmpeg
+    ;(setq whisper--ffmpeg-input-device "Mikrofonarray (Realtek(R) Audio)")   ;; -i flag of FFmpeg
+    ;(setq whisper--ffmpeg-input-device "Mikrofon (USB Audio)")               ;; -i flag of FFmpeg
+
+    (setq whisper-recording-timeout 300)              ;; Number of seconds after which recording will be automatically stopped.
+
+    (message whisper--ffmpeg-input-device)
+)
+#+end_src
+
 ** Project Management
 
 Project management is important in order to be able to  work with projects that consist of many files and that
@@ -16547,7 +16741,6 @@ The package [[https://github.com/mhayashi1120/Emacs-imagex][image+]] works with 
         )
 )
 #+end_src
-
 
 ** Emacs Application Framework :noexport:
 
@@ -22765,6 +22958,14 @@ Brains:
                             )
                     :unnarrowed t
                 )
+                (
+                    "t" "talk" plain
+                    (file ,(psimacs/file-system/concat-file psimacs/config/roam-templates-dir "TalkTemplate.org"))
+                    :if-new (
+                                file "talks/%<%Y-%m-%d>-${slug}.org"
+                            )
+                    :unnarrowed t
+                )
             )
         )
 
@@ -23074,7 +23275,7 @@ capture was not aborted."
         ;; Screenshot copying
         ;;
         (defvar psimacs/internal/org/roam-screenshots-category nil)
-        (defvar psimacs/internal/org/roam-screenshots-category-list '("articles" "books" "cookbooks" "cortex" "faq" "notebooks" "projects" "references" "research"))
+        (defvar psimacs/internal/org/roam-screenshots-category-list '("articles" "books" "cookbooks" "cortex" "faq" "notebooks" "projects" "references" "research" "talks"))
 
         (defvar psimacs/internal/org/roam-screenshots-group nil)
         (defvar psimacs/internal/org/roam-screenshots-group-list '())

@@ -1,50 +1,133 @@
 param (
-    [switch]$h                 = $false,
-    [switch]$help              = $false,
-    [switch]$run               = $false,
-    [switch]$conemu            = $false,
-    [switch]$nopackages        = $false,
-    [switch]$mingw             = $false,
-    [switch]$ucrt              = $false,
-    [switch]$clang             = $false,
-    [switch]$nopython          = $false,
-    [switch]$nopythonupdate    = $false,
-    [switch]$nopythonpackages  = $false,
-    [switch]$pythonuselatest   = $false,
-    [switch]$python_msi        = $false,
-    [string]$pythonrequirements,
-    [string]$python,
-    [switch]$nojava            = $false,
-    [string]$java              = "21.35",
-    [switch]$nolangtool        = $false,
-    [switch]$nosumatrapdf      = $false,
-    [string]$sumatrapdf,
-    [switch]$nopandoc          = $false,
-    [switch]$noplantuml        = $false,
-    [switch]$noreveal_js       = $false,
-    [switch]$uninstall         = $false,
-    [switch]$force             = $false,
-    [string]$psimacsbranch     = "master",
-    [switch]$noprivatefile     = $false,
-    [switch]$nopsimacsdocu     = $false,
-    [string]$username          = "YOUR NAME",
-    [string]$useremail         = "YOUR EMAIL",
-    [string]$calendarlatitude  = "0.0",
-    [string]$calendarlongitude = "0.0",
-    [string]$calendarlocation  = "YOUR CITY, COUNTRY",
-    [switch]$nopackageversions = $false,
-    [switch]$nofontsinstall    = $false,
-    [switch]$allnerdfonts      = $false,
-    [switch]$noalltheicons     = $false,
-    [switch]$nonerdicons       = $false,
-    [switch]$noorgthemes       = $false,
-    [switch]$nocontent         = $false,
-    [switch]$nonpm             = $false
+    # General Switches
+    [switch]$h                   = $false,
+    [switch]$help                = $false,
+    [switch]$run                 = $false,
+    [switch]$state               = $false,
+    [switch]$mingw               = $false,
+    [switch]$ucrt                = $false,
+    [switch]$clang               = $false,
+    [switch]$uninstall           = $false,
+    [switch]$force               = $false,
+    [switch]$deactivate_all      = $false,
+
+    # Feature Switches
+    [switch]$conemu              = $false,
+    [switch]$no_packages         = $false,
+    [switch]$no_python           = $false,
+    [switch]$no_python_update    = $false,
+    [switch]$no_python_packages  = $false,
+    [switch]$python_use_latest   = $false,
+    [switch]$python_msi          = $false,
+    [switch]$no_java             = $false,
+    [switch]$no_langtool         = $false,
+    [switch]$no_sumatrapdf       = $false,
+    [switch]$no_pandoc           = $false,
+    [switch]$no_plantuml         = $false,
+    [switch]$no_reveal_js        = $false,
+    [switch]$no_privatefile      = $false,
+    [switch]$no_psimacsdocu      = $false,
+    [switch]$no_fonts_install    = $false,
+    [switch]$no_all_the_icons    = $false,
+    [switch]$no_nerd_icons       = $false,
+    [switch]$no_org_themes       = $false,
+    [switch]$no_content          = $false,
+    [switch]$no_npm              = $false,
+    [switch]$no_whisper          = $false,
+    [switch]$no_whisper_models   = $false,
+
+    # Reversion Feature Switches: If set, the corresponding
+    # feature switch gets reversed!
+    [switch]$rev_conemu              = $false,
+    [switch]$rev_packages            = $false,
+    [switch]$rev_python              = $false,
+    [switch]$rev_python_update       = $false,
+    [switch]$rev_python_packages     = $false,
+    [switch]$rev_java                = $false,
+    [switch]$rev_langtool            = $false,
+    [switch]$rev_sumatrapdf          = $false,
+    [switch]$rev_pandoc              = $false,
+    [switch]$rev_plantuml            = $false,
+    [switch]$rev_reveal_js           = $false,
+    [switch]$rev_privatefile         = $false,
+    [switch]$rev_psimacsdocu         = $false,
+    [switch]$rev_fonts_install       = $false,
+    [switch]$rev_all_the_icons       = $false,
+    [switch]$rev_nerd_icons          = $false,
+    [switch]$rev_org_themes          = $false,
+    [switch]$rev_content             = $false,
+    [switch]$rev_npm                 = $false,
+    [switch]$rev_whisper             = $false,
+    [switch]$rev_whisper_models      = $false,
+
+    # Switches for dedicated tasks
+    [switch]$no_package_versions  = $false,
+    [switch]$all_nerd_fonts       = $false,
+    [switch]$all_whisper_models   = $false,
+    [string[]]$whisper_models     = @("base", "medium"),
+    [string]$whisper_release      = "whisper-bin-x64",
+    [switch]$all_whisper_releases = $false,
+
+    # Details Input
+    [string]$python_requirements,
+    [string]$python_version,
+    [string]$java_version        = "21.35",
+    [string]$sumatrapdf_version,
+    [string]$psimacsbranch       = "master",
+    [string]$username            = "YOUR NAME",
+    [string]$useremail           = "YOUR EMAIL",
+    [string]$calendarlatitude    = "0.0",
+    [string]$calendarlongitude   = "0.0",
+    [string]$calendarlocation    = "YOUR CITY, COUNTRY"
 )
+
+$whisper_model_list = @(
+    "tiny",
+    "tiny-q5_1",
+    "tiny-q8_0",
+    "tiny.en",
+    "tiny.en-q5_1",
+    "tiny.en-q8_0",
+    "base",
+    "base-q5_1",
+    "base-q8_0",
+    "base.en",
+    "base.en-q5_1",
+    "base.en-q8_0",
+    "small",
+    "small-q5_1",
+    "small-q8_0",
+    "small.en",
+    "small.en-q5_1",
+    "small.en-q8_0",
+    "small.en-tdrz",
+    "medium",
+    "medium-q5_0",
+    "medium-q8_0",
+    "medium.en",
+    "medium.en-q5_0",
+    "medium.en-q8_0",
+    "large-v1",
+    "large-v2",
+    "large-v2-q5_0",
+    "large-v2-q8_0",
+    "large-v3",
+    "large-v3-q5_0",
+    "large-v3-turbo",
+    "large-v3-turbo-q5_0",
+    "large-v3-turbo-q8_0"
+)
+
+if ($all_whisper_models)
+{
+    $whisper_models = $whisper_model_list
+}
 
 if (-not $run)
 {
-    $help = $true
+    if (-not $state) {
+        $help = $true
+    }
 }
 
 if ($help -or $h)
@@ -62,14 +145,14 @@ if ($help -or $h)
     echo "The following set of tools gets installed by this script:"
     echo ""
     echo "      ConEmu       : An optional terminal for windows. See option '-conemu'."
-    echo "      Java         : Java is needed for 'LanguageTool' and for 'PlantUML'. See options '-nojava' and '-java'."
-    echo "      LanguageTool : This is a multi-lingual grammer and spell checker. See option 'nolangtool'."
+    echo "      Java         : Java is needed for 'LanguageTool' and for 'PlantUML'. See options '-no_java' and '-java_version'."
+    echo "      LanguageTool : This is a multi-lingual grammer and spell checker. See option '-no_langtool'."
     echo "      Msys2        : Unix environment for Windows. This is the backbone of the installation."
     echo "                     You can install either MINGW64, UCRT64 or CLANG64 environments. Howerver, currently"
     echo "                     only the MINGW64 environment works without hassle."
-    echo "                     See options '-mingw', '-ucrt', '-clang', or '-nopackages'." 
-    echo "      Pandoc       : Pandoc is a universal document converter. See option '-nopandoc'."
-    echo "      plantUML     : PlantUML is a UML and diagram drawing tool. See option '-noplantuml'."
+    echo "                     See options '-mingw', '-ucrt', '-clang', or '-no_packages'." 
+    echo "      Pandoc       : Pandoc is a universal document converter. See option '-no_pandoc'."
+    echo "      plantUML     : PlantUML is a UML and diagram drawing tool. See option '-no_plantuml'."
     echo "      Psimacs      : This is the actual Psimacs Emacs configuration. The central peace of code."
     echo "      Python       : Psimacs builds around of Windows Python instead of the MSYS2 Python version."
     echo "                     Many tools are not compatible to the MSYS2 Python version."
@@ -77,8 +160,8 @@ if ($help -or $h)
     echo "                     a virtual Python environment into which many Python packages gets installed."
     echo "                     The list of these packages can be found in the 'Requirements.txt' file found"
     echo "                     Psimacs assets Python subdirectory."
-    echo "                     See options '-nopython', '-nopythonupdate', '-nopythonpackages', and '-python'." 
-    echo "      SumatraPDF   : Psimacs uses the SumatryPDF viewer. See options 'nosumatrapdf' and 'sumatrapdf'."
+    echo "                     See options '-no_python', '-no_python_update', '-no_python_packages', and '-python'." 
+    echo "      SumatraPDF   : Psimacs uses the SumatryPDF viewer. See options '-no_sumatrapdf' and 'sumatrapdf_version'."
     echo "      Ghostscript  : Ghostscript is an interpreter for the PostScript language and PDF files. Installed via MSYS2."
     echo "      GraphViz     : GraphViz is graph visualization software. Installed via MSYS2."
     echo "      Cmake        : Cmake is the de-facto standard for building C++. Installed via MSYS2."
@@ -99,6 +182,7 @@ if ($help -or $h)
     echo "      texlive      : Provides a comprehensive full TeX system. Installed via MSYS2."
     echo "      Gcc          : The Gnu Compiler Collection. Installed via MSYS2."
     echo "      Clang        : The Clang compiler. Installed via MSYS2."
+    echo "      Whisper      : Install the speech recognition engine Whisper."
     echo ""
     echo "Attention: This script does not perform any task withoud specification of the '-run' option!"
     echo ""
@@ -122,69 +206,103 @@ if ($help -or $h)
     echo "'-force' option."
     echo ""
     echo "Options:"
-    echo "      -h, -help          : Show this help."
-    echo "      -run               : This script does nothing without setting the -run option!"
+    echo "      -h, -help           : Show this help."
+    echo "      -run                : This script does nothing without setting the -run option!"
+    echo "      -state              : Show the settings of all options and does nothing. Option '-run' is not necessary for use."
+    echo "      -deactivate_all     : All feature are deactivated. No installation happens. Use options '-rev_*' to reactivate"
+    echo "                            a features. That is useful, e.g. if you want to post install a feature."
     echo "    MSYS2"
-    echo "      -mingw             : Install the MINGW64 MSYS2 environment. Recommended and the current default."
-    echo "      -ucrt              : Install the UCRT64 MSYS2 environment. The future, but fails on Emacs's zmq package needed for jupyter."
-    echo "      -clang             : Install the CLANG64 MSYS2 environment. Also fails on Emacs's zmq package."
-    echo "      -nopackages        : Do not install any MSYS2 packages. Mainly for development purpose." 
-    echo "      -allnerdfonts      : Install all available nerd fonts. Otherwise only firacode, hack, and inconsolata nerd fonts gets installed."
-    echo "      -nonpm             : Do not install the Node.js package, providing command npm."
-    echo "      -conemu            : Additionally install the ConEmu terminal."
+    echo "      -mingw              : Install the MINGW64 MSYS2 environment. Recommended and the current default."
+    echo "      -ucrt               : Install the UCRT64 MSYS2 environment. The future, but fails on Emacs's zmq package needed for jupyter."
+    echo "      -clang              : Install the CLANG64 MSYS2 environment. Also fails on Emacs's zmq package."
+    echo "      -no_packages        : Do not install any MSYS2 packages. Mainly for development purpose." 
+    echo "      -all_nerd_fonts     : Install all available nerd fonts. Otherwise only firacode, hack, and inconsolata nerd fonts gets installed."
+    echo "      -no_npm             : Do not install the Node.js package, providing command npm."
+    echo "      -conemu             : Additionally install the ConEmu terminal."
     echo "    Python"
-    echo "      -nopython          : Do not install Python."
-    echo "      -pythonuselatest   : Use the latest python version. Otherwise the version Python 3.11.9 is currently used."
-    echo "                           The latest Python version might not work. Not all package wheels are already available."
-    echo "      -python_msi        : Use the official msi installer from www.python.org. Otherwise the Python package is taken"
-    echo "                           from https://github.com/astral-sh/python-build-standalone. It is not recommended to use the"
-    echo "                           msi installer from www.pytho.org because it forces you to properly uninstall any Python version"
-    echo "                           with the same major.minor version installed on your computer, which typically is quite a hassle."
-    echo "      -nopythonupdate    : If Python is already installed, this options allows the suppression of Python updates."
-    echo "      -nopythonpackages  : Do not install the the Psimacs defined Python package requirements."
-    echo "      -python            : The Python version number in the format 'N.M.B' that should be installed. Default is latest"
-    echo "                           if flage 'pythonuselatest' is defined. Otherwise the Python 3.11.9 is currently used."
-    echo "      -pythonrequirements: Path to alternative 'requirements.txt' to use instead of the one from the 'assets' directory."
+    echo "      -no_python          : Do not install Python."
+    echo "      -python_use_latest  : Use the latest python version. Otherwise the version Python 3.11.9 is currently used."
+    echo "                            The latest Python version might not work. Not all package wheels are already available."
+    echo "      -python_msi         : Use the official msi installer from www.python.org. Otherwise the Python package is taken"
+    echo "                            from https://github.com/astral-sh/python-build-standalone. It is not recommended to use the"
+    echo "                            msi installer from www.pytho.org because it forces you to properly uninstall any Python version"
+    echo "                            with the same major.minor version installed on your computer, which typically is quite a hassle."
+    echo "      -no_python_update   : If Python is already installed, this options allows the suppression of Python updates."
+    echo "      -no_python_packages : Do not install the the Psimacs defined Python package requirements."
+    echo "      -python_version     : The Python version number in the format 'N.M.B' that should be installed. Default is latest"
+    echo "                            if flage 'python_use_latest' is defined. Otherwise the Python 3.11.9 is currently used."
+    echo "      -python_requirements: Path to alternative 'requirements.txt' to use instead of the one from the 'assets' directory."
     echo "    Java"
-    echo "      -nojava            : Do not install OpenJDK JDK."
-    echo "      -java              : The Java version number and the revision: 'N.M'"
+    echo "      -no_java             : Do not install OpenJDK JDK."
+    echo "      -java_version        : The Java version number and the revision: 'N.M'"
     echo "    Tools"
-    echo "      -nolangtool        : Do not install LangTool spell and grammar checker."
-    echo "      -nosumatrapdf      : Do not install the SumatraPDF viewer."
-    echo "      -sumatrapdf        : The SumatraPDF viewer version number in the format 'N.M.B' that should be installed. Default is latest."
-    echo "      -nopandoc          : Do not install the Pandoc document converter."
-    echo "      -noplantuml        : Do not install the PlantUML tool."
-    echo "      -noreveal_js       : Do not install the reveal.js repository. This is not necessary for using of Reveal in Psimacs:"
-    echo "                           Lookup Psimacs variable org-re-reveal-root or option REVEAL_ROOT for informations."
+    echo "      -no_langtool         : Do not install LangTool spell and grammar checker."
+    echo "      -no_sumatrapdf       : Do not install the SumatraPDF viewer."
+    echo "      -sumatrapdf_version  : The SumatraPDF viewer version number in the format 'N.M.B' that should be installed. Default is latest."
+    echo "      -no_pandoc           : Do not install the Pandoc document converter."
+    echo "      -no_plantuml         : Do not install the PlantUML tool."
+    echo "      -no_reveal_js        : Do not install the reveal.js repository. This is not necessary for using of Reveal in Psimacs:"
+    echo "                             Lookup Psimacs variable org-re-reveal-root or option REVEAL_ROOT for informations."
+    echo "      -no_whisper          : Do not install the Whisper speech recognition engine."
+    echo "      -whisper_release     : Defaults to 'whisper-bin-x64'. Alternatives are 'whisper-blas-bin-x64', 'whisper-cublas-11.8.0-bin-x64', 'whisper-cublas-12.4.0-bin-x64'"
+    echo "      -all_whisper_releases: Download all releases but only the '$whisper_release' gets installed."
+    echo "      -no_whisper_models   : Do not install the Whisper gmll models from Hugging Face."
+    echo "      -all_whisper_models  : Install all whisper models, which adds up to 23.4 GByte:"
+    foreach ($model in  $whisper_model_list) {
+        echo "                            - $model"
+    }
     echo "    Psimacs"
-    echo "      -psimacsbranch     : The specific branch, tag or commit to clone. Currently this defaults to the 'master'"
-    echo "                           branch of Psimacs, which is compatible with Emacs 30.2."
-    echo "      -noprivatefile     : Do not create the 'private' directectory with an 'init-private.el' file."
-    echo "      -nopsimacsdocu     : Do not create desktop shortcuts to the HTML documentation files."
-    echo "      -username          : The user name written to the 'init-private.el' file."
-    echo "      -useremail         : The user email written to the 'init-private.el' file."
-    echo "      -calendarlatitude  : The user latitude used for the calender written to the 'init-private.el' file."
-    echo "      -calendarlongitude : The user longitude used for the calender written to the 'init-private.el' file."
-    echo "      -calendarlocation  : The user place used for the calender location."
-    echo "      -nopackageversions : Remove the 'straight/versions/default.el' file. In that case Psimacs installs the"
-    echo "                           most recent packages. Recommended only for experts."
-    echo "      -nofontsinstall    : Do not install any fonts in the Windows system."
-    echo "      -allnerdfonts      : Install all of the Nerd fonts, instead of a subset."
-    echo "      -noalltheicons     : Do not install the 'all_the_icons' TTF fonts."
-    echo "      -nonerdicons       : Do not install the 'nonerdicons' TTF fonts."
-    echo "      -noorgthemes       : Do not install the org themes."
-    echo "      -nocontent         : Do not create the boilerplate content folder."
+    echo "      -psimacsbranch      : The specific branch, tag or commit to clone. Currently this defaults to the 'master'"
+    echo "                            branch of Psimacs, which is compatible with Emacs 30.2."
+    echo "      -no_privatefile     : Do not create the 'private' directectory with an 'init-private.el' file."
+    echo "      -no_psimacsdocu     : Do not create desktop shortcuts to the HTML documentation files."
+    echo "      -username           : The user name written to the 'init-private.el' file."
+    echo "      -useremail          : The user email written to the 'init-private.el' file."
+    echo "      -calendarlatitude   : The user latitude used for the calender written to the 'init-private.el' file."
+    echo "      -calendarlongitude  : The user longitude used for the calender written to the 'init-private.el' file."
+    echo "      -calendarlocation   : The user place used for the calender location."
+    echo "      -no_package_versions: Remove the 'straight/versions/default.el' file. In that case Psimacs installs the"
+    echo "                            most recent packages. Recommended only for experts."
+    echo "      -no_fonts_install   : Do not install any fonts in the Windows system."
+    echo "      -all_nerd_fonts     : Install all of the Nerd fonts, instead of a subset."
+    echo "      -no_all_the_icons   : Do not install the 'alltheicons' TTF fonts."
+    echo "      -no_nerd_icons      : Do not install the 'nerdicons' TTF fonts."
+    echo "      -no_org_themes      : Do not install the org themes."
+    echo "      -no_content         : Do not create the boilerplate content folder."
     echo "    Deinstallation"
-    echo "      -uninstall         : Uninstall all but the virtual Python environment and Psimacs itself."
-    echo "      -force             : Additionally uninstall the virtual Python environment and Psimacs itself. Also needs option '-uninstall'."
+    echo "      -uninstall          : Uninstall all but the virtual Python environment and Psimacs itself."
+    echo "      -force              : Additionally uninstall the virtual Python environment and Psimacs itself. Also needs option '-uninstall'."
+    echo ""
+    echo "    Feature Reversion     : If a '-rev_*' reversion switch is set, the corresponding feature switch is reversed!"
+    echo "      -rev_conemu             :  Reverses '-conemu'."
+    echo "      -rev_packages           :  Reverses '-no_packages'."
+    echo "      -rev_python             :  Reverses '-no_python'."
+    echo "      -rev_python_update      :  Reverses '-no_python_update'."
+    echo "      -rev_python_packages    :  Reverses '-no_python_packages'."
+    echo "      -rev_java               :  Reverses '-no_java'."
+    echo "      -rev_langtool           :  Reverses '-no_langtool'."
+    echo "      -rev_sumatrapdf         :  Reverses '-no_sumatrapdf'."
+    echo "      -rev_pandoc             :  Reverses '-no_pandoc'."
+    echo "      -rev_plantuml           :  Reverses '-no_plantuml'."
+    echo "      -rev_reveal_js          :  Reverses '-no_reveal_js'."
+    echo "      -rev_privatefile        :  Reverses '-no_privatefile'."
+    echo "      -rev_psimacsdocu        :  Reverses '-no_psimacsdocu'."
+    echo "      -rev_fonts_install      :  Reverses '-no_fonts_install'."
+    echo "      -rev_all_the_icons      :  Reverses '-no_all_the_icons'."
+    echo "      -rev_nerd_icons         :  Reverses '-no_nerd_icons'."
+    echo "      -rev_org_themes         :  Reverses '-no_org_themes'."
+    echo "      -rev_content            :  Reverses '-no_content'."
+    echo "      -rev_npm                :  Reverses '-no_npm'."
+    echo "      -rev_whisper            :  Reverses '-no_whisper'."
+    echo "      -rev_whisper_models     :  Reverses '-no_whisper_models'."
     echo ""
     echo "Examples:"
     echo "      bootstrap.ps1 -help"
     echo "      bootstrap.ps1 -run"
     echo "      bootstrap.ps1 -run -conemu -ucrt"
-    echo "      bootstrap.ps1 -run -conemu -mingw -nopackages -python 3.11.9 -java 21.35"
-    echo "      bootstrap.ps1 -run -mingw -allnerdfonts -pythonuselatest -username \"Tobi Talbot\" -useremail \"tobi4242@gmail.com\" -calendarlatitude \"42.123\" -calendarlongitude \"2.987\" -calendarlocation \"Montreal, Canada\""
-    echo "      bootstrap.ps1 -run -mingw -nopackages -nojava -nolangtool -nosumatrapdf -nopandoc -noplantuml -noprivatefile -nofontsinstall -noorgthemes -nocontent -pythonrequirements .\requirements.txt"
+    echo "      bootstrap.ps1 -run -conemu -mingw -no_packages -python 3.11.9 -java_version 21.35"
+    echo "      bootstrap.ps1 -run -mingw -all_nerd_fonts -python_use_latest -username \"Tobi Talbot\" -useremail \"tobi4242@gmail.com\" -calendarlatitude \"42.123\" -calendarlongitude \"2.987\" -calendarlocation \"Montreal, Canada\""
+    echo "      bootstrap.ps1 -run -mingw -no_packages -no_java -no_langtool -no_sumatrapdf -no_pandoc -no_plantuml -no_privatefile -no_fonts_install -no_org_themes -no_content -python_requirements .\requirements.txt"
     echo ""
     echo "Information:"
     echo "      In case that the powershell script does not run, two reasons may be involved:"
@@ -205,13 +323,151 @@ if ($help -or $h)
 }
 
 #
+# Handle '-deactivate_all' option
+#
+if ($deactivate_all) {
+    $conemu              = $false
+    $no_packages         = $true
+    $no_python           = $true
+    $no_python_update    = $true
+    $no_python_packages  = $true
+    $no_java             = $true
+    $no_langtool         = $true
+    $no_sumatrapdf       = $true
+    $no_pandoc           = $true
+    $no_plantuml         = $true
+    $no_reveal_js        = $true
+    $no_privatefile      = $true
+    $no_psimacsdocu      = $true
+    $no_fonts_install    = $true
+    $no_all_the_icons    = $true
+    $no_nerd_icons       = $true
+    $no_org_themes       = $true
+    $no_content          = $true
+    $no_npm              = $true
+    $no_whisper          = $true
+    $no_whisper_models   = $true
+}
+
+#
+# Reverse Switches if requested
+#
+if ($rev_conemu            ) { $conemu              = -not $conemu              }
+if ($rev_packages          ) { $no_packages         = -not $no_packages         }
+if ($rev_python            ) { $no_python           = -not $no_python           }
+if ($rev_python_update     ) { $no_python_update    = -not $no_python_update    }
+if ($rev_python_packages   ) { $no_python_packages  = -not $no_python_packages  }
+if ($rev_java              ) { $no_java             = -not $no_java             }
+if ($rev_langtool          ) { $no_langtool         = -not $no_langtool         }
+if ($rev_sumatrapdf        ) { $no_sumatrapdf       = -not $no_sumatrapdf       }
+if ($rev_pandoc            ) { $no_pandoc           = -not $no_pandoc           }
+if ($rev_plantuml          ) { $no_plantuml         = -not $no_plantuml         }
+if ($rev_reveal_js         ) { $no_reveal_js        = -not $no_reveal_js        }
+if ($rev_privatefile       ) { $no_privatefile      = -not $no_privatefile      }
+if ($rev_psimacsdocu       ) { $no_psimacsdocu      = -not $no_psimacsdocu      }
+if ($rev_fonts_install     ) { $no_fonts_install    = -not $no_fonts_install    }
+if ($rev_all_the_icons     ) { $no_all_the_icons    = -not $no_all_the_icons    }
+if ($rev_nerd_icons        ) { $no_nerd_icons       = -not $no_nerd_icons       }
+if ($rev_org_themes        ) { $no_org_themes       = -not $no_org_themes       }
+if ($rev_content           ) { $no_content          = -not $no_content          }
+if ($rev_npm               ) { $no_npm              = -not $no_npm              }    
+if ($rev_whisper           ) { $no_whisper          = -not $no_whisper          }
+if ($rev_whisper_models    ) { $no_whisper_models   = -not $no_whisper_models   }
+
+#
 # Are we running with Admin rights?
 #
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-if ($pythonrequirements) {
-    $pythonrequirements = Convert-Path -LiteralPath "$pythonrequirements"
+if ($python_requirements) {
+    $python_requirements = Convert-Path -LiteralPath "$python_requirements"
+}
+
+if ($state) {
+    echo "General options:"
+    echo "  run                 = $run"
+    echo "  state               = $state"
+    echo "  mingw               = $mingw"
+    echo "  ucrt                = $ucrt"
+    echo "  clang               = $clang"
+    echo "  uninstall           = $uninstall"
+    echo "  force               = $force"
+    echo "  deactivate_all      = $deactivate_all"
+    echo ""
+    echo "Feature switches:"
+    echo "  conemu              = $conemu"
+    echo "  no_packages         = $no_packages"
+    echo "  no_python           = $no_python"
+    echo "  no_python_update    = $no_python_update"
+    echo "  no_python_packages  = $no_python_packages"
+    echo "  python_use_latest   = $python_use_latest"
+    echo "  python_msi          = $python_msi"
+    echo "  no_java             = $no_java"
+    echo "  no_langtool         = $no_langtool"
+    echo "  no_sumatrapdf       = $no_sumatrapdf"
+    echo "  no_pandoc           = $no_pandoc"
+    echo "  no_plantuml         = $no_plantuml"
+    echo "  no_reveal_js        = $no_reveal_js"
+    echo "  no_privatefile      = $no_privatefile"
+    echo "  no_psimacsdocu      = $no_psimacsdocu"
+    echo "  no_fonts_install    = $no_fonts_install"
+    echo "  no_all_the_icons    = $no_all_the_icons"
+    echo "  no_nerd_icons       = $no_nerd_icons"
+    echo "  no_org_themes       = $no_org_themes"
+    echo "  no_content          = $no_content"
+    echo "  no_npm              = $no_npm"
+    echo "  no_whisper          = $no_whisper"
+    echo "  no_whisper_models   = $no_whisper_models"
+    echo ""
+    echo "Reversion feature switches"
+    echo "  rev_conemu          = $rev_conemu"
+    echo "  rev_packages        = $rev_packages"
+    echo "  rev_python          = $rev_python"
+    echo "  rev_python_update   = $rev_python_update"
+    echo "  rev_python_packages = $rev_python_packages"
+    echo "  rev_java            = $rev_java"
+    echo "  rev_langtool        = $rev_langtool"
+    echo "  rev_sumatrapdf      = $rev_sumatrapdf"
+    echo "  rev_pandoc          = $rev_pandoc"
+    echo "  rev_plantuml        = $rev_plantuml"
+    echo "  rev_reveal_js       = $rev_reveal_js"
+    echo "  rev_privatefile     = $rev_privatefile"
+    echo "  rev_psimacsdocu     = $rev_psimacsdocu"
+    echo "  rev_fonts_install   = $rev_fonts_install"
+    echo "  rev_all_the_icons   = $rev_all_the_icons"
+    echo "  rev_nerd_icons      = $rev_nerd_icons"
+    echo "  rev_org_themes      = $rev_org_themes"
+    echo "  rev_content         = $rev_content"
+    echo "  rev_npm             = $rev_npm"
+    echo "  rev_whisper         = $rev_whisper"
+    echo "  rev_whisper_models  = $rev_whisper_models"
+    echo ""
+    echo "Switches for dedicated tasks:"
+    echo "  no_package_versions = $no_package_versions"
+    echo "  all_nerd_fonts      = $all_nerd_fonts"
+    echo "  all_whisper_releases= $all_whisper_releases"
+    echo "  all_whisper_models  = $all_whisper_models"
+    echo ""
+    echo "Detail settings:"
+    echo "  python_requirements = $python_requirements"
+    echo "  python_version      = $python_version"
+    echo "  java_version        = $java_version"
+    echo "  sumatrapdf_version  = $sumatrapdf_version"
+    echo "  psimacsbranch       = $psimacsbranch"
+    echo "  username            = $username"
+    echo "  useremail           = $useremail"
+    echo "  calendarlatitude    = $calendarlatitude"
+    echo "  calendarlongitude   = $calendarlongitude"
+    echo "  calendarlocation    = $calendarlocation"
+    echo "  whisper_release     = $whisper_release"
+    echo ""
+    echo "The following whisper models gets installed:"
+    foreach ($model in  $whisper_models) {
+    echo "  - $model"
+    }
+
+    return
 }
 
 #
@@ -451,16 +707,16 @@ catch [System.Management.Automation.CommandNotFoundException]
 #
 # Precondition check for Python version if requested Python
 #
-if (-not $nopython)
+if (-not $no_python)
 {
-    if ((-not $python) -and (-not $pythonuselatest))
+    if ((-not $python_version) -and (-not $python_use_latest))
     {
-        $python = "3.11.9"
+        $python_version = "3.11.9"
     }
 
-    if ($python)
+    if ($python_version)
     {
-        if ($python -match '(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)')
+        if ($python_version -match '(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)')
         {
             $PyMajor = $Matches.major
             $PyMinor = $Matches.minor
@@ -494,7 +750,7 @@ if (-not $nopython)
 
                 $python_url =""
                 $python_major_minor_requested = "${PyMajor}.${PyMinor}"
-                $python_requested = $python
+                $python_requested = $python_version
 
                 $no_exact_match = $false
 
@@ -513,7 +769,7 @@ if (-not $nopython)
                         $python_major_minor_build = "${PyMajor}.${PyMinor}.${PyBuild}"
                         $python_major_minor       = "${PyMajor}.${PyMinor}"
 
-                        if ($python_major_minor_build -eq $python)
+                        if ($python_major_minor_build -eq $python_version)
                         {
                             $python_url = $e
                             $no_exact_match = $false
@@ -543,8 +799,8 @@ if (-not $nopython)
 
                 if ($no_exact_match)
                 {
-                    $python = "${PyMajor_found}.${PyMinor_found}.${PyBuild_found}"
-                    echo "Standalone Python does not provide the requested version ${python_requested}. Using ${python} instead."
+                    $python_version = "${PyMajor_found}.${PyMinor_found}.${PyBuild_found}"
+                    echo "Standalone Python does not provide the requested version ${python_requested}. Using ${python_version} instead."
                 }
 
                 #
@@ -580,7 +836,7 @@ if (-not $nopython)
                     $PyMinor = $Matches.minor
                     $PyBuild = $Matches.build
 
-                    $python  = "${PyMajor}.${PyMinor}.${PyBuild}"
+                    $python_version = "${PyMajor}.${PyMinor}.${PyBuild}"
 
                     #
                     # Remark: Python on Windows allows not to install separate build numbers.
@@ -588,7 +844,7 @@ if (-not $nopython)
                     #
                     $python_dir = "Python${PyMajor}${PyMinor}"
 
-                    echo "Found latest stable Python release $python"
+                    echo "Found latest stable Python release $python_version"
                 }
                 else
                 {
@@ -614,7 +870,7 @@ if (-not $nopython)
                 $githubLatestRelease = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '-x86_64-pc-windows-msvc-install_only.tar.gz').Line
                 
                 $ProgressPreference = 'Continue'
-}
+            }
             catch
             {
                 echo "Could not determine Python version from 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest'!"
@@ -669,7 +925,7 @@ if (-not $nopython)
             $PyMinor = $minor_latest.ToString()
             $PyBuild = $build_latest.ToString()
 
-            $python  = "${PyMajor}.${PyMinor}.${PyBuild}"
+            $python_version = "${PyMajor}.${PyMinor}.${PyBuild}"
 
             #
             # Remark: Python on Windows allows not to install separate build numbers.
@@ -685,9 +941,9 @@ if (-not $nopython)
 #
 # Precondition Java
 #
-if (-not $nojava)
+if (-not $no_java)
 {
-    if ($java -match '(?<major>\d+)\.(?<revision>\d+)')
+    if ($java_version -match '(?<major>\d+)\.(?<revision>\d+)')
     {
         $JavaMajor = $Matches.major
         $JavaRev   = $Matches.revision
@@ -697,7 +953,7 @@ if (-not $nojava)
     }
     else
     {
-        echo "Invalid Java OpenJDK version number: $java"
+        echo "Invalid Java OpenJDK version number: $java_version"
         return
     }
 }
@@ -705,11 +961,11 @@ if (-not $nojava)
 #
 # Precondition check for SumatraPDF version if requested SumatryPDF
 #
-if (-not $nosumatrapdf)
+if (-not $no_sumatrapdf)
 {
-    if ($sumatrapdf)
+    if ($sumatrapdf_version)
     {
-        if ($sumatrapdf -match '(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)')
+        if ($sumatrapdf_version -match '(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)')
         {
             $SumatraMajor = $Matches.major
             $SumatraMinor = $Matches.minor
@@ -737,14 +993,14 @@ if (-not $nosumatrapdf)
                 $SumatraMinor = $Matches.minor
                 $SumatraBuild = $Matches.build
 
-                $sumatrapdf = "${SumatraMajor}.${SumatraMinor}.${SumatraBuild}"
+                $sumatrapdf_version = "${SumatraMajor}.${SumatraMinor}.${SumatraBuild}"
 
-                echo "Found latest stable SumatraPDF release $sumatrapdf"
+                echo "Found latest stable SumatraPDF release $sumatrapdf_version"
             }
             else
             {
                 echo "No valid SumatraPDF version could be determined. Please provide a version string"
-                echo "with option -sumatrapdf, like -sumatrapdf 3.4.6"
+                echo "with option -sumatrapdf_version, like -sumatrapdf_version 3.4.6"
                 return
             }
         }
@@ -889,7 +1145,7 @@ $env:MSYS2_PATH_TYPE = 'inherit'
 $env:CONTITLE        = "MinGW ${msys_env_name} x64"
 
 
-if ( ! $nopackages )
+if (-not $no_packages )
 {
     echo "Bootstrapping $msys64 ..."
 
@@ -989,7 +1245,7 @@ if ( ! $nopackages )
     #
     # Node.js and mermaid diagramm support
     #
-    if (! $nonpm)
+    if (! $no_npm)
     {
         & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-nodejs"
         & $bash_exe --login -c "npm install -g @mermaid-js/mermaid-cli"
@@ -998,7 +1254,7 @@ if ( ! $nopackages )
     #
     # Bootstrap msys64 into psimacs dir: install nerd fonts
     #
-    if ($allnerdfonts)
+    if ($all_nerd_fonts)
     {
         & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-nerd-fonts"
     }
@@ -1049,7 +1305,7 @@ if (! (Test-Path "$Dest" -PathType Leaf) )
 #
 # Handle reveal.js installation
 #
-if (-not $noreveal_js)
+if (-not $no_reveal_js)
 {
     $reveal_js_git = "$psimacs\reveal.js\.git"
 
@@ -1151,15 +1407,15 @@ if ($conemu)
 #
 # Install Python if requested
 #
-if (-not $nopython)
+if (-not $no_python)
 {
-    if ( (-not $nopythonupdate) -or (-not (test-path -PathType container $psimacs\$python_dir)) )
+    if ( (-not $no_python_update) -or (-not (test-path -PathType container $psimacs\$python_dir)) )
     {
-        echo "Installing Python $python ..."
+        echo "Installing Python $python_version ..."
 
         if ($python_msi)
         {
-            $python_installer = "python-${python}-amd64.exe"
+            $python_installer = "python-${python_version}-amd64.exe"
 
             #
             # Download installer
@@ -1170,7 +1426,7 @@ if (-not $nopython)
 
                 try
                 {
-                    $python_installer_url = "https://www.python.org/ftp/python/$python/$python_installer"
+                    $python_installer_url = "https://www.python.org/ftp/python/$python_version/$python_installer"
                     
                     $ProgressPreference = "silentlyContinue"
                     Invoke-WebRequest -Uri $python_installer_url -UseBasicParsing -OutFile $python_installer
@@ -1179,7 +1435,7 @@ if (-not $nopython)
                 }
                 catch
                 {
-                    echo "Downloading of Python $python failed. Check for another Python version. Prematurely leaving script!"
+                    echo "Downloading of Python $python_version failed. Check for another Python version. Prematurely leaving script!"
                     Set-Location -Path "$PSScriptRoot"
                     return 
                 }
@@ -1215,7 +1471,7 @@ if (-not $nopython)
                 }
                 catch
                 {
-                    echo "Downloading of Python $python from $python_url failed. Check for another PYTHON version. Prematurely leaving script!"
+                    echo "Downloading of Python $python_version from $python_url failed. Check for another PYTHON version. Prematurely leaving script!"
                     Set-Location -Path "$PSScriptRoot"
                     return 
                 }
@@ -1454,7 +1710,7 @@ if (-not $nopython)
     }
 }
 
-if (-not $nojava)
+if (-not $no_java)
 {
     $java_dir = "$psimacs\java64"
 
@@ -1480,7 +1736,7 @@ if (-not $nojava)
             }
             catch
             {
-                echo "Downloading of Java $java from $java_url failed. Check for another JAVA version. Prematurely leaving script!"
+                echo "Downloading of Java $java_version from $java_url failed. Check for another JAVA version. Prematurely leaving script!"
                 Set-Location -Path "$PSScriptRoot"
                 return 
             }
@@ -1503,7 +1759,7 @@ if (-not $nojava)
     }
 }
 
-if (-not $nolangtool)
+if (-not $no_langtool)
 {
     $langtool_dir = "$psimacs\LanguageTool"
 
@@ -1564,9 +1820,9 @@ if (-not $nolangtool)
     }
 }
 
-if (-not $nosumatrapdf)
+if (-not $no_sumatrapdf)
 {
-    echo "Installing SumatraPDF $sumatrapdf ..."
+    echo "Installing SumatraPDF $sumatrapdf_version ..."
 
     $sumatrapdf_dir = "SumatraPDF"
 
@@ -1589,7 +1845,7 @@ if (-not $nosumatrapdf)
 
             try
             {
-                $sumatrapdf_zip_url = "https://www.sumatrapdfreader.org/dl/rel/${sumatrapdf}/$sumatrapdf_zip"
+                $sumatrapdf_zip_url = "https://www.sumatrapdfreader.org/dl/rel/${sumatrapdf_version}/$sumatrapdf_zip"
                 
                 $ProgressPreference = "silentlyContinue"
                 Invoke-WebRequest -Uri $sumatrapdf_zip_url -UseBasicParsing -OutFile $sumatrapdf_zip
@@ -1598,7 +1854,7 @@ if (-not $nosumatrapdf)
             }
             catch
             {
-                echo "Downloading of SumatraPDF $sumatrapdf failed. Check for another SumatraPDF version. Prematurely leaving script!"
+                echo "Downloading of SumatraPDF $sumatrapdf_version failed. Check for another SumatraPDF version. Prematurely leaving script!"
                 Set-Location -Path "$PSScriptRoot"
                 return 
             }
@@ -1619,7 +1875,7 @@ if (-not $nosumatrapdf)
         #
         # Rename the SumatraPDF executable so that Psimacs does not need to know about the version number.
         #
-        $sumatrapdf_exe = "$psimacs\${sumatrapdf_dir}\SumatraPDF-${sumatrapdf}-64.exe"
+        $sumatrapdf_exe = "$psimacs\${sumatrapdf_dir}\SumatraPDF-${sumatrapdf_version}-64.exe"
 
         if ( Test-Path "$sumatrapdf_exe" -PathType Leaf )
         {
@@ -1632,7 +1888,7 @@ if (-not $nosumatrapdf)
 #
 # Install pandoc
 #
-if (-not $nopandoc)
+if (-not $no_pandoc)
 {
     echo "Installing pandoc..."
 
@@ -1808,7 +2064,7 @@ if (! (Test-Path $init_el -PathType Leaf) )
         $Shortcut.Save()
     }
 
-    if (-not $nopsimacsdocu)
+    if (-not $no_psimacsdocu)
     {
         $Icon    = "$emacs_ico"
         $Desk    = $Shell.SpecialFolders("Desktop")
@@ -1849,17 +2105,17 @@ if (! (Test-Path $init_el -PathType Leaf) )
     }
 }
 
-if (-not $nopython)
+if (-not $no_python)
 {
-    if (-not $nopythonpackages)
+    if (-not $no_python_packages)
     {
         #
         # Install the Python Requirements
         #
-        if ( ($pythonrequirements) -and (Test-Path "$pythonrequirements"))
+        if ( ($python_requirements) -and (Test-Path "$python_requirements"))
         {
-            echo "...using $pythonrequirements"
-            $psimacs_py_requirements = "$pythonrequirements".Replace('\', '/')
+            echo "...using $python_requirements"
+            $psimacs_py_requirements = "$python_requirements".Replace('\', '/')
         }
         else
         {
@@ -1878,7 +2134,7 @@ if (-not $nopython)
 #
 # Handle PlantHML on request
 #
-if (-not $noplantuml)
+if (-not $no_plantuml)
 {
     echo "Installing PlantUML..."
 
@@ -1914,7 +2170,7 @@ if (-not $noplantuml)
     }
 }
 
-if (-not $noprivatefile)
+if (-not $no_privatefile)
 {
     $private_dir  = "$psimacs/psimacs/private"
     $private_file = "$private_dir/init-private.el"
@@ -1970,7 +2226,7 @@ if (-not $noprivatefile)
     }
 }
 
-if ($nopackageversions)
+if ($no_package_versions)
 {
     $straight_dir = "$psimacs/psimacs/straight"
     $straight_versions_file = "$straight_dir/versions/default.el"
@@ -1982,7 +2238,7 @@ if ($nopackageversions)
     }
 }
 
-if (-not $nofontsinstall)
+if (-not $no_fonts_install)
 {
     function Install-Font {
         param
@@ -2069,7 +2325,7 @@ if (-not $nofontsinstall)
     $all_the_icons_dir  = "temp-all-the-icons"
     $all_the_icons_path = "$psimacs\$all_the_icons_dir"
 
-    if (-not $noalltheicons)
+    if (-not $no_all_the_icons)
     {
         echo "Cloning temporary all-the-icons repository ..."
 
@@ -2083,7 +2339,7 @@ if (-not $nofontsinstall)
     $nerd_icons_dir  = "temp-nerd-icons"
     $nerd_icons_path = "$psimacs\$nerd_icons_dir"
 
-    if (-not $nonerdicons)
+    if (-not $no_nerd_icons)
     {
         echo "Cloning temporary nerd-icons repository ..."
 
@@ -2122,7 +2378,7 @@ if (-not $nofontsinstall)
     }
 }
 
-if (-not $noorgthemes)
+if (-not $no_org_themes)
 {
     $themes_url = "https://gitlab.com/OlMon/org-themes.git"
     $themes_dir = "$psimacs\psimacs\content\themes"
@@ -2137,7 +2393,7 @@ if (-not $noorgthemes)
     }
 }
 
-if (-not $nocontent)
+if (-not $no_content)
 {
     $content_dir = "$psimacs\psimacs\content"
     
@@ -2175,6 +2431,152 @@ if (-not $nocontent)
         '#+latex_header: \authorsaffiliations{YOUR AFFILIATIONS}' | out-file -filepath $content_private_latex_file -encoding ascii -width 200 -append
         '#+latex_header: \leftheader{YOUR NAME}'                  | out-file -filepath $content_private_latex_file -encoding ascii -width 200 -append
     }
+}
+
+if (-not $no_whisper)
+{
+    echo "Installing whisper.cpp..."
+
+    $whisper_cpp_git = "$psimacs\whisper.cpp\.git"
+
+    if (! (Test-Path $whisper_cpp_git) )
+    {
+        echo "Cloning whisper.cpp..."
+
+        $whisper_cpp_url = "https://github.com/ggml-org/whisper.cpp.git"
+
+        & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); git clone $whisper_cpp_url whisper.cpp"
+    }
+
+    $whisper_cpp_build_dir = "$psimacs\whisper.cpp\build"
+    $whisper_cpp_build_bin_dir = "$whisper_cpp_build_dir\bin"
+
+    if (Test-Path $whisper_cpp_build_bin_dir) {
+        echo "Directory $whisper_cpp_build_bin_dir already exists!"
+    } else {
+        echo "Creating directory $whisper_cpp_build_bin_dir..."
+        New-Item -Path "$whisper_cpp_build_bin_dir" -ItemType Directory -Force
+    }
+
+    if (Test-Path $whisper_cpp_build_bin_dir) {
+        $whisper_cli_path = "$whisper_cpp_build_bin_dir\whisper-cli.exe"
+
+        if ( Test-Path "$whisper_cli_path" -PathType Leaf ) {
+            "Whisper command line driver '$whisper_cli_path' found! Skipping CLI driver installation!"
+        } else {
+            "Installing Whisper command line driver '$whisper_cli_path'..."
+
+            try
+            {
+                $ProgressPreference = "silentlyContinue"
+
+                $githubLatestReleases = 'https://api.github.com/repos/ggml-org/whisper.cpp/releases/latest'
+                echo "$githubLatestReleases"
+
+                $githubLatestRelease_x64_zip = (((Invoke-WebRequest -Uri $gitHubLatestReleases -UseBasicParsing) | ConvertFrom-Json).assets.browser_download_url | select-string -Pattern '-x64.zip')
+
+                foreach ($whisper_rel in $githubLatestRelease_x64_zip) {
+                    $zip_file = Split-Path $whisper_rel -leaf
+
+                    $download = $false
+
+                    if ($all_whisper_releases) {
+                        $download = $true
+                    } else {
+                        if ("$zip_file" -eq "${whisper_release}.zip") {
+                            $download = $true
+                        }
+                    }
+
+                    if ($download) {
+                        Start-BitsTransfer -Source $whisper_rel -Destination $zip_file
+
+                        if ( Test-Path "$psimacs\$zip_file" -PathType Leaf )
+                        {
+                            echo "Extracting $zip_file archive..."
+
+                            & $bash_exe --login -c "cd $(cygpath --mixed $psimacs); 7z x -owhisper_bin $zip_file"
+
+                            if ("$zip_file" -eq "${whisper_release}.zip") {
+                                Copy-Item -Path "whisper_bin\Release\*" -Destination $whisper_cpp_build_bin_dir
+                            }
+
+                            if ($all_whisper_releases) {
+                                $dst_dir = (Get-Item $zip_file ).Basename
+                                $dst_dir = "$whisper_cpp_build_dir/bin_$dst_dir"
+
+                                if (Test-Path $dst_dir ) {
+                                    echo "Removing directory '$dst_dir'"
+                                    Remove-Item -Recurse -Force "$dst_dir"
+                                }
+                                
+                                echo "Creating directory '$dst_dir'..."
+                                New-Item -Path "$dst_dir" -ItemType Directory -Force
+
+                                Move-Item -Path "whisper_bin\Release\*" -Destination $dst_dir
+                            }
+                            Remove-Item -Recurse -Force "whisper_bin"
+                            Remove-Item "$psimacs\$zip_file"
+                        }                        
+                    }
+                }
+
+                $ProgressPreference = 'Continue'
+
+
+            }
+            catch
+            {
+                echo "Downloading of Whisper release failed. Prematurely leaving script!"
+                Set-Location -Path "$PSScriptRoot"
+                return 
+            }
+        }
+    }
+}
+
+if (-not $no_whisper_models)
+{
+    echo "Installing whisper models from Hugging Face..."
+
+    $whisper_cpp_models_dir = "$psimacs\whisper.cpp\models"
+
+    if (Test-Path $whisper_cpp_models_dir)
+    {
+        if ($all_whisper_models)
+        {
+            echo "Installing all whisper models: $whisper_models"
+        }
+        else
+        {
+            echo "Installing only the following models: $whisper_models"
+        }
+
+        foreach ($model in  $whisper_models) {
+            $model_file = "ggml-${model}.bin"
+            $model_path = "$whisper_cpp_models_dir\$model_file"
+
+            if ( Test-Path "$model_path" -PathType Leaf ) {
+                echo "Model file '$model_file' already exists in folder '$whisper_cpp_models_dir'! Skipping file."
+            } else {
+                echo "Installing whisper model: $model_file"
+
+                if ($model.EndsWith("tdrz")) {
+                    Start-BitsTransfer -Source https://huggingface.co/akashmjn/tinydiarize-whisper.cpp/resolve/main/$model_file -Destination $model_path
+                } else {
+                    Start-BitsTransfer -Source https://huggingface.co/ggerganov/whisper.cpp/resolve/main/$model_file -Destination $model_path
+                }
+
+            }
+        }
+    }
+    else
+    {
+        echo "Directory $whisper_cpp_models_dir could not be found!"
+    }
+
+
+    
 }
 
 #
