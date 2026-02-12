@@ -13681,6 +13681,57 @@ References of string functionality:
                                       (: (* (any " \t\n")) eos)))
                                 ""
                                 str))
+
+;;
+;; (psimacs/string/regexp-matches "\\w+" "abc 123 def") -> ("abc" "123" "def")
+;; (psimacs/string/regexp-matches "\\b[a-z]+" "Hello, world!") -> ("world" "Hello")
+;;
+(defun psimacs/string/regexp-matches (pattern string &optional start)
+  "Return a list of substrings of STRING that match PATTERN.
+If START is non-nil, start searching from that index (default 0)."
+  (let ((pos (or start 0))
+        (matches nil))
+    (while (and (>= pos 0) (< pos (length string)))
+      (let ((beg (string-match pattern string pos)))
+        (if beg
+            (let ((end (match-end 0)))
+              (setq matches (cons (substring string beg end) matches))
+              (setq pos end)
+              (when (= beg end) (setq pos (1+ pos))))
+            (setq pos -1))
+        )
+      )
+        (if matches
+            (nreverse matches)
+            nil)
+    )
+  )
+
+;;
+;; (psimacs/string/regexp-group-matches ".+\\(abc.+xyz\\) something" "hello abc123xyz something") -> '("abc123xyz")
+;;
+(defun psimacs/string/regexp-group-matches (pattern string &optional start group)
+  "Return a list of the contents of capturing GROUP for each match of PATTERN in STRING.
+If GROUP is nil, use 1. If GROUP is 0, return the whole match."
+  (let ((pos (or start 0))
+        (results nil)
+        (grp (or group 1)))
+    (while (and (>= pos 0) (< pos (length string)))
+      (let ((beg (string-match pattern string pos)))
+        (if beg
+            (let ((end (match-end 0)))
+              (let ((s (match-string grp string)))
+                ;; include empty string as a valid capture; skip nil (no such group)
+                (when (not (null s)) (setq results (cons s results)))
+                )
+              (setq pos end)
+              (when (= beg end) (setq pos (1+ pos))))
+            (setq pos -1))))
+    (if results
+        (nreverse results)
+      nil)
+  )
+)
 #+end_src
 
 ** User Interface
@@ -15440,7 +15491,54 @@ TODO: Missing proper Linux support!
          ("H-x W"      . psimacs/whisper/select-microphone)
         )
   :config
+    (defun psimacs/config/whisper--win32-search-microphones-command ()
+      "Produces FFmpeg command that provides information about available microphones."
+      (unless (executable-find "ffmpeg")
+        (error "Needs FFmpeg to gather micorophone information"))
+
+      `("ffmpeg"
+        "-list_devices" "true"
+        "-f" "dshow"
+        "-i" "dummy")
+    )
+
+    (defun psimacs/whisper/available-microphones ()
+      "Get a list of available microphones."
+
+      (let* ((result '())
+             (output "")
+             (proc (make-process
+                 :name "whisper-microphones-proc"
+                 :command (psimacs/config/whisper--win32-search-microphones-command)
+                 :buffer nil
+                 :filter (lambda (p s)
+                           (setq output (concat output s))
+                         )
+               )
+             )
+            )
+        ;; wait for completion, polling every 0.1s
+        (while (eq (process-status proc) 'run)
+          (accept-process-output proc 0.1)
+          )
+
+        (setq result (psimacs/string/regexp-group-matches "\\[dshow @.+\\] \"\\(.+\\)\" (audio)" output))
+      )
+    )
+
     (defun psimacs/whisper/select-microphone ()
+      "Select a microphone from a list of predefined devices."
+      (interactive)
+      (let* (( result (psimacs/ui/internal/select-from-item-list 
+                            "Select a microphone: "
+                            (psimacs/whisper/available-microphones)
+                      )
+            ))
+            (setq whisper--ffmpeg-input-device (concat "audio=" result))
+      )
+    )
+
+    (defun psimacs/whisper/select-microphone-deprecated ()
       "Select a microphone from a list of predefined devices."
       (interactive)
       (let* (( result (psimacs/ui/internal/select-from-item-list "Select a microphone: "
@@ -15450,6 +15548,8 @@ TODO: Missing proper Linux support!
                                                              "Kopfhörermikrofon (Jabra Link 380)"
                                                              "Mikrofonarray (Realtek(R) Audio)"
                                                              "Mikrofon (USB Audio)"
+                                                             "Mikrofon (Logi C270 HD WebCam)"
+                                                             "Kopfhörer (HUAWEI FreeClip 2)"
                                                              ))))
         (setq whisper--ffmpeg-input-device (concat "audio=" result))
       )
@@ -15471,6 +15571,45 @@ TODO: Missing proper Linux support!
       (when (process-live-p whisper--server-process)
         (kill-process whisper--server-process))
       (message "%s" whisper-language)
+    )
+
+    (when psimacs/system/is-win32-p
+        (defun whisper--record-audio ()
+          "Start audio recording process in the background."
+          (when whisper-insert-text-at-point
+            (with-current-buffer whisper--point-buffer
+              (setq whisper--marker (point-marker))))
+          (if whisper--ffmpeg-input-file
+              (message "[*] Pre-processing media file")
+            (message "[*] Recording audio")
+            (whisper--setup-mode-line :show 'recording))
+          (if (string-equal whisper--ffmpeg-input-file whisper--temp-file)
+              (whisper--transcribe-audio)
+            (setq whisper--recording-process
+                  (make-process
+                   :name "whisper-recording"
+                   :command (whisper--record-command whisper--temp-file)
+                   :connection-type nil
+                   :buffer nil
+                   :coding 'iso-8859-1
+                   :sentinel (lambda (_process event)
+                               ;;(message event)
+                               (whisper--setup-mode-line :hide 'recording)
+                               (cond ((or (string-equal "finished\n" event)
+                                          ;; this is would be sane
+                                          (string-equal "terminated\n" event)
+                                          ;; but this is reality
+                                          (string-equal "exited abnormally with code 255\n" event))
+
+                                      (whisper--transcribe-audio))
+                                     ((string-match-p "exited abnormally with code [0-9]+\n" event)
+                                      (if whisper--ffmpeg-input-file
+                                          (error "FFmpeg failed to convert given file")
+                                         (error "FFmpeg failed to record audio")))))
+                 )
+             )
+          )
+        )
     )
 
     (setq whisper-install-whispercpp nil)
@@ -15529,11 +15668,14 @@ TODO: Missing proper Linux support!
 
     ;(setq whisper--ffmpeg-input-format 'dshow)       ;; -f flag of FFmpeg (Default is pulse on linux and dshow on Windows.
 
-    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (4- AT2020USB+)")           ;; -i flag of FFmpeg
-    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (Razer Kiyo Pro)")           ;; -i flag of FFmpeg
-    ;(setq whisper--ffmpeg-input-device "Kopfhörermikrofon (Jabra Link 380)") ;; -i flag of FFmpeg
-    ;(setq whisper--ffmpeg-input-device "Mikrofonarray (Realtek(R) Audio)")   ;; -i flag of FFmpeg
-    ;(setq whisper--ffmpeg-input-device "Mikrofon (USB Audio)")               ;; -i flag of FFmpeg
+                                                      ;; -i flag of FFmpeg
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (4- AT2020USB+)")
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (Razer Kiyo Pro)")
+    ;(setq whisper--ffmpeg-input-device "audio=Kopfhörermikrofon (Jabra Link 380)")
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofonarray (Realtek(R) Audio)")
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (USB Audio)")
+    ;(setq whisper--ffmpeg-input-device "audio=Mikrofon (Logi C270 HD WebCam)")
+    ;(setq whisper--ffmpeg-input-device "audio=Kopfhörer (HUAWEI FreeClip 2)")
 
     (setq whisper-recording-timeout 300)              ;; Number of seconds after which recording will be automatically stopped.
 
@@ -24274,6 +24416,18 @@ Emacs buffer here is buffer whose name starts with *."
         )
     )
 )
+
+(defun psimacs/buffer/clear-messages-buffer ()
+  "Clear the contents of the *Messages* buffer if it is the current buffer."
+  (interactive)
+  (with-current-buffer "*Messages*"
+    (when (string= (buffer-name) "*Messages*")
+      (let ((was-read-only buffer-read-only))
+        (when was-read-only
+          (read-only-mode -1))
+        (erase-buffer)
+        (when was-read-only
+          (read-only-mode 1))))))
 #+end_src
 
 ** Parenthesis
