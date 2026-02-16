@@ -15465,29 +15465,35 @@ References:
 
 [[https://github.com/openai/whisper][Whisper]] is a general-purpose speech recognition model. It is trained on a large dataset of diverse
 audio and is also a multitasking model that can perform multilingual speech recognition, speech
-translation, and language identification. [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] is a plain C++ implementation of the original
-whisper model. *Psimacs* builds on top of [[https://github.com/natrys/whisper.el][whisper.el]] which integrates [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] into /Emacs/.
+translation, and language identification.  [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] is a plain C++ implementation of the original
+whisper model. *Psimacs* builds on top of [[https://github.com/natrys/whisper.el][whisper.el]] which integrates [[https://github.com/ggml-org/whisper.cpp][whisper.cpp]] into /Emacs/.
 
 TODO: Missing proper Linux support!
+
+References:
+- [[https://github.com/openai/whisper][OpenAI Whisper Home Page]]
+- [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]] a plain C/C++ implementation without dependencies.
+- [[https://github.com/natrys/whisper.el][Whisper.el]] integration of [[https://github.com/ggml-org/whisper.cpp][whisper.cpp]] into /Emacs/.
+- [[https://huggingface.co/ggerganov/whisper.cpp][OpenAI's Whisper models converted to ggml]] format for use with [[https://github.com/ggml-org/whisper.cpp][Whisper.cpp]].
+- [[https://github.com/emacselements/whisper][Whisper]] is another integration of [[https://github.com/ggml-org/whisper.cpp][whisper.cpp]] into /Emacs/. *Psimacs*, however, builds on [[https://github.com/natrys/whisper.el][Whisper.el]].
 
 #+attr_html: :class styledtable1
 | Key binding | Command                                           | Description                                                                  |
 |-------------+---------------------------------------------------+------------------------------------------------------------------------------|
 | =H-x H-w=     | =M-x whisper-run=                                   | Start/Stop audio transcription/translation with whisper.                     |
+|             | =M-x whisper-file=                                  | Transcribe/translate local audio file using whisper.                         |
 | =H-x H-W=     | =M-x psimacs/whisper/replay=                        | Replay the last recored speech file.                                         |
-| =H-x C-w=     | =M-x psimacs/whisper/toggle-languate=               | Toggle the whisper language between German (=de=) and English (=en=)             |
+| =H-x C-w=     | =M-x psimacs/whisper/toggle-language=               | Toggle the whisper language between German (=de=) and English (=en=)             |
+|             | =M-x whisper-select-language=                       | Prompt user to select a language and set =whisper-language=.                   |
 | =H-x W=       | =M-x psimacs/whisper/select-microphone=             | Select an audio input device (microphone) from a list of available devices.  |
 |             | =M-x psimacs/whisper/select-microphone-deprecated=  | Select an audio input device (microphone) from a list of predefined devices. |
-|             | =M-x whisper-select-language=                       | Prompt user to select a language and set =whisper-language=.                   |
 |             | =M-x psimacs/whisper/select-model=                  | Select a Whisper model.                                                      |
 |             | =M-x psimacs/whisper/select-quantization=           | Select a Whisper quantization.                                               |
-|             | =M-x whisper-file=                                  | Transcribe/translate local audio file using whisper.                         |
 | =H-x M-w i=   | =M-x psimacs/whisper/toggle-insert-text-at-point=   | Toggle insert whisper text at point.                                         |
 | =H-x M-w r=   | =M-x psimacs/whisper/toggle-return-cursor-to-start= | Toggle point position after Whisper text insertion.                          |
 |             | =M-x psimacs/whisper/toggle-op-mode=                | Toggle the operational mode between =local=, =server= and =openai=                 |
 |             | =M-x psimacs/whisper/toggle-translation-mode=       | Toggle the translation mode. Either translate or no translation.             |
-|             |                                                   |                                                                              |
-
+|-------------+---------------------------------------------------+------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-whisper.el :var file-description="Advanced whisper setup"
 ;;

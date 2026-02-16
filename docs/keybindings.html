@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2026-01-30 Fri 15:04 -->
+<!-- 2026-02-16 Mon 10:48 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Psimacs Emacs configuration</title>
@@ -205,8 +205,6 @@
 <link rel="stylesheet" href="https://hatlafax.github.io/psimacs/css/psimacs.css" type="text/css" />
 <style type="text/css">
  pre.src {background-color: #130911; color: #d0d0d0;}</style>
-<style type="text/css">
- pre.src {background-color: #130911; color: #d0d0d0;}</style>
 </head>
 <body>
 <div id="content" class="content">
@@ -215,137 +213,138 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org501ec9a">1. Psimacs Key Bindings</a>
+<li><a href="#org7d6de01">1. Psimacs Key Bindings</a>
 <ul>
-<li><a href="#orga66cd69">1.1. Remapping the Capslock key</a></li>
-<li><a href="#org443038c">1.2. Get Help</a></li>
-<li><a href="#org5cbae91">1.3. Prefixes</a></li>
-<li><a href="#org4d835c3">1.4. Hydras</a></li>
-<li><a href="#orgaeb1a53">1.5. Universal, Numeric and Negative Argument</a></li>
-<li><a href="#orga44d9b3">1.6. Basic movements</a></li>
-<li><a href="#orga89f6ef">1.7. Basic selection</a></li>
-<li><a href="#orge396213">1.8. Working with other Window</a></li>
-<li><a href="#org31540b1">1.9. Working with other Frame</a></li>
-<li><a href="#org7aee373">1.10. Registers</a></li>
-<li><a href="#org10c05a1">1.11. Bookmarks</a></li>
-<li><a href="#org2632c79">1.12. Useful commands</a></li>
-<li><a href="#orgefd5331">1.13. Buffer Handling in Psimacs</a></li>
-<li><a href="#orgaebae1b">1.14. Tab Bar Mode</a></li>
-<li><a href="#org39f8aa3">1.15. Working with Info</a></li>
-<li><a href="#org38dfd62">1.16. Debugging ELisp with Debug</a></li>
-<li><a href="#orge8832dd">1.17. Debugging ELisp with Edebug</a></li>
-<li><a href="#orgc0e1eed">1.18. References to Emacs Lisp</a></li>
-<li><a href="#orgcedb869">1.19. Startup frame size and position</a></li>
-<li><a href="#org9f866b4">1.20. MSYS2 Packages</a></li>
-<li><a href="#org782c3c3">1.21. Detail startup benchmarking</a></li>
-<li><a href="#org37891bf">1.22. Make C-g a bit more helpful</a></li>
-<li><a href="#orgfa129ff">1.23. Cancels All</a></li>
-<li><a href="#org1cf95aa">1.24. HTML Documentation</a></li>
-<li><a href="#orgafcbcf9">1.25. Printing on Windows</a></li>
-<li><a href="#orgd9edd6f">1.26. Encoding system</a></li>
-<li><a href="#orgdc13675">1.27. Smooth Scrolling</a></li>
-<li><a href="#org85536bd">1.28. Mark and Pop</a></li>
-<li><a href="#org9884cb1">1.29. Indentation and Tab stops</a></li>
-<li><a href="#org077d5e2">1.30. Fill column indicator</a></li>
-<li><a href="#orgb181f82">1.31. Easy-Kill</a></li>
-<li><a href="#org2506b17">1.32. Symbol overlay mode</a></li>
-<li><a href="#org5c8e52a">1.33. Theming</a></li>
-<li><a href="#org0cdfcec">1.34. Prettify-Symbols-Mode</a></li>
-<li><a href="#org88243d9">1.35. Rainbow delimiters</a></li>
-<li><a href="#orge08504d">1.36. History</a></li>
-<li><a href="#org5865aa7">1.37. Recent files</a></li>
-<li><a href="#org19afd9e">1.38. Undo-Redo</a></li>
-<li><a href="#orgd07de5b">1.39. Helpful</a></li>
-<li><a href="#org5ee19ab">1.40. Edit region indirectly in another buffer</a></li>
-<li><a href="#orgdfa9b20">1.41. Insert brackets by pair</a></li>
-<li><a href="#orgf49b71e">1.42. Smart parenthesis</a></li>
-<li><a href="#orga4fc0de">1.43. Buffer List</a></li>
-<li><a href="#orge9f133b">1.44. Cua Mode</a></li>
-<li><a href="#orgdecc601">1.45. Dired+</a></li>
-<li><a href="#orgb45f8f8">1.46. Perspective</a></li>
-<li><a href="#org419e83d">1.47. Abbreviations</a></li>
-<li><a href="#org37deed6">1.48. Centaur tabs</a></li>
-<li><a href="#orgf6e05a3">1.49. Expand-Region</a></li>
-<li><a href="#orgdc992da">1.50. Folding</a></li>
-<li><a href="#org01e99dd">1.51. Whitespace Mode</a></li>
-<li><a href="#org40cdc9f">1.52. Trailing white spaces</a></li>
-<li><a href="#org238677d">1.53. Hungry delete mode</a></li>
-<li><a href="#org3e57d0e">1.54. Zoom Frame</a></li>
-<li><a href="#org16b4071">1.55. Zoom</a></li>
-<li><a href="#orge30dc12">1.56. Easy window switching</a></li>
-<li><a href="#org4fcac23">1.57. Winner Mode</a></li>
-<li><a href="#orgd6cbd74">1.58. Ediff</a></li>
-<li><a href="#orgc573f60">1.59. goto-chg - go to the point where the last edit was made</a></li>
-<li><a href="#orgc449168">1.60. Visible Bookmarks</a></li>
-<li><a href="#orgb082c71">1.61. Avy - jumping to visible text</a></li>
-<li><a href="#org42f0fbb">1.62. Mosey</a></li>
-<li><a href="#orgc780416">1.63. Multiple Cursors</a></li>
-<li><a href="#org87f9e56">1.64. PCRE to Elips Regexp converter</a></li>
-<li><a href="#org3e40657">1.65. Visualize Regexp</a></li>
-<li><a href="#org0fed152">1.66. Visualize Regexp Steroids</a></li>
-<li><a href="#orgf5abb8f">1.67. Ripgrep</a></li>
-<li><a href="#org587a378">1.68. Spell checking with Flyspell and Aspell or Hunspell</a></li>
-<li><a href="#org8813c38">1.69. Spell and grammar checking with LanguageTool</a></li>
-<li><a href="#org55e1023">1.70. Google translate</a></li>
-<li><a href="#orgb0ed837">1.71. Google search</a></li>
-<li><a href="#org06c80d5">1.72. Counsel-search</a></li>
-<li><a href="#orgee6cf2c">1.73. Stack Exchange</a></li>
-<li><a href="#org7f50228">1.74. Crux</a></li>
-<li><a href="#org6c18f40">1.75. Edit multiple regions</a></li>
-<li><a href="#org49d8fc7">1.76. Easy duplicate</a></li>
-<li><a href="#org03d786d">1.77. Help on Psimacs</a></li>
-<li><a href="#orgd4fdb63">1.78. Helm</a></li>
-<li><a href="#org100db14">1.79. Discoverability</a></li>
-<li><a href="#org3842bf9">1.80. Helm-Descbinds</a></li>
-<li><a href="#orgee5cf7c">1.81. Helm-Describe-Modes</a></li>
-<li><a href="#org0de1dac">1.82. Which Key</a></li>
-<li><a href="#org25c293b">1.83. Swiper / Ivy / Counsel</a></li>
-<li><a href="#orgacd68c7">1.84. Ivy</a></li>
-<li><a href="#org4cd562a">1.85. Counsel</a></li>
-<li><a href="#org2be9992">1.86. Amx</a></li>
-<li><a href="#orgb1dcd46">1.87. Frog jumping</a></li>
-<li><a href="#org63b25cd">1.88. Company</a></li>
-<li><a href="#org78fbc41">1.89. Company-try-hard</a></li>
-<li><a href="#org0ee06eb">1.90. Snippets</a></li>
-<li><a href="#orgfaf6450">1.91. Auto-YASnippet</a></li>
-<li><a href="#orgea63f40">1.92. Treemacs</a></li>
-<li><a href="#orgcb09618">1.93. Neotree</a></li>
-<li><a href="#orgc0a3236">1.94. gptel : A simple LLM client for Emacs</a></li>
-<li><a href="#org0fc4d90">1.95. Projectile</a></li>
-<li><a href="#orgbbe0234">1.96. projectile-envrc</a></li>
-<li><a href="#org3eb432c">1.97. projectile-cmake</a></li>
-<li><a href="#orged8303e">1.98. Treemacs-projectile</a></li>
-<li><a href="#org7765916">1.99. Dashboard</a></li>
-<li><a href="#org24f9a31">1.100. Page-break lines</a></li>
-<li><a href="#org6d34137">1.101. Magit</a></li>
-<li><a href="#org3efb7dc">1.102. Else Mode</a></li>
-<li><a href="#org1ab4862">1.103. ELSE Grammar Compiler</a></li>
-<li><a href="#orgd8e15dd">1.104. String Inflection</a></li>
-<li><a href="#org7fe4a36">1.105. Language Server Protcol LSP</a></li>
-<li><a href="#orgf6e44f8">1.106. Dap-Mode</a></li>
-<li><a href="#org1620594">1.107. LSP-Mode</a></li>
-<li><a href="#org85f5fe0">1.108. Lisp</a></li>
-<li><a href="#orgd4a3910">1.109. Python</a></li>
-<li><a href="#orged58da0">1.110. CMake</a></li>
-<li><a href="#org04a223f">1.111. Deft</a></li>
-<li><a href="#orgaba1f23">1.112. BibTeX</a></li>
-<li><a href="#orgc2df0c9">1.113. Ivy-BibTeX</a></li>
-<li><a href="#orge755eff">1.114. LaTeX</a></li>
-<li><a href="#orge560333">1.115. Key bindings used for org mode.</a></li>
-<li><a href="#org16a059d">1.116. Insert links from the clipboard</a></li>
-<li><a href="#org472bc1a">1.117. Completions of structured templates.</a></li>
-<li><a href="#org176f438">1.118. Jupyter Notebook Integration</a></li>
-<li><a href="#org12b55cc">1.119. Org-present</a></li>
-<li><a href="#orgfae857f">1.120. Org-roam</a></li>
-<li><a href="#orgc6eb7ee">1.121. Org-Noter</a></li>
-<li><a href="#org0041012">1.122. Additional key bindings for <b>Psimacs</b>:</a></li>
+<li><a href="#org4005582">1.1. Remapping the Capslock key</a></li>
+<li><a href="#orge2c3f51">1.2. Get Help</a></li>
+<li><a href="#org5361d56">1.3. Prefixes</a></li>
+<li><a href="#org56521f8">1.4. Hydras</a></li>
+<li><a href="#org8413ef1">1.5. Universal, Numeric and Negative Argument</a></li>
+<li><a href="#orgc9c97fc">1.6. Basic movements</a></li>
+<li><a href="#org067dc5b">1.7. Basic selection</a></li>
+<li><a href="#org65d9614">1.8. Working with other Window</a></li>
+<li><a href="#orgf014adc">1.9. Working with other Frame</a></li>
+<li><a href="#orgeb10efb">1.10. Registers</a></li>
+<li><a href="#org0a0e1b2">1.11. Bookmarks</a></li>
+<li><a href="#org14fceea">1.12. Useful commands</a></li>
+<li><a href="#org5906500">1.13. Buffer Handling in Psimacs</a></li>
+<li><a href="#orga85e58f">1.14. Tab Bar Mode</a></li>
+<li><a href="#org8e2b625">1.15. Working with Info</a></li>
+<li><a href="#org84564eb">1.16. Debugging ELisp with Debug</a></li>
+<li><a href="#orgdc7c555">1.17. Debugging ELisp with Edebug</a></li>
+<li><a href="#org3ea4172">1.18. References to Emacs Lisp</a></li>
+<li><a href="#orgc497842">1.19. Startup frame size and position</a></li>
+<li><a href="#org605dbd5">1.20. MSYS2 Packages</a></li>
+<li><a href="#orgd4fe34c">1.21. Detail startup benchmarking</a></li>
+<li><a href="#org0528fd2">1.22. Make C-g a bit more helpful</a></li>
+<li><a href="#org1e81bd0">1.23. Cancels All</a></li>
+<li><a href="#orgd4aae18">1.24. HTML Documentation</a></li>
+<li><a href="#org24d01f6">1.25. Printing on Windows</a></li>
+<li><a href="#org0d40f80">1.26. Encoding system</a></li>
+<li><a href="#org5f84a1a">1.27. Smooth Scrolling</a></li>
+<li><a href="#org4d33eeb">1.28. Mark and Pop</a></li>
+<li><a href="#orga6c726b">1.29. Indentation and Tab stops</a></li>
+<li><a href="#org4fdd982">1.30. Fill column indicator</a></li>
+<li><a href="#orgcd1e17d">1.31. Easy-Kill</a></li>
+<li><a href="#orgb228423">1.32. Symbol overlay mode</a></li>
+<li><a href="#org1ef7991">1.33. Theming</a></li>
+<li><a href="#orgd3a2b46">1.34. Prettify-Symbols-Mode</a></li>
+<li><a href="#org51f9643">1.35. Rainbow delimiters</a></li>
+<li><a href="#org63e5f05">1.36. History</a></li>
+<li><a href="#org403f6a5">1.37. Recent files</a></li>
+<li><a href="#orge25784d">1.38. Undo-Redo</a></li>
+<li><a href="#org16807ab">1.39. Helpful</a></li>
+<li><a href="#orge14024c">1.40. Edit region indirectly in another buffer</a></li>
+<li><a href="#org2ef3424">1.41. Insert brackets by pair</a></li>
+<li><a href="#org8268e2a">1.42. Smart parenthesis</a></li>
+<li><a href="#org7c4eeb0">1.43. Buffer List</a></li>
+<li><a href="#org243b0f0">1.44. Cua Mode</a></li>
+<li><a href="#orgc3378a8">1.45. Dired+</a></li>
+<li><a href="#org9d03f8d">1.46. Perspective</a></li>
+<li><a href="#org8d9c58c">1.47. Abbreviations</a></li>
+<li><a href="#org90db921">1.48. Centaur tabs</a></li>
+<li><a href="#org2d2b361">1.49. Expand-Region</a></li>
+<li><a href="#org4738614">1.50. Folding</a></li>
+<li><a href="#orgf8d87df">1.51. Whitespace Mode</a></li>
+<li><a href="#orgf1a536b">1.52. Trailing white spaces</a></li>
+<li><a href="#orgc4a6141">1.53. Hungry delete mode</a></li>
+<li><a href="#orge20d6cb">1.54. Zoom Frame</a></li>
+<li><a href="#orgb3fa101">1.55. Zoom</a></li>
+<li><a href="#org02c1647">1.56. Easy window switching</a></li>
+<li><a href="#org963ccca">1.57. Winner Mode</a></li>
+<li><a href="#org1bccbbf">1.58. Ediff</a></li>
+<li><a href="#org762dec0">1.59. goto-chg - go to the point where the last edit was made</a></li>
+<li><a href="#org1a97ef9">1.60. Visible Bookmarks</a></li>
+<li><a href="#org669146e">1.61. Avy - jumping to visible text</a></li>
+<li><a href="#orgaee62c7">1.62. Mosey</a></li>
+<li><a href="#org656a6ee">1.63. Multiple Cursors</a></li>
+<li><a href="#org30fd6cc">1.64. PCRE to Elips Regexp converter</a></li>
+<li><a href="#org62d8123">1.65. Visualize Regexp</a></li>
+<li><a href="#orgfa61250">1.66. Visualize Regexp Steroids</a></li>
+<li><a href="#org6725b51">1.67. Ripgrep</a></li>
+<li><a href="#org5cf5523">1.68. Spell checking with Flyspell and Aspell or Hunspell</a></li>
+<li><a href="#org72af6aa">1.69. Spell and grammar checking with LanguageTool</a></li>
+<li><a href="#org7deb620">1.70. Google translate</a></li>
+<li><a href="#orga067765">1.71. Google search</a></li>
+<li><a href="#orga697fc8">1.72. Counsel-search</a></li>
+<li><a href="#org5f77583">1.73. Stack Exchange</a></li>
+<li><a href="#org538886e">1.74. Crux</a></li>
+<li><a href="#org8abb730">1.75. Edit multiple regions</a></li>
+<li><a href="#org5c3c448">1.76. Easy duplicate</a></li>
+<li><a href="#org845a65b">1.77. Help on Psimacs</a></li>
+<li><a href="#org188efe2">1.78. Helm</a></li>
+<li><a href="#org0a81a3e">1.79. Discoverability</a></li>
+<li><a href="#orgbdce3fa">1.80. Helm-Descbinds</a></li>
+<li><a href="#org5618f88">1.81. Helm-Describe-Modes</a></li>
+<li><a href="#org9324a4c">1.82. Which Key</a></li>
+<li><a href="#org578c0be">1.83. Swiper / Ivy / Counsel</a></li>
+<li><a href="#orgc9a6ebc">1.84. Ivy</a></li>
+<li><a href="#orga80f221">1.85. Counsel</a></li>
+<li><a href="#org57c42dd">1.86. Amx</a></li>
+<li><a href="#orgb5ea5f7">1.87. Frog jumping</a></li>
+<li><a href="#org812f054">1.88. Company</a></li>
+<li><a href="#orgcf883a2">1.89. Company-try-hard</a></li>
+<li><a href="#orga0db2fe">1.90. Snippets</a></li>
+<li><a href="#org89fb690">1.91. Auto-YASnippet</a></li>
+<li><a href="#org887fdf6">1.92. Treemacs</a></li>
+<li><a href="#org48c3289">1.93. Neotree</a></li>
+<li><a href="#org8d8f63b">1.94. gptel : A simple LLM client for Emacs</a></li>
+<li><a href="#org1c96e2c">1.95. Whisper</a></li>
+<li><a href="#org034c01e">1.96. Projectile</a></li>
+<li><a href="#org155deb0">1.97. projectile-envrc</a></li>
+<li><a href="#orgeaf9c51">1.98. projectile-cmake</a></li>
+<li><a href="#orgdee1775">1.99. Treemacs-projectile</a></li>
+<li><a href="#org6c2d236">1.100. Dashboard</a></li>
+<li><a href="#org28504c4">1.101. Page-break lines</a></li>
+<li><a href="#org550ae4a">1.102. Magit</a></li>
+<li><a href="#org87eaa6f">1.103. Else Mode</a></li>
+<li><a href="#org4ee49b6">1.104. ELSE Grammar Compiler</a></li>
+<li><a href="#orgc2b3686">1.105. String Inflection</a></li>
+<li><a href="#org5192c5f">1.106. Language Server Protcol LSP</a></li>
+<li><a href="#org91c5370">1.107. Dap-Mode</a></li>
+<li><a href="#org73735e8">1.108. LSP-Mode</a></li>
+<li><a href="#org555454a">1.109. Lisp</a></li>
+<li><a href="#org9616a7b">1.110. Python</a></li>
+<li><a href="#org713c3ab">1.111. CMake</a></li>
+<li><a href="#org1f428fa">1.112. Deft</a></li>
+<li><a href="#org407c039">1.113. BibTeX</a></li>
+<li><a href="#org1808f9c">1.114. Ivy-BibTeX</a></li>
+<li><a href="#org734cf07">1.115. LaTeX</a></li>
+<li><a href="#org6095ec6">1.116. Key bindings used for org mode.</a></li>
+<li><a href="#orge6c286d">1.117. Insert links from the clipboard</a></li>
+<li><a href="#org954d43c">1.118. Completions of structured templates.</a></li>
+<li><a href="#org7268591">1.119. Jupyter Notebook Integration</a></li>
+<li><a href="#orgcf5fa9f">1.120. Org-present</a></li>
+<li><a href="#orgc25cc63">1.121. Org-roam</a></li>
+<li><a href="#org8dc8bbc">1.122. Org-Noter</a></li>
+<li><a href="#org84c2e3c">1.123. Additional key bindings for <b>Psimacs</b>:</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org501ec9a" class="outline-2">
-<h2 id="org501ec9a"><span class="section-number-2">1.</span> Psimacs Key Bindings</h2>
+<div id="outline-container-org7d6de01" class="outline-2">
+<h2 id="org7d6de01"><span class="section-number-2">1.</span> Psimacs Key Bindings</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The following tables summarizes the key bindings found in <b>Psimacs</b>. The key bindings of original <b>Emacs</b>
@@ -439,8 +438,8 @@ Worth readings about <b>Emacs</b> keybindings:
 <li><a href="http://ergoemacs.org/emacs/emacs_hyper_super_keys.html">Emacs: How to Bind Super Hyper Keys</a></li>
 </ul>
 </div>
-<div id="outline-container-orga66cd69" class="outline-3">
-<h3 id="orga66cd69"><span class="section-number-3">1.1.</span> Remapping the Capslock key</h3>
+<div id="outline-container-org4005582" class="outline-3">
+<h3 id="org4005582"><span class="section-number-3">1.1.</span> Remapping the Capslock key</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 I remap the <code>Left-Ctrl</code> to the <code>Capslock</code> key and the original <code>Capslock</code> key to the <code>Prnt Scrn</code> key.
@@ -463,8 +462,8 @@ Attention: This remapping is not performed automatically, but must be performed 
 </p>
 </div>
 </div>
-<div id="outline-container-org443038c" class="outline-3">
-<h3 id="org443038c"><span class="section-number-3">1.2.</span> Get Help</h3>
+<div id="outline-container-orge2c3f51" class="outline-3">
+<h3 id="orge2c3f51"><span class="section-number-3">1.2.</span> Get Help</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 The major help commands and their key bindings.
@@ -797,8 +796,8 @@ The major help commands and their key bindings.
 </table>
 </div>
 </div>
-<div id="outline-container-org5cbae91" class="outline-3">
-<h3 id="org5cbae91"><span class="section-number-3">1.3.</span> Prefixes</h3>
+<div id="outline-container-org5361d56" class="outline-3">
+<h3 id="org5361d56"><span class="section-number-3">1.3.</span> Prefixes</h3>
 <div class="outline-text-3" id="text-1-3">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -843,8 +842,8 @@ The major help commands and their key bindings.
 </table>
 </div>
 </div>
-<div id="outline-container-org4d835c3" class="outline-3">
-<h3 id="org4d835c3"><span class="section-number-3">1.4.</span> Hydras</h3>
+<div id="outline-container-org56521f8" class="outline-3">
+<h3 id="org56521f8"><span class="section-number-3">1.4.</span> Hydras</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 All the hydras defined by <b>Psimacs</b>.
@@ -1027,8 +1026,8 @@ All the hydras defined by <b>Psimacs</b>.
 </table>
 </div>
 </div>
-<div id="outline-container-orgaeb1a53" class="outline-3">
-<h3 id="orgaeb1a53"><span class="section-number-3">1.5.</span> Universal, Numeric and Negative Argument</h3>
+<div id="outline-container-org8413ef1" class="outline-3">
+<h3 id="org8413ef1"><span class="section-number-3">1.5.</span> Universal, Numeric and Negative Argument</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 <code>C-u</code> or <code>H-u</code> runs the command <code>universal-argument</code>.
@@ -1151,8 +1150,8 @@ any particular numeric argument.
 </table>
 </div>
 </div>
-<div id="outline-container-orga44d9b3" class="outline-3">
-<h3 id="orga44d9b3"><span class="section-number-3">1.6.</span> Basic movements</h3>
+<div id="outline-container-orgc9c97fc" class="outline-3">
+<h3 id="orgc9c97fc"><span class="section-number-3">1.6.</span> Basic movements</h3>
 <div class="outline-text-3" id="text-1-6">
 <p>
 The table that follows contain the basic movement commands with their corresponding
@@ -1467,8 +1466,8 @@ References:
 </table>
 </div>
 </div>
-<div id="outline-container-orga89f6ef" class="outline-3">
-<h3 id="orga89f6ef"><span class="section-number-3">1.7.</span> Basic selection</h3>
+<div id="outline-container-org067dc5b" class="outline-3">
+<h3 id="org067dc5b"><span class="section-number-3">1.7.</span> Basic selection</h3>
 <div class="outline-text-3" id="text-1-7">
 <p>
 The fundamental selection commands with their corresponding key bindings are listed in the next table.
@@ -1698,8 +1697,8 @@ References:
 </table>
 </div>
 </div>
-<div id="outline-container-orge396213" class="outline-3">
-<h3 id="orge396213"><span class="section-number-3">1.8.</span> Working with other Window</h3>
+<div id="outline-container-org65d9614" class="outline-3">
+<h3 id="org65d9614"><span class="section-number-3">1.8.</span> Working with other Window</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
 Following table with the most important commands and keybindings for working with other windows.
@@ -1823,8 +1822,8 @@ References:
 </table>
 </div>
 </div>
-<div id="outline-container-org31540b1" class="outline-3">
-<h3 id="org31540b1"><span class="section-number-3">1.9.</span> Working with other Frame</h3>
+<div id="outline-container-orgf014adc" class="outline-3">
+<h3 id="orgf014adc"><span class="section-number-3">1.9.</span> Working with other Frame</h3>
 <div class="outline-text-3" id="text-1-9">
 <p>
 Following table with the most important commands and keybindings for working with other frames.
@@ -1954,8 +1953,8 @@ References:
 </table>
 </div>
 </div>
-<div id="outline-container-org7aee373" class="outline-3">
-<h3 id="org7aee373"><span class="section-number-3">1.10.</span> Registers</h3>
+<div id="outline-container-orgeb10efb" class="outline-3">
+<h3 id="orgeb10efb"><span class="section-number-3">1.10.</span> Registers</h3>
 <div class="outline-text-3" id="text-1-10">
 <p>
 Emacs registers are compartments where you can save text, rectangles, positions, and other things for later use.
@@ -2110,8 +2109,8 @@ Reference: <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Re
 </table>
 </div>
 </div>
-<div id="outline-container-org10c05a1" class="outline-3">
-<h3 id="org10c05a1"><span class="section-number-3">1.11.</span> Bookmarks</h3>
+<div id="outline-container-org0a0e1b2" class="outline-3">
+<h3 id="org0a0e1b2"><span class="section-number-3">1.11.</span> Bookmarks</h3>
 <div class="outline-text-3" id="text-1-11">
 <p>
 Bookmarks are somewhat like registers in that they record positions you can jump to. Unlike registers,
@@ -2209,8 +2208,8 @@ Reference: <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Bo
 </table>
 </div>
 </div>
-<div id="outline-container-org2632c79" class="outline-3">
-<h3 id="org2632c79"><span class="section-number-3">1.12.</span> Useful commands</h3>
+<div id="outline-container-org14fceea" class="outline-3">
+<h3 id="org14fceea"><span class="section-number-3">1.12.</span> Useful commands</h3>
 <div class="outline-text-3" id="text-1-12">
 <p>
 In the following, a table is provided that contains useful commands and their key bindings.
@@ -2338,8 +2337,8 @@ about beforhand or that I might forget about in the future.
 </table>
 </div>
 </div>
-<div id="outline-container-orgefd5331" class="outline-3">
-<h3 id="orgefd5331"><span class="section-number-3">1.13.</span> Buffer Handling in Psimacs</h3>
+<div id="outline-container-org5906500" class="outline-3">
+<h3 id="org5906500"><span class="section-number-3">1.13.</span> Buffer Handling in Psimacs</h3>
 <div class="outline-text-3" id="text-1-13">
 <p>
 <b>Psimacs</b> defines some buffer toggle commands of its own.
@@ -2402,8 +2401,8 @@ about beforhand or that I might forget about in the future.
 </table>
 </div>
 </div>
-<div id="outline-container-orgaebae1b" class="outline-3">
-<h3 id="orgaebae1b"><span class="section-number-3">1.14.</span> Tab Bar Mode</h3>
+<div id="outline-container-orga85e58f" class="outline-3">
+<h3 id="orga85e58f"><span class="section-number-3">1.14.</span> Tab Bar Mode</h3>
 <div class="outline-text-3" id="text-1-14">
 <p>
 A tab is a <i>window configuration</i>. In <b>Emacs</b>, a window configuration is a collection of windows – size, location, the buffer, and so on –
@@ -2587,8 +2586,8 @@ References:
 </table>
 </div>
 </div>
-<div id="outline-container-org39f8aa3" class="outline-3">
-<h3 id="org39f8aa3"><span class="section-number-3">1.15.</span> Working with Info</h3>
+<div id="outline-container-org8e2b625" class="outline-3">
+<h3 id="org8e2b625"><span class="section-number-3">1.15.</span> Working with Info</h3>
 <div class="outline-text-3" id="text-1-15">
 <p>
 This is just a brief overview over the most important <b>Info</b> commands:
@@ -2828,8 +2827,8 @@ Inside <b>Info</b> the following commands are useful:
 </table>
 </div>
 </div>
-<div id="outline-container-org38dfd62" class="outline-3">
-<h3 id="org38dfd62"><span class="section-number-3">1.16.</span> Debugging ELisp with Debug</h3>
+<div id="outline-container-org84564eb" class="outline-3">
+<h3 id="org84564eb"><span class="section-number-3">1.16.</span> Debugging ELisp with Debug</h3>
 <div class="outline-text-3" id="text-1-16">
 <p>
 <b>Emacs</b> has two <a href="https://www.gnu.org/software/emacs/manual/html_node/eintr/debug.html">debuggers</a>,
@@ -2900,8 +2899,8 @@ The most used commads are the following. For more detail see <a href="https://ww
 </table>
 </div>
 </div>
-<div id="outline-container-orge8832dd" class="outline-3">
-<h3 id="orge8832dd"><span class="section-number-3">1.17.</span> Debugging ELisp with Edebug</h3>
+<div id="outline-container-orgdc7c555" class="outline-3">
+<h3 id="orgdc7c555"><span class="section-number-3">1.17.</span> Debugging ELisp with Edebug</h3>
 <div class="outline-text-3" id="text-1-17">
 <p>
 <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug">Edebug</a> is a source-level debugger for Emacs Lisp programs that is very useful developing <i>Lisp</i> code. In the following
@@ -3209,8 +3208,8 @@ References:
 </table>
 </div>
 </div>
-<div id="outline-container-orgc0e1eed" class="outline-3">
-<h3 id="orgc0e1eed"><span class="section-number-3">1.18.</span> References to Emacs Lisp</h3>
+<div id="outline-container-org3ea4172" class="outline-3">
+<h3 id="org3ea4172"><span class="section-number-3">1.18.</span> References to Emacs Lisp</h3>
 <div class="outline-text-3" id="text-1-18">
 <p>
 The following links might be useful for diving deeper into <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/">Elisp</a>:
@@ -3225,8 +3224,8 @@ The following links might be useful for diving deeper into <a href="https://www.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgcedb869" class="outline-3">
-<h3 id="orgcedb869"><span class="section-number-3">1.19.</span> Startup frame size and position</h3>
+<div id="outline-container-orgc497842" class="outline-3">
+<h3 id="orgc497842"><span class="section-number-3">1.19.</span> Startup frame size and position</h3>
 <div class="outline-text-3" id="text-1-19">
 <p>
 <b>Psimacs</b> provides three simple strategies for positioning and sizing new frames. These strategies can be activated
@@ -3272,8 +3271,8 @@ by the following functions.
 </table>
 </div>
 </div>
-<div id="outline-container-org9f866b4" class="outline-3">
-<h3 id="org9f866b4"><span class="section-number-3">1.20.</span> MSYS2 Packages</h3>
+<div id="outline-container-org605dbd5" class="outline-3">
+<h3 id="org605dbd5"><span class="section-number-3">1.20.</span> MSYS2 Packages</h3>
 <div class="outline-text-3" id="text-1-20">
 <p>
 Pacman queries the local package database with the <code>-Q</code> flag, the sync database with the <code>-S</code> flag and the files
@@ -3380,8 +3379,8 @@ Most important commands taken from
 </table>
 </div>
 </div>
-<div id="outline-container-org782c3c3" class="outline-3">
-<h3 id="org782c3c3"><span class="section-number-3">1.21.</span> Detail startup benchmarking</h3>
+<div id="outline-container-orgd4fe34c" class="outline-3">
+<h3 id="orgd4fe34c"><span class="section-number-3">1.21.</span> Detail startup benchmarking</h3>
 <div class="outline-text-3" id="text-1-21">
 <p>
 This is a simple benchmark of calls to <b>Emacs</b> <i>require</i> and <i>load</i> functions. It can be used to keep track
@@ -3434,8 +3433,8 @@ References to benchmarking:
 </ul>
 </div>
 </div>
-<div id="outline-container-org37891bf" class="outline-3">
-<h3 id="org37891bf"><span class="section-number-3">1.22.</span> Make C-g a bit more helpful</h3>
+<div id="outline-container-org0528fd2" class="outline-3">
+<h3 id="org0528fd2"><span class="section-number-3">1.22.</span> Make C-g a bit more helpful</h3>
 <div class="outline-text-3" id="text-1-22">
 <p>
 <code>C-g</code> should behave more then expected:
@@ -3474,8 +3473,8 @@ References to benchmarking:
 </table>
 </div>
 </div>
-<div id="outline-container-orgfa129ff" class="outline-3">
-<h3 id="orgfa129ff"><span class="section-number-3">1.23.</span> Cancels All</h3>
+<div id="outline-container-org1e81bd0" class="outline-3">
+<h3 id="org1e81bd0"><span class="section-number-3">1.23.</span> Cancels All</h3>
 <div class="outline-text-3" id="text-1-23">
 <p>
 Call command <code>keyboard-escape-quit</code> immediately on pressing key <code>H-g</code>.
@@ -3515,8 +3514,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org1cf95aa" class="outline-3">
-<h3 id="org1cf95aa"><span class="section-number-3">1.24.</span> HTML Documentation</h3>
+<div id="outline-container-orgd4aae18" class="outline-3">
+<h3 id="orgd4aae18"><span class="section-number-3">1.24.</span> HTML Documentation</h3>
 <div class="outline-text-3" id="text-1-24">
 <p>
 Provide keybindings for conveniently access of the <b>Psimacs</b> HTML documentation and keybindings.
@@ -3567,8 +3566,8 @@ Provide keybindings for conveniently access of the <b>Psimacs</b> HTML documenta
 </table>
 </div>
 </div>
-<div id="outline-container-orgafcbcf9" class="outline-3">
-<h3 id="orgafcbcf9"><span class="section-number-3">1.25.</span> Printing on Windows</h3>
+<div id="outline-container-org24d01f6" class="outline-3">
+<h3 id="org24d01f6"><span class="section-number-3">1.25.</span> Printing on Windows</h3>
 <div class="outline-text-3" id="text-1-25">
 <p>
 <b>Psimacs</b> currently supports two sets of commands for printing on windows:
@@ -3633,8 +3632,8 @@ Provide keybindings for conveniently access of the <b>Psimacs</b> HTML documenta
 </table>
 </div>
 </div>
-<div id="outline-container-orgd9edd6f" class="outline-3">
-<h3 id="orgd9edd6f"><span class="section-number-3">1.26.</span> Encoding system</h3>
+<div id="outline-container-org0d40f80" class="outline-3">
+<h3 id="org0d40f80"><span class="section-number-3">1.26.</span> Encoding system</h3>
 <div class="outline-text-3" id="text-1-26">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -3693,8 +3692,8 @@ Provide keybindings for conveniently access of the <b>Psimacs</b> HTML documenta
 </table>
 </div>
 </div>
-<div id="outline-container-orgdc13675" class="outline-3">
-<h3 id="orgdc13675"><span class="section-number-3">1.27.</span> Smooth Scrolling</h3>
+<div id="outline-container-org5f84a1a" class="outline-3">
+<h3 id="org5f84a1a"><span class="section-number-3">1.27.</span> Smooth Scrolling</h3>
 <div class="outline-text-3" id="text-1-27">
 <p>
 The <a href="https://github.com/aspiers/smooth-scrolling">smooth-scrolling</a> package offers a minor mode which make emacs scroll smoothly. It keeps the point away from
@@ -3733,8 +3732,8 @@ You can toggle the  <a href="https://github.com/aspiers/smooth-scrolling">smooth
 </table>
 </div>
 </div>
-<div id="outline-container-org85536bd" class="outline-3">
-<h3 id="org85536bd"><span class="section-number-3">1.28.</span> Mark and Pop</h3>
+<div id="outline-container-org4d33eeb" class="outline-3">
+<h3 id="org4d33eeb"><span class="section-number-3">1.28.</span> Mark and Pop</h3>
 <div class="outline-text-3" id="text-1-28">
 <p>
 Handy way of getting back to previous places.
@@ -3812,8 +3811,8 @@ instead of <code>C-u C-SPC</code> to cycle through the mark ring.
 </p>
 </div>
 </div>
-<div id="outline-container-org9884cb1" class="outline-3">
-<h3 id="org9884cb1"><span class="section-number-3">1.29.</span> Indentation and Tab stops</h3>
+<div id="outline-container-orga6c726b" class="outline-3">
+<h3 id="orga6c726b"><span class="section-number-3">1.29.</span> Indentation and Tab stops</h3>
 <div class="outline-text-3" id="text-1-29">
 <p>
 <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Indent-Convenience.html">Electric Indent mode</a> is a global minor mode that automatically indents the line after every <code>RET</code> you type.
@@ -3882,8 +3881,8 @@ Insert a real tab character with <code>C-q TAB</code>.
 </table>
 </div>
 </div>
-<div id="outline-container-org077d5e2" class="outline-3">
-<h3 id="org077d5e2"><span class="section-number-3">1.30.</span> Fill column indicator</h3>
+<div id="outline-container-org4fdd982" class="outline-3">
+<h3 id="org4fdd982"><span class="section-number-3">1.30.</span> Fill column indicator</h3>
 <div class="outline-text-3" id="text-1-30">
 <p>
 <b>Emacs</b> allows to <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Displaying-Boundaries.html">display boundaries</a>. <b>Psimacs</b> uses this to show an indicator at the fill column position.
@@ -3917,8 +3916,8 @@ The default fill column is set to 120 characters because huge displays are now c
 </table>
 </div>
 </div>
-<div id="outline-container-orgb181f82" class="outline-3">
-<h3 id="orgb181f82"><span class="section-number-3">1.31.</span> Easy-Kill</h3>
+<div id="outline-container-orgcd1e17d" class="outline-3">
+<h3 id="orgcd1e17d"><span class="section-number-3">1.31.</span> Easy-Kill</h3>
 <div class="outline-text-3" id="text-1-31">
 <p>
 The package <a href="https://github.com/leoliu/easy-kill">easy-kill</a> provide commands <code>easy-kill</code> and <code>easy-mark</code> to let users kill or mark things easily.
@@ -4080,8 +4079,8 @@ To copy the enclosing list in lispy modes, the key sequence is <code>M-w l</code
 </p>
 </div>
 </div>
-<div id="outline-container-org2506b17" class="outline-3">
-<h3 id="org2506b17"><span class="section-number-3">1.32.</span> Symbol overlay mode</h3>
+<div id="outline-container-orgb228423" class="outline-3">
+<h3 id="orgb228423"><span class="section-number-3">1.32.</span> Symbol overlay mode</h3>
 <div class="outline-text-3" id="text-1-32">
 <p>
 The package <a href="https://github.com/wolray/symbol-overlay">Symbol Overlay</a> highlight symbols with overlays while providing a keymap for
@@ -4254,8 +4253,8 @@ The bindings in ‘symbol-overlay-map’ that are active when the cursor points 
 </table>
 </div>
 </div>
-<div id="outline-container-org5c8e52a" class="outline-3">
-<h3 id="org5c8e52a"><span class="section-number-3">1.33.</span> Theming</h3>
+<div id="outline-container-org1ef7991" class="outline-3">
+<h3 id="org1ef7991"><span class="section-number-3">1.33.</span> Theming</h3>
 <div class="outline-text-3" id="text-1-33">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -4338,8 +4337,8 @@ The bindings in ‘symbol-overlay-map’ that are active when the cursor points 
 </table>
 </div>
 </div>
-<div id="outline-container-org0cdfcec" class="outline-3">
-<h3 id="org0cdfcec"><span class="section-number-3">1.34.</span> Prettify-Symbols-Mode</h3>
+<div id="outline-container-orgd3a2b46" class="outline-3">
+<h3 id="orgd3a2b46"><span class="section-number-3">1.34.</span> Prettify-Symbols-Mode</h3>
 <div class="outline-text-3" id="text-1-34">
 <p>
 When <a href="https://github.com/emacs-mirror/emacs/blob/master/lisp/progmodes/prog-mode.el">prettify-symbols-mode</a> and  <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html">font-locking</a> are enabled, symbols are prettified. <b>Psimacs</b> defines list of symbols
@@ -4394,8 +4393,8 @@ See also: <a href="http://ergoemacs.org/emacs/emacs_pretty_lambda.html">About pr
 </table>
 </div>
 </div>
-<div id="outline-container-org88243d9" class="outline-3">
-<h3 id="org88243d9"><span class="section-number-3">1.35.</span> Rainbow delimiters</h3>
+<div id="outline-container-org51f9643" class="outline-3">
+<h3 id="org51f9643"><span class="section-number-3">1.35.</span> Rainbow delimiters</h3>
 <div class="outline-text-3" id="text-1-35">
 <p>
 The package <a href="https://github.com/Fanael/rainbow-delimiters">rainbow-delimiters</a> highlights delimiters such as parentheses, brackets or braces according to their depth.
@@ -4456,8 +4455,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orge08504d" class="outline-3">
-<h3 id="orge08504d"><span class="section-number-3">1.36.</span> History</h3>
+<div id="outline-container-org63e5f05" class="outline-3">
+<h3 id="org63e5f05"><span class="section-number-3">1.36.</span> History</h3>
 <div class="outline-text-3" id="text-1-36">
 <p>
 Package <a href="https://www.emacswiki.org/emacs/SaveHist">savehist</a> automatically save minibuffer, kill-ring, search-ring and regexp-search-ring histories to a file.
@@ -4495,8 +4494,8 @@ Package <a href="https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist
 </table>
 </div>
 </div>
-<div id="outline-container-org5865aa7" class="outline-3">
-<h3 id="org5865aa7"><span class="section-number-3">1.37.</span> Recent files</h3>
+<div id="outline-container-org403f6a5" class="outline-3">
+<h3 id="org403f6a5"><span class="section-number-3">1.37.</span> Recent files</h3>
 <div class="outline-text-3" id="text-1-37">
 <p>
 <a href="https://www.emacswiki.org/emacs/RecentFiles">Recentf-mode</a> is a minor mode that builds a list of recently opened files. This list is automatically saved
@@ -4563,8 +4562,8 @@ through the command <code>C-x C-r</code>.
 </table>
 </div>
 </div>
-<div id="outline-container-org19afd9e" class="outline-3">
-<h3 id="org19afd9e"><span class="section-number-3">1.38.</span> Undo-Redo</h3>
+<div id="outline-container-orge25784d" class="outline-3">
+<h3 id="orge25784d"><span class="section-number-3">1.38.</span> Undo-Redo</h3>
 <div class="outline-text-3" id="text-1-38">
 <p>
 The package <a href="https://gitlab.com/ideasman42/emacs-undo-fu">undo-fu</a> provides a simple, stable linear undo with redo for <b>Emacs</b>.
@@ -4675,8 +4674,8 @@ References to undo/redo packages:
 </table>
 </div>
 </div>
-<div id="outline-container-orgd07de5b" class="outline-3">
-<h3 id="orgd07de5b"><span class="section-number-3">1.39.</span> Helpful</h3>
+<div id="outline-container-org16807ab" class="outline-3">
+<h3 id="org16807ab"><span class="section-number-3">1.39.</span> Helpful</h3>
 <div class="outline-text-3" id="text-1-39">
 <p>
 The package <a href="https://github.com/Wilfred/helpful">helpful</a> is an alternative to the built-in Emacs help that provides much more contextual information.
@@ -4762,8 +4761,8 @@ It provides the following commands:
 </table>
 </div>
 </div>
-<div id="outline-container-org5ee19ab" class="outline-3">
-<h3 id="org5ee19ab"><span class="section-number-3">1.40.</span> Edit region indirectly in another buffer</h3>
+<div id="outline-container-orge14024c" class="outline-3">
+<h3 id="orge14024c"><span class="section-number-3">1.40.</span> Edit region indirectly in another buffer</h3>
 <div class="outline-text-3" id="text-1-40">
 <p>
 The package <a href="https://github.com/Fanael/edit-indirect">edit-indirect</a> is a useful enhancement for editing. It provides a command <code>edit-indirect-region</code> that
@@ -4826,8 +4825,8 @@ region unchanged. Very useful!
 </table>
 </div>
 </div>
-<div id="outline-container-orgdfa9b20" class="outline-3">
-<h3 id="orgdfa9b20"><span class="section-number-3">1.41.</span> Insert brackets by pair</h3>
+<div id="outline-container-org2ef3424" class="outline-3">
+<h3 id="org2ef3424"><span class="section-number-3">1.41.</span> Insert brackets by pair</h3>
 <div class="outline-text-3" id="text-1-41">
 <p>
 Some convenience functions that use the <code>psimacs/pair/insert-bracket-pair</code> function.
@@ -4912,8 +4911,8 @@ Additionally, <b>Psimacs</b> provides the following key bindings:
 </table>
 </div>
 </div>
-<div id="outline-container-orgf49b71e" class="outline-3">
-<h3 id="orgf49b71e"><span class="section-number-3">1.42.</span> Smart parenthesis</h3>
+<div id="outline-container-org8268e2a" class="outline-3">
+<h3 id="org8268e2a"><span class="section-number-3">1.42.</span> Smart parenthesis</h3>
 <div class="outline-text-3" id="text-1-42">
 <p>
 The package <a href="https://github.com/Fuco1/smartparens">smartparens</a> is minor mode for <b>Emacs</b> that deals with <i>parens pairs</i> and tries to be smart about them.
@@ -5194,8 +5193,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orga4fc0de" class="outline-3">
-<h3 id="orga4fc0de"><span class="section-number-3">1.43.</span> Buffer List</h3>
+<div id="outline-container-org7c4eeb0" class="outline-3">
+<h3 id="org7c4eeb0"><span class="section-number-3">1.43.</span> Buffer List</h3>
 <div class="outline-text-3" id="text-1-43">
 <p>
 Use command <code>ibuffer</code> instead of the default <code>list-buffers</code> for <code>C-x C-b</code>. The command <code>ibuffer</code> is an improved
@@ -5241,8 +5240,8 @@ version of <code>list-buffers</code>. <b>IBuffer</b> colors the files by type an
 </table>
 </div>
 </div>
-<div id="outline-container-orge9f133b" class="outline-3">
-<h3 id="orge9f133b"><span class="section-number-3">1.44.</span> Cua Mode</h3>
+<div id="outline-container-org243b0f0" class="outline-3">
+<h3 id="org243b0f0"><span class="section-number-3">1.44.</span> Cua Mode</h3>
 <div class="outline-text-3" id="text-1-44">
 <p>
 When <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html">CUA mode</a> is enabled, the keys <code>C-x</code>, <code>C-c</code>, <code>C-v</code>, and <code>C-z</code> invoke commands that cut (kill),
@@ -5421,8 +5420,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgdecc601" class="outline-3">
-<h3 id="orgdecc601"><span class="section-number-3">1.45.</span> Dired+</h3>
+<div id="outline-container-orgc3378a8" class="outline-3">
+<h3 id="orgc3378a8"><span class="section-number-3">1.45.</span> Dired+</h3>
 <div class="outline-text-3" id="text-1-45">
 <p>
 Package <a href="https://www.emacswiki.org/emacs/DiredPlus">Dired+</a> extends functionalities provided by standard <b>Emacs</b> library <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html">dired</a>. The standard functions are all
@@ -5748,8 +5747,8 @@ Some usefule key bindings and commands:
 </table>
 </div>
 </div>
-<div id="outline-container-orgb45f8f8" class="outline-3">
-<h3 id="orgb45f8f8"><span class="section-number-3">1.46.</span> Perspective</h3>
+<div id="outline-container-org9d03f8d" class="outline-3">
+<h3 id="org9d03f8d"><span class="section-number-3">1.46.</span> Perspective</h3>
 <div class="outline-text-3" id="text-1-46">
 <p>
 The <a href="https://github.com/nex3/perspective-el">perspective</a> package provides multiple named workspaces
@@ -5931,8 +5930,8 @@ Perspective-aware buffer switcher.
 </table>
 </div>
 </div>
-<div id="outline-container-org419e83d" class="outline-3">
-<h3 id="org419e83d"><span class="section-number-3">1.47.</span> Abbreviations</h3>
+<div id="outline-container-org8d9c58c" class="outline-3">
+<h3 id="org8d9c58c"><span class="section-number-3">1.47.</span> Abbreviations</h3>
 <div class="outline-text-3" id="text-1-47">
 <p>
 <b>Emacs's</b> <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html">Abbrevs</a> feature lets you type a short word and expand into a full word or code template.
@@ -6099,8 +6098,8 @@ See also:
 </ul>
 </div>
 </div>
-<div id="outline-container-org37deed6" class="outline-3">
-<h3 id="org37deed6"><span class="section-number-3">1.48.</span> Centaur tabs</h3>
+<div id="outline-container-org90db921" class="outline-3">
+<h3 id="org90db921"><span class="section-number-3">1.48.</span> Centaur tabs</h3>
 <div class="outline-text-3" id="text-1-48">
 <p>
 Package <a href="https://github.com/ema2159/centaur-tabs">Centaur tabs</a> provides aesthetic, functional and efficient tabs for Emacs.
@@ -6139,8 +6138,8 @@ Package <a href="https://github.com/ema2159/centaur-tabs">Centaur tabs</a> provi
 </table>
 </div>
 </div>
-<div id="outline-container-orgf6e05a3" class="outline-3">
-<h3 id="orgf6e05a3"><span class="section-number-3">1.49.</span> Expand-Region</h3>
+<div id="outline-container-org2d2b361" class="outline-3">
+<h3 id="org2d2b361"><span class="section-number-3">1.49.</span> Expand-Region</h3>
 <div class="outline-text-3" id="text-1-49">
 <p>
 The package <a href="https://github.com/magnars/expand-region.el">expand-region</a> allows you to
@@ -6182,8 +6181,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgdc992da" class="outline-3">
-<h3 id="orgdc992da"><span class="section-number-3">1.50.</span> Folding</h3>
+<div id="outline-container-org4738614" class="outline-3">
+<h3 id="org4738614"><span class="section-number-3">1.50.</span> Folding</h3>
 <div class="outline-text-3" id="text-1-50">
 <p>
 The package <a href="https://github.com/zenozeng/yafolding.el">yafolding</a> provides a minor mode that allows you to fold code blocks based on its indentation.
@@ -6273,8 +6272,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org01e99dd" class="outline-3">
-<h3 id="org01e99dd"><span class="section-number-3">1.51.</span> Whitespace Mode</h3>
+<div id="outline-container-orgf8d87df" class="outline-3">
+<h3 id="orgf8d87df"><span class="section-number-3">1.51.</span> Whitespace Mode</h3>
 <div class="outline-text-3" id="text-1-51">
 <p>
 <b>Emacs's</b> <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html">whitespace-mode</a>
@@ -6316,8 +6315,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org40cdc9f" class="outline-3">
-<h3 id="org40cdc9f"><span class="section-number-3">1.52.</span> Trailing white spaces</h3>
+<div id="outline-container-orgf1a536b" class="outline-3">
+<h3 id="orgf1a536b"><span class="section-number-3">1.52.</span> Trailing white spaces</h3>
 <div class="outline-text-3" id="text-1-52">
 <p>
 You can make trailing whitespace at the end of a line visible by setting the buffer-local variable
@@ -6358,8 +6357,8 @@ You can make trailing whitespace at the end of a line visible by setting the buf
 </table>
 </div>
 </div>
-<div id="outline-container-org238677d" class="outline-3">
-<h3 id="org238677d"><span class="section-number-3">1.53.</span> Hungry delete mode</h3>
+<div id="outline-container-orgc4a6141" class="outline-3">
+<h3 id="orgc4a6141"><span class="section-number-3">1.53.</span> Hungry delete mode</h3>
 <div class="outline-text-3" id="text-1-53">
 <p>
 The package <a href="https://github.com/nflath/hungry-delete">hungry-delete-mode</a> implements hungry deletion, meaning that deleting a whitespace character will delete
@@ -6406,8 +6405,8 @@ Refefences:
 </table>
 </div>
 </div>
-<div id="outline-container-org3e57d0e" class="outline-3">
-<h3 id="org3e57d0e"><span class="section-number-3">1.54.</span> Zoom Frame</h3>
+<div id="outline-container-orge20d6cb" class="outline-3">
+<h3 id="orge20d6cb"><span class="section-number-3">1.54.</span> Zoom Frame</h3>
 <div class="outline-text-3" id="text-1-54">
 <p>
 The package <a href="https://www.emacswiki.org/emacs/SetFonts#ZoomFrame">zoom-frm</a> allows the font resize of the current buffer, the current frame or of all frames.
@@ -6508,8 +6507,8 @@ It is an enhancement of the build-in <code>M-x text-adjust-scale</code> command.
 </table>
 </div>
 </div>
-<div id="outline-container-org16b4071" class="outline-3">
-<h3 id="org16b4071"><span class="section-number-3">1.55.</span> Zoom</h3>
+<div id="outline-container-orgb3fa101" class="outline-3">
+<h3 id="orgb3fa101"><span class="section-number-3">1.55.</span> Zoom</h3>
 <div class="outline-text-3" id="text-1-55">
 <p>
 Package <a href="https://github.com/cyrus-and/zoom">zoom</a> provides a minor mode that takes care of managing the window sizes by enforcing
@@ -6555,8 +6554,8 @@ which does have some problems to be convenient.
 </table>
 </div>
 </div>
-<div id="outline-container-orge30dc12" class="outline-3">
-<h3 id="orge30dc12"><span class="section-number-3">1.56.</span> Easy window switching</h3>
+<div id="outline-container-org02c1647" class="outline-3">
+<h3 id="org02c1647"><span class="section-number-3">1.56.</span> Easy window switching</h3>
 <div class="outline-text-3" id="text-1-56">
 <p>
 The package <a href="https://github.com/abo-abo/ace-window">ace-window</a> allows easy window switching.
@@ -6726,8 +6725,8 @@ If <code>ace-window</code> is active the following key bindings are available:
 </table>
 </div>
 </div>
-<div id="outline-container-org4fcac23" class="outline-3">
-<h3 id="org4fcac23"><span class="section-number-3">1.57.</span> Winner Mode</h3>
+<div id="outline-container-org963ccca" class="outline-3">
+<h3 id="org963ccca"><span class="section-number-3">1.57.</span> Winner Mode</h3>
 <div class="outline-text-3" id="text-1-57">
 <p>
 <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenience.html">winner-mode</a> lets you use
@@ -6777,8 +6776,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgd6cbd74" class="outline-3">
-<h3 id="orgd6cbd74"><span class="section-number-3">1.58.</span> Ediff</h3>
+<div id="outline-container-org1bccbbf" class="outline-3">
+<h3 id="org1bccbbf"><span class="section-number-3">1.58.</span> Ediff</h3>
 <div class="outline-text-3" id="text-1-58">
 <p>
 The <a href="https://www.gnu.org/software/emacs/manual/html_mono/ediff.html">Ediff</a> package provides a
@@ -7362,8 +7361,8 @@ See also:
 </ul>
 </div>
 </div>
-<div id="outline-container-orgc573f60" class="outline-3">
-<h3 id="orgc573f60"><span class="section-number-3">1.59.</span> goto-chg - go to the point where the last edit was made</h3>
+<div id="outline-container-org762dec0" class="outline-3">
+<h3 id="org762dec0"><span class="section-number-3">1.59.</span> goto-chg - go to the point where the last edit was made</h3>
 <div class="outline-text-3" id="text-1-59">
 <p>
 Package <a href="https://github.com/emacs-evil/goto-chg/blob/master/goto-chg.el">goto-chg</a> allows you to jump back to the last edited places.
@@ -7402,8 +7401,8 @@ Package <a href="https://github.com/emacs-evil/goto-chg/blob/master/goto-chg.el"
 </table>
 </div>
 </div>
-<div id="outline-container-orgc449168" class="outline-3">
-<h3 id="orgc449168"><span class="section-number-3">1.60.</span> Visible Bookmarks</h3>
+<div id="outline-container-org1a97ef9" class="outline-3">
+<h3 id="org1a97ef9"><span class="section-number-3">1.60.</span> Visible Bookmarks</h3>
 <div class="outline-text-3" id="text-1-60">
 <p>
 The package <a href="https://github.com/joodland/bm">Visible bookmarks</a> provides visible, buffer local, bookmarks and the
@@ -7463,8 +7462,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgb082c71" class="outline-3">
-<h3 id="orgb082c71"><span class="section-number-3">1.61.</span> Avy - jumping to visible text</h3>
+<div id="outline-container-org669146e" class="outline-3">
+<h3 id="org669146e"><span class="section-number-3">1.61.</span> Avy - jumping to visible text</h3>
 <div class="outline-text-3" id="text-1-61">
 <p>
 <a href="https://github.com/abo-abo/avy">Avy</a> is a GNU Emacs package for jumping to visible text using
@@ -7534,8 +7533,8 @@ a char-based decision tree.
 </table>
 </div>
 </div>
-<div id="outline-container-org42f0fbb" class="outline-3">
-<h3 id="org42f0fbb"><span class="section-number-3">1.62.</span> Mosey</h3>
+<div id="outline-container-orgaee62c7" class="outline-3">
+<h3 id="orgaee62c7"><span class="section-number-3">1.62.</span> Mosey</h3>
 <div class="outline-text-3" id="text-1-62">
 <p>
 <a href="https://github.com/alphapapa/mosey.el">Mosey</a> is a GNU Emacs package that makes it easy to mosey back and forth
@@ -7599,8 +7598,8 @@ in your buffers.
 </table>
 </div>
 </div>
-<div id="outline-container-orgc780416" class="outline-3">
-<h3 id="orgc780416"><span class="section-number-3">1.63.</span> Multiple Cursors</h3>
+<div id="outline-container-org656a6ee" class="outline-3">
+<h3 id="org656a6ee"><span class="section-number-3">1.63.</span> Multiple Cursors</h3>
 <div class="outline-text-3" id="text-1-63">
 <p>
 <a href="https://github.com/magnars/multiple-cursors.el">Multiple-cursors</a> is a very nice package that lets you create several cursors that all
@@ -7903,8 +7902,8 @@ Remarks:
 </table>
 </div>
 </div>
-<div id="outline-container-org87f9e56" class="outline-3">
-<h3 id="org87f9e56"><span class="section-number-3">1.64.</span> PCRE to Elips Regexp converter</h3>
+<div id="outline-container-org30fd6cc" class="outline-3">
+<h3 id="org30fd6cc"><span class="section-number-3">1.64.</span> PCRE to Elips Regexp converter</h3>
 <div class="outline-text-3" id="text-1-64">
 <p>
 The package <a href="https://github.com/joddie/pcre2el">pcre2el</a> converts between
@@ -8086,8 +8085,8 @@ Commands that work on an Emacs regexp:
 </table>
 </div>
 </div>
-<div id="outline-container-org3e40657" class="outline-3">
-<h3 id="org3e40657"><span class="section-number-3">1.65.</span> Visualize Regexp</h3>
+<div id="outline-container-org62d8123" class="outline-3">
+<h3 id="org62d8123"><span class="section-number-3">1.65.</span> Visualize Regexp</h3>
 <div class="outline-text-3" id="text-1-65">
 <p>
 The package <a href="https://github.com/benma/visual-regexp.el">visual-regexp</a> provides the same functionality
@@ -8141,8 +8140,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org0fed152" class="outline-3">
-<h3 id="org0fed152"><span class="section-number-3">1.66.</span> Visualize Regexp Steroids</h3>
+<div id="outline-container-orgfa61250" class="outline-3">
+<h3 id="orgfa61250"><span class="section-number-3">1.66.</span> Visualize Regexp Steroids</h3>
 <div class="outline-text-3" id="text-1-66">
 <p>
 The package <a href="https://github.com/benma/visual-regexp-steroids.el">visual-regexp-steroids</a>
@@ -8201,8 +8200,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgf5abb8f" class="outline-3">
-<h3 id="orgf5abb8f"><span class="section-number-3">1.67.</span> Ripgrep</h3>
+<div id="outline-container-org6725b51" class="outline-3">
+<h3 id="org6725b51"><span class="section-number-3">1.67.</span> Ripgrep</h3>
 <div class="outline-text-3" id="text-1-67">
 <p>
 The package <a href="https://github.com/dajva/rg.el">rg</a> brings support for <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a> to <b>Psimacs</b>.
@@ -8313,8 +8312,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org587a378" class="outline-3">
-<h3 id="org587a378"><span class="section-number-3">1.68.</span> Spell checking with Flyspell and Aspell or Hunspell</h3>
+<div id="outline-container-org5cf5523" class="outline-3">
+<h3 id="org5cf5523"><span class="section-number-3">1.68.</span> Spell checking with Flyspell and Aspell or Hunspell</h3>
 <div class="outline-text-3" id="text-1-68">
 <p>
 <a href="http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html">Flyspell</a> enables on-the-fly spell checking in Emacs by the means of a minor mode. <a href="http://www-sop.inria.fr/members/Manuel.Serrano/flyspell/flyspell.html">Flyspell</a> highlights incorrect words
@@ -8482,8 +8481,8 @@ Some more information about spell checking can be found in the following referen
 </ul>
 </div>
 </div>
-<div id="outline-container-org8813c38" class="outline-3">
-<h3 id="org8813c38"><span class="section-number-3">1.69.</span> Spell and grammar checking with LanguageTool</h3>
+<div id="outline-container-org72af6aa" class="outline-3">
+<h3 id="org72af6aa"><span class="section-number-3">1.69.</span> Spell and grammar checking with LanguageTool</h3>
 <div class="outline-text-3" id="text-1-69">
 <p>
 <a href="https://languagetool.org">LanguageTool</a> provides a <a href="https://www.java.com">Java</a> based spell and grammar checking tool. The <a href="https://github.com/mhayashi1120/Emacs-langtool">langtool.el</a> package gives access to that
@@ -8559,8 +8558,8 @@ tool.
 </table>
 </div>
 </div>
-<div id="outline-container-org55e1023" class="outline-3">
-<h3 id="org55e1023"><span class="section-number-3">1.70.</span> Google translate</h3>
+<div id="outline-container-org7deb620" class="outline-3">
+<h3 id="org7deb620"><span class="section-number-3">1.70.</span> Google translate</h3>
 <div class="outline-text-3" id="text-1-70">
 <p>
 The package <a href="https://github.com/atykhonov/google-translate">google-translate</a> allows to translate the strings using <a href="https://translate.google.com/?hl=de">Google Translate Service</a> directly from <b>Emacs</b>.
@@ -8625,8 +8624,8 @@ by calling function <code>psimacs/spell/google-tanslate/toggle-output-destinatio
 </table>
 </div>
 </div>
-<div id="outline-container-orgb0ed837" class="outline-3">
-<h3 id="orgb0ed837"><span class="section-number-3">1.71.</span> Google search</h3>
+<div id="outline-container-orga067765" class="outline-3">
+<h3 id="orga067765"><span class="section-number-3">1.71.</span> Google search</h3>
 <div class="outline-text-3" id="text-1-71">
 <p>
 The package <a href="https://github.com/Malabarba/emacs-google-this">google-this</a> provides a set of functions and keybindings for launching google searches from within <b>Emacs</b>.
@@ -8739,8 +8738,8 @@ The package <a href="https://github.com/Malabarba/emacs-google-this">google-this
 </table>
 </div>
 </div>
-<div id="outline-container-org06c80d5" class="outline-3">
-<h3 id="org06c80d5"><span class="section-number-3">1.72.</span> Counsel-search</h3>
+<div id="outline-container-orga697fc8" class="outline-3">
+<h3 id="orga697fc8"><span class="section-number-3">1.72.</span> Counsel-search</h3>
 <div class="outline-text-3" id="text-1-72">
 <p>
 The <a href="https://github.com/abo-abo/swiper">Swiper</a> package provides with counsel-search a command
@@ -8781,8 +8780,8 @@ binding:
 </table>
 </div>
 </div>
-<div id="outline-container-orgee6cf2c" class="outline-3">
-<h3 id="orgee6cf2c"><span class="section-number-3">1.73.</span> Stack Exchange</h3>
+<div id="outline-container-org5f77583" class="outline-3">
+<h3 id="org5f77583"><span class="section-number-3">1.73.</span> Stack Exchange</h3>
 <div class="outline-text-3" id="text-1-73">
 <p>
 The package <a href="https://github.com/vermiculus/sx.el">sx</a> provides a full-featured Stack Exchange mode for <b>Emacs</b>.
@@ -8909,8 +8908,8 @@ bindings and commands that comes into play when you actively participate in the 
 </table>
 </div>
 </div>
-<div id="outline-container-org7f50228" class="outline-3">
-<h3 id="org7f50228"><span class="section-number-3">1.74.</span> Crux</h3>
+<div id="outline-container-org538886e" class="outline-3">
+<h3 id="org538886e"><span class="section-number-3">1.74.</span> Crux</h3>
 <div class="outline-text-3" id="text-1-74">
 <p>
 The package <a href="https://github.com/bbatsov/crux">crux</a> is a collection of useful extensions for <b>Emacs</b>.
@@ -9133,8 +9132,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org6c18f40" class="outline-3">
-<h3 id="org6c18f40"><span class="section-number-3">1.75.</span> Edit multiple regions</h3>
+<div id="outline-container-org8abb730" class="outline-3">
+<h3 id="org8abb730"><span class="section-number-3">1.75.</span> Edit multiple regions</h3>
 <div class="outline-text-3" id="text-1-75">
 <p>
 The package <a href="https://github.com/victorhge/iedit">iedit</a> provides two <b>Emacs</b> minor modes
@@ -9149,7 +9148,7 @@ See also:
 <ul class="org-ul">
 <li><a href="https://github.com/victorhge/iedit">Iedit - Edit multiple regions in the same way simultaneously</a></li>
 <li><a href="https://www.emacswiki.org/emacs/DuplicateStartOfLineOrRegion">WikiEmacs: Duplicate Start Of Line Or Region</a></li>
-<li><a href="#orgc780416">1.63</a></li>
+<li><a href="#org656a6ee">1.63</a></li>
 </ul>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
@@ -9179,8 +9178,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org49d8fc7" class="outline-3">
-<h3 id="org49d8fc7"><span class="section-number-3">1.76.</span> Easy duplicate</h3>
+<div id="outline-container-org5c3c448" class="outline-3">
+<h3 id="org5c3c448"><span class="section-number-3">1.76.</span> Easy duplicate</h3>
 <div class="outline-text-3" id="text-1-76">
 <p>
 The package <a href="https://github.com/ongaeshi/duplicate-thing">duplicate-thing</a> provides functionality
@@ -9222,8 +9221,8 @@ Duplicate line or region N times.
 </table>
 </div>
 </div>
-<div id="outline-container-org03d786d" class="outline-3">
-<h3 id="org03d786d"><span class="section-number-3">1.77.</span> Help on Psimacs</h3>
+<div id="outline-container-org845a65b" class="outline-3">
+<h3 id="org845a65b"><span class="section-number-3">1.77.</span> Help on Psimacs</h3>
 <div class="outline-text-3" id="text-1-77">
 <p>
 Provide access to the HTML documentation of <b>Psimacs</b>.
@@ -9275,8 +9274,8 @@ Provide access to the HTML documentation of <b>Psimacs</b>.
 </table>
 </div>
 </div>
-<div id="outline-container-orgd4fdb63" class="outline-3">
-<h3 id="orgd4fdb63"><span class="section-number-3">1.78.</span> Helm</h3>
+<div id="outline-container-org188efe2" class="outline-3">
+<h3 id="org188efe2"><span class="section-number-3">1.78.</span> Helm</h3>
 <div class="outline-text-3" id="text-1-78">
 <p>
 <b>Psimacs</b> uses the <a href="https://github.com/emacs-helm/helm">Helm</a> as well as the <a href="https://oremacs.com/swiper/">Ivy</a> / <a href="https://oremacs.com/swiper/">Counsel</a> framework. It is more focused towards the <a href="https://oremacs.com/swiper/">Ivy</a> / <a href="https://oremacs.com/swiper/">Counsel</a>
@@ -9592,8 +9591,8 @@ Key bindings that related to <a href="https://github.com/emacs-helm/helm">Helm</
 </table>
 </div>
 </div>
-<div id="outline-container-org100db14" class="outline-3">
-<h3 id="org100db14"><span class="section-number-3">1.79.</span> Discoverability</h3>
+<div id="outline-container-org0a81a3e" class="outline-3">
+<h3 id="org0a81a3e"><span class="section-number-3">1.79.</span> Discoverability</h3>
 <div class="outline-text-3" id="text-1-79">
 <p>
 <b>Emacs</b> is quite a complicated beast that is not easy to get acquainted with. Fortunately, few packages are available
@@ -9638,8 +9637,8 @@ major and minor modes.
 </table>
 </div>
 </div>
-<div id="outline-container-org3842bf9" class="outline-3">
-<h3 id="org3842bf9"><span class="section-number-3">1.80.</span> Helm-Descbinds</h3>
+<div id="outline-container-orgbdce3fa" class="outline-3">
+<h3 id="orgbdce3fa"><span class="section-number-3">1.80.</span> Helm-Descbinds</h3>
 <div class="outline-text-3" id="text-1-80">
 <p>
 <b>The package <a href="https://github.com/emacs-helm/helm-descbinds">helm-descbinds</a> provides an interface to *Emacs's</b> <code>describe-bindings</code> making the currently active key
@@ -9673,8 +9672,8 @@ bindings interactively searchable with helm.
 </table>
 </div>
 </div>
-<div id="outline-container-orgee5cf7c" class="outline-3">
-<h3 id="orgee5cf7c"><span class="section-number-3">1.81.</span> Helm-Describe-Modes</h3>
+<div id="outline-container-org5618f88" class="outline-3">
+<h3 id="org5618f88"><span class="section-number-3">1.81.</span> Helm-Describe-Modes</h3>
 <div class="outline-text-3" id="text-1-81">
 <p>
 The package <a href="https://github.com/emacs-helm/helm-describe-modes">helm-describe-modes</a> provides a Helm interface to <b>Emacs's</b> <code>describe-mode</code>. It lists the major mode,
@@ -9708,8 +9707,8 @@ active minor modes, and inactive minor modes using Helm, and provides actions fo
 </table>
 </div>
 </div>
-<div id="outline-container-org0de1dac" class="outline-3">
-<h3 id="org0de1dac"><span class="section-number-3">1.82.</span> Which Key</h3>
+<div id="outline-container-org9324a4c" class="outline-3">
+<h3 id="org9324a4c"><span class="section-number-3">1.82.</span> Which Key</h3>
 <div class="outline-text-3" id="text-1-82">
 <p>
 <a href="https://github.com/justbur/emacs-which-key">Which-key</a> is a minor mode for <b>Emacs</b> that
@@ -9750,8 +9749,8 @@ in a popup. IMHO, this package is one of the most useful packages for <b>Emacs</
 </table>
 </div>
 </div>
-<div id="outline-container-org25c293b" class="outline-3">
-<h3 id="org25c293b"><span class="section-number-3">1.83.</span> Swiper / Ivy / Counsel</h3>
+<div id="outline-container-org578c0be" class="outline-3">
+<h3 id="org578c0be"><span class="section-number-3">1.83.</span> Swiper / Ivy / Counsel</h3>
 <div class="outline-text-3" id="text-1-83">
 <p>
 <a href="https://github.com/abo-abo/swiper">Swiper</a> gives us a really efficient incremental search
@@ -9849,8 +9848,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgacd68c7" class="outline-3">
-<h3 id="orgacd68c7"><span class="section-number-3">1.84.</span> Ivy</h3>
+<div id="outline-container-orgc9a6ebc" class="outline-3">
+<h3 id="orgc9a6ebc"><span class="section-number-3">1.84.</span> Ivy</h3>
 <div class="outline-text-3" id="text-1-84">
 <p>
 <a href="https://github.com/abo-abo/swiper">Ivy</a> is for quick and easy selection from a list. When <b>Emacs</b> prompts for a string
@@ -9937,8 +9936,8 @@ The package <a href="https://github.com/abo-abo/swiper/blob/master/ivy-hydra.el"
 </table>
 </div>
 </div>
-<div id="outline-container-org4cd562a" class="outline-3">
-<h3 id="org4cd562a"><span class="section-number-3">1.85.</span> Counsel</h3>
+<div id="outline-container-orga80f221" class="outline-3">
+<h3 id="orga80f221"><span class="section-number-3">1.85.</span> Counsel</h3>
 <div class="outline-text-3" id="text-1-85">
 <p>
 To keep concerns separated, Ivy doesn't have a lot of other functionality. That's where  <a href="https://github.com/abo-abo/swiper">Counsel</a> comes in.
@@ -10104,8 +10103,8 @@ the best use of <a href="https://github.com/abo-abo/swiper">ivy</a>.
 </table>
 </div>
 </div>
-<div id="outline-container-org2be9992" class="outline-3">
-<h3 id="org2be9992"><span class="section-number-3">1.86.</span> Amx</h3>
+<div id="outline-container-org57c42dd" class="outline-3">
+<h3 id="org57c42dd"><span class="section-number-3">1.86.</span> Amx</h3>
 <div class="outline-text-3" id="text-1-86">
 <p>
 It provides several enhancements over the ordinary <code>execute-extended-command</code>, such as prioritizing
@@ -10151,8 +10150,8 @@ your most-used commands in the completion list and showing keyboard shortcuts.
 </table>
 </div>
 </div>
-<div id="outline-container-orgb1dcd46" class="outline-3">
-<h3 id="orgb1dcd46"><span class="section-number-3">1.87.</span> Frog jumping</h3>
+<div id="outline-container-orgb5ea5f7" class="outline-3">
+<h3 id="orgb5ea5f7"><span class="section-number-3">1.87.</span> Frog jumping</h3>
 <div class="outline-text-3" id="text-1-87">
 <p>
 The package <a href="https://github.com/waymondo/frog-jump-buffer">frog-jump-buffer</a> is the spiritual successor to
@@ -10193,8 +10192,8 @@ ace-jump-buffer and is powered by avy via frog-menu. Just like <code>ace-jump-bu
 </table>
 </div>
 </div>
-<div id="outline-container-org63b25cd" class="outline-3">
-<h3 id="org63b25cd"><span class="section-number-3">1.88.</span> Company</h3>
+<div id="outline-container-org812f054" class="outline-3">
+<h3 id="org812f054"><span class="section-number-3">1.88.</span> Company</h3>
 <div class="outline-text-3" id="text-1-88">
 <p>
 <a href="http://company-mode.github.io/">Company</a> is a text completion framework for <b>Emacs</b>.
@@ -10263,8 +10262,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org78fbc41" class="outline-3">
-<h3 id="org78fbc41"><span class="section-number-3">1.89.</span> Company-try-hard</h3>
+<div id="outline-container-orgcf883a2" class="outline-3">
+<h3 id="orgcf883a2"><span class="section-number-3">1.89.</span> Company-try-hard</h3>
 <div class="outline-text-3" id="text-1-89">
 <p>
 <a href="https://github.com/Wilfred/company-try-hard">company-try-hard</a> is a package that enhances the <a href="http://company-mode.github.io/">company-mode</a>. It provides a <code>company-complete</code> alternative
@@ -10299,8 +10298,8 @@ the command again to try the next backend.
 </table>
 </div>
 </div>
-<div id="outline-container-org0ee06eb" class="outline-3">
-<h3 id="org0ee06eb"><span class="section-number-3">1.90.</span> Snippets</h3>
+<div id="outline-container-orga0db2fe" class="outline-3">
+<h3 id="orga0db2fe"><span class="section-number-3">1.90.</span> Snippets</h3>
 <div class="outline-text-3" id="text-1-90">
 <p>
 The package <a href="https://github.com/joaotavora/yasnippet">Yasnippet</a> provides a template
@@ -10394,8 +10393,8 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-orgfaf6450" class="outline-3">
-<h3 id="orgfaf6450"><span class="section-number-3">1.91.</span> Auto-YASnippet</h3>
+<div id="outline-container-org89fb690" class="outline-3">
+<h3 id="org89fb690"><span class="section-number-3">1.91.</span> Auto-YASnippet</h3>
 <div class="outline-text-3" id="text-1-91">
 <p>
 <a href="https://github.com/abo-abo/auto-yasnippet">Auto-YASnippet</a> is a hybrid of keyboard macros and YASnippet.
@@ -10478,8 +10477,8 @@ current buffer the workflow is very fast.
 </table>
 </div>
 </div>
-<div id="outline-container-orgea63f40" class="outline-3">
-<h3 id="orgea63f40"><span class="section-number-3">1.92.</span> Treemacs</h3>
+<div id="outline-container-org887fdf6" class="outline-3">
+<h3 id="org887fdf6"><span class="section-number-3">1.92.</span> Treemacs</h3>
 <div class="outline-text-3" id="text-1-92">
 <p>
 <a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> is a tree layout file explorer for <b>Emacs</b>.
@@ -10609,8 +10608,8 @@ current buffer the workflow is very fast.
 </table>
 </div>
 </div>
-<div id="outline-container-orgcb09618" class="outline-3">
-<h3 id="orgcb09618"><span class="section-number-3">1.93.</span> Neotree</h3>
+<div id="outline-container-org48c3289" class="outline-3">
+<h3 id="org48c3289"><span class="section-number-3">1.93.</span> Neotree</h3>
 <div class="outline-text-3" id="text-1-93">
 <p>
 Package <a href="https://github.com/jaypei/emacs-neotree">Neotree</a> provides a file tree browser for <b>Emacs</b>.
@@ -10744,8 +10743,8 @@ Global bindings:
 </table>
 </div>
 </div>
-<div id="outline-container-orgc0a3236" class="outline-3">
-<h3 id="orgc0a3236"><span class="section-number-3">1.94.</span> gptel : A simple LLM client for Emacs</h3>
+<div id="outline-container-org8d8f63b" class="outline-3">
+<h3 id="org8d8f63b"><span class="section-number-3">1.94.</span> gptel : A simple LLM client for Emacs</h3>
 <div class="outline-text-3" id="text-1-94">
 <p>
 <a href="https://github.com/karthink/gptel">gptel</a> is a simple LLM client for Emacs.
@@ -10835,9 +10834,133 @@ The basic commands:
 </table>
 </div>
 </div>
-<div id="outline-container-org0fc4d90" class="outline-3">
-<h3 id="org0fc4d90"><span class="section-number-3">1.95.</span> Projectile</h3>
+<div id="outline-container-org1c96e2c" class="outline-3">
+<h3 id="org1c96e2c"><span class="section-number-3">1.95.</span> Whisper</h3>
 <div class="outline-text-3" id="text-1-95">
+<p>
+<a href="https://github.com/openai/whisper">Whisper</a> is a general-purpose speech recognition model. It is trained on a large dataset of diverse
+audio and is also a multitasking model that can perform multilingual speech recognition, speech
+translation, and language identification.  <a href="https://github.com/ggml-org/whisper.cpp">Whisper.cpp</a> is a plain C++ implementation of the original
+whisper model. <b>Psimacs</b> builds on top of <a href="https://github.com/natrys/whisper.el">whisper.el</a> which integrates <a href="https://github.com/ggml-org/whisper.cpp">whisper.cpp</a> into <i>Emacs</i>.
+</p>
+
+<p>
+TODO: Missing proper Linux support!
+</p>
+
+<p>
+References:
+</p>
+<ul class="org-ul">
+<li><a href="https://github.com/openai/whisper">OpenAI Whisper Home Page</a></li>
+<li><a href="https://github.com/ggml-org/whisper.cpp">Whisper.cpp</a> a plain C/C++ implementation without dependencies.</li>
+<li><a href="https://github.com/natrys/whisper.el">Whisper.el</a> integration of <a href="https://github.com/ggml-org/whisper.cpp">whisper.cpp</a> into <i>Emacs</i>.</li>
+<li><a href="https://huggingface.co/ggerganov/whisper.cpp">OpenAI's Whisper models converted to ggml</a> format for use with <a href="https://github.com/ggml-org/whisper.cpp">Whisper.cpp</a>.</li>
+<li><a href="https://github.com/emacselements/whisper">Whisper</a> is another integration of <a href="https://github.com/ggml-org/whisper.cpp">whisper.cpp</a> into <i>Emacs</i>. <b>Psimacs</b>, however, builds on <a href="https://github.com/natrys/whisper.el">Whisper.el</a>.</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Key binding</th>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>H-x H-w</code></td>
+<td class="org-left"><code>M-x whisper-run</code></td>
+<td class="org-left">Start/Stop audio transcription/translation with whisper.</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x whisper-file</code></td>
+<td class="org-left">Transcribe/translate local audio file using whisper.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x H-W</code></td>
+<td class="org-left"><code>M-x psimacs/whisper/replay</code></td>
+<td class="org-left">Replay the last recored speech file.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x C-w</code></td>
+<td class="org-left"><code>M-x psimacs/whisper/toggle-language</code></td>
+<td class="org-left">Toggle the whisper language between German (<code>de</code>) and English (<code>en</code>)</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x whisper-select-language</code></td>
+<td class="org-left">Prompt user to select a language and set <code>whisper-language</code>.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x W</code></td>
+<td class="org-left"><code>M-x psimacs/whisper/select-microphone</code></td>
+<td class="org-left">Select an audio input device (microphone) from a list of available devices.</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x psimacs/whisper/select-microphone-deprecated</code></td>
+<td class="org-left">Select an audio input device (microphone) from a list of predefined devices.</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x psimacs/whisper/select-model</code></td>
+<td class="org-left">Select a Whisper model.</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x psimacs/whisper/select-quantization</code></td>
+<td class="org-left">Select a Whisper quantization.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x M-w i</code></td>
+<td class="org-left"><code>M-x psimacs/whisper/toggle-insert-text-at-point</code></td>
+<td class="org-left">Toggle insert whisper text at point.</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>H-x M-w r</code></td>
+<td class="org-left"><code>M-x psimacs/whisper/toggle-return-cursor-to-start</code></td>
+<td class="org-left">Toggle point position after Whisper text insertion.</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x psimacs/whisper/toggle-op-mode</code></td>
+<td class="org-left">Toggle the operational mode between <code>local</code>, <code>server</code> and <code>openai</code></td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>M-x psimacs/whisper/toggle-translation-mode</code></td>
+<td class="org-left">Toggle the translation mode. Either translate or no translation.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org034c01e" class="outline-3">
+<h3 id="org034c01e"><span class="section-number-3">1.96.</span> Projectile</h3>
+<div class="outline-text-3" id="text-1-96">
 <p>
 Project management is important in order to be able to  work with projects that consist of many files and that
 have special project related rules.
@@ -11350,9 +11473,9 @@ Special global commands:
 </table>
 </div>
 </div>
-<div id="outline-container-orgbbe0234" class="outline-3">
-<h3 id="orgbbe0234"><span class="section-number-3">1.96.</span> projectile-envrc</h3>
-<div class="outline-text-3" id="text-1-96">
+<div id="outline-container-org155deb0" class="outline-3">
+<h3 id="org155deb0"><span class="section-number-3">1.97.</span> projectile-envrc</h3>
+<div class="outline-text-3" id="text-1-97">
 <p>
 The package <a href="https://github.com/hatlafax/projectile-envrc">projectile-envrc</a> allows setting, modifying and removing of
 process environment variables from a simple '.projectile-envrc' description file that resides in the projectile project
@@ -11406,7 +11529,7 @@ considered. Everything else is ignored.
 Example '.projectile-envrc' file:
 </p>
 
-<pre class="example" id="orgd46281d">
+<pre class="example" id="orgd310a73">
     #
     # Hi there this is ignored
     #
@@ -11423,9 +11546,9 @@ Example '.projectile-envrc' file:
 </pre>
 </div>
 </div>
-<div id="outline-container-org3eb432c" class="outline-3">
-<h3 id="org3eb432c"><span class="section-number-3">1.97.</span> projectile-cmake</h3>
-<div class="outline-text-3" id="text-1-97">
+<div id="outline-container-orgeaf9c51" class="outline-3">
+<h3 id="orgeaf9c51"><span class="section-number-3">1.98.</span> projectile-cmake</h3>
+<div class="outline-text-3" id="text-1-98">
 <p>
 The package <a href="https://github.com/hatlafax/projectile-cmake">projectile-cmake</a> gives fine grained support of <a href="https://cmake.org/">CMake</a> with Emacs projectile.
 </p>
@@ -11549,9 +11672,9 @@ The package <a href="https://github.com/hatlafax/projectile-cmake">projectile-cm
 </table>
 </div>
 </div>
-<div id="outline-container-orged8303e" class="outline-3">
-<h3 id="orged8303e"><span class="section-number-3">1.98.</span> Treemacs-projectile</h3>
-<div class="outline-text-3" id="text-1-98">
+<div id="outline-container-orgdee1775" class="outline-3">
+<h3 id="orgdee1775"><span class="section-number-3">1.99.</span> Treemacs-projectile</h3>
+<div class="outline-text-3" id="text-1-99">
 <p>
 The package <a href="https://github.com/Alexander-Miller/treemacs/blob/master/src/extra/treemacs-projectile.el">treemacs-projectile</a> is a small package that contains some utility functions that simplify adding your
 <a href="https://github.com/bbatsov/projectile">projectile</a> projects to <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a>.
@@ -11584,9 +11707,9 @@ The package <a href="https://github.com/Alexander-Miller/treemacs/blob/master/sr
 </table>
 </div>
 </div>
-<div id="outline-container-org7765916" class="outline-3">
-<h3 id="org7765916"><span class="section-number-3">1.99.</span> Dashboard</h3>
-<div class="outline-text-3" id="text-1-99">
+<div id="outline-container-org6c2d236" class="outline-3">
+<h3 id="org6c2d236"><span class="section-number-3">1.100.</span> Dashboard</h3>
+<div class="outline-text-3" id="text-1-100">
 <p>
 The <a href="https://github.com/emacs-dashboard/emacs-dashboard">dashboard</a> is an extensible <b>Emacs</b> startup screen showing you what's most important.
 </p>
@@ -11860,9 +11983,9 @@ Dashboard hyda bindings:
 </table>
 </div>
 </div>
-<div id="outline-container-org24f9a31" class="outline-3">
-<h3 id="org24f9a31"><span class="section-number-3">1.100.</span> Page-break lines</h3>
-<div class="outline-text-3" id="text-1-100">
+<div id="outline-container-org28504c4" class="outline-3">
+<h3 id="org28504c4"><span class="section-number-3">1.101.</span> Page-break lines</h3>
+<div class="outline-text-3" id="text-1-101">
 <p>
 The <a href="https://github.com/purcell/page-break-lines">page-break-lines</a> package provides a global mode which displays ugly form feed characters
 as tidy horizontal rules.
@@ -11901,9 +12024,9 @@ as tidy horizontal rules.
 </table>
 </div>
 </div>
-<div id="outline-container-org6d34137" class="outline-3">
-<h3 id="org6d34137"><span class="section-number-3">1.101.</span> Magit</h3>
-<div class="outline-text-3" id="text-1-101">
+<div id="outline-container-org550ae4a" class="outline-3">
+<h3 id="org550ae4a"><span class="section-number-3">1.102.</span> Magit</h3>
+<div class="outline-text-3" id="text-1-102">
 <p>
 <a href="https://magit.vc/">Magit</a> is an interface to the version control system  <a href="https://git-scm.com/">Git</a> , implemented
 as an <b>Emacs</b> package.
@@ -11967,9 +12090,9 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org3efb7dc" class="outline-3">
-<h3 id="org3efb7dc"><span class="section-number-3">1.102.</span> Else Mode</h3>
-<div class="outline-text-3" id="text-1-102">
+<div id="outline-container-org87eaa6f" class="outline-3">
+<h3 id="org87eaa6f"><span class="section-number-3">1.103.</span> Else Mode</h3>
+<div class="outline-text-3" id="text-1-103">
 <p>
 Peter Milliken has created a minor mode for <b>Emacs</b> called the <a href="https://github.com/peter-milliken/ELSE">Emacs Language Sensitive Editor (ELSE)</a>.
 </p>
@@ -12173,9 +12296,9 @@ See also:
 </table>
 </div>
 </div>
-<div id="outline-container-org1ab4862" class="outline-3">
-<h3 id="org1ab4862"><span class="section-number-3">1.103.</span> ELSE Grammar Compiler</h3>
-<div class="outline-text-3" id="text-1-103">
+<div id="outline-container-org4ee49b6" class="outline-3">
+<h3 id="org4ee49b6"><span class="section-number-3">1.104.</span> ELSE Grammar Compiler</h3>
+<div class="outline-text-3" id="text-1-104">
 <p>
 ELSE, the Emacs Language Sensitive Editor, is a system for template generation
 aimed at reducing the amount of user typing and to operate seamlessly with a minimum of
@@ -12243,9 +12366,9 @@ in order to provide extra meta information for the ELSE framework.
 </table>
 </div>
 </div>
-<div id="outline-container-orgd8e15dd" class="outline-3">
-<h3 id="orgd8e15dd"><span class="section-number-3">1.104.</span> String Inflection</h3>
-<div class="outline-text-3" id="text-1-104">
+<div id="outline-container-orgc2b3686" class="outline-3">
+<h3 id="orgc2b3686"><span class="section-number-3">1.105.</span> String Inflection</h3>
+<div class="outline-text-3" id="text-1-105">
 <p>
 <a href="https://github.com/akicho8/string-inflection">String-inflection</a> is a nifty package to cycle through string case styles:
 <i>camel</i>, <i>snake</i>, <i>kebab</i>&#x2026; The package includes a handful of cycling functions for
@@ -12279,9 +12402,9 @@ different languages (Ruby, Python and Java), but it's easy to mix and match to r
 </table>
 </div>
 </div>
-<div id="outline-container-org7fe4a36" class="outline-3">
-<h3 id="org7fe4a36"><span class="section-number-3">1.105.</span> Language Server Protcol LSP</h3>
-<div class="outline-text-3" id="text-1-105">
+<div id="outline-container-org5192c5f" class="outline-3">
+<h3 id="org5192c5f"><span class="section-number-3">1.106.</span> Language Server Protcol LSP</h3>
+<div class="outline-text-3" id="text-1-106">
 <p>
 The <a href="https://github.com/Microsoft/language-server-protocol/">Language Server Protocol (v3.14)</a> describes an client/server protocol for programming langugage servers and clients.
 </p>
@@ -12304,9 +12427,9 @@ Remarks:
 </ul>
 </div>
 </div>
-<div id="outline-container-orgf6e44f8" class="outline-3">
-<h3 id="orgf6e44f8"><span class="section-number-3">1.106.</span> Dap-Mode</h3>
-<div class="outline-text-3" id="text-1-106">
+<div id="outline-container-org91c5370" class="outline-3">
+<h3 id="org91c5370"><span class="section-number-3">1.107.</span> Dap-Mode</h3>
+<div class="outline-text-3" id="text-1-107">
 <p>
 The package <a href="https://emacs-lsp.github.io/dap-mode/">dap-mode</a> provides an <b>Emacs</b> client library that allow the communication to a Debug server that supports
 the <a href="https://microsoft.github.io/debug-adapter-protocol/">Debug Adapter Protocol</a>, which is a wire protocol between the client and the Debug server.  It's similar to the
@@ -12669,9 +12792,9 @@ the following examples.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org1620594" class="outline-3">
-<h3 id="org1620594"><span class="section-number-3">1.107.</span> LSP-Mode</h3>
-<div class="outline-text-3" id="text-1-107">
+<div id="outline-container-org73735e8" class="outline-3">
+<h3 id="org73735e8"><span class="section-number-3">1.108.</span> LSP-Mode</h3>
+<div class="outline-text-3" id="text-1-108">
 <p>
 <a href="https://emacs-lsp.github.io/lsp-mode/">Lsp-mode</a> is a client for <a href="https://github.com/Microsoft/language-server-protocol/">Language Server Protocol (v3.14)</a>. <a href="https://emacs-lsp.github.io/lsp-mode/">Lsp-mode</a> aims to provide IDE-like experience by providing
 optional integration with the most popular Emacs packages like <a href="https://company-mode.github.io/">company</a>, <a href="https://www.flycheck.org">Flycheck</a> and <a href="https://github.com/bbatsov/projectile">projectile</a>.
@@ -12969,9 +13092,9 @@ Following a survey of the <a href="https://emacs-lsp.github.io/lsp-mode/">lsp-mo
 </table>
 </div>
 </div>
-<div id="outline-container-org85f5fe0" class="outline-3">
-<h3 id="org85f5fe0"><span class="section-number-3">1.108.</span> Lisp</h3>
-<div class="outline-text-3" id="text-1-108">
+<div id="outline-container-org555454a" class="outline-3">
+<h3 id="org555454a"><span class="section-number-3">1.109.</span> Lisp</h3>
+<div class="outline-text-3" id="text-1-109">
 <p>
 The package <a href="https://www.emacswiki.org/emacs/elisp-format.el">elisp-format</a> format elisp code.
 </p>
@@ -13049,9 +13172,9 @@ It provides the following commands:
 </table>
 </div>
 </div>
-<div id="outline-container-orgd4a3910" class="outline-3">
-<h3 id="orgd4a3910"><span class="section-number-3">1.109.</span> Python</h3>
-<div class="outline-text-3" id="text-1-109">
+<div id="outline-container-org9616a7b" class="outline-3">
+<h3 id="org9616a7b"><span class="section-number-3">1.110.</span> Python</h3>
+<div class="outline-text-3" id="text-1-110">
 <p>
 See also:
 </p>
@@ -13125,9 +13248,9 @@ References:
 </ul>
 </div>
 </div>
-<div id="outline-container-orged58da0" class="outline-3">
-<h3 id="orged58da0"><span class="section-number-3">1.110.</span> CMake</h3>
-<div class="outline-text-3" id="text-1-110">
+<div id="outline-container-org713c3ab" class="outline-3">
+<h3 id="org713c3ab"><span class="section-number-3">1.111.</span> CMake</h3>
+<div class="outline-text-3" id="text-1-111">
 <p>
 <a href="https://cmake.org/">CMake</a> is an open-source, cross-platform family of tools designed to build, test and package software.
 </p>
@@ -13138,9 +13261,9 @@ highlighting and indentation for <code>CMakeLists.txt</code> and <code>*.cmake</
 </p>
 </div>
 </div>
-<div id="outline-container-org04a223f" class="outline-3">
-<h3 id="org04a223f"><span class="section-number-3">1.111.</span> Deft</h3>
-<div class="outline-text-3" id="text-1-111">
+<div id="outline-container-org1f428fa" class="outline-3">
+<h3 id="org1f428fa"><span class="section-number-3">1.112.</span> Deft</h3>
+<div class="outline-text-3" id="text-1-112">
 <p>
 <a href="https://github.com/jrblevin/deft">Deft</a> is an Emacs mode for quickly browsing, filtering, and editing directories
 of plain text notes, inspired by Notational Velocity. It was designed for
@@ -13258,9 +13381,9 @@ usual tasks such as creating new files and saving files.
 </table>
 </div>
 </div>
-<div id="outline-container-orgaba1f23" class="outline-3">
-<h3 id="orgaba1f23"><span class="section-number-3">1.112.</span> BibTeX</h3>
-<div class="outline-text-3" id="text-1-112">
+<div id="outline-container-org407c039" class="outline-3">
+<h3 id="org407c039"><span class="section-number-3">1.113.</span> BibTeX</h3>
+<div class="outline-text-3" id="text-1-113">
 <p>
 Manage references and bibliographies with Emacs BibTeX mode.
 </p>
@@ -13293,9 +13416,9 @@ See also: <a href="https://lucidmanager.org/productivity/emacs-bibtex-mode/">Man
 </p>
 </div>
 </div>
-<div id="outline-container-orgc2df0c9" class="outline-3">
-<h3 id="orgc2df0c9"><span class="section-number-3">1.113.</span> Ivy-BibTeX</h3>
-<div class="outline-text-3" id="text-1-113">
+<div id="outline-container-org1808f9c" class="outline-3">
+<h3 id="org1808f9c"><span class="section-number-3">1.114.</span> Ivy-BibTeX</h3>
+<div class="outline-text-3" id="text-1-114">
 <p>
 <a href="https://github.com/tmalsburg/helm-bibtex">Ivy-bibtex</a> allows you to search and manage your BibTeX bibliography.
 The main selling points are efficient search in large bibliographies using powerful search expressions
@@ -13329,9 +13452,9 @@ and tight integration into your Emacs workflows.
 </table>
 </div>
 </div>
-<div id="outline-container-orge755eff" class="outline-3">
-<h3 id="orge755eff"><span class="section-number-3">1.114.</span> LaTeX</h3>
-<div class="outline-text-3" id="text-1-114">
+<div id="outline-container-org734cf07" class="outline-3">
+<h3 id="org734cf07"><span class="section-number-3">1.115.</span> LaTeX</h3>
+<div class="outline-text-3" id="text-1-115">
 <p>
 Support for writing text with <a href="https://www.latex-project.org/">LaTeX.</a> <b>Psimacs</b> uses the <a href="https://www.gnu.org/software/auctex/">AUCTeX</a> package for assisting the <a href="https://www.latex-project.org/">LaTeX</a> text editing.
 On default, <b>Psimacs</b> generates <a href="https://en.wikipedia.org/wiki/PDF">PDF-files</a> and configures the free <a href="https://www.sumatrapdfreader.org/free-pdf-reader.html">SumatraPDF</a> application for viewing these
@@ -13402,7 +13525,7 @@ I used to have some problems with the MikTeX installation. I got error messages 
 The follwing two commands worked for me running in a Windows console:
 </p>
 
-<pre class="example" id="orga5c51f4">
+<pre class="example" id="orgf0e5e4e">
   cd c:\Utils\MiKTeX\miktex\bin\x64
   updmap.exe
   initexmf --mkmaps
@@ -13418,9 +13541,9 @@ Reference:
 </ul>
 </div>
 </div>
-<div id="outline-container-orge560333" class="outline-3">
-<h3 id="orge560333"><span class="section-number-3">1.115.</span> Key bindings used for org mode.</h3>
-<div class="outline-text-3" id="text-1-115">
+<div id="outline-container-org6095ec6" class="outline-3">
+<h3 id="org6095ec6"><span class="section-number-3">1.116.</span> Key bindings used for org mode.</h3>
+<div class="outline-text-3" id="text-1-116">
 <p>
 In this section the key bindings for the <b>Psimacs</b> <a href="https://code.orgmode.org/bzg/org-mode">org-mode</a> configuration are defined.
 </p>
@@ -13519,9 +13642,9 @@ In this section the key bindings for the <b>Psimacs</b> <a href="https://code.or
 </table>
 </div>
 </div>
-<div id="outline-container-org16a059d" class="outline-3">
-<h3 id="org16a059d"><span class="section-number-3">1.116.</span> Insert links from the clipboard</h3>
-<div class="outline-text-3" id="text-1-116">
+<div id="outline-container-orge6c286d" class="outline-3">
+<h3 id="orge6c286d"><span class="section-number-3">1.117.</span> Insert links from the clipboard</h3>
+<div class="outline-text-3" id="text-1-117">
 <p>
 The <a href="https://github.com/rexim/org-cliplink">org-cliplink</a> package inserts <a href="https://orgmode.org">org-mode</a> links from the clipboard.
 </p>
@@ -13562,9 +13685,9 @@ See also: <a href="https://github.com/rexim/org-cliplink">org-cliplink</a>
 </table>
 </div>
 </div>
-<div id="outline-container-org472bc1a" class="outline-3">
-<h3 id="org472bc1a"><span class="section-number-3">1.117.</span> Completions of structured templates.</h3>
-<div class="outline-text-3" id="text-1-117">
+<div id="outline-container-org954d43c" class="outline-3">
+<h3 id="org954d43c"><span class="section-number-3">1.118.</span> Completions of structured templates.</h3>
+<div class="outline-text-3" id="text-1-118">
 <p>
 <a href="https://orgmode.org/manual/Structure-Templates.html">Org tempo</a> reimplements completions of structure template before point.
 </p>
@@ -13637,9 +13760,9 @@ See also: <a href="https://github.com/rexim/org-cliplink">org-cliplink</a>
 </table>
 </div>
 </div>
-<div id="outline-container-org176f438" class="outline-3">
-<h3 id="org176f438"><span class="section-number-3">1.118.</span> Jupyter Notebook Integration</h3>
-<div class="outline-text-3" id="text-1-118">
+<div id="outline-container-org7268591" class="outline-3">
+<h3 id="org7268591"><span class="section-number-3">1.119.</span> Jupyter Notebook Integration</h3>
+<div class="outline-text-3" id="text-1-119">
 <p>
 <a href="https://github.com/nnicandro/emacs-jupyter">emacs-jupyter</a> provides <i>REPL</i> and org-mode source block frontends to Jupyter kernels.
 Kernel interactions integrated with Emacs’s built-in features.
@@ -13900,9 +14023,9 @@ The following commands are defined only if point is in an org-babel source block
 </table>
 </div>
 </div>
-<div id="outline-container-org12b55cc" class="outline-3">
-<h3 id="org12b55cc"><span class="section-number-3">1.119.</span> Org-present</h3>
-<div class="outline-text-3" id="text-1-119">
+<div id="outline-container-orgcf5fa9f" class="outline-3">
+<h3 id="orgcf5fa9f"><span class="section-number-3">1.120.</span> Org-present</h3>
+<div class="outline-text-3" id="text-1-120">
 <p>
 <a href="https://github.com/rlister/org-present">Org-present</a> is an extremely minimalist presentation
 tool for Emacs <a href="https://orgmode.org/">org-mode</a>.
@@ -14001,9 +14124,9 @@ Keybindings:
 </table>
 </div>
 </div>
-<div id="outline-container-orgfae857f" class="outline-3">
-<h3 id="orgfae857f"><span class="section-number-3">1.120.</span> Org-roam</h3>
-<div class="outline-text-3" id="text-1-120">
+<div id="outline-container-orgc25cc63" class="outline-3">
+<h3 id="orgc25cc63"><span class="section-number-3">1.121.</span> Org-roam</h3>
+<div class="outline-text-3" id="text-1-121">
 <p>
 <a href="https://www.orgroam.com/">Org-roam</a> is a plain-text personal knowledge management system.
 </p>
@@ -14287,9 +14410,9 @@ Brains:
 </table>
 </div>
 </div>
-<div id="outline-container-orgc6eb7ee" class="outline-3">
-<h3 id="orgc6eb7ee"><span class="section-number-3">1.121.</span> Org-Noter</h3>
-<div class="outline-text-3" id="text-1-121">
+<div id="outline-container-org8dc8bbc" class="outline-3">
+<h3 id="org8dc8bbc"><span class="section-number-3">1.122.</span> Org-Noter</h3>
+<div class="outline-text-3" id="text-1-122">
 <p>
 The package <a href="https://github.com/org-noter/org-noter">org-noter</a> allows you to take notes in org-mode
 files that stay in sync with pdf document files. It integrates also with the org-roam package.
@@ -14803,9 +14926,9 @@ Keybinding for the <b>org note buffer</b> in <code>org-noter-mode</code>:
 </table>
 </div>
 </div>
-<div id="outline-container-org0041012" class="outline-3">
-<h3 id="org0041012"><span class="section-number-3">1.122.</span> Additional key bindings for <b>Psimacs</b>:</h3>
-<div class="outline-text-3" id="text-1-122">
+<div id="outline-container-org84c2e3c" class="outline-3">
+<h3 id="org84c2e3c"><span class="section-number-3">1.123.</span> Additional key bindings for <b>Psimacs</b>:</h3>
+<div class="outline-text-3" id="text-1-123">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -14957,7 +15080,7 @@ Keybinding for the <b>org note buffer</b> in <code>org-noter-mode</code>:
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Johannes Brunen</p>
-<p class="date">Created: 2026-01-30 Fri 15:04</p>
+<p class="date">Created: 2026-02-16 Mon 10:48</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
