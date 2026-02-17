@@ -20389,7 +20389,7 @@ Setup of the [[https://orgmode.org/manual/Agenda-Views.html][org agenda views]].
           )
 
         (defvar psimacs/config/org-agenda--todo-keyword-regex
-          (reduce (lambda (cur acc)
+          (cl-reduce (lambda (cur acc)
                     (concat acc "\\|" cur))
                   (mapcar (lambda (entry) (concat "\\* " entry))
                           '("TODO" "WORK" "WAIT" "HOLD" "PR" "MERGING" "MERGED" "DONE" "STOP" "REPORT" "BUG" "FEEDBACK" "WAITING" "VERIFY" "KNOWNCAUSE" "FIXED" "CANCELED" "DELEGATED")))
@@ -20412,7 +20412,7 @@ Setup of the [[https://orgmode.org/manual/Agenda-Views.html][org agenda views]].
                  (s3 (format "%d-%02d" y3 m3))
                  (s4 (format "%d-%02d" y4 m4))
                 )
-            (reduce (lambda (cur acc)
+            (cl-reduce (lambda (cur acc)
                     (concat acc "\\|" cur))
                   `(,s4 ,s3 ,s2 ,s1 ,s0))))
 
@@ -20422,7 +20422,7 @@ Setup of the [[https://orgmode.org/manual/Agenda-Views.html][org agenda views]].
 
         Uses grep to discover all files containing anything stored in
         org-agenda--todo-keyword-regex."
-          (remove-if #'file-directory-p
+          (cl-remove-if #'file-directory-p
            (split-string
             (shell-command-to-string
              (concat "grep --include=\"*.org\" -rl -e '" regex "' " psimacs/config/roam-notes-dir))
