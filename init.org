@@ -26258,6 +26258,121 @@ _q_: quit_
 )
 #+end_src
 
+* Casual Suite
+
+The package [[https://github.com/kickingvegas/casual-suite][casual-suite]] is an umbrella package to
+support a single installation point for all Casual user interfaces for Emacs.
+
+Refereces:
+- [[https://github.com/kickingvegas/casual][Casual]] is a project to re-imagine the primary user interface for
+  Emacs using keyboard-driven menus.
+
+
+Global menu commands:
+  #+attr_html: :class styledtable1
+| Key binding | Command                            | Description                             |
+|-------------+------------------------------------+-----------------------------------------|
+| =H-o a=       | =M-x casual-avy-tmenu=               | Casual Avy Transient menu.              |
+| =H-o o=       | =M-x casual-editkit-main-tmenu=      | Reference main menu for Casual EditKit. |
+| =H-o H-o=     | =M-x casual-editkit-main-tmenu=      | Reference main menu for Casual EditKit. |
+| =H-o w=       | =M-x casual-editkit-windows-tmenu=   | Menu for /Window/ commands.               |
+| =H-o r=       | =M-x casual-editkit-rectangle-tmenu= | Menu for /Rectangle/ commands.            |
+| =H-o g=       | =M-x casual-editkit-registers-tmenu= | Menu for /Registers/ commands.            |
+| =H-o p=       | =M-x casual-editkit-project-tmenu=   | Menu for /Project/ commands.              |
+|-------------+------------------------------------+-----------------------------------------|
+
+Mode mapped  menu commands:
+  #+attr_html: :class styledtable1
+| Mode                | Key binding | Global  | Command                                   | Description                                                            |
+|---------------------+-------------+---------+-------------------------------------------+------------------------------------------------------------------------|
+| =calc-mode=           | =H-o H-o=     |         | =M-x casual-calc-tmenu=                     | Casual Calc main menu.                                                 |
+| =calc-alg=            | =H-o H-o=     |         | =M-x casual-calc-tmenu=                     | Casual Calc main menu.                                                 |
+| =dired-mode=          | =H-o H-o=     |         | =M-x casual-dired-tmenu=                    | Casual Dired main menu.                                                |
+|                     | =s=           |         | =M-x casual-dired-sort-by-tmenu=            | Transient menu to sort Dired buffer by different criteria.             |
+|                     | =/=           |         | =M-x casual-dired-search-replace-tmenu=     | Transient Dired search and replace menu.                               |
+| =isearch-mode=        | =H-o H-o=     |         | =M-x casual-isearch-tmenu=                  | Transient menu for I-Search.                                           |
+| =ibuffer-mode=        | =H-o H-o=     |         | =M-x casual-ibuffer-tmenu=                  | Transient menu for I-Buffer.                                           |
+|                     | =F=           |         | =M-x casual-ibuffer-filter-tmenu=           | Casual IBuffer filter menu.                                            |
+|                     | =s=           |         | =M-x casual-ibuffer-sortby-tmenu=           | Casual IBuffer sortby menu.                                            |
+|                     | ={=           |         | =M-x ibuffer-backwards-next-marked=         | Move backwards by COUNT marked buffers (default 1).                    |
+|                     | =}=           |         | =M-x ibuffer-forward-next-marked=           | Move forward by COUNT marked buffers (default 1).                      |
+|                     | =[=           |         | =M-x ibuffer-backward-filter-group=         | Move point backwards by COUNT filtering groups.                        |
+|                     | =]=           |         | =M-x ibuffer-forward-filter-group=          | Move point forwards by COUNT filtering groups.                         |
+|                     | =$=           |         | =M-x ibuffer-toggle-filter-group=           | Toggle the display status of the filter group on this line.            |
+| =Info-mode=           | =H-o H-o=     |         | =M-x casual-info-tmenu=                     | Transient menu for Info.                                               |
+|                     | =M-[=         |         | =M-x Info-history-back=                     | Go back in the history to the last node visited.                       |
+|                     | =M-]=         |         | =M-x Info-history-forward=                  | Go forward in the history of visited nodes.                            |
+|                     | =p=           |         | =M-x casual-info-browse-backward-paragraph= | Move point backward paragraph such that the first line is highlighted. |
+|                     | =n=           |         | =M-x casual-info-browse-forward-paragraph=  | Move point forward paragraph such that the first line is highlighted.  |
+|                     | =l=           |         | =M-x Info-next=                             | Go to the next node of this node.                                      |
+|                     | =h=           |         | =M-x Info-prev=                             | Go to the previous node of this node.                                  |
+|                     | =j=           |         | =M-x Info-next-reference=                   | Move cursor to the next cross-reference or menu item in the node.      |
+|                     | =k=           |         | =M-x Info-prev-reference=                   | Move cursor to the previous cross-reference or menu item in the node.  |
+|                     | =/=           |         | =M-x Info-search=                           | Search for REGEXP, starting from point, and select node of search hit. |
+|                     | =B=           | =C-x r m= | =M-x bookmark-set=                          | Set a bookmark named NAME at the current location.                     |
+| =reb-mode=            | =H-o H-o=     |         | =M-x casual-re-builder-tmenu=               | Transient menu for RE-Builder commands.                                |
+| =reb-lisp-mode=       | =H-o H-o=     |         | =M-x casual-re-builder-tmenu=               | Transient menu for RE-Builder commands.                                |
+| =bookmark-bmenu-mode= | =H-o H-o=     |         | =M-x casual-bookmarks-tmenu=                | Transient menu for Bookmark commands.                                  |
+|                     | =J=           | =C-c b=   | =M-x bookmark-jump=                         | Jump to bookmark BOOKMARK (a point in some file).                      |
+| =org-agenda-mode=     | =H-o H-o=     |         | =M-x casual-agenda-tmenu=                   | Transient menu for ORG Agenda.                                         |
+|                     | =M-j=         |         | =M-x org-agenda-clock-goto=                 | Jump to the currently clocked in task within the agenda.               |
+|                     | =J=           | =C-c b=   | =M-x bookmark-jump=                         | Jump to bookmark BOOKMARK (a point in some file).                      |
+| =symbol-overlay=      | =H-o H-o=     |         | =M-x casual-symbol-overlay-tmenu=           | Transient menu for Symbol Overlay.                                     |
+|---------------------+-------------+---------+-------------------------------------------+------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-casual-suite.el :var file-description="Casual Suite Setup"
+;;
+;; Configure the Casual Suite
+;;
+(use-package casual-suite
+  :straight (casual-suite :host github :repo "kickingvegas/casual-suite")
+  :demand t
+  :bind (
+            ("H-o a"   . 'casual-avy-tmenu)
+            ("H-o o"   . 'casual-editkit-main-tmenu)
+            ("H-o H-o" . 'casual-editkit-main-tmenu)
+            ("H-o w"   . 'casual-editkit-windows-tmenu)
+            ("H-o r"   . 'casual-editkit-rectangle-tmenu)
+            ("H-o g"   . 'casual-editkit-registers-tmenu)
+            ("H-o p"   . 'casual-editkit-project-tmenu)
+
+            :map calc-mode-map           ("H-o H-o" . 'casual-calc-tmenu)
+            :map calc-alg-map            ("H-o H-o" . 'casual-calc-tmenu)
+            :map dired-mode-map          ("H-o H-o" . 'casual-dired-tmenu)
+                                         ("s"       . 'casual-dired-sort-by-tmenu)
+                                         ("/"       . 'casual-dired-search-replace-tmenu)
+            :map isearch-mode-map        ("H-o H-o" . 'casual-isearch-tmenu)
+            :map ibuffer-mode-map        ("H-o H-o" . 'casual-ibuffer-tmenu)
+                                         ("F"       . 'casual-ibuffer-filter-tmenu)
+                                         ("s"       . 'casual-ibuffer-sortby-tmenu)
+                                         ("{"       . 'ibuffer-backwards-next-marked)
+                                         ("}"       . 'ibuffer-forward-next-marked)
+                                         ("["       . 'ibuffer-backward-filter-group)
+                                         ("]"       . 'ibuffer-forward-filter-group)
+                                         ("$"       . 'ibuffer-toggle-filter-group)
+            :map Info-mode-map           ("H-o H-o" . 'casual-info-tmenu)
+                                         ("M-["     . 'Info-history-back)
+                                         ("M-]"     . 'Info-history-forward)
+                                         ("p"       . 'casual-info-browse-backward-paragraph)
+                                         ("n"       . 'casual-info-browse-forward-paragraph)
+                                         ("h"       . 'Info-prev)
+                                         ("j"       . 'Info-next-reference)
+                                         ("k"       . 'Info-prev-reference)
+                                         ("l"       . 'Info-next)
+                                         ("/"       . 'Info-search)
+                                         ("B"       . 'bookmark-set)
+            :map reb-mode-map            ("H-o H-o" . 'casual-re-builder-tmenu)
+            :map reb-lisp-mode-map       ("H-o H-o" . 'casual-re-builder-tmenu)
+            :map bookmark-bmenu-mode-map ("H-o H-o" . 'casual-bookmarks-tmenu)
+                                         ("J"       . 'bookmark-jump)
+            :map org-agenda-mode-map     ("H-o H-o" . 'casual-agenda-tmenu)
+                                         ("M-j"     . 'org-agenda-clock-goto)
+                                         ("J"       . 'bookmark-jump)
+            :map symbol-overlay-map      ("H-o H-o" . 'casual-symbol-overlay-tmenu)
+        )
+)
+#+end_src
+
 * Key bindings
 
 Additional key bindings for *Psimacs*:

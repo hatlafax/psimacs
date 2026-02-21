@@ -159,7 +159,11 @@ The major help commands and their key bindings.
 
 ** Hydras
 
-All the hydras defined by *Psimacs*.
+A collection of *Psimacs* hydras that not directly belong to a single package.
+
+References:
+- [[https://github.com/abo-abo/hydra][Hydra]]
+- [[https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/][Hydras to Share]]
 
 | Key binding | Command                                 | Description               |
 |-------------+-----------------------------------------+---------------------------|
@@ -182,6 +186,7 @@ All the hydras defined by *Psimacs*.
 | =H-SPC C-c=   | =M-x psimacs/hydra/multiple-cursors/body= | Multiple Cursors...       |
 | =H-SPC C-f=   | =M-x psimacs/hydra/flycheck/body=         | Flycheck...               |
 | =H-SPC C-i=   | =M-x psimacs/hydra/image+/body=           | Image...                  |
+| =H-SPC C-j=   | =M-x psimacs/hydra/dumb-jump/body=        | Dumb-Jump...              |
 | =H-SPC C-l=   | =M-x psimacs/hydra/vlf-large-files/body=  | Large Files...            |
 | =H-SPC C-m=   | =M-x psimacs/hydra/word-modes/body=       | CamelCase...              |
 | =H-SPC C-o=   | =M-x psimacs/hydra/org/body=              | Org-Mode...               |
@@ -190,6 +195,68 @@ All the hydras defined by *Psimacs*.
 | =H-SPC C-s=   | =M-x psimacs/hydra/straight/body=         | Straight...               |
 | =H-SPC H-m=   | =M-x psimacs/hydra/navigation/body=       | Navigation...             |
 |-------------+-----------------------------------------+---------------------------|
+
+** Casual Suite
+
+The package [[https://github.com/kickingvegas/casual-suite][casual-suite]] is an umbrella package to
+support a single installation point for all Casual user interfaces for Emacs.
+
+Refereces:
+- [[https://github.com/kickingvegas/casual][Casual]] is a project to re-imagine the primary user interface for
+  Emacs using keyboard-driven menus.
+
+
+Global menu commands:
+  #+attr_html: :class styledtable1
+| Key binding | Command                            | Description                             |
+|-------------+------------------------------------+-----------------------------------------|
+| =H-o a=       | =M-x casual-avy-tmenu=               | Casual Avy Transient menu.              |
+| =H-o o=       | =M-x casual-editkit-main-tmenu=      | Reference main menu for Casual EditKit. |
+| =H-o H-o=     | =M-x casual-editkit-main-tmenu=      | Reference main menu for Casual EditKit. |
+| =H-o w=       | =M-x casual-editkit-windows-tmenu=   | Menu for /Window/ commands.               |
+| =H-o r=       | =M-x casual-editkit-rectangle-tmenu= | Menu for /Rectangle/ commands.            |
+| =H-o g=       | =M-x casual-editkit-registers-tmenu= | Menu for /Registers/ commands.            |
+| =H-o p=       | =M-x casual-editkit-project-tmenu=   | Menu for /Project/ commands.              |
+|-------------+------------------------------------+-----------------------------------------|
+
+Mode mapped  menu commands:
+  #+attr_html: :class styledtable1
+| Mode                | Key binding | Global  | Command                                   | Description                                                            |
+|---------------------+-------------+---------+-------------------------------------------+------------------------------------------------------------------------|
+| =calc-mode=           | =H-o H-o=     |         | =M-x casual-calc-tmenu=                     | Casual Calc main menu.                                                 |
+| =calc-alg=            | =H-o H-o=     |         | =M-x casual-calc-tmenu=                     | Casual Calc main menu.                                                 |
+| =dired-mode=          | =H-o H-o=     |         | =M-x casual-dired-tmenu=                    | Casual Dired main menu.                                                |
+|                     | =s=           |         | =M-x casual-dired-sort-by-tmenu=            | Transient menu to sort Dired buffer by different criteria.             |
+|                     | =/=           |         | =M-x casual-dired-search-replace-tmenu=     | Transient Dired search and replace menu.                               |
+| =isearch-mode=        | =H-o H-o=     |         | =M-x casual-isearch-tmenu=                  | Transient menu for I-Search.                                           |
+| =ibuffer-mode=        | =H-o H-o=     |         | =M-x casual-ibuffer-tmenu=                  | Transient menu for I-Buffer.                                           |
+|                     | =F=           |         | =M-x casual-ibuffer-filter-tmenu=           | Casual IBuffer filter menu.                                            |
+|                     | =s=           |         | =M-x casual-ibuffer-sortby-tmenu=           | Casual IBuffer sortby menu.                                            |
+|                     | ={=           |         | =M-x ibuffer-backwards-next-marked=         | Move backwards by COUNT marked buffers (default 1).                    |
+|                     | =}=           |         | =M-x ibuffer-forward-next-marked=           | Move forward by COUNT marked buffers (default 1).                      |
+|                     | =[=           |         | =M-x ibuffer-backward-filter-group=         | Move point backwards by COUNT filtering groups.                        |
+|                     | =]=           |         | =M-x ibuffer-forward-filter-group=          | Move point forwards by COUNT filtering groups.                         |
+|                     | =$=           |         | =M-x ibuffer-toggle-filter-group=           | Toggle the display status of the filter group on this line.            |
+| =Info-mode=           | =H-o H-o=     |         | =M-x casual-info-tmenu=                     | Transient menu for Info.                                               |
+|                     | =M-[=         |         | =M-x Info-history-back=                     | Go back in the history to the last node visited.                       |
+|                     | =M-]=         |         | =M-x Info-history-forward=                  | Go forward in the history of visited nodes.                            |
+|                     | =p=           |         | =M-x casual-info-browse-backward-paragraph= | Move point backward paragraph such that the first line is highlighted. |
+|                     | =n=           |         | =M-x casual-info-browse-forward-paragraph=  | Move point forward paragraph such that the first line is highlighted.  |
+|                     | =l=           |         | =M-x Info-next=                             | Go to the next node of this node.                                      |
+|                     | =h=           |         | =M-x Info-prev=                             | Go to the previous node of this node.                                  |
+|                     | =j=           |         | =M-x Info-next-reference=                   | Move cursor to the next cross-reference or menu item in the node.      |
+|                     | =k=           |         | =M-x Info-prev-reference=                   | Move cursor to the previous cross-reference or menu item in the node.  |
+|                     | =/=           |         | =M-x Info-search=                           | Search for REGEXP, starting from point, and select node of search hit. |
+|                     | =B=           | =C-x r m= | =M-x bookmark-set=                          | Set a bookmark named NAME at the current location.                     |
+| =reb-mode=            | =H-o H-o=     |         | =M-x casual-re-builder-tmenu=               | Transient menu for RE-Builder commands.                                |
+| =reb-lisp-mode=       | =H-o H-o=     |         | =M-x casual-re-builder-tmenu=               | Transient menu for RE-Builder commands.                                |
+| =bookmark-bmenu-mode= | =H-o H-o=     |         | =M-x casual-bookmarks-tmenu=                | Transient menu for Bookmark commands.                                  |
+|                     | =J=           | =C-c b=   | =M-x bookmark-jump=                         | Jump to bookmark BOOKMARK (a point in some file).                      |
+| =org-agenda-mode=     | =H-o H-o=     |         | =M-x casual-agenda-tmenu=                   | Transient menu for ORG Agenda.                                         |
+|                     | =M-j=         |         | =M-x org-agenda-clock-goto=                 | Jump to the currently clocked in task within the agenda.               |
+|                     | =J=           | =C-c b=   | =M-x bookmark-jump=                         | Jump to bookmark BOOKMARK (a point in some file).                      |
+| =symbol-overlay=      | =H-o H-o=     |         | =M-x casual-symbol-overlay-tmenu=           | Transient menu for Symbol Overlay.                                     |
+|---------------------+-------------+---------+-------------------------------------------+------------------------------------------------------------------------|
 
 ** Universal, Numeric and Negative Argument
 
