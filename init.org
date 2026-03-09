@@ -19223,6 +19223,22 @@ used as title."
 
 Configuration of important major modes for *Psimacs*.
 
+** Markdown Indent
+
+The [[https://github.com/whhone/markdown-indent-mode][markdown-indent-mode]] is an Emacs minor mode for 
+dynamic virtual indentation in /Markdown/, similar to [[https://orgmode.org/manual/Org-Indent-Mode.html][org-indent-mode]
+in Org mode.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el :var file-description="Major Modes - latex-mode setup"
+;;
+;; Enable markdown-indent-mode
+;;
+(use-package markdown-indent-mode
+  :straight (markdown-indent-mode :type git :host github :repo "whhone/markdown-indent-mode")
+  :hook (markdown-mode . markdown-indent-mode)
+)
+#+end_src
+
 ** BibTeX
 
 Manage references and bibliographies with Emacs BibTeX mode.
