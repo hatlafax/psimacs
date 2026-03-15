@@ -1195,6 +1195,32 @@ Later in the initialization process the garbage collection procedure is even mor
 (defconst psimacs/config/verbose t)
 #+end_src
 
+*** Loading user provided elisp configuration files
+
+*Psimacs* allows the execution of user provided elisp code. This allows users to extend the *Psimacs*
+configuration without modifiying the official repository. Four different code points are defined at
+which user provided elisp files are executed. These extension files are not stored in the
+git project. It is the user's reponsibility to manage these files. The files are expected in the
+=user-emacs-directory= directory.
+
+| Elisp file                | Remark                                                                                          |
+|---------------------------|-------------------------------------------------------------------------------------------------|
+| =user-pre-early-init.el=  | Loaded near the beginning of the =early.init.el= file.                                          |
+| =user-post-early-init.el= | Loaded near the end of the =early.init.el= file.                                                |
+| =user-pre-init.el=        | Loaded early in the =init.el=, but after the configuration of the =straight.el= package manager.|
+| =user-post-init.el=       | Loaded near the end of the =init.el= file.                                                      |
+|---------------------------|-------------------------------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Handling of user early- and init.el files.
+;;
+(defconst psimacs/config/load-pre-early-init  t "It true, load `user-pre-early-init.el`.")
+(defconst psimacs/config/load-post-early-init t "It true, load `user-post-early-init.el`.")
+(defconst psimacs/config/load-pre-init        t "It true, load `user-load `pre-init.el`.")
+(defconst psimacs/config/load-post-init       t "It true, load `user-post-init.el`.")
+#+end_src
+
 *** Timing of the Emacs load time
 
 *Psimacs* allows the timing of the complete startup procedure.
@@ -1461,7 +1487,19 @@ increase this.")
 It is the fraction of the current heap size.")
 #+end_src
 
-*** Support for Byte and Native compilation
+** Load user-pre-early-init.el
+
+Allow the user to run its own elisp code early on.
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Loading of user-pre-early-init.el file.
+;;
+(when psimacs/config/load-pre-early-init
+    (load (concat (file-name-as-directory user-emacs-directory) "user-pre-early-init") 'noerror 'nomessage))
+#+end_src
+
+** Support for Byte and Native compilation
 
 As of /Emacs 28/ navtive elisp compilation is supported. The following code
 set the directory where the compiled files are stored.
@@ -2464,7 +2502,26 @@ This starts the processing of this org file (=init.org=), resulting in the final
 ;;
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
                                                                   psimacs/config/main-org-file-name)))
+#+end_src
 
+** Load user-post-early-init.el
+
+Allow the user to run its own elisp code at the end of early intialization.
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Loading of user-post-early-init.el file.
+;;
+(when psimacs/config/load-post-early-init
+    (load (concat (file-name-as-directory user-emacs-directory) "user-post-early-init") 'noerror 'nomessage))
+#+end_src
+
+** End of early initialization phase
+
+#+begin_src emacs-lisp :tangle early-init.el
+;;
+;; Timing point for early-init
+;;
 (psimacs/config/load-feature-timing "early-init.el: load-configuration-file")
 
 (provide 'early-init)
@@ -5616,6 +5673,18 @@ which is required at various places of the configuration.
 * Basic setup
 
 Some fundamental setting that *Psimacs* uses are collected here.
+
+** Load user-pre-init.el
+
+Allow the user to run its own elisp code early, but after the configuration of the package manager.
+
+#+begin_src emacs-lisp :tangle config/init-basic-private.el :var file-description="Basic private setup"
+;;
+;; Loading of user-pre-init.el file.
+;;
+(when psimacs/config/load-pre-init
+    (load (concat (file-name-as-directory user-emacs-directory) "user-pre-init") 'noerror 'nomessage))
+#+end_src
 
 ** Personal information
 
@@ -19225,7 +19294,7 @@ Configuration of important major modes for *Psimacs*.
 
 ** Markdown Indent
 
-The [[https://github.com/whhone/markdown-indent-mode][markdown-indent-mode]] is an Emacs minor mode for 
+The [[https://github.com/whhone/markdown-indent-mode][markdown-indent-mode]] is an Emacs minor mode for
 dynamic virtual indentation in /Markdown/, similar to [[https://orgmode.org/manual/Org-Indent-Mode.html][org-indent-mode]
 in Org mode.
 
@@ -26600,6 +26669,18 @@ References:
 
     (byte-recompile-directory psimacs/config/config-dir 0)
 )
+#+end_src
+
+* Load user-post-init.el and conclude configuartion
+
+Allow the user to run its own elisp code at the end of the configuration.
+
+#+begin_src emacs-lisp :tangle yes
+;;
+;; Loading of user-post-init.el file.
+;;
+(when psimacs/config/load-post-init
+    (load (concat (file-name-as-directory user-emacs-directory) "user-post-init") 'noerror 'nomessage))
 
 ;;
 ;; Avoid lint warning of checkdoc

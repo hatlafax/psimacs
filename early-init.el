@@ -57,6 +57,14 @@
 (defconst psimacs/config/verbose t)
 
 ;;
+;; Handling of user early- and init.el files.
+;;
+(defconst psimacs/config/load-pre-early-init  t "It true, load `user-pre-early-init.el`.")
+(defconst psimacs/config/load-post-early-init t "It true, load `user-post-early-init.el`.")
+(defconst psimacs/config/load-pre-init        t "It true, load `user-load `pre-init.el`.")
+(defconst psimacs/config/load-post-init       t "It true, load `user-post-init.el`.")
+
+;;
 ;; Start up timing
 ;;
 (defconst psimacs/config/startup-timing t
@@ -255,6 +263,12 @@ increase this.")
 (defconst psimacs/config/gc-cons-percentage 0.2
   "This variable specifies the amount of consing before garbage collection occurs.
 It is the fraction of the current heap size.")
+
+;;
+;; Loading of user-pre-early-init.el file.
+;;
+(when psimacs/config/load-pre-early-init
+    (load (concat (file-name-as-directory user-emacs-directory) "user-pre-early-init") 'noerror 'nomessage))
 
 ;;
 ;; Byte and native compilation
@@ -1056,6 +1070,15 @@ The expected place in the \\='dropbox\\=' directory is \\='psimacs\\='."
 (psimacs/config/load-configuration-file (expand-file-name (concat user-emacs-directory
                                                                   psimacs/config/main-org-file-name)))
 
+;;
+;; Loading of user-post-early-init.el file.
+;;
+(when psimacs/config/load-post-early-init
+    (load (concat (file-name-as-directory user-emacs-directory) "user-post-early-init") 'noerror 'nomessage))
+
+;;
+;; Timing point for early-init
+;;
 (psimacs/config/load-feature-timing "early-init.el: load-configuration-file")
 
 (provide 'early-init)
