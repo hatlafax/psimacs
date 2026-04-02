@@ -303,6 +303,9 @@ if ($help -or $h)
     echo "      bootstrap.ps1 -run -conemu -mingw -no_packages -python 3.11.9 -java_version 21.35"
     echo "      bootstrap.ps1 -run -mingw -all_nerd_fonts -python_use_latest -username \"Tobi Talbot\" -useremail \"tobi4242@gmail.com\" -calendarlatitude \"42.123\" -calendarlongitude \"2.987\" -calendarlocation \"Montreal, Canada\""
     echo "      bootstrap.ps1 -run -mingw -no_packages -no_java -no_langtool -no_sumatrapdf -no_pandoc -no_plantuml -no_privatefile -no_fonts_install -no_org_themes -no_content -python_requirements .\requirements.txt"
+    echo "      bootstrap.ps1 -deactivate_all -run -all_whisper_releases -rev_whisper"
+    echo "      bootstrap.ps1 -deactivate_all -run -rev_reveal_js"
+    echo "      bootstrap.ps1 -deactivate_all -run -all_whisper_releases -rev_whisper -rev_reveal_js -rev_langtool -rev_sumatrapdf -rev_pandoc -rev_plantuml"
     echo ""
     echo "Information:"
     echo "      In case that the powershell script does not run, two reasons may be involved:"
@@ -987,7 +990,16 @@ if (-not $no_sumatrapdf)
             $response = Invoke-WebRequest -Uri $baseuri -UseBasicParsing
             $ProgressPreference = 'Continue'
 
-            if ($response.Content -match '.*SumatraPDF-(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)-64.zip.*')
+            if ($response.Content -match '.*SumatraPDF-(?<major>\d+)\.(?<minor>\d+)-64.zip.*')
+            {
+                $SumatraMajor = $Matches.major
+                $SumatraMinor = $Matches.minor
+
+                $sumatrapdf_version = "${SumatraMajor}.${SumatraMinor}"
+
+                echo "Found latest stable SumatraPDF release $sumatrapdf_version"
+            }
+            elseif ($response.Content -match '.*SumatraPDF-(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)-64.zip.*')
             {
                 $SumatraMajor = $Matches.major
                 $SumatraMinor = $Matches.minor
@@ -1834,7 +1846,7 @@ if (-not $no_sumatrapdf)
 
     if (-not (test-path -PathType container $psimacs\$sumatrapdf_dir)) 
     {
-        $sumatrapdf_zip = "SumatraPDF-${sumatrapdf}-64.zip"
+        $sumatrapdf_zip = "SumatraPDF-${sumatrapdf_version}-64.zip"
 
         #
         # Download installer
