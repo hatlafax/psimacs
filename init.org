@@ -15544,6 +15544,8 @@ The package [[https://github.com/xenodium/agent-shell][agent-shell]] provides a 
 
 With [[https://github.com/xenodium/agent-shell][agent-shell]], you can chat with the likes of /Gemini CLI/, /Claude Agent/, /Auggie/, /Mistral Vibe/, or any other ACP-driven agent.
 
+*Attention:* Use with care!!!
+
 References:
 - [[https://xenodium.com/][Xenodium's Blog]]
 - [[https://github.com/xenodium/agent-shell][agent-shell on github]]
@@ -15556,13 +15558,16 @@ References:
 
 The basic commands:
 #+attr_html: :class styledtable1
-| Key binding | Command                   | Description                        |
-|-------------+---------------------------+------------------------------------|
-| <RET>       | =M-x newline=               | Inserts a new line character.      |
-| =C-c RET=     | =M-x shell-makter-submit=   | Submits prompt.                    |
-| =C-c C-c=     | =M-x shell-makter-submit=   | Submits prompt.                    |
-| =C-u C-c RET= | =M-x agent-shell-interrupt= | Interrupt current agent operation. |
-|-------------+---------------------------+------------------------------------|
+| Key binding | Command                                     | Description                                  |
+|-------------+---------------------------------------------+----------------------------------------------|
+|             | =M-x agent-shell=                             | Start or reuse existing =agent-shell=. (DWIM)  |
+|             | =C-u M-x agent-shell=                         | Start new =agent-shell=.                       |
+| =RET=         | =M-x newline=                                 | Inserts a new line character.                |
+| =C-RET=       | =M-x agent-shell-ui-toggle-fragment-at-point= | Toggle visibility of fragment body at point. |
+| =C-c RET=     | =M-x shell-makter-submit=                     | Submits prompt.                              |
+| =C-c C-c=     | =M-x shell-makter-submit=                     | Submits prompt.                              |
+| =C-u C-c RET= | =M-x agent-shell-interrupt=                   | Interrupt current agent operation.           |
+|-------------+---------------------------------------------+----------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 ;;
@@ -15622,7 +15627,8 @@ The basic commands:
     ;(agent-shell-completion-mode 1)
 
   :bind (:map agent-shell-mode-map
-              ("RET" . newline)
+              ("RET"     . newline)
+              ("C-RET"   . agent-shell-ui-toggle-fragment-at-point)
               ("C-c RET" . shell-maker-submit)
               ("C-c C-c" . shell-maker-submit)
               ("C-c C-k" . agent-shell-interrupt)
