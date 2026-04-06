@@ -15430,9 +15430,18 @@ References:
           gptel-include-reasoning   'ignore
           gptel-log-level           'info
           gptel--debug              nil
-          gptel-model              "gpt-5-nano"
+          gptel-model               "gpt-5-nano"
           ;gptel-model               "gpt-4.1-mini"
           gptel-default-mode        'org-mode
+          gptel-highlight-methods   '(face margin)
+    )
+
+    (setq gptel-directives
+       '(
+         (default      . "You are a large language model living in Emacs and a helpful assistant. Use LaTeX, not unicode, for any mathematical answer. Answer using org-mode syntax, in particular make sure that code blocks are inside org code blocks. Respond concisely.")
+         (mathematics  . "Solve this mathematical formula. Just output the solution in LaTeX without giving any explanation.")
+         (copy-editing . "You are an editor specialized in academic paper in physics. You are here to help me generate the best text for my academic articles. I will provide you texts and I would like you to review them for any spelling, grammar, or punctuation errors. Do not stop at simple proofreading, if it is useful, propose to refine the content's structure, style, and clarity. Once you have finished editing the text, provide me with any necessary corrections or suggestions for improving the text. Please respect any LaTeX, org, or markdown command. Avoid passive form.")
+        )
     )
 
     (add-to-list 'gptel-prompt-prefix-alist `(org-mode . ,(concat "*** me: " (format-time-string "[%Y-%m-%d]") "\n")))
@@ -15500,6 +15509,10 @@ References:
 
     (require 'gptel-integrations)
 
+  :hook
+    (gptel-mode . gptel-highlight-mode)
+    (gptel-mode . (lambda() (org-indent-mode -1)))
+
   :bind (
          :map psimacs/config/global-key-map/common
               ("RET"   . gptel-send)
@@ -15535,6 +15548,38 @@ References:
 
         ;; ensure prompts are updated if prompt files change
         (gptel-prompts-add-update-watchers)
+)
+#+end_src
+
+**** gptel-magit
+
+[[https://github.com/ragnard/gptel-magit/][gptel-magit]] uses the fantastic [[https://github.com/karthink/gptel][gptel]] to extend the equally fantastic [[https://github.com/magit/magit][magit]] with some LLM-powered functionality.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+(use-package gptel-magit
+  :custom
+    (gptel-magit-model 'gpt-5-mini)
+  :hook (magit-mode . gptel-magit-install)
+)
+#+end_src
+
+**** gptel-agent
+
+[[https://github.com/karthink/gptel-agent][gptel-agent]] is a collection of tools and prompts to use [[https://github.com/karthink/gptel][gptel]] /agentically/ with any LLM, to autonomously perform tasks.
+
+It has access to
+- the web (via basic web search, URL fetching and YouTube video metadata),
+- local files (read/write/edit),
+- the state of Emacs (documentation and Elisp evaluation),
+- and Bash, if you are in a POSIX-y environment.
+
+By default, all actions except for web search, fetching URLs and reading local files require confirmation.
+You can change this, add more tools and MCP servers etc as in regular gptel usage.
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+(use-package gptel-agent
+  :straight (gptel-agent :host github :repo "karthink/gptel-agent")
+  :config (gptel-agent-update) ;Read files from agents directories
 )
 #+end_src
 
@@ -15633,6 +15678,35 @@ The basic commands:
               ("C-c C-c" . shell-maker-submit)
               ("C-c C-k" . agent-shell-interrupt)
         )
+)
+#+end_src
+
+*** Aidermacs
+
+[[https://github.com/MatthewZMD/aidermacs][Aidermacs]] brings AI-powered development to Emacs by integrating [[https://github.com/Aider-AI/aider][Aider]], one of the most powerful open-source AI pair programming tools.
+
+References:
+- [[https://www.joshbailey.blog/posts/emacs-ai][Experimenting With AI In Emacs]]
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+(use-package aidermacs
+  :defer t
+  :config
+    (setenv "OPENAI_API_KEY"    (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY"    psimacs/config/keys-file))
+    (setenv "ANTHROPIC_API_KEY" (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
+    (message "key=%s" (getenv "ANTHROPIC_API_KEY"))
+
+    (unless (equal system-type 'windows-nt)
+      (setopt aidermacs-backend 'vterm)
+    )
+
+    (setq aidermacs-use-architect-mode t)
+    (setq aidermacs-default-model "sonnet")
+    (setq aidermacs-default-chat-mode 'architect)
+    (setq aidermacs-auto-commits t)
+    (setq aidermacs-show-diff-after-change t)
+
+  :bind (("C-c a" . aidermacs-transient-menu))
 )
 #+end_src
 
