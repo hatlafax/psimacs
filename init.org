@@ -15418,6 +15418,9 @@ References:
 - [[https://platform.claude.com/docs/en/about-claude/models/overview][Anthropic Claude Models]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+;;
+;; gptel and support packages
+;;
 (use-package gptel
   :straight (gptel :host github :repo "karthink/gptel")
   :demand t
@@ -15532,6 +15535,98 @@ References:
 
         ;; ensure prompts are updated if prompt files change
         (gptel-prompts-add-update-watchers)
+)
+#+end_src
+
+*** agent-shell
+
+The package [[https://github.com/xenodium/agent-shell][agent-shell]] provides a native Emacs shell to interact with LLM agents powered by ACP ([[https://agentclientprotocol.com/get-started/introduction][Agent Client Protocol]]).
+
+With [[https://github.com/xenodium/agent-shell][agent-shell]], you can chat with the likes of /Gemini CLI/, /Claude Agent/, /Auggie/, /Mistral Vibe/, or any other ACP-driven agent.
+
+References:
+- [[https://xenodium.com/][Xenodium's Blog]]
+- [[https://github.com/xenodium/agent-shell][agent-shell on github]]
+- [[https://github.com/gveres/agent-shell-workspace][agent-shell-workspace on github]]
+- [[https://xenodium.com/introducing-agent-shell][Introducing agent-shell by Xenodium]]
+- [[https://www.youtube.com/watch?v=R2Ucr3amgGg][Bending Emacs Episode 10: AI / LLM agent-shell]]
+- [[https://www.youtube.com/watch?v=ymMlftdGx4I][Bending Emacs Episode 12: agent-shell + Claude Skills]]
+- [[https://www.youtube.com/watch?v=HJQ86HuSIJI][Bending Emacs Episode 13: agent-shell + Claude Skills + Charts]]
+- [[https://agentclientprotocol.com/get-started/introduction][Agent Client Protocol]]
+
+The basic commands:
+#+attr_html: :class styledtable1
+| Key binding | Command                   | Description                        |
+|-------------+---------------------------+------------------------------------|
+| <RET>       | =M-x newline=               | Inserts a new line character.      |
+| =C-c RET=     | =M-x shell-makter-submit=   | Submits prompt.                    |
+| =C-c C-c=     | =M-x shell-makter-submit=   | Submits prompt.                    |
+| =C-u C-c RET= | =M-x agent-shell-interrupt= | Interrupt current agent operation. |
+|-------------+---------------------------+------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+;;
+;; agent-shell and support packages
+;;
+(use-package agent-shell
+  :straight (:host github :repo "xenodium/agent-shell")
+  ;:ensure-system-package (
+    ;(npm . "sudo dnf install -y npm")
+
+    ;(claude . "curl -fsSL https://claude.ai/install.sh | bash")
+
+    ;(sudo claude-code     . "npm install -g @anthropic-ai/claude-code")
+    ;(sudo claude-code-acp . "npm install -g @agentclientprotocol/claude-agent-acp")
+
+    ;(claude-code     . "npm install -g @anthropic-ai/claude-code")
+    ;(claude-code-acp . "npm install -g @agentclientprotocol/claude-agent-acp")
+
+    ;(sudo codex-acp . "npm install -g @zed-industries/codex-acp")
+
+    ;(codex-acp . "npm install -g @zed-industries/codex-acp")
+  ;)
+  :config
+    ;; With function
+    (setq agent-shell-anthropic-authentication
+          (agent-shell-anthropic-make-authentication
+           :api-key (lambda () (psimacs/config/read-key-value-from-file "psimacs-claude-api-key" psimacs/config/keys-file))
+           ))
+
+    ;; With function
+    (setq agent-shell-openai-authentication
+          (agent-shell-openai-make-authentication
+           :api-key (lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file))
+           ))
+
+    ;(setq agent-shell-google-authentication
+    ;      (agent-shell-google-make-authentication
+    ;       :api-key (lambda () (psimacs/config/read-key-value-from-file "psimacs-gemini-api-key" psimacs/config/keys-file))
+    ;       ))
+
+    ;; Set Claude Code as the preferred agent
+    (agent-shell-preferred-agent-config (agent-shell-anthropic-make-claude-code-config))
+
+    ;; Use Gemini CLI as the default.
+    ;(setq agent-shell-preferred-agent-config (agent-shell-google-make-gemini-config))
+
+    ;; Dedicated side window on the right (like claude-code-ide)
+    (agent-shell-display-action
+     '((display-buffer-in-side-window)
+       (side . right)
+       (slot . 0)
+       (window-width . 90)))
+
+    ;(setq agent-shell-show-welcome-message nil))
+
+    ;; This enables "@" file completion and "/" command completion (not supported by all agents).
+    ;(agent-shell-completion-mode 1)
+
+  :bind (:map agent-shell-mode-map
+              ("RET" . newline)
+              ("C-c RET" . shell-maker-submit)
+              ("C-c C-c" . shell-maker-submit)
+              ("C-c C-k" . agent-shell-interrupt)
+        )
 )
 #+end_src
 

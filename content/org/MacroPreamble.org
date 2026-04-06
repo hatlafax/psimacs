@@ -1,2 +1,6 @@
-#+MACRO: atest (eval (if (org-export-derived-backend-p org-export-current-backend 'html) "#+options: d:RESULTS"))
-{{{atest}}}
+#+MACRO: nline src_emacs-lisp[:results raw]{"\n"}
+#+MACRO: hline @@html:<hr>@@
+#+MACRO: bline @@html:<br>@@
+
+#+MACRO: if_org_export #+begin_export org {{{nline}}} $1 {{{nline}}} #+end_export
+#+MACRO: sectionbreak {{{if_org_export( {{{bline}}}{{{nline}}}{{{hline}}} )}}}
