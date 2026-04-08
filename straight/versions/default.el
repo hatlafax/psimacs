@@ -67,7 +67,6 @@
  ("emacs" . "cab1ea60cf7aa24709e7fe2ac11220acd4e895e0")
  ("emacs-afternoon-theme" . "89b1d778a1f8b385775c122f2bd1c62f0fbf931a")
  ("emacs-async" . "31cb2fea8f4bc7a593acd76187a89075d8075500")
- ("emacs-dashboard" . "17c8acfd3a648ae44e6af814a6979b928bf11cad")
  ("emacs-emojify" . "1b726412f19896abf5e4857d4c32220e33400b55")
  ("emacs-google-this" . "abdcb565503844e2146de42ab5ba898e90a2bb09")
  ("emacs-kaolin-themes" . "fc0337582f36167b74cbdc86a48471092c8f3262")
