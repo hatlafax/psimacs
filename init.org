@@ -1877,7 +1877,9 @@ After initialization we set sensible GC parameters.
 
   Reference: [[https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/][Stealing from the Best Emacs Configs]]
 
-  #+begin_src emacs-lisp :tangle early-init.el
+  Attention: =org-noter= crashes emacs with this setting for unknown reason! Therefore it is not used for *Psimacs*.
+
+  #+begin_src emacs-lisp :tangle no early-init.el
   (setq redisplay-skip-fontification-on-input t)
   #+end_src
 
@@ -10240,7 +10242,7 @@ It uses a central [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Au
     (setq auto-save-list-file-prefix (concat auto-save-dir ".auto-saves-"))
     (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
 
-    (setq auto-save-list-file-prefix nil)
+    ;(setq auto-save-list-file-prefix nil)
 
     (setq-default tramp-auto-save-directory auto-save-dir)
 )
@@ -24148,6 +24150,17 @@ Org-ref cite: links and Org-cite citations.
 The package [[https://github.com/org-noter/org-noter][org-noter]] allows you to take notes in org-mode
 files that stay in sync with pdf document files. It integrates also with the org-roam package.
 
+References:
+- [[https://github.com/org-noter/org-noter][org-noter/org-noter]] package used by *Psimacs*
+- [[https://github.com/weirdNox/org-noter][weirdNox/org-noter]] is the original but stalled package.
+- [[https://github.com/c1-g/org-noter-plus-djvu][org-noter-plus-djvu]] is a refactored version of [[https://github.com/weirdNox/org-noter][weirdNox/org-noter]].
+- [[https://elpa.gnu.org/packages/djvu.html][djvu]]: Edit and view Djvu files via djvused.
+- [[https://github.com/dalanicolai/djvu3][djvu3]] extends [[https://elpa.gnu.org/packages/djvu.html][djvu]].
+- [[https://github.com/wasamasa/nov.el][nov]] is a Major mode for reading EPUBs in Emacs.
+
+Packages [[https://elpa.gnu.org/packages/djvu.html][djvu]] and [[https://github.com/wasamasa/nov.el][nov]] are
+only used to silence warnings produced by [[https://github.com/org-noter/org-noter][org-noter/org-noter]].
+
 Working with =org-noter=:
 
 #+attr_html: :class styledtable1
@@ -24174,10 +24187,13 @@ Keybindings for the *pdf buffer* in =org-noter-mode=:
 | =SPC= =n= =<PageDown>= =<down>=   |                                                       | To move forward in document. Scroll Down by Page-full                                                  |
 | =BACKSPACE= =p= =<PageUp>= =<up>= |                                                       | To move back in document. Scroll Up by Page-full                                                       |
 |---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =i=                         | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
-| =I=                         | =M-x org-noter-insert-precise-note-toggle-no-questions= | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
-| =C-i= =TAB=                   | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
-| =C-S-i= =M-TAB=               | =M-x org-noter-insert-note-toggle-no-questions=         | Inserts a note linked to the current page. Note is always create with the default title.               |
+| =H-i=                       | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
+| =H-I=                       | =M-x org-noter-insert-note-toggle-no-questions=         | Inserts a note linked to the current page. Note is always create with the default title.               |
+| =H-C-i=                     | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
+| =H-C-I=                     | =M-x org-noter-insert-precise-note-toggle-no-questions= | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
+|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =<tab>=                     | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
+| =S-<tab>=                   | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
 |---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 | =M-p=                       | =M-x org-noter-sync-prev-note=                          | Go to the location of the previous note, in relation to where the point is.                            |
 | =M-n=                       | =M-x org-noter-sync-next-note=                          | Go to the location of the next note, in relation to where the point is.                                |
@@ -24240,21 +24256,39 @@ Keybindings for the *pdf buffer* in =org-noter-mode=:
 Keybinding for the *org note buffer* in =org-noter-mode=:
 
 #+attr_html: :class styledtable1
-| Key binding | Command                                    | Description                                                                 |
-|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
-| =M-p=         | =M-x org-noter-sync-prev-note=               | Go to the location of the previous note, in relation to where the point is. |
-| =M-n=         | =M-x org-noter-sync-next-note=               | Go to the location of the next note, in relation to where the point is.     |
-| =M-.=         | =M-x org-noter-sync-current-note=            | Go the location of the selected note, in relation to where the point is.    |
-|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
-| =C-M-p=       | =M-x org-noter-sync-prev-page-or-chapter=    | Show previous page or chapter that has notes.                               |
-| =C-M-n=       | =M-x org-noter-sync-next-page-or-chapter=    | Show previous page or chapter that has notes.                               |
-| =C-M-.=       | =M-x org-noter-sync-current-page-or-chapter= | Show current page or chapter notes.                                         |
-|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
-| =M-T=         | =M-x org-noter-toggle-notes-window-location= | Toggle between side- and bottom-notes window location.                      |
-| =M-q=         | =M-x org-noter-kill-session=                 | Kill an ‘org-noter’ session.                                                |
-|-------------+--------------------------------------------+-----------------------------------------------------------------------------|
+| Key binding | Command                                               | Description                                                                                            |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-i=         | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
+| =H-I=         | =M-x org-noter-insert-note-toggle-no-questions=         | Inserts a note linked to the current page. Note is always create with the default title.               |
+| =H-C-i=       | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
+| =H-C-I=       | =M-x org-noter-insert-precise-note-toggle-no-questions= | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-p=         | =M-x org-noter-sync-prev-note=                          | Go to the location of the previous note, in relation to where the point is.                            |
+| =M-n=         | =M-x org-noter-sync-next-note=                          | Go to the location of the next note, in relation to where the point is.                                |
+| =M-.=         | =M-x org-noter-sync-current-note=                       | Go the location of the selected note, in relation to where the point is.                               |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-M-p=       | =M-x org-noter-sync-prev-page-or-chapter=               | Show previous page or chapter that has notes.                                                          |
+| =C-M-n=       | =M-x org-noter-sync-next-page-or-chapter=               | Show previous page or chapter that has notes.                                                          |
+| =C-M-.=       | =M-x org-noter-sync-current-page-or-chapter=            | Show current page or chapter notes.                                                                    |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-T=         | =M-x org-noter-toggle-notes-window-location=            | Toggle between side- and bottom-notes window location.                                                 |
+| =M-q=         | =M-x org-noter-kill-session=                            | Kill an ‘org-noter’ session.                                                                           |
+|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-major-modes-org-noter.el :var file-description="Major Modes - org-noter setup"
+;;
+;; Edit and view Djvu files via djvused
+;;
+(use-package djvu)
+
+;;
+;; Major mode for reading EPUBs in Emacs
+;;
+(use-package nov)
+
+;;
+;; Install org-noter
+;;
 (use-package org-noter
     :straight
         (:repo "org-noter/org-noter"
@@ -24271,12 +24305,13 @@ Keybinding for the *org note buffer* in =org-noter-mode=:
             ("H-x n"    . org-noter)
 
             :map org-noter-doc-mode-map
-                ("i"        . org-noter-insert-precise-note)
-                ("I"        . org-noter-insert-precise-note-toggle-no-questions)
-                ("C-i"      . org-noter-insert-note)
-                ("C-S-i"    . org-noter-insert-note-toggle-no-questions)
+                ("H-i"      . org-noter-insert-note)
+                ("H-I"      . org-noter-insert-note-toggle-no-questions)
+                ("H-C-i"    . org-noter-insert-precise-note)
+                ("H-C-S-i"  . org-noter-insert-precise-note-toggle-no-questions)
+
                 ("<tab>"    . org-noter-insert-note)
-                ("M-<tab>"  . org-noter-insert-note-toggle-no-questions)
+                ("S-<tab>"  . org-noter-insert-precise-note)
 
                 ("M-p"      . org-noter-sync-prev-note)
                 ("M-n"      . org-noter-sync-next-note)
@@ -24291,6 +24326,11 @@ Keybinding for the *org note buffer* in =org-noter-mode=:
 
 
             :map org-noter-notes-mode-map
+                ("H-i"      . org-noter-insert-note)
+                ("H-I"      . org-noter-insert-note-toggle-no-questions)
+                ("H-C-i"    . org-noter-insert-precise-note)
+                ("H-C-S-i"  . org-noter-insert-precise-note-toggle-no-questions)
+
                 ("M-p"      . org-noter-sync-prev-note)
                 ("M-n"      . org-noter-sync-next-note)
                 ("M-."      . org-noter-sync-current-note)

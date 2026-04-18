@@ -522,8 +522,6 @@ It is the fraction of the current heap size.")
                   eval-expression-debug-on-error nil)
             ))
 
-  (setq redisplay-skip-fontification-on-input t)
-
 ;;
 ;; Preamble support
 ;;
