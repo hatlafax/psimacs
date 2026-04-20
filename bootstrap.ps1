@@ -2057,8 +2057,8 @@ if (! (Test-Path $init_el -PathType Leaf) )
 
     $Target  = "$client"
     $Icon    = "$client_ico"
-    #$Args    = "-n -a `"$emacs -init-directory $psimacs/psimacs`""
-    $Args    = "-n -a $emacs -c"
+    #$Args    = "-n -F `"'((visibility . t) (auto-raise . t))`" -a `"$emacs -init-directory $psimacs/psimacs`""
+    $Args    = "-n -F `"'((visibility . t) (auto-raise . t))`" -a $emacs -c"
     $Dest    = $Shell.SpecialFolders("Desktop")
     $Dest    = "$Dest\Psimacs Client.lnk"
 
