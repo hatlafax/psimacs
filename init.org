@@ -2731,7 +2731,7 @@ to it's documentation string.
 (defun psimacs/config/calculate_layout_positions ()
     "Take the main frame as reference."
 
-    (let* ( (main_frame       (car (reverse (frame-list))))
+    (let* ( (main_frame      (car (reverse (frame-list))))
             (primary-monitor (car (display-monitor-attributes-list)))
             (geometry        (assoc 'geometry primary-monitor))
             (_width          (nth 3 geometry))                          ;; screen width
@@ -2902,7 +2902,13 @@ Supported strategies are:
     "Set the frame layout creation strategy to `layout'."
     (interactive)
 
-    (psimacs/config/calculate_layout_positions)
+    (let* ( (main_frame (car (reverse (frame-list)))) 
+            (frame_visibility (frame-parameter main_frame 'visibility))
+          )
+        (when (equal frame_visibility t)
+            (psimacs/config/calculate_layout_positions)
+        )
+    )
 
     (when (= psimacs/config/default-frame-placement-counter 1)
         (setq psimacs/config/default-frame-pos-x  psimacs/config/default-frame-1-pos-x)
