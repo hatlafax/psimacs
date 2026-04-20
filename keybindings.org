@@ -270,25 +270,102 @@ Repeating =C-u= without digits or minus sign multiplies the argument by 4 each t
 For some commands, just =C-u= by itself serves as a flag that is different in effect from
 any particular numeric argument.
 
-| Key binding          | Command                | Description                                                                                                          |
-|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
-| =C-u=  =H-u=             | =M-x universal-argument= | Begin a numeric argument for the following command. Digits or minus sign following =C-u= make up the numeric argument. |
-| =C-u=  =H-u=             | =C-u 4=                  |                                                                                                                      |
-| =C-u C-u=  =H-u H-u=     | =C-u 16=                 |                                                                                                                      |
-|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
-| =C-0=  =M-0=  =C-M-0=  =H-0= | =C-u 0=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-1=  =M-1=  =C-M-1=  =H-1= | =C-u 1=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-2=  =M-2=  =C-M-2=  =H-2= | =C-u 2=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-3=  =M-3=  =C-M-3=  =H-3= | =C-u 3=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-4=  =M-4=  =C-M-4=  =H-4= | =C-u 4=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-5=  =M-5=  =C-M-5=  =H-5= | =C-u 5=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-6=  =M-6=  =C-M-6=  =H-6= | =C-u 6=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-7=  =M-7=  =C-M-7=  =H-7= | =C-u 7=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-8=  =M-8=  =C-M-8=  =H-8= | =C-u 8=                  | Runs the command =digit-argument=.                                                                                     |
-| =C-9=  =M-9=  =C-M-9=  =H-9= | =C-u 9=                  | Runs the command =digit-argument=.                                                                                     |
-|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
-| =C--=  =M--=  =C-M--=  =H--= | =C-u -=                  | Runs the command =negative-argument=.                                                                                  |
-|----------------------+------------------------+----------------------------------------------------------------------------------------------------------------------|
+| Key binding          | Command                        | Description                                                                                                          |
+|----------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------|
+| =C-u <cmd>=            | =M-x universal-argument <cnd>=   | Begin a numeric argument for the following command. Digits or minus sign following =C-u= make up the numeric argument. |
+| =H-u <cmd>=            | =M-x universal-argument <cnd>=   | Begin a numeric argument for the following command. Digits or minus sign following =C-u= make up the numeric argument. |
+| =C-u C-u <cmd>=        | =C-u 4 <cmd>=                    | 4-times the argument.                                                                                                |
+| =H-u C-u= <cmd>        | =C-u 16 <cmd>=                   | 16-times the argument.                                                                                               |
+| =C-u N <cmd>=          | =M-x universal-argument N <cnd>= | N-times the argument.                                                                                                |
+|----------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------|
+| =C--=  =M--=  =C-M--=  =H--= | =C-u -=                          | Runs the command =negative-argument=.                                                                                  |
+|----------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------|
+| =C-u - C-u <cmd>=      | =C-u -4=                         | (-4) runs /cmd/ negative argument                                                                                      |
+| =C-u C-u - C-u <cmd>=  | =C-u -16=                        | (-16) runs /cmd/ negative argument                                                                                     |
+| =C-u -N C-u <cmd>=     | =C-u -N=                         | (-N) runs /cmd/ negative argument                                                                                      |
+|----------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------|
+
+Examples:
+
+| Key binding       | Result                                                           |
+|-------------------+------------------------------------------------------------------|
+| =C-u x=             | xxxx                                                             |
+| =C-u C-u x=         | xxxxxxxxxxxxxxxx                                                 |
+| =C-u C-u C-u=       | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
+|-------------------+------------------------------------------------------------------|
+| =H-u x=             | xxxx                                                             |
+| =H-u C-u x=         | xxxxxxxxxxxxxxxx                                                 |
+| =H-u C-u C-u=       | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
+|-------------------+------------------------------------------------------------------|
+| =C-u 1 x=           | x                                                                |
+| =C-u 2 x=           | xx                                                               |
+| =C-u 3 x=           | xxx                                                              |
+| =C-u 4 x=           | xxxx                                                             |
+| =C-u 5 x=           | xxxxx                                                            |
+| =C-u 6 x=           | xxxxxx                                                           |
+| =C-u 7 x=           | xxxxxxx                                                          |
+| =C-u 8 x=           | xxxxxxxx                                                         |
+| =C-u 9 x=           | xxxxxxxxx                                                        |
+| =C-u 10 x=          | xxxxxxxxxx                                                       |
+| =C-u 11 x=          | xxxxxxxxxxx                                                      |
+| =C-u ... x=         | x...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =C-u 1 C-u 5=       | 5                                                                |
+| =C-u 2 C-u 5=       | 55                                                               |
+| =C-u ... C-u 5=     | 5...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =H-u 1 x=           | x                                                                |
+| =H-u 2 x=           | xx                                                               |
+| =H-u ...=           | ...                                                              |
+|-------------------+------------------------------------------------------------------|
+| =M-u 1 x=           | x                                                                |
+| =M-u 2 x=           | xx                                                               |
+| =M-u ...=           | ...                                                              |
+|-------------------+------------------------------------------------------------------|
+| =C-1 x=             | x                                                                |
+| =C-2 x=             | xx                                                               |
+| =C-3 x=             | xxx                                                              |
+| =C-4 x=             | xxxx                                                             |
+| =C-5 x=             | xxxxx                                                            |
+| =C-6 x=             | xxxxxx                                                           |
+| =C-7 x=             | xxxxxxx                                                          |
+| =C-8 x=             | xxxxxxxx                                                         |
+| =C-9 x=             | xxxxxxxxx                                                        |
+| =C-10 x=            | xxxxxxxxxx                                                       |
+| =C-11 x=            | xxxxxxxxxxx                                                      |
+| =C-... x=           | x...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =H-1 x=             | x                                                                |
+| =H-2 x=             | xx                                                               |
+| =H-...=             | ...                                                              |
+|-------------------+------------------------------------------------------------------|
+| =M-1 x=             | x                                                                |
+| =M-2 x=             | xx                                                               |
+| =M-...=             | ...                                                              |
+|-------------------+------------------------------------------------------------------|
+| =C-M-1 x=           | x                                                                |
+| =C-M-2 x=           | xx                                                               |
+| =C-M-...=           | ...                                                              |
+|-------------------+------------------------------------------------------------------|
+| =C-1 C-u 7=         | 7                                                                |
+| =C-2 C-u 7=         | 77                                                               |
+| =C-... C-u 7=       | 7...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =H-1 C-u 7=         | 7                                                                |
+| =H-2 C-u 7=         | 77                                                               |
+| =H-... C-u 7=       | 7...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =M-1 C-u 7=         | 7                                                                |
+| =M-2 C-u 7=         | 77                                                               |
+| =M-... C-u 7=       | 7...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =C-M-1 C-u 7=       | 7                                                                |
+| =C-M-2 C-u 7=       | 77                                                               |
+| =C-M-... C-u 7=     | 7...                                                             |
+|-------------------+------------------------------------------------------------------|
+| =C-u - C-u <cmd>=   | (-4) runs /cmd/ negative argument                                  |
+| =C-u -47 C-u <arg>= |                                                                  |
+|-------------------+------------------------------------------------------------------|
 
 ** Basic movements
 
