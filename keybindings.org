@@ -603,6 +603,22 @@ Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks
 |                  | =M-x bookmark-insert RET Bookmark RET=          | Insert in the buffer the contents of the file that bookmark Bookmark points to.                                                                                                                                 |
 |------------------+-----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
+** Macro Recording
+
+Keyboard macro recording and replaying is a powerful mechanism for efficient editing. The following table
+shows the most important provided commands and keybindings.
+
+#+attr_html: :class styledtable
+| Key binding   | Command                               | Description                                                           |
+|---------------+---------------------------------------+-----------------------------------------------------------------------|
+| =C-x (=         | =M-x kmacro-start-macro=                | Record subsequent keyboard input, defining a keyboard macro.          |
+| =C-u C-x (=     | =M-x kmacro-start-macro=                | Append to the last keyboard macro.                                    |
+| =C-x )=         | =M-x kmacro-end-macro=                  | Finish defining a keyboard macro.                                     |
+| =C-x e=         | =M-x kmacro-end-and-call-macro=         | Call last keyboard macro, ending it first if currently being defined. |
+| =C-u <n> C-x e= | =C-u <n> M-x kmacro-end-and-call-macro= | Call last keyboard macro =<n>=-times.                                   |
+| =C-x C-k n=     | =M-x kmacro-name-last-macro=            | Assign a name to the last keyboard macro defined.                     |
+|---------------+---------------------------------------+-----------------------------------------------------------------------|
+
 ** Useful commands
 
 In the following, a table is provided that contains useful commands and their key bindings.
@@ -3945,6 +3961,7 @@ Brains:
 |-------------+----------------------------------------------------+------------------------------------------------------------------------------|
 | =C-c n TAB=   | =M-x psimacs/org/roam-screenshots=                   | Move screenshot images to org roam image directory.                          |
 |-------------+----------------------------------------------------+------------------------------------------------------------------------------|
+
 ** Org-Noter
 
 The package [[https://github.com/org-noter/org-noter][org-noter]] allows you to take notes in org-mode
