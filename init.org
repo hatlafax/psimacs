@@ -298,6 +298,7 @@ The major help commands and their key bindings.
 |-------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 | =C-h b=       | =M-x counsel-descbinds=                                                              | Show a list of all defined key bindings and their definitions.                                         |
 | =C-h c=       | =M-x describe-key-briefly=                                                           | Print the name of the function called by key binding.                                                  |
+| =H-h H-h p=   | =M-x describe-personal-keybindings=                                                  | Display all the personal keybindings defined by =bind-key=.                                              |
 | =C-h k=       | =M-x describe-key=                                                                   | Display documentation of the function invoked by key binding.                                          |
 | =H-h H-h b=   | =M-x helm-descbinds=                                                                 | Create a listing of all key bindings of current major mode.                                            |
 | =C-h w=       | =M-x where-is=                                                                       | Print message listing key sequences that invoke the command DEFINITION.                                |
@@ -673,8 +674,10 @@ References:
 | =C-x 5 r=     | =M-x find-file-read-only-other-frame=   | Edit file FILENAME, in another frame, but don't allow changes.                                                                                                                                                                    |
 | =C-x 5 u=     | =M-x undelete-frame=                    | Undelete a frame deleted with =M-x delete-frame=.                                                                                                                                                                                   |
 | =C-x 5 C-f=   | =M-x find-file-other-frame=             | Edit file FILENAME, in another frame.                                                                                                                                                                                             |
-| =C-x 4 C-o=   | =M-x display-buffer-other-frame=        | Display buffer BUFFER preferably in another frame. This function attempts to look for a window displaying BUFFER, on all the frames on the current terminal, skipping the selected window; if that fails, it pops up a new frame. |
+| =C-x 5 C-o=   | =M-x display-buffer-other-frame=        | Display buffer BUFFER preferably in another frame. This function attempts to look for a window displaying BUFFER, on all the frames on the current terminal, skipping the selected window; if that fails, it pops up a new frame. |
+| =M-<f4>=      | =M-x psimacs/config/delete-frame=       | This function deletes the selected frame. If the last frame it leaves emacs.                                                                                                                                                      |
 |-------------+---------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
 
 ** Registers and Bookmarks
 
@@ -745,15 +748,71 @@ Keyboard macro recording and replaying is a powerful mechanism for efficient edi
 shows the most important provided commands and keybindings.
 
 #+attr_html: :class styledtable
-| Key binding   | Command                               | Description                                                           |
-|---------------+---------------------------------------+-----------------------------------------------------------------------|
-| =C-x (=         | =M-x kmacro-start-macro=                | Record subsequent keyboard input, defining a keyboard macro.          |
-| =C-u C-x (=     | =M-x kmacro-start-macro=                | Append to the last keyboard macro.                                    |
-| =C-x )=         | =M-x kmacro-end-macro=                  | Finish defining a keyboard macro.                                     |
-| =C-x e=         | =M-x kmacro-end-and-call-macro=         | Call last keyboard macro, ending it first if currently being defined. |
-| =C-u <n> C-x e= | =C-u <n> M-x kmacro-end-and-call-macro= | Call last keyboard macro =<n>=-times.                                   |
-| =C-x C-k n=     | =M-x kmacro-name-last-macro=            | Assign a name to the last keyboard macro defined.                     |
-|---------------+---------------------------------------+-----------------------------------------------------------------------|
+| Key binding     | Command                                  | Description                                                                      |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
+|                 | =M-x consult-kmacro=                       | Run a chosen keyboard macro.                                                     |
+|                 | =M-x counsel-kmacro=                       | Interactively choose and execute a keyboard macro.                               |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
+|                 | =M-x kmacro-menu=                          | List the keyboard macros.                                                        |
+|                 | =M-x kmacro-menu-mark=                     | Mark macros in the region or on the current line.                                |
+|                 | =M-x kmacro-menu-unmark=                   | Unmark and unflag macros in the region or on the current line.                   |
+|                 | =M-x kmacro-menu-unmark-backward=          | Like ‘kmacro-menu-unmark’, but move backwards instead of forwards.               |
+|                 | =M-x kmacro-menu-unmark-all=               | Unmark and unflag all listed keyboard macros.                                    |
+|                 | =M-x kmacro-menu-mode=                     | Major mode for listing and editing keyboard macros.                              |
+|                 | =M-x kmacro-menu-do-flagged-delete=        | Delete keyboard macros flagged via ‘kmacro-menu-flag-for-deletion’.              |
+|                 | =M-x kmacro-menu-flag-for-deletion=        | Flag macros in the region or on the current line.                                |
+|                 | =M-x kmacro-menu-edit-position=            | Move the keyboard macro at point to a new position.                              |
+|                 | =M-x kmacro-menu-do-delete=                | Delete macros in the region, those with markers, or the one at point.            |
+|                 | =M-x kmacro-menu-edit-keys=                | Edit the keys of the keyboard macro at point via ‘edmacro-mode’.                 |
+|                 | =M-x kmacro-menu-edit-counter=             | Edit the counter of the keyboard macro at point.                                 |
+|                 | =M-x kmacro-menu-transpose=                | Swap the keyboard macro at point with the one above, then move to the next line. |
+|                 | =M-x kmacro-menu-do-copy=                  | Duplicate macros in the region, those with markers, or the one at point.         |
+|                 | =M-x kmacro-menu-edit-column=              | Edit the value in the current column of the keyboard macro at point.             |
+|                 | =M-x kmacro-menu-edit-format=              | Edit the counter format of the keyboard macro at point.                          |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
+| =<f3>=            | =M-x kmacro-start-macro-or-insert-counter= | Record subsequent keyboard input, defining a keyboard macro.                     |
+| =C-x (=           | =M-x kmacro-start-macro=                   | Record subsequent keyboard input, defining a keyboard macro.                     |
+| =C-u C-x (=       | =M-x kmacro-start-macro=                   | Append to the last keyboard macro.                                               |
+| =C-x )=           | =M-x kmacro-end-macro=                     | Finish defining a keyboard macro.                                                |
+| =C-x e=           | =M-x kmacro-end-and-call-macro=            | Call last keyboard macro, ending it first if currently being defined.            |
+| =C-u <n> C-x e=   | =C-u <n> M-x kmacro-end-and-call-macro=    | Call last keyboard macro =<n>=-times.                                              |
+| =<f4>=            | =M-x kmacro-end-or-call-macro=             | End kbd macro if currently being defined; else call last kbd macro.              |
+| =C-x C-k C-k=     | =M-x kmacro-end-or-call-macro-repeat=      | As ‘kmacro-end-or-call-macro’ but allow repeat without repeating prefix.         |
+| =S-<mouse-3>=     | =M-x kmacro-end-call-mouse=                | Move point to the position clicked with the mouse and call last kbd macro.       |
+|                 | =M-x kmacro-call-macro=                    | Call the keyboard MACRO that you defined with C-x (.                             |
+|                 | =M-x kmacro-view-macro=                    | Display the last keyboard macro.                                                 |
+| =C-x C-k C-v=     | =M-x kmacro-view-macro-repeat=             | Display the last keyboard macro.                                                 |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
+| =C-x C-k n=       | =M-x kmacro-name-last-macro=               | Assign a name to the last keyboard macro defined.                                |
+| =C-x C-k b=       | =M-x kmacro-bind-to-key=                   | When not defining or executing a macro, offer to bind last macro to a key.       |
+| =C-x C-k d=       | =M-x kmacro-redisplay=                     | Force redisplay during keyboard macro execution.                                 |
+| =C-x C-k RET=     | =M-x kmacro-edit-macro=                    | As edit last keyboard macro, but without kmacro-repeat property.                 |
+| =C-x C-k C-e=     | =M-x kmacro-edit-macro-repeat=             | Edit last keyboard macro.                                                        |
+| =C-x C-k SPC=     | =M-x kmacro-step-edit-macro=               | Step edit and execute last keyboard macro.                                       |
+| =C-x C-k C-t=     | =M-x kmacro-swap-ring=                     | Swap first two elements on keyboard macro ring.                                  |
+| =C-x C-k C-d=     | =M-x kmacro-delete-ring-head=              | Delete current macro from keyboard macro ring.                                   |
+|                 | =M-x kmacro-call-ring-2nd=                 | Execute second keyboard macro in macro ring.                                     |
+| =C-x C-k C-l=     | =M-x kmacro-call-ring-2nd-repeat=          | Execute second keyboard macro in macro ring.                                     |
+|                 | =M-x kmacro-view-ring-2nd=                 | Display the second macro in the keyboard macro ring.                             |
+| =C-x C-k C-p=     | =M-x kmacro-cycle-ring-previous=           | Move to previous keyboard macro in keyboard macro ring.                          |
+| =C-x C-k C-n=     | =M-x kmacro-cycle-ring-next=               | Move to next keyboard macro in keyboard macro ring.                              |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
+| =C-x C-k x=       | =M-x kmacro-to-register=                   | Store the last keyboard macro in register R.                                     |
+| =C-x C-k l=       | =M-x kmacro-edit-lossage=                  | Edit most recent 300 keystrokes as a keyboard macro.                             |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
+| =C-x C-k C-c=     | =M-x kmacro-set-counter=                   | Set the value of ‘kmacro-counter’ to ARG, or prompt for value if no argument.    |
+| =C-x C-k C-a=     | =M-x kmacro-add-counter=                   | Add the value of numeric prefix arg (prompt if missing) to ‘kmacro-counter’.     |
+| =C-x C-k TAB=     | =M-x kmacro-insert-counter=                | Insert current value of ‘kmacro-counter’, then increment it by ARG.              |
+| =C-x C-k C-f=     | =M-x kmacro-set-format=                    | Set the format of ‘kmacro-counter’ to FORMAT.                                    |
+| =C-x C-k C-r l=   | =M-x kmacro-reg-load-counter=              | Load the value of a REGISTER into ‘kmacro-counter’.                              |
+| =C-x C-k C-r s=   | =M-x kmacro-reg-save-counter=              | Save the value of ‘kmacro-counter’ to a REGISTER.                                |
+| =C-x C-k C-q <=   | =M-x kmacro-quit-counter-less=             | Quit the keyboard macro if the counter is less than ARGS.                        |
+| =C-x C-k C-q ==   | =M-x kmacro-quit-counter-equal=            | Quit the keyboard macro if the counter is equal to ARG.                          |
+| =C-x C-k C-q >=   | =M-x kmacro-quit-counter-greater=          | Quit the keyboard macro if the counter is greater than ARG.                      |
+| =C-x C-k C-r a <= | =M-x kmacro-reg-add-counter-less=          | Increment counter by one if it is less than register value.                      |
+| =C-x C-k C-r a == | =M-x kmacro-reg-add-counter-equal=         | Increment counter by one if it is equal to register value.                       |
+| =C-x C-k C-r a >= | =M-x kmacro-reg-add-counter-greater=       | Increment counter by one if it is greater than register value.                   |
+|-----------------+------------------------------------------+----------------------------------------------------------------------------------|
 
 ** Useful commands
 
@@ -6211,6 +6270,7 @@ For *Psimacs* own functions and goodies separate key prefix maps are defined:
 )
 
 (global-set-key (kbd "M-<f4>" ) 'psimacs/config/delete-frame)
+(global-set-key (kbd "H-h H-h p" ) 'describe-personal-keybindings)
 #+end_src
 
 *** Extend the universal-argument handling to the Hyper key
