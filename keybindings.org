@@ -4025,6 +4025,17 @@ Brains:
 The package [[https://github.com/org-noter/org-noter][org-noter]] allows you to take notes in org-mode
 files that stay in sync with pdf document files. It integrates also with the org-roam package.
 
+References:
+- [[https://github.com/org-noter/org-noter][org-noter/org-noter]] package used by *Psimacs*
+- [[https://github.com/weirdNox/org-noter][weirdNox/org-noter]] is the original but stalled package.
+- [[https://github.com/c1-g/org-noter-plus-djvu][org-noter-plus-djvu]] is a refactored version of [[https://github.com/weirdNox/org-noter][weirdNox/org-noter]].
+- [[https://elpa.gnu.org/packages/djvu.html][djvu]]: Edit and view Djvu files via djvused.
+- [[https://github.com/dalanicolai/djvu3][djvu3]] extends [[https://elpa.gnu.org/packages/djvu.html][djvu]].
+- [[https://github.com/wasamasa/nov.el][nov]] is a Major mode for reading EPUBs in Emacs.
+
+Packages [[https://elpa.gnu.org/packages/djvu.html][djvu]] and [[https://github.com/wasamasa/nov.el][nov]] are
+only used to silence warnings produced by [[https://github.com/org-noter/org-noter][org-noter/org-noter]].
+
 Working with =org-noter=:
 
 #+attr_html: :class styledtable1
@@ -4045,99 +4056,171 @@ Working with =org-noter=:
 
 Keybindings for the *pdf buffer* in =org-noter-mode=:
 
+pdf-view-scroll-down-or-previous-page
+
 #+attr_html: :class styledtable1
-| Key binding               | Command                                               | Description                                                                                            |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =SPC= =n= =<PageDown>= =<down>=   |                                                       | To move forward in document. Scroll Down by Page-full                                                  |
-| =BACKSPACE= =p= =<PageUp>= =<up>= |                                                       | To move back in document. Scroll Up by Page-full                                                       |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =H-i=                       | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
-| =H-I=                       | =M-x org-noter-insert-note-toggle-no-questions=         | Inserts a note linked to the current page. Note is always create with the default title.               |
-| =H-C-i=                     | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
-| =H-C-I=                     | =M-x org-noter-insert-precise-note-toggle-no-questions= | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =<tab>=                     | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
-| =S-<tab>=                   | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =M-p=                       | =M-x org-noter-sync-prev-note=                          | Go to the location of the previous note, in relation to where the point is.                            |
-| =M-n=                       | =M-x org-noter-sync-next-note=                          | Go to the location of the next note, in relation to where the point is.                                |
-| =M-.=                       | =M-x org-noter-sync-current-note=                       | Go the location of the selected note, in relation to where the point is.                               |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-M-p=                     | =M-x org-noter-sync-prev-page-or-chapter=               | Show previous page or chapter that has notes.                                                          |
-| =C-M-n=                     | =M-x org-noter-sync-next-page-or-chapter=               | Show next page or chapter that has notes.                                                              |
-| =C-M-.=                     | =M-x org-noter-sync-current-page-or-chapter=            | Show current page or chapter notes.                                                                    |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =M-T=                       | =M-x org-noter-toggle-notes-window-location=            | Toggle between side- and bottom-notes window location.                                                 |
-| =M-q=                       | =M-x org-noter-kill-session=                            | Kill an ‘org-noter’ session.                                                                           |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =M-g g=                     | =M-x pdf-view-goto-page=                                | Goto page.                                                                                             |
-| =C-n=                       | =M-x pdf-view-next-line-or-next-page=                   | Scroll Up one line.                                                                                    |
-| =C-p=                       | =M-x pdf-view-previous-line-or-previous-page=           | Scroll Down one line.                                                                                  |
-| =C-f=                       | =M-x image-forward-hscroll=                             | Scroll right.                                                                                          |
-| =C-b=                       | =M-x image-backward-hscroll=                            | Scroll left.                                                                                           |
-| =<= or =M-<=                  | =M-x pdf-view-first-page=                               | Goto first page.                                                                                       |
-| => =or =M->=                  | =M-x pdf-view-last-page=                                | Goto last page.                                                                                        |
-| =n=                         | =M-x pdf-view-next-page-command=                        | Next page.                                                                                             |
-| =p=                         | =M-x pdf-view-previous-page-command=                    | Previous page.                                                                                         |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-s=                       | =M-x swiper-iseach=                                     | A =swiper= that’s not line-based. Incrementally search with an overview.                                 |
-| =C-r=                       | =M-x swiper=                                            | Incrementally search with an overview.                                                                 |
-| =H-m C-s s=                 | =M-x isearch-forward=                                   | Incrementally search forward.                                                                          |
-| =H-m C-s r=                 | =M-x isearch-backward=                                  | Incrementally search backward.                                                                         |
-| =f=                         | =M-x pdf-links-isearch-link=                            | Search link.                                                                                           |
-| =M-s o=                     | =M-x pdf-occur=                                         | Occur (list all lines containing a phrase). =RET= to jump to occcur line.                                |
-|                           | =M-x pdf-occur-view-occurrence=                         | View the occurrence at EVENT.                                                                          |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =m=                         | =M-x pdf-view-position-to-register=                     | Store current PDF position in register REGISTER.                                                       |
-| ='=                         | =M-x pdf-view-jump-to-register=                         | Move point to a position stored in a REGISTER.                                                         |
-| =C-c C-d=                   | =M-x pdf-view-dark-minor-mode=                          | Mode for PDF documents with dark background.                                                           |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-c C-r m=                 | =M-x pdf-view-midnight-minor-mode=                      | Apply a color-filter appropriate for past midnight reading.                                            |
-| =C-c C-r t=                 | =M-x pdf-view-themed-minor-mode=                        | Synchronize color filter with the present Emacs theme.                                                 |
-| =C-c C-r p=                 | =M-x pdf-view-printer-minor-mode=                       | Display the PDF as it would be printed.                                                                |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =r=                         | =M-x pdf-history-forward=                               | Go N times forward in the history.                                                                     |
-| =l=                         | =M-x pdf-history-backward=                              | Go N times backward in the history.                                                                    |
-|                           | =M-x pdf-history-goto=                                  | Go to item N in the history.                                                                           |
-|                           | =M-x pdf-history-push=                                  | Push the current page on the stack.                                                                    |
-|                           | =M-x pdf-history-clear=                                 | Remove all history items.                                                                              |
-|                           | =M-x pdf-history-debug=                                 | Visualize the history in the header-line.                                                              |
-|                           | =M-x pdf-history-minor-mode=                            | Keep a history of previously visited pages.                                                            |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =-=                         | =M-x pdf-view-shrink=                                   | Shrink PDF by FACTOR.                                                                                  |
-| ~=~                         | =M-x pdf-view-enlarge=                                  | Enlarge PDF by FACTOR.                                                                                 |
-| =0=                         | =M-x pdf-view-scale-reset=                              | Reset PDF to its default set.                                                                          |
-| =H=                         | =M-x pdf-view-fit-height-to-window=                     | Fit PDF height to window.                                                                              |
-| =W=                         | =M-x pdf-view-fit-width-to-window=                      | Fit PDF size to window.                                                                                |
-| =P=                         | =M-x pdf-view-fit-page-to-window=                       | Fit PDF to window.                                                                                     |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =R=                         | =M-x pdf-view-rotate=                                   | Rotate the current page by ANGLE degrees clockwise.                                                    |
-|                           | =M-x pdf-view-center-in-window=                         | Center PDF in window horizontally.                                                                     |
-| =C-c TAB=                   | =M-x pdf-view-extract-region-image=                     | Create a PNG image of REGIONS.                                                                         |
-|---------------------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| Key binding               | Command                                                     | Description                                                                                            |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =SPC= =n= =<PageDown>= =<down>=   | =M-x pdf-view-scroll-up-or-next-page=                         | To move forward in document. Scroll Down by Page-full                                                  |
+| =BACKSPACE= =p= =<PageUp>= =<up>= | =M-x pdf-view-scroll-down-or-previous-page=                   | To move back in document. Scroll Up by Page-full                                                       |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-x SPC=                   | =M-x psimacs/org-noter/pdf-view-scroll-up-or-next-page=       | To move forward in document. Scroll Down by Page-full                                                  |
+| =H-x BACKSPACE=             | =M-x psimacs/org-noter/pdf-view-scroll-down-or-previous-page= | To move back in document. Scroll Up by Page-full                                                       |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-i=                       | =M-x org-noter-insert-note=                                   | Inserts a note linked to the current page.                                                             |
+| =H-I=                       | =M-x org-noter-insert-note-toggle-no-questions=               | Inserts a note linked to the current page. Note is always create with the default title.               |
+| =H-C-i=                     | =M-x org-noter-insert-precise-note=                           | Insert a note associated with a specific location (x,y).                                               |
+| =H-C-I=                     | =M-x org-noter-insert-precise-note-toggle-no-questions=       | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =<tab>=                     | =M-x org-noter-insert-note=                                   | Inserts a note linked to the current page.                                                             |
+| =S-<tab>=                   | =M-x org-noter-insert-precise-note=                           | Insert a note associated with a specific location (x,y).                                               |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-p=                       | =M-x org-noter-sync-prev-note=                                | Go to the location of the previous note, in relation to where the point is.                            |
+| =M-n=                       | =M-x org-noter-sync-next-note=                                | Go to the location of the next note, in relation to where the point is.                                |
+| =M-.=                       | =M-x org-noter-sync-current-note=                             | Go the location of the selected note, in relation to where the point is.                               |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-M-p=                     | =M-x org-noter-sync-prev-page-or-chapter=                     | Show previous page or chapter that has notes.                                                          |
+| =C-M-n=                     | =M-x org-noter-sync-next-page-or-chapter=                     | Show next page or chapter that has notes.                                                              |
+| =C-M-.=                     | =M-x org-noter-sync-current-page-or-chapter=                  | Show current page or chapter notes.                                                                    |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-T=                       | =M-x org-noter-toggle-notes-window-location=                  | Toggle between side- and bottom-notes window location.                                                 |
+| =M-q=                       | =M-x org-noter-kill-session=                                  | Kill an ‘org-noter’ session.                                                                           |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-g g=                     | =M-x pdf-view-goto-page=                                      | Goto page.                                                                                             |
+| =C-n=                       | =M-x pdf-view-next-line-or-next-page=                         | Scroll Up one line.                                                                                    |
+| =C-p=                       | =M-x pdf-view-previous-line-or-previous-page=                 | Scroll Down one line.                                                                                  |
+| =C-f=                       | =M-x image-forward-hscroll=                                   | Scroll right.                                                                                          |
+| =C-b=                       | =M-x image-backward-hscroll=                                  | Scroll left.                                                                                           |
+| =<= or =M-<=                  | =M-x pdf-view-first-page=                                     | Goto first page.                                                                                       |
+| => =or =M->=                  | =M-x pdf-view-last-page=                                      | Goto last page.                                                                                        |
+| =n=                         | =M-x pdf-view-next-page-command=                              | Next page.                                                                                             |
+| =p=                         | =M-x pdf-view-previous-page-command=                          | Previous page.                                                                                         |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-s=                       | =M-x swiper-iseach=                                           | A =swiper= that’s not line-based. Incrementally search with an overview.                                 |
+| =C-r=                       | =M-x swiper=                                                  | Incrementally search with an overview.                                                                 |
+| =H-m C-s s=                 | =M-x isearch-forward=                                         | Incrementally search forward.                                                                          |
+| =H-m C-s r=                 | =M-x isearch-backward=                                        | Incrementally search backward.                                                                         |
+| =f=                         | =M-x pdf-links-isearch-link=                                  | Search link.                                                                                           |
+| =M-s o=                     | =M-x pdf-occur=                                               | Occur (list all lines containing a phrase). =RET= to jump to occcur line.                                |
+|                           | =M-x pdf-occur-view-occurrence=                               | View the occurrence at EVENT.                                                                          |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =m=                         | =M-x pdf-view-position-to-register=                           | Store current PDF position in register REGISTER.                                                       |
+| ='=                         | =M-x pdf-view-jump-to-register=                               | Move point to a position stored in a REGISTER.                                                         |
+| =C-c C-d=                   | =M-x pdf-view-dark-minor-mode=                                | Mode for PDF documents with dark background.                                                           |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-c C-r m=                 | =M-x pdf-view-midnight-minor-mode=                            | Apply a color-filter appropriate for past midnight reading.                                            |
+| =C-c C-r t=                 | =M-x pdf-view-themed-minor-mode=                              | Synchronize color filter with the present Emacs theme.                                                 |
+| =C-c C-r p=                 | =M-x pdf-view-printer-minor-mode=                             | Display the PDF as it would be printed.                                                                |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =r=                         | =M-x pdf-history-forward=                                     | Go N times forward in the history.                                                                     |
+| =l=                         | =M-x pdf-history-backward=                                    | Go N times backward in the history.                                                                    |
+|                           | =M-x pdf-history-goto=                                        | Go to item N in the history.                                                                           |
+|                           | =M-x pdf-history-push=                                        | Push the current page on the stack.                                                                    |
+|                           | =M-x pdf-history-clear=                                       | Remove all history items.                                                                              |
+|                           | =M-x pdf-history-debug=                                       | Visualize the history in the header-line.                                                              |
+|                           | =M-x pdf-history-minor-mode=                                  | Keep a history of previously visited pages.                                                            |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =-=                         | =M-x pdf-view-shrink=                                         | Shrink PDF by FACTOR.                                                                                  |
+| ~=~                         | =M-x pdf-view-enlarge=                                        | Enlarge PDF by FACTOR.                                                                                 |
+| =0=                         | =M-x pdf-view-scale-reset=                                    | Reset PDF to its default set.                                                                          |
+| =H=                         | =M-x pdf-view-fit-height-to-window=                           | Fit PDF height to window.                                                                              |
+| =W=                         | =M-x pdf-view-fit-width-to-window=                            | Fit PDF size to window.                                                                                |
+| =P=                         | =M-x pdf-view-fit-page-to-window=                             | Fit PDF to window.                                                                                     |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =R=                         | =M-x pdf-view-rotate=                                         | Rotate the current page by ANGLE degrees clockwise.                                                    |
+|                           | =M-x pdf-view-center-in-window=                               | Center PDF in window horizontally.                                                                     |
+| =C-c TAB=                   | =M-x pdf-view-extract-region-image=                           | Create a PNG image of REGIONS.                                                                         |
+|---------------------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 
 
 Keybinding for the *org note buffer* in =org-noter-mode=:
 
 #+attr_html: :class styledtable1
-| Key binding | Command                                               | Description                                                                                            |
-|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =H-i=         | =M-x org-noter-insert-note=                             | Inserts a note linked to the current page.                                                             |
-| =H-I=         | =M-x org-noter-insert-note-toggle-no-questions=         | Inserts a note linked to the current page. Note is always create with the default title.               |
-| =H-C-i=       | =M-x org-noter-insert-precise-note=                     | Insert a note associated with a specific location (x,y).                                               |
-| =H-C-I=       | =M-x org-noter-insert-precise-note-toggle-no-questions= | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
-|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =M-p=         | =M-x org-noter-sync-prev-note=                          | Go to the location of the previous note, in relation to where the point is.                            |
-| =M-n=         | =M-x org-noter-sync-next-note=                          | Go to the location of the next note, in relation to where the point is.                                |
-| =M-.=         | =M-x org-noter-sync-current-note=                       | Go the location of the selected note, in relation to where the point is.                               |
-|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =C-M-p=       | =M-x org-noter-sync-prev-page-or-chapter=               | Show previous page or chapter that has notes.                                                          |
-| =C-M-n=       | =M-x org-noter-sync-next-page-or-chapter=               | Show previous page or chapter that has notes.                                                          |
-| =C-M-.=       | =M-x org-noter-sync-current-page-or-chapter=            | Show current page or chapter notes.                                                                    |
-|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
-| =M-T=         | =M-x org-noter-toggle-notes-window-location=            | Toggle between side- and bottom-notes window location.                                                 |
-| =M-q=         | =M-x org-noter-kill-session=                            | Kill an ‘org-noter’ session.                                                                           |
-|-------------+-------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| Key binding   | Command                                                     | Description                                                                                            |
+|---------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-x SPC=       | =M-x psimacs/org-noter/pdf-view-scroll-up-or-next-page=       | To move forward in document. Scroll Down by Page-full                                                  |
+| =H-x BACKSPACE= | =M-x psimacs/org-noter/pdf-view-scroll-down-or-previous-page= | To move back in document. Scroll Up by Page-full                                                       |
+|---------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =H-i=           | =M-x org-noter-insert-note=                                   | Inserts a note linked to the current page.                                                             |
+| =H-I=           | =M-x org-noter-insert-note-toggle-no-questions=               | Inserts a note linked to the current page. Note is always create with the default title.               |
+| =H-C-i=         | =M-x org-noter-insert-precise-note=                           | Insert a note associated with a specific location (x,y).                                               |
+| =H-C-I=         | =M-x org-noter-insert-precise-note-toggle-no-questions=       | Insert a note associated with a specific location (x,y). Note is always create with the default title. |
+|---------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-p=           | =M-x org-noter-sync-prev-note=                                | Go to the location of the previous note, in relation to where the point is.                            |
+| =M-n=           | =M-x org-noter-sync-next-note=                                | Go to the location of the next note, in relation to where the point is.                                |
+| =M-.=           | =M-x org-noter-sync-current-note=                             | Go the location of the selected note, in relation to where the point is.                               |
+|---------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =C-M-p=         | =M-x org-noter-sync-prev-page-or-chapter=                     | Show previous page or chapter that has notes.                                                          |
+| =C-M-n=         | =M-x org-noter-sync-next-page-or-chapter=                     | Show previous page or chapter that has notes.                                                          |
+| =C-M-.=         | =M-x org-noter-sync-current-page-or-chapter=                  | Show current page or chapter notes.                                                                    |
+|---------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+| =M-T=           | =M-x org-noter-toggle-notes-window-location=                  | Toggle between side- and bottom-notes window location.                                                 |
+| =M-q=           | =M-x org-noter-kill-session=                                  | Kill an ‘org-noter’ session.                                                                           |
+|---------------+-------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
+
+** Eat Shell
+
+[[https://codeberg.org/akib/emacs-eat][Eat]] stands for /Emulate A Terminal/.
+It is pretty fast, more than three times faster than Term, despite being implemented entirely in Emacs Lisp.
+
+Eat has four input modes:
+
+- *semi-char* mode: This is the default input mode. Most keys are bound to send the key to the terminal, except
+                  the following keys: =C-\=, =C-c=, =C-x=, =C-g=, =C-h=, =C-M-c=, =C-u=, =C-q=, =M-x=, =M-:=, =M-!=, =M-&= and some other
+                  keys. The following special keybinding are available:
+
+  - =C-q=: Send next key to the terminal.
+  - =C-y=: Like `yank', but send the text to the terminal.
+  - =M-y=: Like `yank-pop', but send the text to the terminal.
+  - =C-c C-k=: Kill process.
+  - =C-c C-e=: Switch to *emacs* input mode.
+  - =C-c M-d=: Switch to *char* input mode.
+  - =C-c C-l=: Switch to *line* input mode.
+
+- *emacs* mode: No special keybinding, except the following:
+
+  - =C-c C-j=: Switch to "semi-char" input mode.
+  - =C-c M-d=: Switch to "char" input mode.
+  - =C-c C-l=: Switch to "line" input mode.
+  - =C-c C-k=: Kill process.
+
+- *char* mode: All supported keys are bound to send the key to the terminal, except =C-M-m= or =M-RET=, which is bound to
+  switch to *semi-char* input mode.
+
+- *line* mode: Similar to Comint, Shell mode and Term line mode. In this input mode, terminal input is sent one line at
+  once, and you can edit input line using the usual Emacs commands.
+
+  - =C-c C-e=: Switch to "emacs" input mode
+  - =C-c C-j=: Switch to "semi-char" input mode.
+  - =C-c M-d=: Switch to "char" input mode.
+
+References:
+- [[https://codeberg.org/akib/emacs-eat][Eat]]
+- [[https://codeberg.org/akib/emacs-eat/pulls/258][Add native Windows PTY support via pywinpty #258]]
+- [[https://pypi.org/project/pywinpty/][pywinpty on PyPi]]
+
+#+attr_html: :class styledtable1
+| Key binding | Command                    | Description                                                      |
+|-------------+----------------------------+------------------------------------------------------------------|
+|             | =M-x eat=                    | Start the Eat terminal emulation.                                |
+|             | =M-x eat-other-window=       | Start a new Eat terminal emulator in a buffer in another window. |
+|             | =M-x eat-project=            | Start Eat in the current project’s root directory.               |
+| =C-c C-k=     | =M-x eat-kill-process=       | Kill Eat process in current buffer.                              |
+|             | =M-x eat-reset=              | Perform a terminal reset.                                        |
+|             | =M-x eat-reload=             | Reload Eat.                                                      |
+|-------------+----------------------------+------------------------------------------------------------------|
+| =C-c C-e=     | =M-x eat-emacs-mode=         | Switch to /emacs/ input mode.                                      |
+| =C-c M-d=     | =M-x eat-char-mode=          | Switch to /char/ input mode.                                       |
+| =C-c C-j=     | =M-x eat-semi-char-mode=     | Switch to /semi-char/ input mode.                                  |
+| =C-c C-l=     | =M-x eat-line-mode=          | Switch to /line/ input mode.                                       |
+|-------------+----------------------------+------------------------------------------------------------------|
+| =C-y=         | =M-x eat-yank=               | Same as ‘yank’, but for Eat.                                     |
+| =C-x 8 RET=   | =M-x eat-input-char=         | Input CHARACTER, COUNT times.                                    |
+| =DEL=         | =M-x eat-self-input=         | Send E as input N times.                                         |
+| =C-q=         | =M-x eat-quoted-input=       | Read a character and send it as INPUT.                           |
+|             | =M-x eat-line-restore-input= | Restore unfinished input.                                        |
+| =C-c C-n=     | =M-x  eat-next-shell-prompt= | Go to the next shell prompt.                                     |
+|-------------+----------------------------+------------------------------------------------------------------|
 
 ** Additional key bindings for *Psimacs*:
 
