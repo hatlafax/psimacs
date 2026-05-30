@@ -15912,7 +15912,7 @@ You can change this, add more tools and MCP servers etc as in regular gptel usag
 )
 #+end_src
 
-*** agent-shell
+*** Agent-Shell
 
 The package [[https://github.com/xenodium/agent-shell][agent-shell]] provides a native Emacs shell to interact with LLM agents powered by ACP ([[https://agentclientprotocol.com/get-started/introduction][Agent Client Protocol]]).
 
@@ -15924,6 +15924,7 @@ References:
 - [[https://xenodium.com/][Xenodium's Blog]]
 - [[https://github.com/xenodium/agent-shell][agent-shell on github]]
 - [[https://github.com/gveres/agent-shell-workspace][agent-shell-workspace on github]]
+- [[https://github.com/cmacrae/agent-shell-sidebar][agent-shell-sidebar on github]]
 - [[https://xenodium.com/introducing-agent-shell][Introducing agent-shell by Xenodium]]
 - [[https://www.youtube.com/watch?v=R2Ucr3amgGg][Bending Emacs Episode 10: AI / LLM agent-shell]]
 - [[https://www.youtube.com/watch?v=ymMlftdGx4I][Bending Emacs Episode 12: agent-shell + Claude Skills]]
@@ -16006,6 +16007,42 @@ The basic commands:
               ("C-c RET" . shell-maker-submit)
               ("C-c C-c" . shell-maker-submit)
               ("C-c C-k" . agent-shell-interrupt)
+        )
+)
+#+end_src
+
+**** CANCELED Agent-Shell-Sidebar
+
+[[https://github.com/cmacrae/agent-shell-sidebar][agent-shell-sidebar]] provides a persistent sidebar interface for [[https://github.com/xenodium/agent-shell][agent-shell]], with a treemacs-like side panel for interacting
+with LLM agents.
+
+The basic commands:
+#+attr_html: :class styledtable1
+| Key binding | Command                                 | Description                                                               |
+|-------------+-----------------------------------------+---------------------------------------------------------------------------|
+|             | =M-x agent-shell-sidebar-reset=           | Reset the sidebar for the current project by killing the current session. |
+| =C-c a s=     | =M-x agent-shell-sidebar-toggle=          | Toggle sidebar visibility for the current project.                        |
+| =C-c a f=     | =M-x agent-shell-sidebar-toggle-focus=    | Toggle focus between sidebar and last buffer for current project.         |
+|             | =M-x agent-shell-sidebar-change-provider= | Change the agent provider for the current project’s sidebar.              |
+|-------------+-----------------------------------------+---------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+;;
+;; agent-shell and support packages
+;;
+(use-package agent-shell
+  :after agent-shell
+  :straight (:host github :repo "cmacrae/agent-shell-sidebar")
+  :config
+    (setq agent-shell-sidebar-width "25%")
+    (setq agent-shell-sidebar-minimum-width 80)
+    (setq agent-shell-sidebar-maximum-width "50%")
+    (setq agent-shell-sidebar-position 'right)
+    (setq agent-shell-sidebar-locked t)
+    (setq agent-shell-sidebar-default-config (agent-shell-anthropic-make-claude-code-config))
+  :bind (
+         ("C-c a s" . agent-shell-sidebar-toggle)
+         ("C-c a f" . agent-shell-sidebar-toggle-focus)
         )
 )
 #+end_src

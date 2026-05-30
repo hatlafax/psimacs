@@ -1262,6 +1262,17 @@ if (-not $no_packages )
         & $bash_exe --login -c "pacman --sync --noconfirm --needed ${package_prefix}-nodejs"
         & $bash_exe --login -c "npm install -g @mermaid-js/mermaid-cli"
     }
+
+    #
+    # Node.js and claude code support
+    #
+    if (! $no_npm)
+    {
+        & $bash_exe --login -c "npm install -g @anthropic-ai/claude-code"
+        & $bash_exe --login -c "claude plugin marketplace add xenodium/emacs-skills"
+        & $bash_exe --login -c "claude plugin install emacs-skills@xenodium-emacs-skills"
+        & $bash_exe --login -c "claude plugin marketplace update xenodium-emacs-skills"
+    }
     
     #
     # Bootstrap msys64 into psimacs dir: install nerd fonts
