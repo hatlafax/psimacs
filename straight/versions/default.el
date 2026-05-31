@@ -3,7 +3,6 @@
  ("Emacs-wgrep" . "49f09ab9b706d2312cab1199e1eeb1bcd3f27f6f")
  ("ace-window" . "77115afc1b0b9f633084cf7479c767988106c196")
  ("acp.el" . "3ddfa907eb7f17949a4a8e731ea5c5241e6cbcb4")
- ("agent-shell" . "2e288326f43397008b04d3da0724acf5afab9283")
  ("aggressive-indent-mode" . "a437a45868f94b77362c6b913c5ee8e67b273c42")
  ("aidermacs" . "9772db3e1969eec1df6a53b7d3e5597d07e3337f")
  ("alect-themes" . "b1f97e4bc0dc6ec91c7e9999fbe9fa371016463b")

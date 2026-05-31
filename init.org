@@ -15949,7 +15949,8 @@ The basic commands:
 ;; agent-shell and support packages
 ;;
 (use-package agent-shell
-  :straight (:host github :repo "xenodium/agent-shell")
+  ;;:straight (:host github :repo "xenodium/agent-shell")
+  :straight (:host github :repo "hatlafax/agent-shell")
   ;:ensure-system-package (
     ;(npm . "sudo dnf install -y npm")
 
@@ -15976,6 +15977,10 @@ The basic commands:
     (setq agent-shell-openai-authentication
           (agent-shell-openai-make-authentication
            :api-key (lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file))
+           ))
+
+    (setq agent-shell-jetbrains-authentication
+          (agent-shell-jetbrains-make-junie-authentication :none t
            ))
 
     ;(setq agent-shell-google-authentication
