@@ -747,6 +747,9 @@ Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks
 Keyboard macro recording and replaying is a powerful mechanism for efficient editing. The following table
 shows the most important provided commands and keybindings.
 
+References:
+- [[https://www.masteringemacs.org/article/keyboard-macros-are-misunderstood][Keyboard Macros are Misunderstood]]
+
 #+attr_html: :class styledtable
 | Key binding     | Command                                  | Description                                                                      |
 |-----------------+------------------------------------------+----------------------------------------------------------------------------------|
@@ -2928,7 +2931,7 @@ to it's documentation string.
             ;; screen offsets in pixel
             ;;
             (offset_top      30)
-            (offset_bottom   80)
+            (offset_bottom  100)
             ;;
             ;; Size corrections
             ;;
@@ -4430,6 +4433,23 @@ zip 3.0-3
 (defconst psimacs/config/msys-env-lib-dir
     (psimacs/file-system/concat-directory psimacs/config/msys-env-root-dir "lib")
   "The psimacs actual msys environment lib directory.")
+#+end_src
+
+** Powershell
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Powershell installation
+;;
+(defconst psimacs/config/powershell-root-dir
+  (if psimacs/system/is-win32-p "c:/Program Files/PowerShell/7" nil)
+  "The psimacs powershell root directory.")
+
+(defconst psimacs/config/powershell-runtime-exe
+  (if psimacs/system/is-win32-p
+      (psimacs/file-system/concat-file psimacs/config/powershell-root-dir "pwsh.exe")
+    nil)
+  "The powershell executable.")
 #+end_src
 
 ** SSH
@@ -7334,10 +7354,46 @@ cursor in the active window only.
 ;; Cursor visible only in the active window
 ;;
 (setq-default cursor-in-non-selected-windows nil)
-;;(setq-default cursor-type 'bar)
+
+
+;; Define default cursor type (e.g., box, bar, hollow)
+(setq-default cursor-type '(bar . 3))
+
+;(setq cursor-type 'box)
+;(setq cursor-type '(bar . 3))
+;(setq cursor-type 'hbox)
+;(setq cursor-type '(hbar . 3))
 
 (setq blink-cursor-delay    10
       blink-cursor-interval 0.7)
+
+(defun psimacs/config/change-cursor-shape ()
+  "Set cursor shape depending on overwrite mode.
+When overwrite-mode is nil (off), set cursor-type to hbar.
+Otherwise, set it to box."
+  (interactive)
+  (when (buffer-live-p (current-buffer))
+    (cond
+      ;; 1. Read-only mode takes highest priority
+      (buffer-read-only
+        (setq-local cursor-type 'hollow))
+      ;; 2. Overwrite mode (box cursor)
+      (overwrite-mode
+        (setq-local cursor-type 'box))
+      ;; 3. Normal editing mode (bar cursor)
+      (t
+        (setq-local cursor-type '(bar . 3))
+      )
+    )
+  )
+)
+
+;; Hook for buffer switching and visibility changes
+(add-hook 'buffer-list-update-hook #'psimacs/config/change-cursor-shape)
+
+;; Hook for mode toggles and state changes within the current buffer
+(add-hook 'post-command-hook #'psimacs/config/change-cursor-shape)
+
 
 ;; Don't stretch the cursor to fit wide characters, it is disorienting,
 ;; especially for tabs.
@@ -10595,6 +10651,23 @@ we set the =tramp-persistency-file-name= variable.
 ** Handling
 
 This section provides setting and packages that enhance the user experience with *Emacs* considerably.
+
+*** Inhibit Mouse Mode
+
+The [[https://github.com/jamescherti/inhibit-mouse.el][inhibit-mouse-mode]] package allows the disabling of mouse input in Emacs. By default mouse is
+enabled. Toggle activation state with =M-x inhibit-mouse-mode=.
+
+#+begin_src emacs-lisp :tangle config/init-basic-handling.el :var file-description="Basic handling setup"
+(use-package inhibit-mouse
+  :custom
+    ;; Disable highlighting of clickable text such as URLs and hyperlinks when
+    ;; hovered by the mouse pointer.
+    (inhibit-mouse-adjust-mouse-highlight t)
+
+    ;; Disables the use of tooltips (show-help-function) during mouse events.
+    (inhibit-mouse-adjust-show-help-function t)
+)
+#+end_src
 
 *** Proportional Window Resizing
 
@@ -15933,16 +16006,47 @@ References:
 
 The basic commands:
 #+attr_html: :class styledtable1
-| Key binding | Command                                     | Description                                  |
-|-------------+---------------------------------------------+----------------------------------------------|
-|             | =M-x agent-shell=                             | Start or reuse existing =agent-shell=. (DWIM)  |
-|             | =C-u M-x agent-shell=                         | Start new =agent-shell=.                       |
-| =RET=         | =M-x newline=                                 | Inserts a new line character.                |
-| =C-RET=       | =M-x agent-shell-ui-toggle-fragment-at-point= | Toggle visibility of fragment body at point. |
-| =C-c RET=     | =M-x shell-makter-submit=                     | Submits prompt.                              |
-| =C-c C-c=     | =M-x shell-makter-submit=                     | Submits prompt.                              |
-| =C-u C-c RET= | =M-x agent-shell-interrupt=                   | Interrupt current agent operation.           |
-|-------------+---------------------------------------------+----------------------------------------------|
+| Key binding | Command                                     | Description                                                                  |
+|-------------+---------------------------------------------+------------------------------------------------------------------------------|
+| =TAB=         | =M-x agent-shell-next-item=                   | Go to next item.                                                             |
+| =S-TAB=       | =M-x agent-shell-previous-item=               | Go to previous item.                                                         |
+| =n=           | =M-x agent-shell-next-item=                   | Go to next item.                                                             |
+| =p=           | =M-x agent-shell-previous-item=               | Go to previous item.                                                         |
+| =C-c C-n=     | =M-x comint-next-prompt=                      | Go to next prompt.                                                           |
+| =C-c C-p=     | =M-x comint-previous-prompt=                  | Go to previous prompt.                                                       |
+|             | =M-x agent-shell=                             | Start or reuse existing =agent-shell=. (DWIM)                                  |
+|             | =C-u M-x agent-shell=                         | Start new =agent-shell=.                                                       |
+| =RET=         | =M-x newline=                                 | Inserts a new line character.                                                |
+| =C-RET=       | =M-x agent-shell-ui-toggle-fragment-at-point= | Toggle visibility of fragment body at point.                                 |
+| =C-c RET=     | =M-x shell-maker-submit=                      | Submits prompt.                                                              |
+| =C-c C-c=     | =M-x shell-maker-submit=                      | Submits prompt.                                                              |
+| =C-c C-k=     | =M-x agent-shell-interrupt=                   | Interrupt current agent operation.                                           |
+| =C-c C-o=     | =M-x agent-shell-other-buffer=                | Switch to other associated buffer (viewport vs shell).                       |
+| =C-c C-s=     | =M-x agent-shell-set-session-config-option=   | Set a session config option.                                                 |
+| =C-c C-t=     | =M-x agent-shell-set-session-thought-level=   | Set thought level (reasoning effort) for the current session.                |
+| =H-c C-m M=   | =M-x agent-shell-set-session-model=           | Set session model.                                                           |
+| =H-c C-m m=   | =M-x agent-shell-set-session-mode=            | Set session mode (if any available).                                         |
+| =H-c C-m c=   | =M-x agent-shell-cycle-session-mode=          | Cycle through available session modes.                                       |
+| =H-c C-m C=   | =M-x agent-shell-completion-mode=             | Toggle agent shell completion with =@= or =/= prefix.                        |
+| =H-c C-h m=   | =M-x agent-shell-help-menu=                   | Transient menu for =agent-shell= commands.                                   |
+| =H-c C-h v=   | =M-x agent-shell-viewport--help-menu=         | Show viewport and display the transient help menu (bound to ? in view mode). |
+| =H-c H-p=     | =M-x agent-shell-prompt-compose=              | Compose an ‘agent-shell’ prompt in a dedicated buffer.                       |
+|             | =M-x agent-shell-insert-shell-command-output= | Execute a shell command and insert output as a code block.                   |
+|-------------+---------------------------------------------+------------------------------------------------------------------------------|
+|             | =M-x agent-shell-send-dwim=                   | Send region or error at point to last accessed shell buffer in project.      |
+|             | =M-x agent-shell-send-file=                   | Insert a file into ‘agent-shell’.                                            |
+|             | =M-x agent-shell-send-file-to=                | Like ‘agent-shell-send-file’ but prompt for which shell to use.              |
+|             | =M-x agent-shell-insert-file=                 | Insert a file into ‘agent-shell’ (agent-shell-send-file).                    |
+|             | =M-x agent-shell-send-current-file=           | Insert a file into ‘agent-shell’ (agent-shell-send-file).                    |
+|             | =M-x agent-shell-send-other-file=             | Prompt to send a file into ‘agent-shell’.                                    |
+|             | =M-x agent-shell-send-region=                 | Send region to last accessed shell buffer in project.                        |
+|             | =M-x agent-shell-send-region-to=              | Like ‘agent-shell-send-region’ but prompt for which shell to use.            |
+|             | =M-x agent-shell-send-screenshot=             | Capture a screenshot and insert it into ‘agent-shell’.                       |
+|             | =M-x agent-shell-send-screenshot-to=          | Like ‘agent-shell-send-screenshot’ but prompt for which shell to use.        |
+|             | =M-x agent-shell-send-clipboard-image=        | Paste clipboard image and insert it into ‘agent-shell’.                      |
+|             | =M-x agent-shell-send-clipboard-image-to=     | Like ‘agent-shell-send-clipboard-image’ but prompt for which shell to use.   |
+|-------------+---------------------------------------------+------------------------------------------------------------------------------|
+
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 ;;
@@ -15979,9 +16083,9 @@ The basic commands:
            :api-key (lambda () (psimacs/config/read-key-value-from-file "Psimacs GPT API KEY" psimacs/config/keys-file))
            ))
 
-    (setq agent-shell-jetbrains-authentication
-          (agent-shell-jetbrains-make-junie-authentication :none t
-           ))
+    ;(setq agent-shell-jetbrains-authentication
+    ;      (agent-shell-jetbrains-make-authentication :none t
+    ;       ))
 
     ;(setq agent-shell-google-authentication
     ;      (agent-shell-google-make-authentication
@@ -15989,7 +16093,7 @@ The basic commands:
     ;       ))
 
     ;; Set Claude Code as the preferred agent
-    (agent-shell-preferred-agent-config (agent-shell-anthropic-make-claude-code-config))
+    ;(setq agent-shell-preferred-agent-config (agent-shell-anthropic-make-claude-code-config))
 
     ;; Use Gemini CLI as the default.
     ;(setq agent-shell-preferred-agent-config (agent-shell-google-make-gemini-config))
@@ -16004,15 +16108,90 @@ The basic commands:
     ;(setq agent-shell-show-welcome-message nil))
 
     ;; This enables "@" file completion and "/" command completion (not supported by all agents).
-    ;(agent-shell-completion-mode 1)
+    (agent-shell-completion-mode 1)
+
+    ; For example, agent-shell-send* will insert text into the viewport
+    ; buffer instead of the shell buffer.  If no viewport buffer exists, one
+    ; will be created.
+    (setq agent-shell-prefer-viewport-interaction t) ; Non-nil makes agent-shell prefer viewport interaction
+                                                     ; over shell interaction.
+
+    ;(when (eq system-type 'windows-nt)
+    ;  (defun psimacs/config/agent-shell (orig-fun &rest args)
+    ;    "Run `agent-shell` with a temporary MSYS2-Bash configuration."
+    ;    (let* ((msys2-env (or (getenv "MSYS2_ENV") "ucrt64"))
+    ;           (explicit-shell-file-name psimacs/config/msys-runtime-exe)
+    ;           (shell-file-name psimacs/config/msys-runtime-exe)
+    ;           (explicit-bash.exe-args '("--login" "-i"))
+    ;           (shell-command-switch "-c")
+    ;           (process-environment (append (list (format "MSYSTEM=%s" msys2-env)
+    ;                                              "TERM=dumb"
+    ;                                              "EMACS=t")
+    ;                                        process-environment))
+    ;           ;; 1. Capture the buffer object returned by agent-shell
+    ;           (agent-buffer (apply orig-fun args)))
+    ;
+    ;      ;; 2. If a valid buffer was returned, configure the filters locally
+    ;      (when (buffer-live-p agent-buffer)
+    ;        (with-current-buffer agent-buffer
+    ;          ;; Add filters exclusively (locally) to this specific agent buffer
+    ;          (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m nil t)
+    ;          (add-hook 'comint-preoutput-filter-functions #'psimacs/config/bash-filter nil t)))
+    ;
+    ;      ;; Important: Return the buffer to the rest of the Emacs system
+    ;      agent-buffer))
+    ;
+    ;  ;; Attach the wrapper to agent-shell
+    ;  (advice-add 'agent-shell :around #'psimacs/config/agent-shell)
+    ;)
+
+    ;; see https://github.com/xenodium/agent-shell/issues/521
+    ;; Feature request: easier .agent-shell/ transcript directory management #521
+    ;;
+    ;(setq agent-shell-transcript-file-path-function
+    ;    (lambda ()
+    ;      (let* ((proj (or (and (fboundp 'project-current)
+    ;                            (project-current)
+    ;                            (file-name-nondirectory
+    ;                             (directory-file-name
+    ;                              (project-root (project-current)))))
+    ;                       "no-project"))
+    ;             (dir (expand-file-name
+    ;                   (format "agent-shell/transcripts/%s/" proj)
+    ;                   (or (getenv "XDG_STATE_HOME") "~/.local/state/"))))
+    ;        (make-directory dir t)
+    ;        (expand-file-name (format-time-string "%F-%H-%M-%S.md") dir))))
 
   :bind (:map agent-shell-mode-map
-              ("RET"     . newline)
-              ("C-RET"   . agent-shell-ui-toggle-fragment-at-point)
-              ("C-c RET" . shell-maker-submit)
-              ("C-c C-c" . shell-maker-submit)
-              ("C-c C-k" . agent-shell-interrupt)
+              ("RET"       . newline)
+              ("C-RET"     . agent-shell-ui-toggle-fragment-at-point)
+              ("C-c RET"   . shell-maker-submit)
+              ("C-c C-c"   . shell-maker-submit)
+              ("C-c C-k"   . agent-shell-interrupt)
+              ("H-c C-m M" . agent-shell-set-session-model)
+              ("H-c C-m m" . agent-shell-set-session-mode)
+              ("H-c C-m c" . agent-shell-cycle-session-mode)
+              ("H-c C-m C" . agent-shell-completion-mode)
+              ("H-c C-h m" . agent-shell-help-menu)
+              ("H-c C-h v" . agent-shell-viewport--help-menu)
+              ("H-c H-p"   . agent-shell-prompt-compose)
         )
+)
+#+end_src
+
+**** Agent Shell ORG Tanscript
+
+The package [[https://github.com/lllShamanlll/agent-shell-org-transcript][agent-shell-org-transcript]] saves
+[[https://github.com/xenodium/agent-shell][agent-shell]] conversation transcripts as =.org= files in =org-roam-directory=
+or a directory of your choice, with content converted from /markdown/ to /org-mode/ format
+(headings, code blocks, block quotes, bold).
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+(use-package agent-shell-org-transcript
+  :straight (:host github :repo "lllShamanlll/agent-shell-org-transcript")
+  :after agent-shell
+  :config
+    (setq agent-shell-org-transcript-directory (psimacs/file-system/concat-directory psimacs/config/roam-notes-dir "agent-shell"))
 )
 #+end_src
 
@@ -25071,20 +25250,35 @@ References:
   (shell (current-buffer))
 )
 
+(defun psimacs/config/bash-filter (string)
+  "Filter out stubborn TTY and job control warnings from the MSYS2 Bash."
+  (let ((filtered string))
+    (setq filtered (replace-regexp-in-string "bash: cannot set terminal process group.*?\n" "" filtered))
+    (setq filtered (replace-regexp-in-string "bash: no job control in this shell.*?\n" "" filtered))
+    filtered))
 
 (defun psimacs/shell/run-bash ()
-  "Run a bash interactive shell."
+  "Run a bash interactive shell with persistent buffer-local filters."
   (interactive)
-  (let ((process-environment (cl-copy-list process-environment))
-          (explicit-shell-file-name psimacs/config/msys-runtime-exe)
-          (explicit-bash.exe-args '("--login" "-i"))
-          (binary-process-input t)
-          (w32-quote-process-args t)
-          )
-      (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
-      (shell "*bash*")
-  )
-)
+  (let* ((msys2-env (or (getenv "MSYS2_ENV") "ucrt64"))
+         (explicit-shell-file-name psimacs/config/msys-runtime-exe)
+         (shell-file-name psimacs/config/msys-runtime-exe)
+         (explicit-bash.exe-args '("--login" "-i"))
+         (shell-command-switch "-c")
+         (process-environment (append (list (format "MSYSTEM=%s" msys2-env)
+                                            "TERM=dumb"
+                                            "EMACS=t")
+                                      process-environment)))
+
+    ;; 1. Start the Shell asynchronously
+    (shell "*bash*")
+
+    ;; 2. Temporily switch into the context of the new buffer
+    (with-current-buffer "*bash*"
+      ;; The fourth argument 't is most important: it makes the hook BUFFER-LOKAL.
+      ;; With that the hook stays active when the Bash milliseconds later sends the text.
+      (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m nil t)
+      (add-hook 'comint-preoutput-filter-functions #'psimacs/config/bash-filter nil t))))
 
 (defun psimacs/shell/run-cmd ()
   "Run a DOS command shell."
@@ -25094,10 +25288,26 @@ References:
   )
 
 (defun psimacs/shell/run-powershell ()
-  "Run a DOS command shell."
+  "Run a Powershell command shell."
   (interactive)
-  (powershell)
+  ;;(powershell)
+
+  (let* (
+         (explicit-shell-file-name psimacs/config/powershell-runtime-exe)
+         (shell-file-name psimacs/config/powershell-runtime-exe)
+        )
+
+    ;; 1. Start the Shell asynchronously
+    (shell "*powershell*")
+
+    ;; 2. Temporily switch into the context of the new buffer
+    (with-current-buffer "*powershell*"
+      ;; The fourth argument 't is most important: it makes the hook BUFFER-LOKAL.
+      ;; With that the hook stays active when the Bash milliseconds later sends the text.
+      (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m nil t)
+    )
   )
+)
 
 (defun psimacs/shell/run-eshell ()
   "Run a Emacs eshell."

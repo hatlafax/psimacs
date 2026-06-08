@@ -610,6 +610,9 @@ Reference: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks
 Keyboard macro recording and replaying is a powerful mechanism for efficient editing. The following table
 shows the most important provided commands and keybindings.
 
+References:
+- [[https://www.masteringemacs.org/article/keyboard-macros-are-misunderstood][Keyboard Macros are Misunderstood]]
+
 #+attr_html: :class styledtable
 | Key binding     | Command                                  | Description                                                                      |
 |-----------------+------------------------------------------+----------------------------------------------------------------------------------|
@@ -3058,16 +3061,49 @@ References:
 
 The basic commands:
 #+attr_html: :class styledtable1
-| Key binding | Command                                     | Description                                  |
-|-------------+---------------------------------------------+----------------------------------------------|
-|             | =M-x agent-shell=                             | Start or reuse existing =agent-shell=. (DWIM)  |
-|             | =C-u M-x agent-shell=                         | Start new =agent-shell=.                       |
-| =RET=         | =M-x newline=                                 | Inserts a new line character.                |
-| =C-RET=       | =M-x agent-shell-ui-toggle-fragment-at-point= | Toggle visibility of fragment body at point. |
-| =C-c RET=     | =M-x shell-makter-submit=                     | Submits prompt.                              |
-| =C-c C-c=     | =M-x shell-makter-submit=                     | Submits prompt.                              |
-| =C-u C-c RET= | =M-x agent-shell-interrupt=                   | Interrupt current agent operation.           |
-|-------------+---------------------------------------------+----------------------------------------------|
+| Key binding | Command                                     | Description                                                                  |
+|-------------+---------------------------------------------+------------------------------------------------------------------------------|
+| =TAB=         | =M-x agent-shell-next-item=                   | Go to next item.                                                             |
+| =S-TAB=       | =M-x agent-shell-previous-item=               | Go to previous item.                                                         |
+| =n=           | =M-x agent-shell-next-item=                   | Go to next item.                                                             |
+| =p=           | =M-x agent-shell-previous-item=               | Go to previous item.                                                         |
+| =C-c C-n=     | =M-x comint-next-prompt=                      | Go to next prompt.                                                           |
+| =C-c C-p=     | =M-x comint-previous-prompt=                  | Go to previous prompt.                                                       |
+|             | =M-x agent-shell=                             | Start or reuse existing =agent-shell=. (DWIM)                                  |
+|             | =C-u M-x agent-shell=                         | Start new =agent-shell=.                                                       |
+| =RET=         | =M-x newline=                                 | Inserts a new line character.                                                |
+| =C-RET=       | =M-x agent-shell-ui-toggle-fragment-at-point= | Toggle visibility of fragment body at point.                                 |
+| =C-c RET=     | =M-x shell-maker-submit=                      | Submits prompt.                                                              |
+| =C-c C-c=     | =M-x shell-maker-submit=                      | Submits prompt.                                                              |
+| =C-c C-k=     | =M-x agent-shell-interrupt=                   | Interrupt current agent operation.                                           |
+| =C-c C-o=     | =M-x agent-shell-other-buffer=                | Switch to other associated buffer (viewport vs shell).                       |
+| =C-c C-s=     | =M-x agent-shell-set-session-config-option=   | Set a session config option.                                                 |
+| =C-c C-t=     | =M-x agent-shell-set-session-thought-level=   | Set thought level (reasoning effort) for the current session.                |
+| =H-c C-m M=   | =M-x agent-shell-set-session-model=           | Set session model.                                                           |
+| =H-c C-m m=   | =M-x agent-shell-set-session-mode=            | Set session mode (if any available).                                         |
+| =H-c C-m c=   | =M-x agent-shell-cycle-session-mode=          | Cycle through available session modes.                                       |
+| =H-c C-m C=   | =M-x agent-shell-completion-mode=             | Toggle agent shell completion with =@= or =/= prefix.                        |
+| =H-c C-h m=   | =M-x agent-shell-help-menu=                   | Transient menu for =agent-shell= commands.                                   |
+| =H-c C-h v=   | =M-x agent-shell-viewport--help-menu=         | Show viewport and display the transient help menu (bound to ? in view mode). |
+| =H-c H-p=     | =M-x agent-shell-prompt-compose=              | Compose an ‘agent-shell’ prompt in a dedicated buffer.                       |
+|             | =M-x agent-shell-insert-shell-command-output= | Execute a shell command and insert output as a code block.                   |
+|             | =M-x agent-shell-fork=                        | Fork the current session into a new shell.                                   |
+|             | =M-x agent-shell-view-traffic=                | View agent shell traffic buffer.                                             |
+|             | =M-x agent-shell-toggle-logging=              | Toggle logging.                                                                             |
+|-------------+---------------------------------------------+------------------------------------------------------------------------------|
+|             | =M-x agent-shell-send-dwim=                   | Send region or error at point to last accessed shell buffer in project.      |
+|             | =M-x agent-shell-send-file=                   | Insert a file into ‘agent-shell’.                                            |
+|             | =M-x agent-shell-send-file-to=                | Like ‘agent-shell-send-file’ but prompt for which shell to use.              |
+|             | =M-x agent-shell-insert-file=                 | Insert a file into ‘agent-shell’ (agent-shell-send-file).                    |
+|             | =M-x agent-shell-send-current-file=           | Insert a file into ‘agent-shell’ (agent-shell-send-file).                    |
+|             | =M-x agent-shell-send-other-file=             | Prompt to send a file into ‘agent-shell’.                                    |
+|             | =M-x agent-shell-send-region=                 | Send region to last accessed shell buffer in project.                        |
+|             | =M-x agent-shell-send-region-to=              | Like ‘agent-shell-send-region’ but prompt for which shell to use.            |
+|             | =M-x agent-shell-send-screenshot=             | Capture a screenshot and insert it into ‘agent-shell’.                       |
+|             | =M-x agent-shell-send-screenshot-to=          | Like ‘agent-shell-send-screenshot’ but prompt for which shell to use.        |
+|             | =M-x agent-shell-send-clipboard-image=        | Paste clipboard image and insert it into ‘agent-shell’.                      |
+|             | =M-x agent-shell-send-clipboard-image-to=     | Like ‘agent-shell-send-clipboard-image’ but prompt for which shell to use.   |
+|-------------+---------------------------------------------+------------------------------------------------------------------------------|
 
 ** Whisper
 
