@@ -4408,6 +4408,9 @@ zip 3.0-3
     "bash")
   "The psimacs bash executable.")
 
+(defconst psimacs/config/msys-runtime-cmd
+  (psimacs/file-system/concat-file psimacs/config/msys-root-dir "msys2_shell.cmd")
+  "The psimacs msys2_shell command.")
 
 (defconst psimacs/config/msys-env-root-dir
   (if psimacs/system/is-win32-p
@@ -4449,6 +4452,21 @@ zip 3.0-3
   (if psimacs/system/is-win32-p
       (psimacs/file-system/concat-file psimacs/config/powershell-root-dir "pwsh.exe")
     nil)
+  "The powershell executable.")
+#+end_src
+
+** Ghostel
+
+#+begin_src emacs-lisp :tangle config/init-constants.el
+;;
+;; Ghostel installation
+;;
+(defconst psimacs/config/ghostel-shell-bash
+  `(,psimacs/config/msys-runtime-cmd "-defterm" "-here" "-no-start" "-use-full-path" "-mingw64")
+  "The psimacs ghostel bash command root directory.")
+
+(defconst psimacs/config/ghostel-shell-powershell
+  psimacs/config/powershell-runtime-exe
   "The powershell executable.")
 #+end_src
 
@@ -5398,6 +5416,10 @@ It is based on the [[https://llvm.org/][LLVM Compiler Infrastructure]].
 (defconst psimacs/config/projectile-cache-file
   (psimacs/file-system/concat-file psimacs/config/projectile-dir ".projectile.cache")
   "The psimacs projectile cache file.")
+
+(defconst psimacs/config/projectile-frecency-file
+  (psimacs/file-system/concat-file psimacs/config/projectile-dir ".projectile-frecency.eld")
+  "The psimacs projectile frequency file.")
 #+end_src
 
 ** LSP-Mode
@@ -6842,6 +6864,77 @@ See also:
 See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 
 Goal:
+- force Emacs to default to UTF-8.
+- use the file encodings as they are found.
+
+#+begin_src emacs-lisp :tangle config/init-basic-system.el
+;;
+;; Encodings
+;;
+
+;; Initialize globale UTF-8 standard
+(set-language-environment "UTF-8")
+
+;; Deaktivate the unwanted automatic activation of input methods
+(setq default-input-method nil)
+
+;; Force unix (LF) a standard for new files.
+;; Overwrite the urge to save everything in CLRF for Windows
+(prefer-coding-system       'utf-8-unix)
+(set-default-coding-systems 'utf-8-unix)
+
+;; Platform specific adaptation for the clipboard
+(cond
+  (psimacs/system/is-win32-p
+    (set-clipboard-coding-system 'utf-16le-dos)) ;; Sicheres UTF-16 für Windows
+  (t
+    (set-selection-coding-system 'utf-8))        ;; UTF-8 für Linux/Unix/macOS
+)
+
+;; 4. Native EOL-Verarbeitung ohne Hook (Verhindert Start-Hänger)
+;; Froce existing EOL mode for existing files on loading
+;; but uses Unix-LF for new or unknown files.
+;; Prevents ghost-modification in Git repos by find-file and emacsclient
+(modify-coding-system-alist 'file "" 'utf-8-unix)
+#+end_src
+
+** Encoding system                                                :noexport:
+
+I am by no means an expert in Encoding systems. I followed the implementation of
+[[https://github.com/doomemacs/doomemacs][doomemacs]]. I have tested the following
+and it worked so far:
+- On Windows
+    - cut and pase from Windows notepad to *Psimacs* scratch buffer with german /umlaut/ characters
+    - tramp ssh connection linux box and editing and saving file with german /umlaut/ characters.
+    - jupyter notebook in org-mode
+
+See also:
+- [[https://github.com/doomemacs/doomemacs][doomemacs]]
+- [[https://www.masteringemacs.org/article/working-coding-systems-unicode-emacs][Working with Coding Systems and Unicode in Emacs]]
+- [[http://xahlee.info/emacs/emacs/emacs_file_encoding.html][Emacs Init: Set Default File Encoding]]
+- [[http://xahlee.info/comp/unicode_intro.html][Unicode: Character Set, Encoding, UTF-8, Codepoint]]
+- [[http://xahlee.info/comp/unicode_index.html][Unicode Characters]]
+- [[https://www.emacswiki.org/emacs/ChangingEncodings][EmacsWiki: ChangingEncodings]]
+- [[https://www.emacswiki.org/emacs/UnicodeEncoding][EmacsWiki: UnicodeEncoding]]
+- [[http://ergoemacs.org/emacs/emacs_encoding_decoding_faq.html][Emacs File Encoding FAQ]]
+- [[https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows][Pasting Unicode characters in Emacs (Windows)]]
+- [[https://en.wikipedia.org/wiki/List_of_Unicode_characters][Wikipdia about Unicode Characters]]
+
+
+#+attr_html: :class styledtable1
+| Key binding | Command                               | Description                                                                                                                                                                                                       |
+|-------------+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|             | =M-x revert-buffer-with-coding-system=  |                                                                                                                                                                                                                   |
+|             | =M-x set-buffer-file-coding-system=     |                                                                                                                                                                                                                   |
+|             | =M-x describe-coding-system=            | Information about coding system.                                                                                                                                                                                  |
+|             | =M-x list-coding-systems=               |                                                                                                                                                                                                                   |
+|             | =M-x find-file-literally=               | Open file without any conversion.                                                                                                                                                                                 |
+| =C-x RET c=   | =M-x universal-coding-system-argument== | Ttakes as an argument the coding system you want to use, and a command to execute it with. That makes it possible to open files, shells or run Emacs commands as though you were using a different coding system. |
+|-------------+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+See also content of variable =buffer-file-coding-system= by use of =C-h v=.
+
+Goal:
 - force Emacs to default to UTF-8
 - convincing Emacs to treat files as UTF-8 by default, when no information in the file explicitly says it is.
 
@@ -6868,6 +6961,8 @@ Goal:
 ;;
 (unless psimacs/system/is-win32-p
   (setq selection-coding-system 'utf-8))
+
+
 #+end_src
 
 ** Encoding system                                                :noexport:
@@ -10116,6 +10211,127 @@ See also: [[https://www.emacswiki.org/emacs/PowerLine][EmacsWiki: PowerLine]]
 #+end_src
 
 *** Doom Modeline
+
+[[https://github.com/seagle0128/doom-modeline][Doom-modeline]] is a fancy and fast mode-line inspired by minimalism design.
+
+#+begin_src emacs-lisp :tangle config/init-basic-mode-line.el :var file-description="Basic Mode-Line setup"
+;;
+;; Prettify the mode-line
+;;
+(use-package doom-modeline
+  :hook (after-init . doom-modeline-mode)
+  :config
+    ;; How tall the mode-line should be. It's only respected in GUI.
+    ;; If the actual char height is larger, it respects the actual height.
+    (setq doom-modeline-height 24)
+
+    ;; How wide the mode-line bar should be. It's only respected in GUI.
+    (setq doom-modeline-bar-width 3)
+
+    ;; The limit of the window width.
+    ;; If `window-width' is smaller than the limit, [DOS] / [LF] is still visible
+    (setq doom-modeline-window-width-limit nil)
+
+    ;; The limit of the window width.
+    ;; If `window-width' is smaller than the limit, some information won't be displayed.
+    ;(setq doom-modeline-window-width-limit fill-column)
+
+    ;; How to detect the project root.
+    ;; The default priority of detection is `ffip' > `projectile' > `project'.
+    ;; nil means to use `default-directory'.
+    ;; The project management packages have some issues on detecting project root.
+    ;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
+    ;; to hanle sub-projects.
+    ;; You can specify one if you encounter the issue.
+    (setq doom-modeline-project-detection 'project)
+
+    ;; Determines the style used by `doom-modeline-buffer-file-name'.
+    ;;
+    ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+    ;;   auto => emacs/lisp/comint.el (in a project) or comint.el
+    ;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+    ;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+    ;;   truncate-with-project => emacs/l/comint.el
+    ;;   truncate-except-project => ~/P/F/emacs/l/comint.el
+    ;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
+    ;;   truncate-all => ~/P/F/e/l/comint.el
+    ;;   truncate-nil => ~/Projects/FOSS/emacs/lisp/comint.el
+    ;;   relative-from-project => emacs/lisp/comint.el
+    ;;   relative-to-project => lisp/comint.el
+    ;;   file-name => comint.el
+    ;;   buffer-name => comint.el<2> (uniquify buffer name)
+    ;;
+    ;; If you are experiencing the laggy issue, especially while editing remote files
+    ;; with tramp, please try `file-name' style.
+    ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
+    (setq doom-modeline-buffer-file-name-style 'auto)
+
+    ;; Activate icons und visual indicators
+    (setq doom-modeline-icon (display-graphic-p))
+    (setq doom-modeline-major-mode-icon t)
+    (setq doom-modeline-major-mode-color-icon t)
+    (setq doom-modeline-buffer-state-icon t)
+    (setq doom-modeline-buffer-modification-icon t)
+    (setq doom-modeline-unicode-fallback nil)
+    (setq doom-modeline-modal-icon t)
+
+    ;; Text  metrices & modi
+    (setq doom-modeline-minor-modes t)
+    (setq doom-modeline-enable-word-count nil)
+    (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+    (setq doom-modeline-indent-info nil)
+
+    ;; Show EOL-Format (LF vs DOS)
+    (setq doom-modeline-buffer-encoding t)
+
+    ;; Limits & UI behavior
+    (setq doom-modeline-check-simple-format t)
+    (setq doom-modeline-number-limit 99)
+    (setq doom-modeline-vcs-max-length 12)
+
+    ;; Workspaces & Perspectives
+    (setq doom-modeline-workspace-name t)
+    (setq doom-modeline-persp-name t)
+    (setq doom-modeline-display-default-persp-name nil)
+    (setq doom-modeline-persp-icon t)
+
+    ;; Integrations (LSP, Gnus, IRC, GitHub)
+    (setq doom-modeline-lsp t)
+    (setq doom-modeline-github nil)
+    (setq doom-modeline-github-interval (* 30 60))
+    (setq doom-modeline-mu4e nil)
+    (setq doom-modeline-gnus t)
+    (setq doom-modeline-gnus-timer 2)
+    (setq doom-modeline-gnus-excluded-groups '("dummy.group"))
+    (setq doom-modeline-irc t)
+    (setq doom-modeline-irc-stylize 'identity)
+
+    ;; Runtime and language versions
+    (setq doom-modeline-env-version t)
+    (setq doom-modeline-env-enable-python t)
+    (setq doom-modeline-env-enable-ruby t)
+    (setq doom-modeline-env-enable-perl t)
+    (setq doom-modeline-env-enable-go t)
+    (setq doom-modeline-env-enable-elixir t)
+    (setq doom-modeline-env-enable-rust t)
+
+    (setq doom-modeline-env-python-executable "python")
+    (setq doom-modeline-env-ruby-executable "ruby")
+    (setq doom-modeline-env-perl-executable "perl")
+    (setq doom-modeline-env-go-executable "go")
+    (setq doom-modeline-env-elixir-executable "iex")
+    (setq doom-modeline-env-rust-executable "rustc")
+    (setq doom-modeline-env-load-string "...")
+    (setq doom-modeline-before-update-env-hook nil)
+    (setq doom-modeline-after-update-env-hook nil)
+
+    ;; Prevent the modification of face size of the modeline on zoom
+    (set-face-attribute 'mode-line nil :height 100)
+    (set-face-attribute 'mode-line-inactive nil :height 100)
+)
+#+end_src
+
+*** Doom Modeline :noexport:
 
 [[https://github.com/seagle0128/doom-modeline][Doom-modeline]] is a fancy and fast mode-line inspired by minimalism design.
 
@@ -16053,8 +16269,8 @@ The basic commands:
 ;; agent-shell and support packages
 ;;
 (use-package agent-shell
-  ;;:straight (:host github :repo "xenodium/agent-shell")
-  :straight (:host github :repo "hatlafax/agent-shell")
+  :straight (:host github :repo "xenodium/agent-shell")
+  ;;:straight (:host github :repo "hatlafax/agent-shell")
   ;:ensure-system-package (
     ;(npm . "sudo dnf install -y npm")
 
@@ -16733,6 +16949,8 @@ The file is only created if it does not already exist."
                 ("C-e e d"   . psimacs/projectile/destroy-projectile-envrc-emscripten)
           )
     :init
+        (setq projectile-frecency-file psimacs/config/projectile-frecency-file)
+
         (setq projectile-mode-line-prefix " ℘")
         ;(setq projectile-require-project-root nil)
         (setq projectile-indexing-method 'native)
@@ -17663,7 +17881,7 @@ This derivation of the `else-compile-buffer' function additionally saves the poi
 
     ;; Disable automatic else-mode activation. If active, there are problems with org-mode building
     ;;:hook ((emacs-lisp-mode sh-mode c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
-    :hook ((c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
+    ;;:hook ((c-mode c++-mode python-mode perl-mode LaTeX-mode Java-mode) . else-mode)
     :bind (
              :map else-mode-key-map
              ("H-n"   . else-next)
@@ -18595,9 +18813,9 @@ Following a survey of the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] co
         (require 'dap-cpptools)
 
     :hook (
-            (c-mode      . lsp-deferred) ; . lsp)
-            (c++-mode    . lsp-deferred) ; . lsp)
-            (cmake-mode  . lsp-deferred) ; . lsp)
+            ;(c-mode      . lsp-deferred) ; . lsp)
+            ;(c++-mode    . lsp-deferred) ; . lsp)
+            ;(cmake-mode  . lsp-deferred) ; . lsp)
 
             (lsp-mode    . lsp-enable-which-key-integration)
 
@@ -20020,13 +20238,166 @@ used as title."
 
 Configuration of important major modes for *Psimacs*.
 
-** Markdown Indent
+** Markdown
+
+*** md-Mode
+
+The [[https://github.com/yibie/md-mode][md-mode]] is an opinionated major mode for people who enjoy the direct, structural 
+editing of Org mode but need their files to remain ordinary Markdown.
+
+It provides two views of the same buffer:
+- Edit view keeps the original Markdown as buffer text while font-lock styles headings, emphasis, links, blockquotes, callouts, fenced code, and tables.
+- Rendered view removes the visible markup and presents a read-only, in-buffer rendering. =C-c C-v= returns to the exact editable source.
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-markdown-mode.el :var file-description="Major Modes - markdown-mode setup"
+;;
+;; md-mode
+;;
+(use-package md-mode
+  :straight (md-mode :host github :repo "yibie/md-mode")
+)
+#+end_src
+
+*** Markdown Mode
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-markdown-mode.el :var file-description="Major Modes - markdown-mode setup"
+;;
+;; markdown-mode
+;;
+(use-package markdown-mode
+  :mode (("README\\.md\\'" . gfm-mode))
+  :init
+  (setq markdown-enable-wiki-links t
+        markdown-italic-underscore t
+        markdown-asymmetric-header t
+        markdown-make-gfm-checkboxes-buttons t
+        markdown-gfm-uppercase-checkbox t
+        markdown-fontify-code-blocks-natively t
+
+        markdown-content-type "application/xhtml+xml"
+        markdown-css-paths '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
+                             "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css")
+        markdown-xhtml-header-content "
+<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+<style>
+body {
+  box-sizing: border-box;
+  max-width: 740px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 0 10px;
+}
+</style>
+
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/default.min.css'>
+<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add('markdown-body');
+  document.querySelectorAll('pre code').forEach((code) => {
+    if (code.className != 'mermaid') {
+      hljs.highlightBlock(code);
+    }
+  });
+});
+</script>
+
+<script src='https://unpkg.com/mermaid@8.4.8/dist/mermaid.min.js'></script>
+<script>
+mermaid.initialize({
+  theme: 'default',  // default, forest, dark, neutral
+  startOnLoad: true
+});
+</script>
+"
+        markdown-gfm-additional-languages "Mermaid")
+
+  ;; `multimarkdown' is necessary for `highlight.js' and `mermaid.js'
+  (when (executable-find "multimarkdown")
+    (setq markdown-command "multimarkdown"))
+  :config
+  ;; Support `mermaid'
+  (add-to-list 'markdown-code-lang-modes '("mermaid" . mermaid-mode))
+
+  (with-no-warnings
+    ;; Use `which-key' instead
+    (advice-add #'markdown--command-map-prompt :override #'ignore)
+    (advice-add #'markdown--style-map-prompt   :override #'ignore)
+
+    ;; Preview with webkit
+    (defun my/markdown-export-and-preview ()
+      "Preview with `xwidget' if applicable, otherwise with the default browser."
+      (centaur-browse-url-of-file (markdown-export)))
+    (advice-add #'markdown-export-and-preview :override #'my/markdown-export-and-preview)))
+#+end_src
+
+*** Markdown table of contents
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-markdown-mode.el :var file-description="Major Modes - markdown-mode setup"
+;;
+;; markdown-toc - Table of contents
+;;
+(use-package markdown-toc
+  :diminish
+  :bind (:map markdown-mode-command-map
+         ("r" . markdown-toc-generate-or-refresh-toc))
+  :hook markdown-mode
+  :init (setq markdown-toc-indentation-space 2
+              markdown-toc-header-toc-title "\n## Table of Contents"
+              markdown-toc-user-toc-structure-manipulation-fn 'cdr)
+  :config
+  (with-no-warnings
+    (define-advice markdown-toc-generate-toc (:around (fn &rest args) lsp)
+      "Generate or refresh toc after disabling lsp."
+      (cond
+       ((bound-and-true-p eglot--manage-mode)
+        (eglot--manage-mode -1)
+        (apply fn args)
+        (eglot--manage-mode 1))
+       ((bound-and-true-p lsp-managed-mode)
+        (lsp-managed-mode -1)
+        (apply fn args)
+        (lsp-managed-mode 1))
+       (t
+        (apply fn args))))))
+#+end_src
+
+*** Preview markdown files
+
+#+begin_src emacs-lisp :tangle config/init-major-modes-markdown-mode.el :var file-description="Major Modes - markdown-mode setup"
+;;
+;; grip-mode = Preview markdown files
+;; @see https://github.com/seagle0128/grip-mode?tab=readme-ov-file#prerequisite
+;;
+(use-package grip-mode
+  :defines markdown-mode-command-map org-mode-map grip-update-after-change grip-use-mdopen
+  :functions auth-source-user-and-password
+  :autoload grip-mode
+  :init
+  (with-eval-after-load 'markdown-mode
+    (bind-key "g" #'grip-mode markdown-mode-command-map))
+
+  (with-eval-after-load 'org
+    (bind-key "C-c C-g" #'grip-mode org-mode-map))
+
+  (setq grip-update-after-change nil)
+
+  ;; mdopen doesn't need credentials, and only support external browsers
+  (if (executable-find "mdopen")
+      (setq grip-use-mdopen t)
+    (when-let* ((credential (and (require 'auth-source nil t)
+                                 (auth-source-user-and-password "api.github.com"))))
+      (setq grip-github-user (car credential)
+            grip-github-password (cadr credential)))))
+#+end_src
+
+*** Markdown Indent
 
 The [[https://github.com/whhone/markdown-indent-mode][markdown-indent-mode]] is an Emacs minor mode for
 dynamic virtual indentation in /Markdown/, similar to [[https://orgmode.org/manual/Org-Indent-Mode.html][org-indent-mode]
 in Org mode.
 
-#+begin_src emacs-lisp :tangle config/init-major-modes-latex-mode.el :var file-description="Major Modes - latex-mode setup"
+#+begin_src emacs-lisp :tangle config/init-major-modes-markdown-mode.el :var file-description="Major Modes - markdown-mode setup"
 ;;
 ;; Enable markdown-indent-mode
 ;;
@@ -25165,6 +25536,9 @@ References:
 |-------------+----------------------------+------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
+;;
+;; EAT - Emulate A Terminal
+;;
 (use-package eat
     :straight (eat :host codeberg :repo "akib/emacs-eat"
         :files (
@@ -25225,6 +25599,109 @@ References:
             (eshell-load . eat-eshell-mode)
             (eshell-load . eat-eshell-visual-command-mode)
         )
+)
+#+end_src
+
+** Ghostel Shell
+
+[[https://github.com/dakra/ghostel][Ghostel]] is a terminal emulator for Emacs powered by /libghostty-vt/, the VT engine behind the /Ghostty/ terminal.
+
+It aims to be featureful, fast, robust and correct. Ghostel's features include synchronized output, true color, the Kitty keyboard and graphics protocols, 
+hyperlinks, desktop notifications, progress reports and a lot more.
+
+Shell integration (directory tracking, prompt navigation) all works out of the box for bash, zsh, fish and nushell.
+
+Ghostel has four input modes:
+
+References:
+- [[https://github.com/dakra/ghostel][Ghostel]]
+
+#+begin_src emacs-lisp :tangle config/init-advanced-shell.el :var file-description="Advanced shell setup"
+;;
+;; Ghostel terminal
+;;
+(use-package ghostel
+  :straight (ghostel :host github :repo "dakra/ghostel")
+  :demand t
+  :commands (ghostel ghostel-project ghostel-project-list-buffers ghostel-send-key) 
+  :config
+    (setq psimacs/config/ghostel-shell-system ghostel-shell)
+
+    ;(setq psimacs/config/ghostel-shell-default psimacs/config/ghostel-shell-system)
+    (setq psimacs/config/ghostel-shell-default psimacs/config/ghostel-shell-bash)
+    ;(setq psimacs/config/ghostel-shell-default psimacs/config/ghostel-shell-powershell)
+
+    (setq ghostel-shell psimacs/config/ghostel-shell-default)
+
+    (defun psimacs/shell/ghostel-system (arg)
+      "Launch a ghostel terminal instance running the system shell.
+
+A new terminal is opened calling with a prefix-argument."
+      (interactive "P")
+      (let ((ghostel-shell psimacs/config/ghostel-shell-system))
+        (ghostel arg)
+      )
+    )
+
+    (defun psimacs/shell/ghostel-bash (arg)
+      "Launch a ghostel terminal instance running MSYS2 Bash.
+
+A new terminal is opened calling with a prefix-argument."
+      (interactive "P")
+      (let ((ghostel-shell psimacs/config/ghostel-shell-bash))
+        (ghostel arg)
+      )
+    )
+
+    (defun psimacs/shell/ghostel-powershell(arg)
+      "Launch a ghostel terminal instance running Powershell.
+
+A new terminal is opened calling with a prefix-argument."
+      (interactive "P")
+      (let ((ghostel-shell psimacs/config/ghostel-shell-powershell))
+        (ghostel arg)
+      )
+    )
+
+    (defun psimacs/shell/ghostel-send-C-k-and-kill ()
+      "Send `C-k' to ghostel.
+       Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
+      (interactive)
+      (kill-ring-save (point) (line-end-position))
+      (ghostel-send-key "k" "ctrl")
+    )
+
+  :bind (
+         ("C-x m" . ghostel)
+
+         :map ghostel-semi-char-mode-map
+         ("C-s"  . consult-line)
+         ("C-k"  . psimacs/shell/ghostel-send-C-k-and-kill)
+
+         ;; I'm used to go up/down the shell history with M-n/p from eshell
+         ;; Simulate this behavior in ghostel by sending C-p and C-n
+         ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+         ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
+
+         :map project-prefix-map
+         ("m" . ghostel-project)
+         ("M" . ghostel-project-list-buffers)
+        )
+)
+
+;(use-package ghostel-eshell
+;  :straight nil
+;  :hook (eshell-load . ghostel-eshell-visual-command-mode)
+;)
+
+(use-package ghostel-compile
+  :straight nil
+  :hook (after-init . ghostel-compile-global-mode)
+)
+
+(use-package ghostel-comint
+  :straight nil
+  :hook (after-init . ghostel-comint-global-mode)
 )
 #+end_src
 
@@ -25290,7 +25767,6 @@ References:
 (defun psimacs/shell/run-powershell ()
   "Run a Powershell command shell."
   (interactive)
-  ;;(powershell)
 
   (let* (
          (explicit-shell-file-name psimacs/config/powershell-runtime-exe)
