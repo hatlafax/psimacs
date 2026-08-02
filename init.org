@@ -6872,16 +6872,21 @@ Goal:
 ;; Encodings
 ;;
 
+;; 1. Force Emacs to default to UTF-8
 ;; Initialize globale UTF-8 standard
 (set-language-environment "UTF-8")
 
 ;; Deaktivate the unwanted automatic activation of input methods
 (setq default-input-method nil)
 
-;; Force unix (LF) a standard for new files.
+;; Force Unix (LF) as the absolute default for new files
 ;; Overwrite the urge to save everything in CLRF for Windows
 (prefer-coding-system       'utf-8-unix)
 (set-default-coding-systems 'utf-8-unix)
+(setq-default buffer-file-coding-system 'utf-8-unix)
+
+;; Safe fallback for processing standard files
+(modify-coding-system-alist 'file "\\.org\\'" 'utf-8)
 
 ;; Platform specific adaptation for the clipboard
 (cond
@@ -6891,11 +6896,10 @@ Goal:
     (set-selection-coding-system 'utf-8))        ;; UTF-8 für Linux/Unix/macOS
 )
 
-;; 4. Native EOL-Verarbeitung ohne Hook (Verhindert Start-Hänger)
 ;; Froce existing EOL mode for existing files on loading
 ;; but uses Unix-LF for new or unknown files.
 ;; Prevents ghost-modification in Git repos by find-file and emacsclient
-(modify-coding-system-alist 'file "" 'utf-8-unix)
+;(modify-coding-system-alist 'file "" 'utf-8-unix)
 #+end_src
 
 ** Encoding system                                                :noexport:
@@ -16214,6 +16218,7 @@ References:
 - [[https://github.com/xenodium/agent-shell][agent-shell on github]]
 - [[https://github.com/gveres/agent-shell-workspace][agent-shell-workspace on github]]
 - [[https://github.com/cmacrae/agent-shell-sidebar][agent-shell-sidebar on github]]
+- [[https://github.com/alberti42/agent-shell-math-renderer][agent-shell-math-renderer]]
 - [[https://xenodium.com/introducing-agent-shell][Introducing agent-shell by Xenodium]]
 - [[https://www.youtube.com/watch?v=R2Ucr3amgGg][Bending Emacs Episode 10: AI / LLM agent-shell]]
 - [[https://www.youtube.com/watch?v=ymMlftdGx4I][Bending Emacs Episode 12: agent-shell + Claude Skills]]
@@ -16269,8 +16274,8 @@ The basic commands:
 ;; agent-shell and support packages
 ;;
 (use-package agent-shell
-  :straight (:host github :repo "xenodium/agent-shell")
-  ;;:straight (:host github :repo "hatlafax/agent-shell")
+  ;:straight (:host github :repo "xenodium/agent-shell")
+  :straight (:host github :repo "hatlafax/agent-shell")
   ;:ensure-system-package (
     ;(npm . "sudo dnf install -y npm")
 
@@ -16403,6 +16408,9 @@ or a directory of your choice, with content converted from /markdown/ to /org-mo
 (headings, code blocks, block quotes, bold).
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+;;
+;; Agent Shell ORG Tanscript
+;;
 (use-package agent-shell-org-transcript
   :straight (:host github :repo "lllShamanlll/agent-shell-org-transcript")
   :after agent-shell
@@ -16411,7 +16419,46 @@ or a directory of your choice, with content converted from /markdown/ to /org-mo
 )
 #+end_src
 
-**** CANCELED Agent-Shell-Sidebar
+**** Agent Shell Math Renderer
+
+The package [[https://github.com/alberti42/agent-shell-math-renderer][agent-shell-math-renderer]]
+renders LaTeX math in [[https://github.com/xenodium/agent-shell][agent-shell's]] streamed markdown output.
+Display equations and inline math in an agent's response are compiled with latex → dvisvgm and shown as 
+crisp, theme-matched SVG images — while the original LaTeX stays in the buffer, so copy and save round-trip 
+renderable source.
+
+| Form | Example | Default |
+|------|---------|---------|
+| Bracket display math | =\[ E = mc^2 \]= | on |
+| Dollar display math | =$$ E = mc^2 $$= | on |
+| Fenced math | =```math= / =```latex= / =```tex= blocks | on |
+| Inline math | =\(x^2\)= | on |
+|------|---------|---------|
+
+References:
+- [[https://github.com/alberti42/agent-shell-math-renderer][agent-shell-math-renderer]]
+- [[https://github.com/xenodium/agent-shell][agent-shell]]
+
+#+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
+;;
+;; Agent Shell Math Renderer
+;;
+(use-package agent-shell-math-renderer
+  :straight (agent-shell-math-renderer
+             :type git :host github
+             :repo "alberti42/agent-shell-math-renderer")
+  :after agent-shell
+  :config
+    (setq agent-shell-math-renderer-enabled t)
+    (setq agent-shell-math-renderer-render-submitted-prompts t)
+    (setq agent-shell-math-renderer-appended-preamble
+          "\\usepackage{physics}
+           \\usepackage{siunitx}"
+    )
+)
+#+end_src
+
+**** CANCELED Agent Shell Sidebar
 
 [[https://github.com/cmacrae/agent-shell-sidebar][agent-shell-sidebar]] provides a persistent sidebar interface for [[https://github.com/xenodium/agent-shell][agent-shell]], with a treemacs-like side panel for interacting
 with LLM agents.
@@ -16428,18 +16475,20 @@ The basic commands:
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
 ;;
-;; agent-shell and support packages
+;; Agent Shell Sidebar
 ;;
-(use-package agent-shell
+(use-package agent-shell-sidebar
   :after agent-shell
-  :straight (:host github :repo "cmacrae/agent-shell-sidebar")
+  ;:straight (:host github :repo "cmacrae/agent-shell-sidebar")
+  :straight nil
+  :load-path "./work-lisp/agent-shell-sidebar-2"
   :config
-    (setq agent-shell-sidebar-width "25%")
-    (setq agent-shell-sidebar-minimum-width 80)
+    (setq agent-shell-sidebar-width         "25%")
+    (setq agent-shell-sidebar-minimum-width  80)
     (setq agent-shell-sidebar-maximum-width "50%")
-    (setq agent-shell-sidebar-position 'right)
-    (setq agent-shell-sidebar-locked t)
-    (setq agent-shell-sidebar-default-config (agent-shell-anthropic-make-claude-code-config))
+    (setq agent-shell-sidebar-position      'right)
+    (setq agent-shell-sidebar-locked         t)
+    ;(setq agent-shell-sidebar-default-config nil) ;;(agent-shell-anthropic-make-claude-code-config))
   :bind (
          ("C-c a s" . agent-shell-sidebar-toggle)
          ("C-c a f" . agent-shell-sidebar-toggle-focus)
@@ -16472,7 +16521,10 @@ References:
     (setq aidermacs-auto-commits t)
     (setq aidermacs-show-diff-after-change t)
 
-  :bind (("C-c a" . aidermacs-transient-menu))
+  :bind (
+            :map aidermacs-map
+            ("C-c a" . aidermacs-transient-menu)
+        )
 )
 #+end_src
 
@@ -17769,10 +17821,11 @@ See also:
 (use-package else-mode
     :diminish (else-mode else-template-mode)
     ;:straight nil
-    ;:load-path "./work-lisp/ELSE"
-    ;:straight (else :host github :repo "hatlafax/ELSE" :branch "feature/fix-menu-redirection" :build (:not compile))
+    ;:load-path "./work-lisp/else-hatlafax"
     :straight (else :host github :repo "hatlafax/ELSE" :build (:not compile))
-    ;:straight (else :host github :repo "peter-milliken/ELSE" :branch "beforeafter" :build (:not compile))
+
+    ;;:straight (else :host github :repo "hatlafax/ELSE" :branch "feature/fix-menu-redirection" :build (:not compile))
+    ;;:straight (else :host github :repo "peter-milliken/ELSE" :branch "beforeafter" :build (:not compile))
     :defines (else-fast-load-directory
               else-kill-proceed-to-next-placeholder
               else-only-proceed-within-window
