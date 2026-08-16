@@ -17700,15 +17700,50 @@ for both Git beginners and experts alike.
 #+end_quote
 
 See also:
-- [[https://magit.vc/][Magit - A Git Porcelain inside Emacs]]
-- [[https://magit.vc/manual/magit/#Top][Manual]]
-- [[https://magit.vc/manual/magit-refcard.pdf][Reference Card]]
 - [[https://git-scm.com/][Git]]
+- [[https://magit.vc/][It's Magit!]]
+- [[https://github.com/magit/magit][Magit on Github]]
+- [[https://magit.vc/manual/magit-refcard.pdf][Reference Card]]
+- [[https://emacsair.me/2017/09/01/magit-walk-through/][A walk through the Magit interface]]
+- [[https://emacsair.me/2017/09/01/the-magical-git-interface/][Magit, the magical Git interface]]
+- [[https://magit.vc/screencasts/][It's Magit - Screencasts]]
+- [[https://heiwiper.com/posts/magit-status-tour/][A Tour of Magit's Status interface]]
 
-| Key binding | Command          | Description             |
-|-------------+------------------+-------------------------|
-| =C-x g=       | =M-x magit-status= | Run git status command. |
-|-------------+------------------+-------------------------|
+#+attr_html: :class styledtable1
+| Key binding | Command                            | Description                                       |
+|-------------+------------------------------------+---------------------------------------------------|
+| =C-x g=       | =M-x magit-status=                   | Run git status command.                           |
+| =g=           | =M-x magit-refresh=                  | Refresh the current status buffer.                |
+| =G=           | =M-x magit-refresh-all=              | Refresh all status buffers.                       |
+| =TAB=         | =M-x magit-section-toggle=           | Hide/Show a status section                        |
+| =RET=         | =M-x magit-visit-ref=                | Depending on context...                           |
+|             | =M-x magit-diff-show-commit=         |                                                   |
+|             | =M-x magit-diff-unstaged=            |                                                   |
+|             | =M-x magit-diff-dwim=                |                                                   |
+|             | =M-x magit-diff-visit-file=          |                                                   |
+|             | ...                                |                                                   |
+| =q=           | =M-x magit-mode-bury-buffer=         | Bury or kill the current buffer.                  |
+| =?=           |                                    | Show popup of popups.                             |
+| ? =C-x m=     | =M-x descrive-mode=                  | Show all keybindings.                             |
+| =? C-x i=     |                                    | Show info manual.                                 |
+| =C-n=         | =M-x magit-next-line=                |                                                   |
+| =C-p=         | =M-x magit-previous-line=            |                                                   |
+| =n=           | =M-x magit-section-forward=          |                                                   |
+| =p=           | =M-x magit-section-backward=         |                                                   |
+| =M-n=         | =M-x magit-section-forward-sibling=  |                                                   |
+| =M-n=         | =M-x magit-section-backward-sibling= |                                                   |
+| =d=           | =M-x magit-diff-popup=               | Shows the /diff popup/ context menu                 |
+| =dd=          | =M-x magit-diff-dwim=                |                                                   |
+| =l=           | =M-x magit-log-popup=                | Shows the /log popup/ context menu                  |
+| =ll=          | =M-x magit-log-current=              |                                                   |
+| =C-h=         |                                    | Provide help.                                     |
+| =?=           |                                    | Provide help.                                     |
+| =s=           | =M-x magit-stage=                    | Add the change at point to the staging area.      |
+| =u=           | =M-x magit-unstage=                  | Remove the change at point from the staging area. |
+| =S=           | =M-x magit-stage-modified=           | Stage all changes to files in the worktree.       |
+| =U=           | =M-x magit-unstage-all=              | Remove all changes from staging area.             |
+|             |                                    |                                                   |
+|-------------+------------------------------------+---------------------------------------------------|
 
 *** Git timemachine
 
@@ -25706,6 +25741,15 @@ Shell integration (directory tracking, prompt navigation) all works out of the b
 
 Ghostel has four input modes:
 
+#+attr_html: :class styledtable1
+| Key binding | Command                              | Description                   |
+|-------------+--------------------------------------+-------------------------------|
+| =H-x C-x g=   | =M-x ghostel=                          | Opens a ghostel terminal.     |
+|             | =M-x psimacs/shell/ghostel-system=     | Opens a Windows CMD terminal. |
+|             | =M-x psimacs/shell/ghostel-bash=       | Opens a Bash terminal.        |
+|             | =M-x psimacs/shell/ghostel-powershell= | Opens a Powershell terminal.  |
+|-------------+--------------------------------------+-------------------------------|
+
 References:
 - [[https://github.com/dakra/ghostel][Ghostel]]
 
@@ -25765,7 +25809,7 @@ A new terminal is opened calling with a prefix-argument."
     )
 
   :bind (
-         ("C-x m" . ghostel)
+         ("H-x H-m" . ghostel)
 
          :map ghostel-semi-char-mode-map
          ("C-s"  . consult-line)
