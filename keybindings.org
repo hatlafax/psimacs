@@ -693,21 +693,13 @@ about beforhand or that I might forget about in the future.
 | =C-x M-:=     | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
 |             | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x C-+=     | =M-x zoom-in/out=            | Zooms in  current buffer                                                                                          |
-| =C-x C--=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
-| =C-x C-0=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
-| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
-| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
-| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
-|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-u C-x C-+= | =C-u M-x zoom-in/out=        | Zooms in  current frame                                                                                           |
-| =C-u C-x C--= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
-| =C-u C-x C-0= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
-| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
-| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
-| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
-|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =H-m C-x C-0= | =M-x zoom-frm-unzoom=        | Cancel zoom of frame.                                                                                             |
+| =C-x C-+=     | =M-x text-scale-adjust=      | Increase font size in current buffer by one step.                                                                 |
+| ~C-x C-=~     | =M-x text-scale-adjust=      | Increase font size in current buffer by one step.                                                                 |
+| =C-x C--=     | =M-x text-scale-adjust=      | Decrease font size in current buffer by one step.                                                                 |
+| =C-x C-0=     | =M-x text-scale-adjust=      | Reset the font size to the global default.                                                                        |
+| ~+~ ~=~         |                            | After start of =text-scale-adjust=, further zoom in.                                                                |
+| ~-~           |                            | After start of =text-scale-adjust=, further zoom out.                                                               |
+| ~0~           |                            | After start of =text-scale-adjust=, reset the font size to the global default.                                      |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
 
 ** Buffer Handling in Psimacs
@@ -1851,27 +1843,20 @@ Refefences:
 | =H-<DEL>=     | =M-x hungry-delete-backward= | Delete the preceding character or all preceding whitespace. |
 |-------------+----------------------------+-------------------------------------------------------------|
 
-** Zoom Frame
+*** Zooming
 
-The package [[https://www.emacswiki.org/emacs/SetFonts#ZoomFrame][zoom-frm]] allows the font resize of the current buffer, the current frame or of all frames.
-It is an enhancement of the build-in =M-x text-adjust-scale= command.
+We use native command =text-scale-adjust=.
 
-| Key binding | Command             | Description                               |
-|-------------+---------------------+-------------------------------------------|
-| =C-x C-+=     | =M-x zoom-in/out=     | Zooms in  current buffer                  |
-| =C-x C--=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
-| =C-x C-0=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
-| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
-| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
-| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
-|-------------+---------------------+-------------------------------------------|
-| =C-u C-x C-+= | =C-u M-x zoom-in/out= | Zooms in  current frame                   |
-| =C-u C-x C--= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
-| =C-u C-x C-0= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
-| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
-| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
-| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
-|-------------+---------------------+-------------------------------------------|
+| Key binding | Command               | Description                                                                  |
+|-------------+-----------------------+------------------------------------------------------------------------------|
+| =C-x C-+=     | =M-x text-scale-adjust= | Increase font size in current buffer by one step.                            |
+| ~C-x C-=~     | =M-x text-scale-adjust= | Increase font size in current buffer by one step.                            |
+| =C-x C--=     | =M-x text-scale-adjust= | Decrease font size in current buffer by one step.                            |
+| =C-x C-0=     | =M-x text-scale-adjust= | Reset the font size to the global default.                                   |
+| ~+~ ~=~         |                       | After start of =text-scale-adjust=, further zoom in.                           |
+| ~-~           |                       | After start of =text-scale-adjust=, further zoom out.                          |
+| ~0~           |                       | After start of =text-scale-adjust=, reset the font size to the global default. |
+|-------------+-----------------------+------------------------------------------------------------------------------|
 
 ** Zoom
 

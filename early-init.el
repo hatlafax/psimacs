@@ -442,25 +442,26 @@ It is the fraction of the current heap size.")
 ;;
 ;; Faster to disable these here (before they've been initialized)
 ;;
-(push '(menu-bar-lines . 0)           default-frame-alist)
-(push '(tool-bar-lines . 0)           default-frame-alist)
-(push '(vertical-scroll-bars)         default-frame-alist)
-(push '(horizontal-scroll-bars)       default-frame-alist)
-(push '(background-color . "#000000") default-frame-alist)
-(when (featurep 'ns)
-    (push '(ns-appearance . dark)        default-frame-alist)
-    (push '(ns-transparent-titlebar . t) default-frame-alist)
-)
+(setq default-frame-alist '(;;(fullscreen . maximized)
+
+                            ;; You can turn off scroll bars by uncommenting these lines:
+                            (vertical-scroll-bars . nil)
+                            (horizontal-scroll-bars . nil)
+
+                            ;; Setting the face in here prevents flashes of
+                            ;; color as the theme gets activated
+                            (background-color . "#000000")
+                            (foreground-color . "#ffffff")
+                            (ns-appearance . dark)
+                            (ns-transparent-titlebar . t)))
+
+
 (setq-default mode-line-format nil)
 
-(setq scroll-bar-mode nil)
-(when (fboundp 'horizontal-scroll-bar-mode)
-    (horizontal-scroll-bar-mode -1))
-
-;(menu-bar-mode -1)
-;(tool-bar-mode -1)
-;(scroll-bar-mode -1)
-;(horizontal-scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
 
 ;;
 ;; After initialization set the garbage collection threshold to a reasonable value.

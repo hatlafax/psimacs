@@ -830,19 +830,13 @@ about beforhand or that I might forget about in the future.
 | =C-x M-:=     | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
 |             | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x C-+=     | =M-x zoom-in/out=            | Zooms in  current buffer                                                                                          |
-| =C-x C--=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
-| =C-x C-0=     | =M-x zoom-in/out=            | Zooms out current buffer                                                                                          |
-| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
-| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
-| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
-|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-u C-x C-+= | =C-u M-x zoom-in/out=        | Zooms in  current frame                                                                                           |
-| =C-u C-x C--= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
-| =C-u C-x C-0= | =C-u M-x zoom-in/out=        | Zooms out current frame                                                                                           |
-| ~+~ ~=~         |                            | Zooms in after start of =zoom-in/out=                                                                               |
-| ~-~           |                            | Zooms out after start of =zoom-in/out=                                                                              |
-| ~0~           |                            | Reset zoom in running command =zoom-in/out=                                                                         |
+| =C-x C-+=     | =M-x text-scale-adjust=      | Increase font size in current buffer by one step.                                                                 |
+| ~C-x C-=~     | =M-x text-scale-adjust=      | Increase font size in current buffer by one step.                                                                 |
+| =C-x C--=     | =M-x text-scale-adjust=      | Decrease font size in current buffer by one step.                                                                 |
+| =C-x C-0=     | =M-x text-scale-adjust=      | Reset the font size to the global default.                                                                        |
+| ~+~ ~=~         |                            | After start of =text-scale-adjust=, further zoom in.                                                                |
+| ~-~           |                            | After start of =text-scale-adjust=, further zoom out.                                                               |
+| ~0~           |                            | After start of =text-scale-adjust=, reset the font size to the global default.                                      |
 |-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
 
 ** Buffer Handling in Psimacs
@@ -1912,25 +1906,26 @@ ugly flashes of unstyled Emacs.
 ;;
 ;; Faster to disable these here (before they've been initialized)
 ;;
-(push '(menu-bar-lines . 0)           default-frame-alist)
-(push '(tool-bar-lines . 0)           default-frame-alist)
-(push '(vertical-scroll-bars)         default-frame-alist)
-(push '(horizontal-scroll-bars)       default-frame-alist)
-(push '(background-color . "#000000") default-frame-alist)
-(when (featurep 'ns)
-    (push '(ns-appearance . dark)        default-frame-alist)
-    (push '(ns-transparent-titlebar . t) default-frame-alist)
-)
+(setq default-frame-alist '(;;(fullscreen . maximized)
+
+                            ;; You can turn off scroll bars by uncommenting these lines:
+                            (vertical-scroll-bars . nil)
+                            (horizontal-scroll-bars . nil)
+
+                            ;; Setting the face in here prevents flashes of
+                            ;; color as the theme gets activated
+                            (background-color . "#000000")
+                            (foreground-color . "#ffffff")
+                            (ns-appearance . dark)
+                            (ns-transparent-titlebar . t)))
+
+
 (setq-default mode-line-format nil)
 
-(setq scroll-bar-mode nil)
-(when (fboundp 'horizontal-scroll-bar-mode)
-    (horizontal-scroll-bar-mode -1))
-
-;(menu-bar-mode -1)
-;(tool-bar-mode -1)
-;(scroll-bar-mode -1)
-;(horizontal-scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
 #+end_src
 
 - Garbage Collection fine tuning
@@ -3151,6 +3146,10 @@ The following boolean constants are defined for convenience.
 (defconst emacs/>=30p (>= emacs-major-version 30) "Emacs is 30 or above.")
 (defconst emacs/>=31p (>= emacs-major-version 31) "Emacs is 31 or above.")
 (defconst emacs/>=32p (>= emacs-major-version 32) "Emacs is 32 or above.")
+
+(unless emacs/>=30p
+    (error "Psimacs only works with Emacs 30 and newer; you have version %s" emacs-major-version)
+)
 #+end_src
 
 ** Helper functions for assembling folders and files
@@ -6249,7 +6248,6 @@ that are really easy to trigger accidentally.
 (unbind-key "C-z")              ;; suspend-frame
 (unbind-key "M-o")              ;; facemenu-mode
 (unbind-key "<mouse-2>")        ;; pasting with mouse-wheel click
-(unbind-key "<C-wheel-down>")   ;; text scale adjust
 #+end_src
 
 *** Personal key prefix map
@@ -7423,7 +7421,11 @@ No distracting splash screen or annoying startup message :-)
 (setopt completion-auto-select 'second-tab)            ; Much more eager
 ;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
 
+(setopt switch-to-buffer-obey-display-actions t)       ; Make switching buffers more consistent
+
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+
+
 #+end_src
 
 *** Bells
@@ -7573,7 +7575,8 @@ Beside the row I'd also like to see the column in the mode line.
 ;;
 ;; Show rows and columns in the mode line.
 ;;
-(column-number-mode)
+(setopt line-number-mode t)                        ; Show current line in modeline
+(setopt column-number-mode t)                      ; Show column as well
 #+end_src
 
 *** Indicate buffer boundaries
@@ -7590,61 +7593,52 @@ Do not centre the point before scrolling. Scroll one line at a time (less "jumpy
 Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Textual-Scrolling.html#Textual-Scrolling][Textual Scrolling]] in the *Emacs* manual.
 
 #+begin_src emacs-lisp :tangle config/init-basic-ui.el
-  ;;
-  ;; Scrolling: Adjust to your likening...
-  ;;
-  (setq scroll-step 1                                ; keyboard scroll: one line at a time
-        scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
-        scroll-error-top-bottom t                    ; Move point to top/bottom of buffer before signaling a scrolling error.
-        ;; Keeps screen position if the scroll command moved it vertically out of the
-        ;; window.
-        scroll-preserve-screen-position nil          ; this is not windows like, i.e. quite foreign
-
-        ;; Enables faster scrolling through unfontified regions. This may result in
-        ;; brief periods of inaccurate syntax highlighting immediately after scrolling,
-        ;; which should quickly self-correct.
-        fast-but-imprecise-scrolling t
-
-        mouse-wheel-scroll-amount '(1 ((shift) . 1)) ; dito with wheel: one line at a time
-        mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
-        mouse-wheel-follow-mouse 't                  ; scroll window under mouse
-
-        ;; Reduce cursor lag by :
-        ;; 1. Prevent automatic adjustments to `window-vscroll' for long lines.
-        ;; 2. Resolve the issue of random half-screen jumps during scrolling.
-        auto-window-vscroll nil
-
-        next-line-add-newlines nil                   ; Don't automatically add new lines when scrolling down at the bottom of a buffer.
-  )
-
-  (pixel-scroll-precision-mode)                      ; Smooth scrolling
-#+end_src
-
-*** Smooth Scrolling
-
-The [[https://github.com/aspiers/smooth-scrolling][smooth-scrolling]] package offers a minor mode which make emacs scroll smoothly. It keeps the point away from
-the top and bottom of the current buffer's window in order to keep lines of context around the point visible as
-much as possible, whilst minimising the frequency of sudden scroll jumps which are visually confusing.
-
-You can toggle the  [[https://github.com/aspiers/smooth-scrolling][smooth-scrolling-mode]] with the following command.
-
-| Key binding   | Command                   | Description                                  |
-|---------------+---------------------------+----------------------------------------------|
-| =H-m C-w C-s s= | =M-x smooth-scrolling-mode= | Enable or disable the smooth scrolling mode. |
-|---------------+---------------------------+----------------------------------------------|
-
-#+begin_src emacs-lisp :tangle config/init-basic-ui.el
 ;;
-;; ...or additionally/alternatively use the smooth-scrolling package
+;; Scrolling: Adjust to your likening...
 ;;
-(use-package smooth-scrolling
-    :demand t
-    :config (smooth-scrolling-mode 1)
-    :bind (
-         :map psimacs/config/global-key-map/special
-              ("C-w C-s s" . smooth-scrolling-mode)
-        )
+(setq scroll-step 1                                ; keyboard scroll: one line at a time
+      scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
+      scroll-error-top-bottom t                    ; Move point to top/bottom of buffer before signaling a scrolling error.
+
+      ;; Keeps screen position if the scroll command moved it vertically out of the
+      ;; window.
+      scroll-preserve-screen-position nil          ; this is not windows like, i.e. quite foreign
+
+      ;; Enables faster scrolling through unfontified regions. This may result in
+      ;; brief periods of inaccurate syntax highlighting immediately after scrolling,
+      ;; which should quickly self-correct.
+      fast-but-imprecise-scrolling t
+
+      isearch-allow-scroll 'unlimited              ; Allow scrolling actions while remaining inside a search block.
+
+      ;;mouse-wheel-scroll-amount '(1) ; dito with wheel: one line at a time
+      mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
+      mouse-wheel-follow-mouse t                   ; scroll window under mouse
+
+      ;; Enable horizontal scrolling
+      mouse-wheel-tilt-scroll t
+      mouse-wheel-flip-direction t
+
+      ;; Reduce cursor lag by :
+      ;; 1. Prevent automatic adjustments to `window-vscroll' for long lines.
+      ;; 2. Resolve the issue of random half-screen jumps during scrolling.
+      auto-window-vscroll nil
+
+      next-line-add-newlines nil                   ; Don't automatically add new lines when scrolling down at the bottom of a buffer.
 )
+
+;; Provide a "stick-to-edge" scrolling experience.
+;(setq-default scroll-up-aggressively   0.01
+;              scroll-down-aggressively 0.01)
+
+;; Auto-scroll to bottom only when you type, not when background output arrives.
+(setq-default comint-scroll-to-bottom-on-input  t
+              comint-scroll-to-bottom-on-output nil)
+
+(pixel-scroll-precision-mode)                      ; Smooth scrolling
+
+;; For terminal users, make the mouse more useful
+(xterm-mouse-mode 1)
 #+end_src
 
 *** Confirmation request
@@ -10728,7 +10722,7 @@ Package [[https://github.com/emacs-mirror/emacs/blob/master/lisp/savehist.el][sa
     :straight nil
     :config
         (setq savehist-file psimacs/config/history-file)
-        (savehist-mode 1)
+        (savehist-mode)
         (setq history-length t)
         (setq history-delete-duplicates t)
         (setq savehist-save-minibuffer-history 1)
@@ -11616,6 +11610,9 @@ See also:
 
 Some settings for build-in /Dired/.
 
+References:
+- [[https://www.jamescherti.com/emacs-dired-configuration/][Fixing Emacs Dired Defaults: Settings for Better File Managemen]]
+
 #+begin_src emacs-lisp :tangle config/init-basic-handling.el
 ;;
 ;; Avoid creation of new buffers for each visited directory
@@ -11623,16 +11620,113 @@ Some settings for build-in /Dired/.
 (use-package dired
     :straight nil
     :commands (dired dired-jump)
-    ;:custom ((dired-listing-switches "-agho --group-directories-first"))
     :config
-        (setq dired-kill-when-opening-new-dired-buffer t)
-        (setq dired-recursive-copies                   'always)
-        (setq dired-recursive-deletes                  'always)
-        (setq delete-by-moving-to-trash                t)
-        (setq dired-dwim-target                        t)
+        (setq dired-kill-when-opening-new-dired-buffer t)   ; Causes Dired to automatically kill the current Dired buffer upon 
+                                                            ; navigating into a different directory.
+
+        (setq dired-dwim-target         t)  ; Enable intelligent directory guessing. Do What I Mean. 
+                                            ; When you split your window into two side-by-side Dired buffers, 
+                                            ; Dired will automatically suggest the directory of the other window
+                                            ; as the default target when you press C (copy) or R (rename).
+
+        (setq dired-vc-rename-file      t)  ; Causes Dired to perform file renames through the underlying 
+                                            ; version control system when supported.
+
+        (setq delete-by-moving-to-trash t)  ; Uses system trash
+
+        (setq dired-deletion-confirmer  'y-or-n-p   ; 'y' or 'n' instead  'yes'
+              dired-recursive-deletes   'top)       ; Ask for your confirmation exactly once for the top-level directory
+                                                    ; you have marked. Once you confirm that initial prompt, it silently 
+                                                    ; and recursively deletes all nested files and folders inside that 
+                                                    ; tree without any further interruptions.
+
+        (setq dired-clean-confirm-killing-deleted-buffers nil)  ; Suppresses the prompt that asks for permission to close Dired buffers
+                                                                ; associated with directories you just deleted, closing them automatically
+                                                                ; instead.
+
+        (setq dired-free-space nil)                 ; Removes disk space indicator from Dired buffers.
+
+        (setq dired-movement-style 'bounded-files)  ; Restricts vertical movement to file lines in the Dired buffer. 
+                                                    ; When point reaches the first or last file line, further vertical 
+                                                    ; movement stops instead of moving to other non-file lines.
+
+        (setq dired-recursive-copies        'always ; Copy directories recursively by default without prompting.
+              dired-create-destination-dirs 'ask)   ; Explicitly asking for confirmation before creating new, non-existent destination directories.
+
+        (setq dired-auto-revert-buffer 'dired-directory-changed-p)  ; Automatically revert the buffer when the listed directory has changed.
+                                                                    ; The tradeoff is that changes that do not modify the directory itself, 
+                                                                    ; such as in-place edits to existing files, might not trigger an automatic
+                                                                    ; refresh.
+
+        (setq dired-do-revert-buffer (lambda (dir)                  ; Automatically updates destination Dired buffers after file operations like 
+                                        (not (file-remote-p dir)))) ; copying or renaming, but uses a custom predicate to skip remote directories.
+                                                                    ; The tradeoff is that remote directory buffers require a manual refresh to 
+                                                                    ; reflect recent file transfers.
+
+        (setq dired-mouse-drag-files t) ; Allows you to click and drag files directly from a Dired buffer into external 
+                                        ; desktop applications, such as graphical file managers or web browsers.
+
+        ;; The following snippet configures Dired to open specific file extensions using the default application handler 
+        ;; of the host operating system. It identifies the environment (macOS, Linux, or Windows) and assigns the 
+        ;; corresponding system command (open, xdg-open, or start) to the dired-guess-shell-alist-user variable for 
+        ;; documents, images, and media files. The main benefit is that it delegates file association management to 
+        ;; the operating system, removing the need to configure individual applications within Emacs for every file type.
+        (defvar my-dired-xdg-open-cmd nil)
+        (with-eval-after-load 'dired
+          (when-let* ((cmd (cond
+                            ((eq system-type 'darwin)
+                             "open")
+                            ((memq system-type '(gnu gnu/linux gnu/kfreebsd
+                                                     berkeley-unix))
+                             "xdg-open")
+                            ((memq system-type '(cygwin windows-nt ms-dos))
+                             "start"))))
+            (setq dired-guess-shell-alist-user
+                  `(("\\.\\(?:docx\\|pdf\\|odt\\|odg\\|ods\\|djvu\\|eps\\)\\'" ,cmd)
+                    ("\\.\\(?:jpe?g\\|webp\\|png\\|gif\\|xpm\\)\\'" ,cmd)
+                    ("\\.\\(?:xcf\\)\\'" ,cmd)
+                    ("\\.tex\\'" ,cmd)
+                    ("\\.\\(?:mp4\\|mkv\\|m4a\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,cmd)
+                    ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)))
+            (when cmd
+              (setq my-dired-xdg-open-cmd cmd))))
+
+        ;;
+        ;; Omitting hidden files
+        ;;
+        ;; use dired-omit-mode off to see all files
+        (setq dired-omit-verbose nil)
+        ;; (setq dired-omit-files (concat dired-omit-files "\\|^\\."))  ; hide all hidden files whose names begin with a dot
+        (setq dired-omit-files (concat "\\`[.]\\'"
+                               "\\|\\.\\(?:elc\\|a\\|o\\|pyc\\|pyo\\|swp\\|class\\)\\'"
+                               "\\|^\\.DS_Store\\'"
+                               "\\|^\\.\\(?:svn\\|git\\)\\'"
+                               "\\|^flycheck_.*"
+                               "\\|^flymake_.*"))
+        ;;
+        ;; Sort directories before files
+        ;;
+        (setq ls-lisp-verbosity  nil 
+              ls-lisp-dirs-first t)
+
+        (when (eq system-type 'darwin)
+            (setq dired-use-ls-dired nil)) ; macOS/BSD ls
+
+        (let ((args "--group-directories-first -ahlv"))
+            (when (or (eq system-type 'darwin) (eq system-type 'berkeley-unix))
+                (if-let* ((gls (executable-find "gls")))
+                     (setq insert-directory-program gls)
+                  (setq args nil)
+                )
+            )
+            (when args
+                (setq dired-listing-switches args)
+            )
+        )
 
     :hook (
-        (dired-mode . dired-hide-details-mode)
+        (dired-mode . dired-omit-mode)          ; omit all hidden files
+        (dired-mode . dired-hide-details-mode)  ; hides file details such as permissions, size, and modification dates.
         (dired-mode . hl-line-mode)
     )
 )
@@ -12487,107 +12581,20 @@ Add key bindings for the frame creation strategy commands, as promised in the [[
 (define-key psimacs/config/global-key-map/special (kbd "C-w C-x 5 s") 'psimacs/window/set-frame-creation-strategy-system)
 #+end_src
 
-*** Font Size
+*** Zooming
 
-*** Zoom Frame
+We use native command =text-scale-adjust=.
 
-The package [[https://www.emacswiki.org/emacs/SetFonts#ZoomFrame][zoom-frm]] allows the font resize of the current buffer, the current frame or of all frames.
-It is an enhancement of the build-in =M-x text-adjust-scale= command.
-
-| Key binding | Command             | Description                               |
-|-------------+---------------------+-------------------------------------------|
-| =C-x C-+=     | =M-x zoom-in/out=     | Zooms in  current buffer                  |
-| =C-x C--=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
-| =C-x C-0=     | =M-x zoom-in/out=     | Zooms out current buffer                  |
-| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
-| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
-| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
-|-------------+---------------------+-------------------------------------------|
-| =C-u C-x C-+= | =C-u M-x zoom-in/out= | Zooms in  current frame                   |
-| =C-u C-x C--= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
-| =C-u C-x C-0= | =C-u M-x zoom-in/out= | Zooms out current frame                   |
-| ~+~ ~=~         |                     | Zooms in after start of =zoom-in/out=       |
-| ~-~           |                     | Zooms out after start of =zoom-in/out=      |
-| ~0~           |                     | Reset zoom in running command =zoom-in/out= |
-|-------------+---------------------+-------------------------------------------|
-| =H-m C-x C-0= | =M-x zoom-frm-unzoom= | Cancel zoom of frame.                     |
-|-------------+---------------------+-------------------------------------------|
-
-#+begin_src emacs-lisp :tangle config/init-basic-layout.el :var file-description="Basic layout setup"
-;;
-;; Provide frame oriented scaling option
-;;
-(use-package frame-fns)
-(use-package frame-cmds)
-(use-package zoom-frm
-    :config
-        ;;(setq zoom-frame/buffer 'frame)
-
-        (defun psimacs/config/initalize-zoom-frm ()
-            (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
-            (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
-            (define-key ctl-x-map [(control ?=)] 'zoom-in/out)
-            (define-key ctl-x-map [(control ?0)] 'zoom-in/out)
-
-            (global-set-key (vector (list 'control mouse-wheel-down-event)) 'zoom-in)
-            (global-set-key (vector (list 'control mouse-wheel-up-event))   'zoom-out)
-
-            (global-set-key (vector (list 'control 'meta mouse-wheel-down-event)) 'zoom-all-frames-in)
-            (global-set-key (vector (list 'control 'meta mouse-wheel-up-event))   'zoom-all-frames-out)
-
-            (when psimacs/system/is-win32-p
-              (global-set-key [S-mouse-1]    'zoom-in)
-              (global-set-key [C-S-mouse-1]  'zoom-in)
-            )
-
-            (when psimacs/system/is-linux-p
-              (global-set-key [S-mouse-1]    nil)
-              (global-set-key [C-S-mouse-1]  nil)
-
-              (global-set-key [C-wheel-up]    'zoom-in)
-              (global-set-key [C-wheel-down]  'zoom-out)
-            )
-
-            ;;;; Get rid of `mouse-set-font' or `mouse-appearance-menu':
-            (global-set-key [S-down-mouse-1] nil)
-        )
-
-    :hook (after-init . psimacs/config/initalize-zoom-frm)
-    :bind (
-            :map psimacs/config/global-key-map/special
-            ("C-x C-0" . zoom-frm-unzoom)
-        )
-)
-#+end_src
-
-*** CANCELED Golden-Ratio for new buffers
-
-The package [[https://github.com/roman/golden-ratio.el][Golden-Ratio]] provides the /golden-ratio-mode/ that will automatically adjust buffers sizes to keep
-the golden ration.
-
-| Key binding | Command               | Description                                         |
-|-------------+-----------------------+-----------------------------------------------------|
-| =H-m C-w C-r= | =M-x golden-ratio-mode= | Toggle automatic window resizing with golden ratio. |
-|-------------+-----------------------+-----------------------------------------------------|
-
-
-#+begin_src emacs-lisp :tangle config/init-basic-layout.el
-;;
-;; Always keep buffer sizes in golden ratios
-;;
-(use-package golden-ratio
-    :diminish golden-ratio-mode
-    :config
-	(setq golden-ratio-auto-scale nil)
-
-        (setq golden-ratio-adjust-factor 1.0)
-        (setq golden-ratio-wide-adjust-factor .8)
-    :bind (
-         :map psimacs/config/global-key-map/special
-              ("C-w C-r" . golden-ratio-mode)
-        )
-)
-#+end_src
+| Key binding | Command               | Description                                                                  |
+|-------------+-----------------------+------------------------------------------------------------------------------|
+| =C-x C-+=     | =M-x text-scale-adjust= | Increase font size in current buffer by one step.                            |
+| ~C-x C-=~     | =M-x text-scale-adjust= | Increase font size in current buffer by one step.                            |
+| =C-x C--=     | =M-x text-scale-adjust= | Decrease font size in current buffer by one step.                            |
+| =C-x C-0=     | =M-x text-scale-adjust= | Reset the font size to the global default.                                   |
+| ~+~ ~=~         |                       | After start of =text-scale-adjust=, further zoom in.                           |
+| ~-~           |                       | After start of =text-scale-adjust=, further zoom out.                          |
+| ~0~           |                       | After start of =text-scale-adjust=, reset the font size to the global default. |
+|-------------+-----------------------+------------------------------------------------------------------------------|
 
 *** Zoom
 
