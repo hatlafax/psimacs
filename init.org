@@ -7596,8 +7596,15 @@ Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/
 ;;
 ;; Scrolling: Adjust to your likening...
 ;;
-(setq scroll-step 1                                ; keyboard scroll: one line at a time
-      scroll-conservatively 10000                  ; scroll one line at a time when you move the cursor past the top or bottom
+(pixel-scroll-precision-mode 1) ; pixel-scroll-precision-mode is a complete rewrite that 
+                                ; natively replaces the older pixel-scroll-mode
+;; (setq pixel-scroll-mode t)
+
+(setq scroll-step 1                                ; Scroll exactly 1 line at a time for keyboard navigation
+      scroll-margin 2                              ; Start scrolling when cursor is within 2 lines of the edge
+      scroll-conservatively 10000                  ; Setting this above 100 fixes the jarring Emacs default behavior where the 
+                                                   ; window aggressively recenters the cursor when you cross the top or bottom
+                                                   ; screen boundary.
       scroll-error-top-bottom t                    ; Move point to top/bottom of buffer before signaling a scrolling error.
 
       ;; Keeps screen position if the scroll command moved it vertically out of the
@@ -7634,8 +7641,6 @@ Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/
 ;; Auto-scroll to bottom only when you type, not when background output arrives.
 (setq-default comint-scroll-to-bottom-on-input  t
               comint-scroll-to-bottom-on-output nil)
-
-(pixel-scroll-precision-mode)                      ; Smooth scrolling
 
 ;; For terminal users, make the mouse more useful
 (xterm-mouse-mode 1)
@@ -11621,23 +11626,23 @@ References:
     :straight nil
     :commands (dired dired-jump)
     :config
-        (setq dired-kill-when-opening-new-dired-buffer t)   ; Causes Dired to automatically kill the current Dired buffer upon 
+        (setq dired-kill-when-opening-new-dired-buffer t)   ; Causes Dired to automatically kill the current Dired buffer upon
                                                             ; navigating into a different directory.
 
-        (setq dired-dwim-target         t)  ; Enable intelligent directory guessing. Do What I Mean. 
-                                            ; When you split your window into two side-by-side Dired buffers, 
+        (setq dired-dwim-target         t)  ; Enable intelligent directory guessing. Do What I Mean.
+                                            ; When you split your window into two side-by-side Dired buffers,
                                             ; Dired will automatically suggest the directory of the other window
                                             ; as the default target when you press C (copy) or R (rename).
 
-        (setq dired-vc-rename-file      t)  ; Causes Dired to perform file renames through the underlying 
+        (setq dired-vc-rename-file      t)  ; Causes Dired to perform file renames through the underlying
                                             ; version control system when supported.
 
         (setq delete-by-moving-to-trash t)  ; Uses system trash
 
         (setq dired-deletion-confirmer  'y-or-n-p   ; 'y' or 'n' instead  'yes'
               dired-recursive-deletes   'top)       ; Ask for your confirmation exactly once for the top-level directory
-                                                    ; you have marked. Once you confirm that initial prompt, it silently 
-                                                    ; and recursively deletes all nested files and folders inside that 
+                                                    ; you have marked. Once you confirm that initial prompt, it silently
+                                                    ; and recursively deletes all nested files and folders inside that
                                                     ; tree without any further interruptions.
 
         (setq dired-clean-confirm-killing-deleted-buffers nil)  ; Suppresses the prompt that asks for permission to close Dired buffers
@@ -11646,30 +11651,30 @@ References:
 
         (setq dired-free-space nil)                 ; Removes disk space indicator from Dired buffers.
 
-        (setq dired-movement-style 'bounded-files)  ; Restricts vertical movement to file lines in the Dired buffer. 
-                                                    ; When point reaches the first or last file line, further vertical 
+        (setq dired-movement-style 'bounded-files)  ; Restricts vertical movement to file lines in the Dired buffer.
+                                                    ; When point reaches the first or last file line, further vertical
                                                     ; movement stops instead of moving to other non-file lines.
 
         (setq dired-recursive-copies        'always ; Copy directories recursively by default without prompting.
               dired-create-destination-dirs 'ask)   ; Explicitly asking for confirmation before creating new, non-existent destination directories.
 
         (setq dired-auto-revert-buffer 'dired-directory-changed-p)  ; Automatically revert the buffer when the listed directory has changed.
-                                                                    ; The tradeoff is that changes that do not modify the directory itself, 
+                                                                    ; The tradeoff is that changes that do not modify the directory itself,
                                                                     ; such as in-place edits to existing files, might not trigger an automatic
                                                                     ; refresh.
 
-        (setq dired-do-revert-buffer (lambda (dir)                  ; Automatically updates destination Dired buffers after file operations like 
+        (setq dired-do-revert-buffer (lambda (dir)                  ; Automatically updates destination Dired buffers after file operations like
                                         (not (file-remote-p dir)))) ; copying or renaming, but uses a custom predicate to skip remote directories.
-                                                                    ; The tradeoff is that remote directory buffers require a manual refresh to 
+                                                                    ; The tradeoff is that remote directory buffers require a manual refresh to
                                                                     ; reflect recent file transfers.
 
-        (setq dired-mouse-drag-files t) ; Allows you to click and drag files directly from a Dired buffer into external 
+        (setq dired-mouse-drag-files t) ; Allows you to click and drag files directly from a Dired buffer into external
                                         ; desktop applications, such as graphical file managers or web browsers.
 
-        ;; The following snippet configures Dired to open specific file extensions using the default application handler 
-        ;; of the host operating system. It identifies the environment (macOS, Linux, or Windows) and assigns the 
-        ;; corresponding system command (open, xdg-open, or start) to the dired-guess-shell-alist-user variable for 
-        ;; documents, images, and media files. The main benefit is that it delegates file association management to 
+        ;; The following snippet configures Dired to open specific file extensions using the default application handler
+        ;; of the host operating system. It identifies the environment (macOS, Linux, or Windows) and assigns the
+        ;; corresponding system command (open, xdg-open, or start) to the dired-guess-shell-alist-user variable for
+        ;; documents, images, and media files. The main benefit is that it delegates file association management to
         ;; the operating system, removing the need to configure individual applications within Emacs for every file type.
         (defvar my-dired-xdg-open-cmd nil)
         (with-eval-after-load 'dired
@@ -11706,7 +11711,7 @@ References:
         ;;
         ;; Sort directories before files
         ;;
-        (setq ls-lisp-verbosity  nil 
+        (setq ls-lisp-verbosity  nil
               ls-lisp-dirs-first t)
 
         (when (eq system-type 'darwin)
@@ -12564,6 +12569,16 @@ Refefences:
             ("H-<backspace>" . hungry-delete-forward)
         )
 )
+#+end_src
+
+*** View-Read-Only
+
+When you visit a /read-only/ file, it will be in /view mode/, so you can use SPC to scroll.
+This affects buffers for files that you don't have permission to change as well as
+buffers that you make /read-only/ using =C-x C-q= (=M-x read-only-mode=).
+
+#+begin_src emacs-lisp :tangle config/init-basic-handling.el
+(setopt view-read-only t)
 #+end_src
 
 ** Windows and frame layout
