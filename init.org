@@ -2965,6 +2965,7 @@ to it's documentation string.
 Supported strategies are:
   `layout'      -> new frames surround the main frame
   `main'        -> new frames get always the same size and position of the main frame
+  `center'      -> new frames get always size and position of the main frame but slightly reduced
   `system'      -> let emacs decide"
 )
 
@@ -3034,6 +3035,29 @@ Supported strategies are:
     (message "Switched to main frame creation strategy.")
 )
 
+(defun psimacs/window/set-frame-creation-strategy-center ()
+    "Set the frame layout creation strategy to `center'."
+    (interactive)
+
+    (let* (
+            (_width  (truncate (* psimacs/config/initial-frame-size-x 0.8)))
+            (_height (truncate (* psimacs/config/initial-frame-size-y 0.8)))
+            (_offset_x (truncate (* (- psimacs/config/initial-frame-size-x _width ) 0.5)))
+            (_offset_y (truncate (* (- psimacs/config/initial-frame-size-y _height) 0.5)))
+            (_x (+ psimacs/config/initial-frame-pos-x _offset_x))
+            (_y (+ psimacs/config/initial-frame-pos-y _offset_y))
+          )
+
+        (setq psimacs/config/default-frame-pos-x  _x)
+        (setq psimacs/config/default-frame-pos-y  _y)
+        (setq psimacs/config/default-frame-size-x _width)
+        (setq psimacs/config/default-frame-size-y _height)
+
+        (setq psimacs/config/default-frame-creation-strategy "center")
+        (message "Switched to center frame creation strategy.")
+    )
+)
+
 (defun psimacs/window/set-frame-creation-strategy-system ()
     "Set the frame layout creation strategy to `system'."
     (interactive)
@@ -3055,6 +3079,8 @@ Supported strategies are:
            (psimacs/window/set-frame-creation-strategy-layout))
           ((string= psimacs/config/default-frame-creation-strategy "main")
            (psimacs/window/set-frame-creation-strategy-main))
+          ((string= psimacs/config/default-frame-creation-strategy "center")
+           (psimacs/window/set-frame-creation-strategy-center))
           ((string= psimacs/config/default-frame-creation-strategy "system")
            (psimacs/window/set-frame-creation-strategy-system))
     )
@@ -3078,6 +3104,12 @@ Supported strategies are:
                 (setq psimacs/config/default-frame-placement-counter 1)
             )
         )
+
+        (when (frame-parameter _frame 'client)
+            (make-frame-visible _frame)
+            (raise-frame _frame)
+        )
+
         (psimacs/window/apply-frame-creation-strategy)
     )
 )
@@ -7078,6 +7110,31 @@ See also content of variable =buffer-file-coding-system= by use of =C-h v=.
 (setq default-input-method nil) ; this is the default  value
 #+end_src
 
+** Buffer Terminator
+
+The package [[https://github.com/jamescherti/buffer-terminator.el][buffer-terminator]]
+automatically and safely kills buffers, ensuring a clean and efficient workspace while
+enhancing the performance of Emacs by reducing open buffers, which minimizes active modes,
+timers, processes...
+
+#+begin_src emacs-lisp :tangle no config/init-basic-system.el
+(use-package buffer-terminator
+  :custom
+    (buffer-terminator-verbose nil)
+
+    ;; Set the inactivity timeout (in seconds) after which buffers are considered
+    ;; inactive (default is 30 minutes):
+    (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+
+    ;; Define how frequently the cleanup process should run (default is every 10
+    ;; minutes):
+    (buffer-terminator-interval (* 10 60)) ; 10 minutes
+
+  :init
+    (buffer-terminator-mode 1)
+)
+#+end_src
+
 ** Emacs server
 
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Emacs-Server.html][Using Emacs as a Server]] describes the details about configuration of an *Emacs server*. *Psimacs* uses a configuration
@@ -7596,13 +7653,13 @@ Scrolling is explained in [[https://www.gnu.org/software/emacs/manual/html_node/
 ;;
 ;; Scrolling: Adjust to your likening...
 ;;
-(pixel-scroll-precision-mode 1) ; pixel-scroll-precision-mode is a complete rewrite that 
+(pixel-scroll-precision-mode 1) ; pixel-scroll-precision-mode is a complete rewrite that
                                 ; natively replaces the older pixel-scroll-mode
 ;; (setq pixel-scroll-mode t)
 
 (setq scroll-step 1                                ; Scroll exactly 1 line at a time for keyboard navigation
       scroll-margin 2                              ; Start scrolling when cursor is within 2 lines of the edge
-      scroll-conservatively 10000                  ; Setting this above 100 fixes the jarring Emacs default behavior where the 
+      scroll-conservatively 10000                  ; Setting this above 100 fixes the jarring Emacs default behavior where the
                                                    ; window aggressively recenters the cursor when you cross the top or bottom
                                                    ; screen boundary.
       scroll-error-top-bottom t                    ; Move point to top/bottom of buffer before signaling a scrolling error.
@@ -28083,9 +28140,9 @@ Mode mapped  menu commands:
 ;  (use-package casual-calc
 ;    :straight (casual-calc :host github :repo "kickingvegas/casual-calc")
 ;    :after calc
-;    :bind (:map calc-mode-map 
+;    :bind (:map calc-mode-map
 ;            ("C-o" . casual-calc-tmenu)
-;           :map calc-alg-map 
+;           :map calc-alg-map
 ;            ("C-o" . casual-calc-tmenu)
 ;  	  )
 ;  )
