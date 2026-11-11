@@ -12,40 +12,50 @@ body {
     font-size: 90%;
 }
 
-/* Inline code (=text= in org) - light background */
+/* Inline code/verbatim (=text= or ~text~ in org) */
 code {
     color: #00f;
     padding: 1px 3px;
     border: 1px solid #ddd;
-    background: #f5f5f5;  /* Light gray for inline code */
+    background: #f5f5f5;  /* Light background for inline code */
     font-size: 115%;
     border-radius: 2px;
     font-family: monospace;
 }
 
-/* Code blocks - dark background */
-pre {
+/* Source code blocks */
+pre.src {
     border: 1pt solid #333;
-    background: #1e1e1e;  /* Dark gray instead of pure black */
+    background: #1e1e1e;  /* Dark background for code blocks */
     color: #fff;
     padding: 5pt;
     overflow: auto;
     border-radius: 4px;
     box-shadow: 3px 3px 3px #888;
-    line-height: 1.5em;  /* Increased for better spacing */
+    line-height: 1.5em;
     font-family: monospace;
     font-size: 115%;
 }
 
-/* Code inside pre blocks - override inline code styles */
-pre code {
-    color: inherit;  /* Use pre's color */
-    background: transparent;  /* No background, use pre's background */
+/* Code inside source blocks - inherit from pre */
+pre.src code {
+    color: inherit;
+    background: none;
     border: none;
     padding: 0;
-    font-size: 100%;  /* Reset to pre's font size */
-    display: block;
-    line-height: inherit;  /* Use pre's line-height */
+    font-size: inherit;
+    line-height: inherit;
+}
+
+/* Generic pre (fallback) */
+pre {
+    border: 1pt solid #AEBDCC;
+    background: #eee;
+    padding: 5pt;
+    overflow: auto;
+    border-radius: 4px;
+    line-height: 1.5em;
+    font-family: monospace;
 }
 
 div#content {
