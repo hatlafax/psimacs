@@ -345,6 +345,8 @@ The major help commands and their key bindings.
 | =H-<f2>=      | =M-x (lambda() (interactive) (browse-url psimacs/config/init-html-file)))=           | Open *Psimacs* configuration as Html in default browser.                                                 |
 | =H-S-<f1>=    | =M-x (lambda() (interactive) (eww-open-file psimacs/config/keybindings-html-file)))= | Open *Psimacs* keybindings as Html in =eww=.                                                               |
 | =H-S-<f2>=    | =M-x (lambda() (interactive) (eww-open-file psimacs/config/init-html-file)))=        | Open *Psimacs* configuration as Html in =eww=.                                                             |
+| =H-C-<f1>=    | =M-x psimacs/help/open-psimacs-keys=                                                 | Open *Psimacs* keybindings as read-only ORG buffer.                                                      |
+| =H-C-<f2>=    | =M-x psimacs/help/open-psimacs-config=                                               | Open *Psimacs* configuration as read-only ORG buffer.                                                    |
 |-------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 
 ** Prefixes
@@ -678,7 +680,6 @@ References:
 | =M-<f4>=      | =M-x psimacs/config/delete-frame=       | This function deletes the selected frame. If the last frame it leaves emacs.                                                                                                                                                      |
 |-------------+---------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
-
 ** Registers and Bookmarks
 
 *** Registers
@@ -824,20 +825,28 @@ The list is not exhaustive, but contains just bindings and commands that I did n
 about beforhand or that I might forget about in the future.
 
 #+attr_html: :class styledtable
-| Key binding | Command                    | Description                                                                                                       |
-|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x z=       | =M-x repeat=                 | Repeat the most recently executed command. After first execution pressing key =z= repeats the command further.      |
-| =C-x M-:=     | =M-x repeat-complex-command= | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
-|             | =M-x view-lossage=           | Display last few input keystrokes and the commands run.                                                           |
-|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
-| =C-x C-+=     | =M-x text-scale-adjust=      | Increase font size in current buffer by one step.                                                                 |
-| ~C-x C-=~     | =M-x text-scale-adjust=      | Increase font size in current buffer by one step.                                                                 |
-| =C-x C--=     | =M-x text-scale-adjust=      | Decrease font size in current buffer by one step.                                                                 |
-| =C-x C-0=     | =M-x text-scale-adjust=      | Reset the font size to the global default.                                                                        |
-| ~+~ ~=~         |                            | After start of =text-scale-adjust=, further zoom in.                                                                |
-| ~-~           |                            | After start of =text-scale-adjust=, further zoom out.                                                               |
-| ~0~           |                            | After start of =text-scale-adjust=, reset the font size to the global default.                                      |
-|-------------+----------------------------+-------------------------------------------------------------------------------------------------------------------|
+| Key binding   | Command                             | Description                                                                                                       |
+|---------------+-------------------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =C-x z=         | =M-x repeat=                          | Repeat the most recently executed command. After first execution pressing key =z= repeats the command further.      |
+| =C-x M-:=       | =M-x repeat-complex-command=          | Edit and re-evaluate last complex command, or ARGth from last. A complex command is one that used the minibuffer. |
+|               | =M-x view-lossage=                    | Display last few input keystrokes and the commands run.                                                           |
+|---------------+-------------------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =C-x C-+=       | =M-x text-scale-adjust=               | Increase font size in current buffer by one step.                                                                 |
+| ~C-x C-=~       | =M-x text-scale-adjust=               | Increase font size in current buffer by one step.                                                                 |
+| =C-x C--=       | =M-x text-scale-adjust=               | Decrease font size in current buffer by one step.                                                                 |
+| =C-x C-0=       | =M-x text-scale-adjust=               | Reset the font size to the global default.                                                                        |
+| ~+~ ~=~           |                                     | After start of =text-scale-adjust=, further zoom in.                                                                |
+| ~-~             |                                     | After start of =text-scale-adjust=, further zoom out.                                                               |
+| ~0~             |                                     | After start of =text-scale-adjust=, reset the font size to the global default.                                      |
+|---------------+-------------------------------------+-------------------------------------------------------------------------------------------------------------------|
+| =H-m C-s C-c c= | =M-x caser-camelcase-dwim=            | Camelcase words in the region, if active; if not, camelcase word at point.                                        |
+| =H-m C-s C-c u= | =M-x caser-upper-camelcase-dwim=      | UpperCamelcase words in the region, if active; if not, word at point.                                             |
+| =H-m C-s C-c s= | =M-x caser-snakecase-dwim=            | Snakecase words in the region, if active; if not, snakecase word at point.                                        |
+| =H-m C-s C-c d= | =M-x caser-dashcase-dwim=             | Dashcase words in the region, if active; if not, dashcase word at point.                                          |
+| =H-m C-s C-c C= | =M-x caser-camelcase-from-space-dwim= | Camelcase what you mean, including converting spaces to dashes.                                                   |
+| =H-m C-s C-c S= | =M-x caser-snakecase-from-space-dwim= | Snakecase what you mean, including converting spaces to dashes.                                                   |
+| =H-m C-s C-c D= | =M-x caser-dashcase-from-space-dwim=  | Dashcase what you mean, including converting spaces to dashes.                                                    |
+|---------------+-------------------------------------+-------------------------------------------------------------------------------------------------------------------|
 
 ** Buffer Handling in Psimacs
 
@@ -6544,9 +6553,9 @@ Provide keybindings for conveniently access of the *Psimacs* HTML documentation 
 (use-package eww
     :straight nil
     :bind (
-        ("H-<f1>"   . (lambda() (interactive) (browse-url psimacs/config/keybindings-html-file)))
+        ("H-<f1>"   . (lambda() (interactive) (browse-url-of-file psimacs/config/keybindings-html-file)))
         ("H-S-<f1>" . (lambda() (interactive) (eww-open-file psimacs/config/keybindings-html-file)))
-        ("H-<f2>"   . (lambda() (interactive) (browse-url psimacs/config/init-html-file)))
+        ("H-<f2>"   . (lambda() (interactive) (browse-url-of-file psimacs/config/init-html-file)))
         ("H-S-<f2>" . (lambda() (interactive) (eww-open-file psimacs/config/init-html-file)))
     )
 )
@@ -13206,8 +13215,11 @@ _W_: ... zero chars, jump ...
 
 *** Mosey
 
-[[https://github.com/alphapapa/mosey.el][Mosey]] is a GNU Emacs package that makes it easy to mosey back and forth
-in your buffers.
+[[https://github.com/alphapapa/mosey.el][Mosey]] is a GNU Emacs package that makes it easy to mosey back and forth in your buffers.
+
+*Psimacs* just passes a list of point-moving functions to function =defmosey=, and [[https://github.com/alphapapa/mosey.el][mosey]] cooks up six functions:
+=mosey-psimacs-forward=, =mosey-psimacs-backward=, =mosey-psimacs-forward-bounce=, =mosey-psimacs-backward-bounce=,
+=mosey-psimacs-forward-cycle=, and =mosey-psimacs-backward-cycle=.
 
 #+attr_html: :class styledtable1
 | Key binding     | Command                   | Description                                        |
@@ -13267,6 +13279,40 @@ This support package is used by [[https://orgmode.org][org-mode]] to produce col
 ;; Convert buffer text to HTML
 ;;
 (use-package htmlize)
+#+end_src
+
+*** Change the Case of Text
+
+Package [[https://hg.sr.ht/~zck/caser.el][caser.el]] provides functions which change the case of text -- from camelCase to UpperCamelCase to dash-case to snake_case and back.
+
+#+attr_html: :class styledtable1
+| Key binding   | Command                             | Description                                                                |
+|---------------+-------------------------------------+----------------------------------------------------------------------------|
+| =H-m C-s C-c c= | =M-x caser-camelcase-dwim=            | Camelcase words in the region, if active; if not, camelcase word at point. |
+| =H-m C-s C-c u= | =M-x caser-upper-camelcase-dwim=      | UpperCamelcase words in the region, if active; if not, word at point.      |
+| =H-m C-s C-c s= | =M-x caser-snakecase-dwim=            | Snakecase words in the region, if active; if not, snakecase word at point. |
+| =H-m C-s C-c d= | =M-x caser-dashcase-dwim=             | Dashcase words in the region, if active; if not, dashcase word at point.   |
+| =H-m C-s C-c C= | =M-x caser-camelcase-from-space-dwim= | Camelcase what you mean, including converting spaces to dashes.            |
+| =H-m C-s C-c S= | =M-x caser-snakecase-from-space-dwim= | Snakecase what you mean, including converting spaces to dashes.            |
+| =H-m C-s C-c D= | =M-x caser-dashcase-from-space-dwim=  | Dashcase what you mean, including converting spaces to dashes.             |
+|---------------+-------------------------------------+----------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp :tangle config/init-basic-tools.el
+;;
+;; Setup usage of caser
+;;
+(use-package caser
+    :bind (
+        :map psimacs/config/global-key-map/special
+            ("C-s C-c c"   . caser-camelcase-dwim)
+            ("C-s C-c u"   . caser-upper-camelcase-dwim)
+            ("C-s C-c s"   . caser-snakecase-dwim)
+            ("C-s C-c d"   . caser-dashcase-dwim)
+            ("C-s C-c C"   . caser-camelcase-from-space-dwim)
+            ("C-s C-c S"   . caser-snakecase-from-space-dwim)
+            ("C-s C-c D"   . caser-dashcase-from-space-dwim)
+        )
+)
 #+end_src
 
 *** Multiple Cursors
@@ -14321,26 +14367,29 @@ Duplicate line or region N times.
 
 Provide access to the HTML documentation of *Psimacs*.
 
-| Key binding | Command                                  | Description                                                      |
-|-------------+------------------------------------------+------------------------------------------------------------------|
-| =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config=   | Open default browser and shows the Psimacs configuration export. |
-| =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=     | Open default browser and shows the Psimacs keys.                 |
-|-------------+------------------------------------------+------------------------------------------------------------------|
-| =H-h H-p C=   | =M-x psimacs/help/org-psimacs-config=      | Open org buffer with Psimacs configuration.                      |
-| =H-h H-p K=   | =M-x psimacs/help/org-psimacs-keys=        | Open org buffer and shows the Psimacs keys.                      |
-|-------------+------------------------------------------+------------------------------------------------------------------|
+| Key binding | Command                                | Description                                                      |
+|-------------+----------------------------------------+------------------------------------------------------------------|
+| =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config= | Open default browser and shows the Psimacs configuration export. |
+| =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=   | Open default browser and shows the Psimacs keys.                 |
+|-------------+----------------------------------------+------------------------------------------------------------------|
+| =H-h H-p C=   | =M-x psimacs/help/open-psimacs-config=   | Open org buffer with Psimacs configuration.                      |
+| =H-h H-p K=   | =M-x psimacs/help/open-psimacs-keys=     | Open org buffer and shows the Psimacs keys.                      |
+|-------------+----------------------------------------+------------------------------------------------------------------|
+| =H-C-<f2>=    | =M-x psimacs/help/open-psimacs-config=   | Open org buffer with Psimacs configuration.                      |
+| =H-C-<f1>=    | =M-x psimacs/help/open-psimacs-keys=     | Open org buffer and shows the Psimacs keys.                      |
+|-------------+----------------------------------------+------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle config/init-basic-tools.el
 (defun psimacs/help/browse-psimacs-config ()
   "Open default browser and shows the psimacs HTML configuration export."
   (interactive)
-  (browse-url (psimacs/file-system/concat-file user-emacs-directory "docs/init.html"))
+  (browse-url-of-file (psimacs/file-system/concat-file user-emacs-directory "docs/init.html"))
 )
 
 (defun psimacs/help/browse-psimacs-keys ()
   "Open default browser and shows the psimacs HTML listed keys."
   (interactive)
-  (browse-url (psimacs/file-system/concat-file user-emacs-directory "docs/keybindings.html"))
+  (browse-url-of-file (psimacs/file-system/concat-file user-emacs-directory "docs/keybindings.html"))
 )
 
 (defun psimacs/help/open-psimacs-config ()
@@ -14356,9 +14405,13 @@ Provide access to the HTML documentation of *Psimacs*.
 )
 
 (define-key psimacs/config/global-key-map/help (kbd "H-p c") 'psimacs/help/browse-psimacs-config)
-(define-key psimacs/config/global-key-map/help (kbd "H-p C") 'psimacs/help/open-psimacs-config)
 (define-key psimacs/config/global-key-map/help (kbd "H-p k") 'psimacs/help/browse-psimacs-keys)
+
+(define-key psimacs/config/global-key-map/help (kbd "H-p C") 'psimacs/help/open-psimacs-config)
 (define-key psimacs/config/global-key-map/help (kbd "H-p K") 'psimacs/help/open-psimacs-keys)
+
+(global-set-key (kbd "H-C-<f2>") 'psimacs/help/open-psimacs-config)
+(global-set-key (kbd "H-C-<f1>") 'psimacs/help/open-psimacs-keys)
 #+end_src
 
 ** EditorConfig Emacs Plugin
@@ -16519,34 +16572,36 @@ References:
 - [[https://github.com/xenodium/agent-shell][agent-shell]]
 
 #+begin_src emacs-lisp :tangle config/init-advanced-ai.el :var file-description="Advanced AI setup"
-;;
-;; Agent Shell Math Renderer
-;;
-(use-package latex-to-svg-backend
-    :straight (latex-to-svg-backend
-             :type git :host github
-             :repo "alberti42/latex-to-svg-backend")
-)
+  ;;
+  ;; Agent Shell Math Renderer
+  ;;
+  (use-package latex-to-svg-backend
+      :straight (latex-to-svg-backend
+               :type git :host github
+               :repo "alberti42/latex-to-svg-backend"
+  	     :files (:defaults "*.el")
+  	     )
+  )
 
-(use-package latex-to-svg
-    :straight (latex-to-svg
-             :type git :host github
-             :repo "alberti42/latex-to-svg")
-)
+  (use-package latex-to-svg
+      :straight (latex-to-svg
+               :type git :host github
+               :repo "alberti42/latex-to-svg")
+  )
 
-(use-package agent-shell-math-renderer
-  :straight (agent-shell-math-renderer
-             :type git :host github
-             :repo "alberti42/agent-shell-math-renderer")
-  :after agent-shell
-  :config
-    (setq agent-shell-math-renderer-enabled t)
-    (setq agent-shell-math-renderer-render-submitted-prompts t)
-    (setq agent-shell-math-renderer-appended-preamble
-          "\\usepackage{physics}
-           \\usepackage{siunitx}"
-    )
-)
+  (use-package agent-shell-math-renderer
+    :straight (agent-shell-math-renderer
+               :type git :host github
+               :repo "alberti42/agent-shell-math-renderer")
+    :after agent-shell
+    :config
+      (setq agent-shell-math-renderer-enabled t)
+      (setq agent-shell-math-renderer-render-submitted-prompts t)
+      (setq agent-shell-math-renderer-appended-preamble
+            "\\usepackage{physics}
+             \\usepackage{siunitx}"
+      )
+  )
 #+end_src
 
 **** CANCELED Agent Shell Sidebar

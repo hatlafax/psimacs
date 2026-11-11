@@ -145,6 +145,8 @@ The major help commands and their key bindings.
 | =H-<f2>=      | =M-x (lambda() (interactive) (browse-url psimacs/config/init-html-file)))=           | Open *Psimacs* configuration as Html in default browser.                                                 |
 | =H-S-<f1>=    | =M-x (lambda() (interactive) (eww-open-file psimacs/config/keybindings-html-file)))= | Open *Psimacs* keybindings as Html in =eww=.                                                               |
 | =H-S-<f2>=    | =M-x (lambda() (interactive) (eww-open-file psimacs/config/init-html-file)))=        | Open *Psimacs* configuration as Html in =eww=.                                                             |
+| =H-C-<f1>=    | =M-x psimacs/help/open-psimacs-keys=                                                 | Open *Psimacs* keybindings as read-only ORG buffer.                                                      |
+| =H-C-<f2>=    | =M-x psimacs/help/open-psimacs-config=                                               | Open *Psimacs* configuration as read-only ORG buffer.                                                    |
 |-------------+------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------|
 
 ** Prefixes
@@ -2121,8 +2123,11 @@ a char-based decision tree.
 
 ** Mosey
 
-[[https://github.com/alphapapa/mosey.el][Mosey]] is a GNU Emacs package that makes it easy to mosey back and forth
-in your buffers.
+[[https://github.com/alphapapa/mosey.el][Mosey]] is a GNU Emacs package that makes it easy to mosey back and forth in your buffers.
+
+*Psimacs* just passes a list of point-moving functions to function =defmosey=, and [[https://github.com/alphapapa/mosey.el][mosey]] cooks up six functions:
+=mosey-psimacs-forward=, =mosey-psimacs-backward=, =mosey-psimacs-forward-bounce=, =mosey-psimacs-backward-bounce=,
+=mosey-psimacs-forward-cycle=, and =mosey-psimacs-backward-cycle=.
 
 #+attr_html: :class styledtable1
 | Key binding     | Command                   | Description                                        |
@@ -2135,6 +2140,21 @@ in your buffers.
 | =H-m C-s C-m C-b= | =M-x mosey-backward-cycle=  | Loop around when it gets to one end or the other.  |
 |-----------------+---------------------------+----------------------------------------------------|
 
+** Change the Case of Text
+
+Package [[https://hg.sr.ht/~zck/caser.el][caser.el]] provides functions which change the case of text -- from camelCase to UpperCamelCase to dash-case to snake_case and back.
+
+#+attr_html: :class styledtable1
+| Key binding   | Command                             | Description                                                                |
+|---------------+-------------------------------------+----------------------------------------------------------------------------|
+| =H-m C-s C-c c= | =M-x caser-camelcase-dwim=            | Camelcase words in the region, if active; if not, camelcase word at point. |
+| =H-m C-s C-c u= | =M-x caser-upper-camelcase-dwim=      | UpperCamelcase words in the region, if active; if not, word at point.      |
+| =H-m C-s C-c s= | =M-x caser-snakecase-dwim=            | Snakecase words in the region, if active; if not, snakecase word at point. |
+| =H-m C-s C-c d= | =M-x caser-dashcase-dwim=             | Dashcase words in the region, if active; if not, dashcase word at point.   |
+| =H-m C-s C-c C= | =M-x caser-camelcase-from-space-dwim= | Camelcase what you mean, including converting spaces to dashes.            |
+| =H-m C-s C-c S= | =M-x caser-snakecase-from-space-dwim= | Snakecase what you mean, including converting spaces to dashes.            |
+| =H-m C-s C-c D= | =M-x caser-dashcase-from-space-dwim=  | Dashcase what you mean, including converting spaces to dashes.             |
+|---------------+-------------------------------------+----------------------------------------------------------------------------|
 ** Multiple Cursors
 
 [[https://github.com/magnars/multiple-cursors.el][Multiple-cursors]] is a very nice package that lets you create several cursors that all
@@ -2599,14 +2619,17 @@ Duplicate line or region N times.
 
 Provide access to the HTML documentation of *Psimacs*.
 
-| Key binding | Command                                  | Description                                                      |
-|-------------+------------------------------------------+------------------------------------------------------------------|
-| =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config=   | Open default browser and shows the Psimacs configuration export. |
-| =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=     | Open default browser and shows the Psimacs keys.                 |
-|-------------+------------------------------------------+------------------------------------------------------------------|
-| =H-h H-p C=   | =M-x psimacs/help/org-psimacs-config=      | Open org buffer with Psimacs configuration.                      |
-| =H-h H-p K=   | =M-x psimacs/help/org-psimacs-keys=        | Open org buffer and shows the Psimacs keys.                      |
-|-------------+------------------------------------------+------------------------------------------------------------------|
+| Key binding | Command                                | Description                                                      |
+|-------------+----------------------------------------+------------------------------------------------------------------|
+| =H-h H-p c=   | =M-x psimacs/help/browse-psimacs-config= | Open default browser and shows the Psimacs configuration export. |
+| =H-h H-p k=   | =M-x psimacs/help/browse-psimacs-keys=   | Open default browser and shows the Psimacs keys.                 |
+|-------------+----------------------------------------+------------------------------------------------------------------|
+| =H-h H-p C=   | =M-x psimacs/help/open-psimacs-config=   | Open org buffer with Psimacs configuration.                      |
+| =H-h H-p K=   | =M-x psimacs/help/open-psimacs-keys=     | Open org buffer and shows the Psimacs keys.                      |
+|-------------+----------------------------------------+------------------------------------------------------------------|
+| =H-C-<f2>=    | =M-x psimacs/help/open-psimacs-config=   | Open org buffer with Psimacs configuration.                      |
+| =H-C-<f1>=    | =M-x psimacs/help/open-psimacs-keys=     | Open org buffer and shows the Psimacs keys.                      |
+|-------------+----------------------------------------+------------------------------------------------------------------|
 
 ** Helm
 
