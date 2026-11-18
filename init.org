@@ -4503,6 +4503,12 @@ zip 3.0-3
 ;;
 (defconst psimacs/config/ghostel-shell-bash
   `(,psimacs/config/msys-runtime-cmd "-defterm" "-here" "-no-start" "-use-full-path" "-mingw64")
+  ;;
+  ;; -defterm       : Set terminal type (-defterm | -mintty | -conemu | -alacritty)
+  ;; -here          : Use current directory as working
+  ;; -no-start      : Do not use "start" command and return login shell resulting errorcode as this batch file resulting errorcode.
+  ;; -use-full-path : To export full current PATH from environment into MSYS2.
+  ;; -mingw64       : Set shell type (-mingw32 | -mingw64 | -ucrt64 | -clang64 | -msys[2] | -clangarm64)
   "The psimacs ghostel bash command root directory.")
 
 (defconst psimacs/config/ghostel-shell-powershell
@@ -16224,6 +16230,33 @@ References:
     )
 
     ;;
+    ;; Github Copilot enterprise (GHE.com data residency)
+    ;;
+    (require 'gptel-gh)
+
+    ;; Redirect gptel's hardcoded github.com endpoints to the GHE.com tenant.
+    (defun psimacs/config/gptel-gh-rewrite-url (orig url &rest args)
+      (apply orig
+             (replace-regexp-in-string
+              "\\`https://api\\.github\\.com"
+              (format "https://api.%s.ghe.com" psimacs/config/gh-ghe-subdomain)
+              (replace-regexp-in-string
+               "\\`https://github\\.com"
+               (format "https://%s.ghe.com" psimacs/config/gh-ghe-subdomain)
+               url))
+             args))
+    (advice-add 'gptel--url-retrieve :around #'psimacs/config/gptel-gh-rewrite-url)
+
+    ;; Keep these tokens separate from a normal github.com Copilot login
+    (setq gptel-gh-github-token-file (expand-file-name "copilot/ghe-github-token" psimacs/config/session-dir)
+          gptel-gh-token-file        (expand-file-name "copilot/ghe-token"        psimacs/config/session-dir)
+    )
+
+    (gptel-make-gh-copilot "Copilot-GHE"
+      :host (format "copilot-api.%s.ghe.com" psimacs/config/gh-ghe-subdomain)
+    )
+
+    ;;
     ;; Google
     ;;
     ;(gptel-make-gemini "Gemini"
@@ -16261,6 +16294,14 @@ References:
     ;            google/palm-2-codechat-bison-32k
     ;            google/gemini-pro))
 
+    (setq gptel-backend (gptel-make-gh-copilot "Copilot-GHE"
+                            :host (format "copilot-api.%s.ghe.com" psimacs/config/gh-ghe-subdomain))
+          gptel-model 'claude-sonnet-5.5)
+
+    (when psimacs/system/is-win32-p
+        (setq gptel-curl-extra-args '("--ca-native"))
+    )
+
     (require 'gptel-integrations)
 
   :hook
@@ -16269,8 +16310,7 @@ References:
 
   :bind (
          :map psimacs/config/global-key-map/common
-              ("RET"   . gptel-send)
-              ("C-RET" . gptel-send)
+            ("C-c RET" . gptel-send)
         )
 )
 #+end_src
@@ -16406,8 +16446,7 @@ The basic commands:
 ;; agent-shell and support packages
 ;;
 (use-package agent-shell
-  ;:straight (:host github :repo "xenodium/agent-shell")
-  :straight (:host github :repo "hatlafax/agent-shell")
+  :straight (:host github :repo "xenodium/agent-shell")
   ;:ensure-system-package (
     ;(npm . "sudo dnf install -y npm")
 
@@ -21537,14 +21576,31 @@ A list of useful tags is predefined by *Psimacs*.
                 ("project"      . (:foreground "gold1"))
                 ("appointment"  . (:foreground "gold1"))
 
+                ;; special tags
+                ("link"         . (:foreground "green1"))
+
                 ;; property tags
                 ("ordered"      . (:foreground "chocolate1"))
+
+                ;; colleguas tags
+                ("Niels"    . (:foreground "aquamarine1"))
+                ("Daniel"   . (:foreground "aquamarine1"))
+                ("Johannes" . (:foreground "aquamarine1"))
+                ("Lukas"    . (:foreground "aquamarine1"))
+                ("Mert"     . (:foreground "aquamarine1"))
+                ("Uwe"      . (:foreground "aquamarine1"))
+                ("Henning"  . (:foreground "aquamarine1"))
+                ("Sebastian". (:foreground "aquamarine1"))
+                ("Michael"  . (:foreground "aquamarine1"))
+                ("Steffi"   . (:foreground "aquamarine1"))
+                ("Christian". (:foreground "aquamarine1"))
+                ("Thorsten" . (:foreground "aquamarine1"))
+                ("Oliver"   . (:foreground "aquamarine1"))
+
               )
         )
 
-        ;; Available key shortcuts for further tags.
-        ;; h j k u
-        ;; G N U
+        ;; Available: 9 @ $ % ^ ( ) { } [ ]
 
         (setq org-tag-persistent-alist
             '(
@@ -21640,9 +21696,12 @@ A list of useful tags is predefined by *Psimacs*.
                 ("flagged"      . ?=)
                 ("project"      . ?-)
                 ("appointment"  . ?N)
+                ("link"         . ?!)
 
                 ;; property tags
                 ("ordered"      . ?Z)
+
+                ;; colleguas tags
             )
         )
 
@@ -25919,7 +25978,10 @@ A new terminal is opened calling with a prefix-argument."
 
 A new terminal is opened calling with a prefix-argument."
       (interactive "P")
-      (let ((ghostel-shell psimacs/config/ghostel-shell-bash))
+      (let (
+            (ghostel-shell psimacs/config/ghostel-shell-bash)
+            ;;(default-directory (expand-file-name "~"))
+            )
         (ghostel arg)
       )
     )
